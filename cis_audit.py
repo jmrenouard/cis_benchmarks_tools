@@ -12,9 +12,15 @@ import json
 import os
 import subprocess
 import sys
-import yaml
 from datetime import datetime
 from pathlib import Path
+
+try:
+    import yaml
+except ImportError:
+    print("Error: PyYAML is required but not installed.", file=sys.stderr)
+    print("Please install it using: pip install --user PyYAML", file=sys.stderr)
+    sys.exit(1)
 
 
 class BenchmarkCheck:
@@ -189,7 +195,7 @@ class CISAuditor:
         """Get system hostname."""
         try:
             return subprocess.check_output(['hostname'], text=True).strip()
-        except:
+        except Exception:
             return "unknown"
     
     def load_config(self, config_file):

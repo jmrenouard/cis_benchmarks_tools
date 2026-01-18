@@ -94,7 +94,7 @@ checks:
     type: command
     title: "Ensure system is up to date"
     description: "Regular updates should be applied to maintain security"
-    command: "apt-get -s upgrade 2>/dev/null | grep '^0 upgraded' || yum check-update 2>&1 | grep -q 'No packages' && echo 'No packages'"
+    command: "apt-get -s upgrade 2>/dev/null | grep -q '^0 upgraded' || (yum check-update 2>&1 | grep -q 'No packages')"
     severity: high
     remediation: "Run system updates: apt-get update && apt-get upgrade OR yum update"
 

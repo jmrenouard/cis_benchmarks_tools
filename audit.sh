@@ -25,10 +25,20 @@ check_dependencies() {
     python3 -c "import yaml" 2>/dev/null
     if [ $? -ne 0 ]; then
         echo -e "${YELLOW}Installing dependencies...${NC}"
-        pip install --user -r "${SCRIPT_DIR}/requirements.txt" || {
-            echo -e "${RED}Failed to install dependencies${NC}"
-            exit 1
-        }
+        
+        # Check if we're in a virtual environment
+        if [ -n "$VIRTUAL_ENV" ]; then
+            pip install -r "${SCRIPT_DIR}/requirements.txt" || {
+                echo -e "${RED}Failed to install dependencies${NC}"
+                exit 1
+            }
+        else
+            pip install --user -r "${SCRIPT_DIR}/requirements.txt" || {
+                echo -e "${RED}Failed to install dependencies${NC}"
+                echo -e "${YELLOW}Tip: Consider using a virtual environment${NC}"
+                exit 1
+            }
+        fi
     fi
 }
 
