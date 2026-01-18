@@ -97,18 +97,18 @@ checks:
     title: "Check /etc/shadow permissions"
     description: "Password hashes should be protected"
     filepath: "/etc/shadow"
-    expected_perms: "000"
+    expected_perms: "400"
     severity: high
-    remediation: "chmod 000 /etc/shadow"
+    remediation: "chmod 400 /etc/shadow"
 
   - id: "file.3"
     type: file
     title: "Check /etc/gshadow permissions"
     description: "Group password hashes should be protected"
     filepath: "/etc/gshadow"
-    expected_perms: "000"
+    expected_perms: "400"
     severity: high
-    remediation: "chmod 000 /etc/gshadow"
+    remediation: "chmod 400 /etc/gshadow"
 ```
 
 Run it:
