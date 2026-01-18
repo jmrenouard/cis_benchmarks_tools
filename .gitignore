@@ -208,7 +208,9 @@ __marimo__/
 
 # CIS Audit Reports
 cis_audit_report.*
-*_audit.*
+*_audit_*.json
+*_audit_*.html
+*_audit_*.text
 *_report.*
 *.report.json
 *.report.html
