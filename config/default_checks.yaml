@@ -86,6 +86,7 @@ checks:
     title: "Ensure SSH X11 forwarding is disabled"
     description: "X11 forwarding should be disabled unless required"
     command: "grep -E '^X11Forwarding\\s+no' /etc/ssh/sshd_config"
+    expected_output: "X11Forwarding no"
     severity: low
     remediation: "Set 'X11Forwarding no' in /etc/ssh/sshd_config"
 
@@ -94,7 +95,7 @@ checks:
     type: command
     title: "Ensure system is up to date"
     description: "Regular updates should be applied to maintain security"
-    command: "apt-get -s upgrade 2>/dev/null | grep -q '^0 upgraded' || (yum check-update 2>&1 | grep -q 'No packages')"
+    command: "(apt-get -s upgrade 2>/dev/null | grep -q '^0 upgraded') || (yum check-update 2>&1 | tail -1 | grep -q 'No packages')"
     severity: high
     remediation: "Run system updates: apt-get update && apt-get upgrade OR yum update"
 
