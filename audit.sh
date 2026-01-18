@@ -22,10 +22,10 @@ fi
 
 # Check if dependencies are installed
 check_dependencies() {
-    python3 -c "import yaml, jinja2" 2>/dev/null
+    python3 -c "import yaml" 2>/dev/null
     if [ $? -ne 0 ]; then
         echo -e "${YELLOW}Installing dependencies...${NC}"
-        pip install -r "${SCRIPT_DIR}/requirements.txt" || {
+        pip install --user -r "${SCRIPT_DIR}/requirements.txt" || {
             echo -e "${RED}Failed to install dependencies${NC}"
             exit 1
         }

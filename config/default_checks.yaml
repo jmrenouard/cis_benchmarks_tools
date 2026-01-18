@@ -37,10 +37,10 @@ checks:
     title: "Ensure permissions on /etc/shadow are configured"
     description: "The /etc/shadow file contains encrypted passwords and should not be readable by unprivileged users"
     filepath: "/etc/shadow"
-    expected_perms: "000"
+    expected_perms: "400"
     should_exist: true
     severity: high
-    remediation: "Run command: chmod 000 /etc/shadow or chmod 400 /etc/shadow"
+    remediation: "Run command: chmod 400 /etc/shadow"
 
   - id: "1.2.3"
     type: file

@@ -413,11 +413,11 @@ def create_default_checks():
     checks.append(FileCheck(
         check_id="1.2.2",
         title="Ensure permissions on /etc/shadow are configured",
-        description="/etc/shadow should have 000 or 400 permissions",
+        description="/etc/shadow should have 400 permissions",
         filepath="/etc/shadow",
-        expected_perms="000",
+        expected_perms="400",
         severity="high",
-        remediation="Run: chmod 000 /etc/shadow"
+        remediation="Run: chmod 400 /etc/shadow"
     ))
     
     # Check 4: Ensure firewall is enabled
