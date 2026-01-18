@@ -205,3 +205,11 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# CIS Audit Reports
+cis_audit_report.*
+*_audit.*
+*_report.*
+*.report.json
+*.report.html
+*.report.text

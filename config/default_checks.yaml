@@ -1,0 +1,108 @@
+# CIS Benchmarks Configuration File
+# This file defines security checks to be performed during audit
+
+checks:
+  # Password and Account Policies
+  - id: "1.1.1"
+    type: command
+    title: "Ensure password expiration is configured"
+    description: "Password maximum age should be set to prevent use of old passwords"
+    command: "grep ^PASS_MAX_DAYS /etc/login.defs"
+    expected_output: "PASS_MAX_DAYS"
+    severity: medium
+    remediation: "Edit /etc/login.defs and set PASS_MAX_DAYS to 90 or less"
+
+  - id: "1.1.2"
+    type: command
+    title: "Ensure minimum password age is configured"
+    description: "Minimum days between password changes should be set"
+    command: "grep ^PASS_MIN_DAYS /etc/login.defs"
+    expected_output: "PASS_MIN_DAYS"
+    severity: low
+    remediation: "Edit /etc/login.defs and set PASS_MIN_DAYS to 1 or more"
+
+  # File Permissions
+  - id: "1.2.1"
+    type: file
+    title: "Ensure permissions on /etc/passwd are configured"
+    description: "The /etc/passwd file contains user account information and should be readable by all but writable only by root"
+    filepath: "/etc/passwd"
+    expected_perms: "644"
+    should_exist: true
+    severity: high
+    remediation: "Run command: chmod 644 /etc/passwd"
+
+  - id: "1.2.2"
+    type: file
+    title: "Ensure permissions on /etc/shadow are configured"
+    description: "The /etc/shadow file contains encrypted passwords and should not be readable by unprivileged users"
+    filepath: "/etc/shadow"
+    expected_perms: "000"
+    should_exist: true
+    severity: high
+    remediation: "Run command: chmod 000 /etc/shadow or chmod 400 /etc/shadow"
+
+  - id: "1.2.3"
+    type: file
+    title: "Ensure permissions on /etc/group are configured"
+    description: "The /etc/group file contains group information and should be readable by all but writable only by root"
+    filepath: "/etc/group"
+    expected_perms: "644"
+    should_exist: true
+    severity: medium
+    remediation: "Run command: chmod 644 /etc/group"
+
+  # Network Configuration
+  - id: "2.1.1"
+    type: command
+    title: "Ensure firewall is active"
+    description: "A host-based firewall should be running to control network traffic"
+    command: "systemctl is-active ufw 2>/dev/null || systemctl is-active firewalld 2>/dev/null || systemctl is-active iptables 2>/dev/null"
+    should_exist: true
+    severity: high
+    remediation: "Install and enable a firewall (ufw, firewalld, or iptables)"
+
+  - id: "2.1.2"
+    type: command
+    title: "Ensure IP forwarding is disabled"
+    description: "IP forwarding should be disabled unless the system is a router"
+    command: "sysctl net.ipv4.ip_forward"
+    expected_output: "net.ipv4.ip_forward = 0"
+    severity: medium
+    remediation: "Set net.ipv4.ip_forward=0 in /etc/sysctl.conf and run sysctl -p"
+
+  # SSH Configuration
+  - id: "3.1.1"
+    type: command
+    title: "Ensure SSH root login is disabled"
+    description: "Root should not be allowed to login via SSH"
+    command: "grep -E '^PermitRootLogin\\s+no' /etc/ssh/sshd_config"
+    expected_output: "PermitRootLogin no"
+    severity: high
+    remediation: "Set 'PermitRootLogin no' in /etc/ssh/sshd_config and restart sshd"
+
+  - id: "3.1.2"
+    type: command
+    title: "Ensure SSH X11 forwarding is disabled"
+    description: "X11 forwarding should be disabled unless required"
+    command: "grep -E '^X11Forwarding\\s+no' /etc/ssh/sshd_config"
+    severity: low
+    remediation: "Set 'X11Forwarding no' in /etc/ssh/sshd_config"
+
+  # System Maintenance
+  - id: "4.1.1"
+    type: command
+    title: "Ensure system is up to date"
+    description: "Regular updates should be applied to maintain security"
+    command: "apt-get -s upgrade 2>/dev/null | grep '^0 upgraded' || yum check-update 2>&1 | grep -q 'No packages' && echo 'No packages'"
+    severity: high
+    remediation: "Run system updates: apt-get update && apt-get upgrade OR yum update"
+
+  - id: "4.1.2"
+    type: command
+    title: "Ensure auditd service is enabled"
+    description: "System auditing should be enabled to track security events"
+    command: "systemctl is-enabled auditd 2>/dev/null"
+    expected_output: "enabled"
+    severity: medium
+    remediation: "Install and enable auditd: systemctl enable auditd"

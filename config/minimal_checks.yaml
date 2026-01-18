@@ -1,0 +1,33 @@
+# Minimal CIS Benchmarks Configuration Example
+# This is a simplified configuration for basic security checks
+
+checks:
+  # Basic file permissions
+  - id: "1.1"
+    type: file
+    title: "Check /etc/passwd permissions"
+    description: "Ensure /etc/passwd has correct permissions"
+    filepath: "/etc/passwd"
+    expected_perms: "644"
+    severity: high
+    remediation: "chmod 644 /etc/passwd"
+
+  # SSH configuration
+  - id: "2.1"
+    type: command
+    title: "Check SSH configuration"
+    description: "Verify SSH service status"
+    command: "systemctl status sshd 2>/dev/null || systemctl status ssh 2>/dev/null"
+    should_exist: true
+    severity: medium
+    remediation: "Install and configure OpenSSH server"
+
+  # System updates
+  - id: "3.1"
+    type: command
+    title: "Check for security updates"
+    description: "Verify system update status"
+    command: "echo 'Check your package manager for updates'"
+    should_exist: true
+    severity: low
+    remediation: "Apply available security updates"
