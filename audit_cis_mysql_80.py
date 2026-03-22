@@ -17,37 +17,37 @@ MYSQL_CMD = "mysql -N -B" # -N: skip headers, -B: batch mode (tab separated)
 # Basée sur le PDF "CIS MySQL 8.0 Benchmark – Tableau récapitulatif complet.pdf"
 RECOMMENDATIONS_DATA = [
     # Catégorie 1: Configuration Système d'exploitation
-    {"category": "1. Configuration Système d'exploitation", "number": "1.1", "name": "Placer les bases de données sur des partitions non-système", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@datadir;\" puis vérifier avec df -h <datadir>", "expected_output": None, "remediation": "Sauvegarder la base, déplacer les fichiers de données, mettre à jour datadir dans la configuration MySQL, redémarrer le service."},
-    {"category": "1. Configuration Système d'exploitation", "number": "1.2", "name": "Utiliser un compte dédié et privilégié minimal pour MySQL", "type": "Automated", "test_procedure": "ps -ef | grep mysqld | grep -v grep | awk '{print $1}'", "expected_output": {"type": "stdout_equals", "value": "mysql"}, "remediation": "Configurer le service MySQL pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux."},
+    {"category": "1. Configuration Système d'exploitation", "number": "1.1", "name": "Placer les bases de données sur des partitions non-système", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@datadir;\"", "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'", "expected_output": {"type": "stdout_not_equals", "value": "/"}, "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service."},
+    {"category": "1. Configuration Système d'exploitation", "number": "1.2", "name": "Utiliser un compte dédié et privilégié minimal pour MySQL", "type": "Automated", "test_procedure": "ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | awk '{print $1}' | head -n 1", "expected_output": {"type": "stdout_equals", "value": "mysql"}, "remediation": "Configurer le service MySQL pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.3", "name": "Désactiver l'historique des commandes MySQL", "type": "Automated", "test_procedure": "! find /home /root -name .mysql_history -print -quit 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.4", "name": "Vérifier que MYSQL_PWD n'est pas utilisé", "type": "Automated", "test_procedure": "! grep -qs MYSQL_PWD /proc/*/environ", "expected_output": {"type": "returncode_zero"}, "remediation": "Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifiée."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.5", "name": "Désactiver l'accès interactif pour l'utilisateur MySQL", "type": "Automated", "test_procedure": "getent passwd mysql | cut -d: -f7", "expected_output": {"type": "stdout_contains_any", "values": ["/bin/false", "/sbin/nologin"]}, "remediation": "Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql)."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.6", "name": "Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs", "type": "Automated", "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD."},
-    {"category": "1. Configuration Système d'exploitation", "number": "1.7", "name": "Exécuter MySQL dans un environnement sandbox", "type": "Manual", "test_procedure": "Vérifier si chroot, unité systemd spécifique, ou conteneurs Docker sont utilisés.", "expected_output": None, "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker."},
+    {"category": "1. Configuration Système d'exploitation", "number": "1.7", "name": "Exécuter MySQL dans un environnement sandbox", "type": "Automated", "test_procedure": "[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'", "expected_output": {"type": "stdout_equals", "value": "DOCKER"}, "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker."},
 
     # Catégorie 2: Installation et Planification
-    {"category": "2. Installation et Planification", "number": "2.1.1", "name": "Politique de sauvegarde en place", "type": "Manual", "test_procedure": "Vérifier crontab -l, les scripts de sauvegarde, ou la documentation interne.", "expected_output": None, "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques."},
-    {"category": "2. Installation et Planification", "number": "2.1.2", "name": "Validation des sauvegardes", "type": "Manual", "test_procedure": "Analyser les rapports de tests de restauration.", "expected_output": None, "remediation": "Planifier et documenter les tests de restauration périodiques."},
-    {"category": "2. Installation et Planification", "number": "2.1.3", "name": "Sécuriser les identifiants de sauvegarde", "type": "Manual", "test_procedure": "Inspecter les permissions des fichiers contenant les credentials de sauvegarde.", "expected_output": None, "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement."},
-    {"category": "2. Installation et Planification", "number": "2.1.4", "name": "Sécuriser les fichiers de sauvegarde", "type": "Manual", "test_procedure": "Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.", "expected_output": None, "remediation": "Utiliser l'option --encrypt-password de MySQL Enterprise Backup ou une méthode de chiffrement équivalente."},
+    {"category": "2. Installation et Planification", "number": "2.1.1", "name": "Politique de sauvegarde en place", "type": "Automated", "test_procedure": "crontab -l 2>/dev/null | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques."},
+    {"category": "2. Installation et Planification", "number": "2.1.2", "name": "Validation des sauvegardes", "type": "Manual", "test_procedure": "Analyser les rapports de tests de restauration.", "expected_output": None, "remediation": "Planifier et documenter les tests de restauration périodiques.", "manual_steps": ["Identifier les fichiers de sauvegarde récents.", "Restaurer une base de test à partir de ces fichiers.", "Vérifier l'intégrité des données.", "Documenter la date et le résultat du test."]},
+    {"category": "2. Installation et Planification", "number": "2.1.3", "name": "Sécuriser les identifiants de sauvegarde", "type": "Manual", "test_procedure": "Inspecter les permissions des fichiers contenant les credentials de sauvegarde.", "expected_output": None, "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.", "manual_steps": ["Rechercher les scripts de sauvegarde.", "Vérifier si les mots de passe sont en clair.", "S'assurer que les fichiers de config (.my.cnf) ont des droits 600.", "Utiliser mysql_config_editor."]},
+    {"category": "2. Installation et Planification", "number": "2.1.4", "name": "Sécuriser les fichiers de sauvegarde", "type": "Manual", "test_procedure": "Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.", "expected_output": None, "remediation": "Utiliser l'option --encrypt-password de MySQL Enterprise Backup ou une méthode de chiffrement équivalente.", "manual_steps": ["Localiser le stockage des sauvegardes.", "Vérifier les ACLs.", "Confirmer que les fichiers sont chiffrés au repos (AES-256/GPG)."]},
     {"category": "2. Installation et Planification", "number": "2.1.5", "name": "Point-in-Time Recovery", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@log_bin;\"", "expected_output": {"type": "stdout_equals", "value": "1"}, "remediation": "Activer log_bin (log-bin=mysql-bin dans my.cnf), configurer l'expiration (expire_logs_days ou binlog_expire_logs_seconds), tester les restaurations PITR."},
-    {"category": "2. Installation et Planification", "number": "2.1.6", "name": "Plan de reprise d'activité (DR)", "type": "Manual", "test_procedure": "Vérifier l'existence et la validité du plan DR.", "expected_output": None, "remediation": "Documenter et tester un plan DR incluant réplication, backups offsite."},
-    {"category": "2. Installation et Planification", "number": "2.1.7", "name": "Sauvegarde des fichiers de configuration", "type": "Manual", "test_procedure": "Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).", "expected_output": None, "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde."},
+    {"category": "2. Installation et Planification", "number": "2.1.6", "name": "Plan de reprise d'activité (DR)", "type": "Manual", "test_procedure": "Vérifier l'existence et la validité du plan DR.", "expected_output": None, "remediation": "Documenter et tester un plan DR incluant réplication, backups offsite.", "manual_steps": ["Consulter la documentation technique.", "Vérifier la présence d'une procédure de basculement.", "Confirmer la réplication hors-site."]},
+    {"category": "2. Installation et Planification", "number": "2.1.7", "name": "Sauvegarde des fichiers de configuration", "type": "Manual", "test_procedure": "Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).", "expected_output": None, "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.", "manual_steps": ["Lister le contenu d'une sauvegarde complète.", "Vérifier la présence de /etc/my.cnf et des certificats SSL."]},
 
     # Catégorie 3: Permissions Fichiers
-    {"category": "3. Permissions Fichiers", "number": "3.1", "name": "Permissions adéquates sur 'datadir'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@datadir;\"", "test_procedure_template": "stat -c '%U:%G %a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^mysql:mysql\s+700$"}, "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>"},
-    {"category": "3. Permissions Fichiers", "number": "3.2", "name": "Permissions sur les fichiers 'log_bin_basename'", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@log_bin_basename;\" puis ls -l <log_bin_basename>*", "expected_output": None, "remediation": "Appliquer chmod 600 sur les fichiers binaires."}, # Manual car dépend du nom et de l'emplacement
-    {"category": "3. Permissions Fichiers", "number": "3.3", "name": "Permissions sur 'log_error'", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@log_error;\" puis ls -l <log_error>", "expected_output": None, "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."}, # Manual car dépend du nom et de l'emplacement
-    {"category": "3. Permissions Fichiers", "number": "3.4", "name": "Permissions sur 'slow_query_log'", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@slow_query_log_file;\" puis ls -l <slow_query_log_file>", "expected_output": None, "remediation": "Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600)."}, # Manual car dépend du nom et de l'emplacement
-    {"category": "3. Permissions Fichiers", "number": "3.5", "name": "Permissions sur 'relay_log_basename'", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@relay_log_basename;\" puis ls -l <relay_log_basename>*", "expected_output": None, "remediation": "Appliquer chmod 600."}, # Manual car dépend du nom et de l'emplacement
-    {"category": "3. Permissions Fichiers", "number": "3.6", "name": "Permissions sur 'general_log_file'", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@general_log_file;\" puis ls -l <general_log_file>", "expected_output": None, "remediation": "Restreindre les droits d'accès (ex: 640 ou 600)."}, # Manual car dépend du nom et de l'emplacement
-    {"category": "3. Permissions Fichiers", "number": "3.7", "name": "Permissions sur les fichiers de clés SSL", "type": "Manual", "test_procedure": "Identifier les chemins des fichiers ssl_key, ssl_cert, ssl_ca dans my.cnf ou via SHOW VARIABLES, puis vérifier les permissions avec ls -l.", "expected_output": None, "remediation": "Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql."},
-    {"category": "3. Permissions Fichiers", "number": "3.8", "name": "Permissions sur le répertoire des plugins", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@plugin_dir;\"", "test_procedure_template": "stat -c '%U:%G %a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^mysql:mysql\s+755$"}, "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>"}, # 755 est courant pour les plugins
-    {"category": "3. Permissions Fichiers", "number": "3.9", "name": "Permissions sur 'audit_log_file'", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@audit_log_file;\" puis ls -l <audit_log_file>", "expected_output": None, "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."}, # Manual car dépend du nom et de l'emplacement
-    {"category": "3. Permissions Fichiers", "number": "3.10", "name": "Sécuriser le Keyring MySQL", "type": "Manual", "test_procedure": "Vérifier les permissions du fichier keyring (si type 'file').", "expected_output": None, "remediation": "Chiffrer et restreindre l'accès au fichier keyring."},
+    {"category": "3. Permissions Fichiers", "number": "3.1", "name": "Permissions adéquates sur 'datadir'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@datadir;\"", "test_procedure_template": "stat -c '%U:%G %a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^mysql:mysql\s+7[05][05]$"}, "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>"},
+    {"category": "3. Permissions Fichiers", "number": "3.2", "name": "Permissions sur les fichiers 'log_bin_basename'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@log_bin_basename;\"", "test_procedure_template": "ls -l {path}* | awk '{{print $1}}' | uniq", "expected_output": {"type": "stdout_regex_match", "pattern": r"^-rw-------$"}, "remediation": "Appliquer chmod 600 sur les fichiers binaires."},
+    {"category": "3. Permissions Fichiers", "number": "3.3", "name": "Permissions sur 'log_error'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@log_error;\"", "test_procedure_template": "stat -c '%a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^6[04]0$"}, "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."},
+    {"category": "3. Permissions Fichiers", "number": "3.4", "name": "Permissions sur 'slow_query_log'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@slow_query_log_file;\"", "test_procedure_template": "stat -c '%a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^6[04]0$"}, "remediation": "Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600)."},
+    {"category": "3. Permissions Fichiers", "number": "3.5", "name": "Permissions sur 'relay_log_basename'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@relay_log_basename;\"", "test_procedure_template": "ls -l {path}* | awk '{{print $1}}' | uniq", "expected_output": {"type": "stdout_regex_match", "pattern": r"^-rw-------$"}, "remediation": "Appliquer chmod 600."},
+    {"category": "3. Permissions Fichiers", "number": "3.6", "name": "Permissions sur 'general_log_file'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@general_log_file;\"", "test_procedure_template": "stat -c '%a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^6[04]0$"}, "remediation": "Restreindre les droits d'accès (ex: 640 ou 600)."},
+    {"category": "3. Permissions Fichiers", "number": "3.7", "name": "Permissions sur les fichiers de clés SSL", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'ssl_key';\" | awk '{{print $2}}' | xargs stat -c '%a'", "expected_output": {"type": "stdout_equals", "value": "600"}, "remediation": "Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql."},
+    {"category": "3. Permissions Fichiers", "number": "3.8", "name": "Permissions sur le répertoire des plugins", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@plugin_dir;\"", "test_procedure_template": "stat -c '%U:%G %a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^mysql:mysql\s+755$"}, "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>"},
+    {"category": "3. Permissions Fichiers", "number": "3.9", "name": "Permissions sur 'audit_log_file'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@audit_log_file;\"", "test_procedure_template": "stat -c '%a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^6[04]0$"}, "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."},
+    {"category": "3. Permissions Fichiers", "number": "3.10", "name": "Sécuriser le Keyring MySQL", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'keyring_file_data';\" | awk '{{print $2}}' | xargs stat -c '%a'", "expected_output": {"type": "stdout_equals", "value": "600"}, "remediation": "Chiffrer et restreindre l'accès au fichier keyring."},
 
     # Catégorie 4: Général
-    {"category": "4. Général", "number": "4.1", "name": "Ensure the Latest Security Patches are Applied", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@version;\" puis comparer aux annonces Oracle/OS.", "expected_output": None, "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version."},
+    {"category": "4. Général", "number": "4.1", "name": "Ensure the Latest Security Patches are Applied", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@version;\"", "expected_output": None, "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.", "manual_steps": ["Relever la version affichée.", "Comparer avec les Release Notes MySQL 8.0.", "Vérifier les CVE critiques."]},
     {"category": "4. Général", "number": "4.2", "name": "Ensure Example or Test Databases are Not Installed on Production Servers", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME IN ('employees', 'world', 'world_x', 'sakila', 'airportdb', 'menagerie');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "Exécutez DROP DATABASE <database name>; pour supprimer une base de données d'exemple."},
     {"category": "4. Général", "number": "4.3", "name": "Ensure 'allow-suspicious-udfs' is Set to 'OFF'", "type": "Automated", "test_procedure": "my_print_defaults mysqld | grep -q 'allow-suspicious-udfs' && echo 'FOUND' || echo 'NOT FOUND'", "expected_output": {"type": "stdout_equals", "value": "NOT FOUND"}, "remediation": "Supprimer --allow-suspicious-udfs de la ligne de commande ou du fichier de configuration."},
     {"category": "4. Général", "number": "4.4", "name": "Harden Usage for 'local_infile' on MySQL Clients", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@local_infile;\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "Ajouter local-infile=0 à la section [mysqld] et [mysql] du fichier de configuration MySQL et redémarrer le service. Si nécessaire, utiliser --load-data-local-dir et TLS."},
@@ -56,263 +56,283 @@ RECOMMENDATIONS_DATA = [
     {"category": "4. Général", "number": "4.7", "name": "Ensure the 'daemon_memcached' Plugin is Disabled", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT PLUGIN_STATUS FROM information_schema.plugins WHERE PLUGIN_NAME = 'daemon_memcached';\"", "expected_output": {"type": "stdout_not_equals", "value": "ACTIVE"}, "remediation": "Exécutez UNINSTALL PLUGIN daemon_memcached;"},
     {"category": "4. Général", "number": "4.8", "name": "Ensure the 'secure_file_priv' is Configured Correctly", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@secure_file_priv;\"", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Définir secure_file_priv sur NULL (pour désactiver) ou sur un chemin spécifique dans my.cnf."}, # Check if NOT empty string
     {"category": "4. Général", "number": "4.9", "name": "Ensure 'sql_mode' Contains 'STRICT_ALL_TABLES'", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@sql_mode;\"", "expected_output": {"type": "stdout_contains", "value": "STRICT_ALL_TABLES"}, "remediation": "Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans my.cnf."},
-    {"category": "4. Général", "number": "4.10", "name": "Use MySQL TDE for At-Rest Data Encryption", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT TABLE_SCHEMA, TABLE_NAME, CREATE_OPTIONS FROM information_schema.TABLES WHERE CREATE_OPTIONS NOT LIKE '%ENCRYPTION=\"Y\"%' AND TABLE_SCHEMA NOT IN ('mysql', 'information_schema', 'performance_schema', 'sys');\"", "expected_output": None, "remediation": "Activer le chiffrement pour les tables/tablespaces nécessaires via ALTER TABLE ... ENCRYPTION='Y';. Configurer le chiffrement pour les logs (binlog, redo, undo) et l'audit log si nécessaire."},
+    {"category": "4. Général", "number": "4.10", "name": "Use MySQL TDE for At-Rest Data Encryption", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM information_schema.TABLES WHERE CREATE_OPTIONS NOT LIKE '%ENCRYPTION=\"Y\"%' AND TABLE_SCHEMA NOT IN ('mysql', 'information_schema', 'performance_schema', 'sys');\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "Activer le chiffrement pour les tables/tablespaces nécessaires via ALTER TABLE ... ENCRYPTION='Y';. Configurer le chiffrement pour les logs (binlog, redo, undo) et l'audit log si nécessaire."},
 
     # Catégorie 5 - Gestion des privilèges
-    {"category": "5. Gestion des privilèges", "number": "5.1", "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.db WHERE db='mysql' AND (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y');\"", "expected_output": None, "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs."},
-    {"category": "5. Gestion des privilèges", "number": "5.2", "name": "Retirer le droit FILE aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE File_priv = 'Y';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';"}, # Assume only admins should have it, check if any user has it
-    {"category": "5. Gestion des privilèges", "number": "5.3", "name": "Retirer le droit PROCESS aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Process_priv = 'Y';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';"}, # Assume only admins should have it
-    {"category": "5. Gestion des privilèges", "number": "5.4", "name": "Retirer le droit SUPER (prérogative obsolète)", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Super_priv = 'Y';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "Migrer vers les droits dynamiques (ex: BACKUP_ADMIN, REPLICATION_SLAVE_ADMIN) puis REVOKE SUPER ON *.* FROM '<user>'@'<host>';"}, # Assume only admins should have it
-    {"category": "5. Gestion des privilèges", "number": "5.5", "name": "Retirer le droit SHUTDOWN", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Shutdown_priv = 'Y';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';"}, # Assume only admins should have it
-    {"category": "5. Gestion des privilèges", "number": "5.6", "name": "Retirer CREATE USER aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Create_user_priv = 'Y';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';"}, # Assume only admins should have it
-    {"category": "5. Gestion des privilèges", "number": "5.7", "name": "Retirer GRANT OPTION aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Grant_priv = 'Y';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';"}, # Assume only admins should have it
-    {"category": "5. Gestion des privilèges", "number": "5.8", "name": "Limiter REPLICATION SLAVE aux comptes de réplication", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Repl_slave_priv = 'Y';\"", "expected_output": None, "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication."},
-    {"category": "5. Gestion des privilèges", "number": "5.9", "name": "Limiter les droits DML/DDL à des BD/comptes précis", "type": "Manual", "test_procedure": "Inspecter les privilèges via SHOW GRANTS FOR '<user>'@'<host>';", "expected_output": None, "remediation": "Révoquer les droits superflus par base de données/compte."},
-    {"category": "5. Gestion des privilèges", "number": "5.10", "name": "Définir proprement DEFINER/INVOKER des SP/Functions", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT ROUTINE_SCHEMA, ROUTINE_NAME, DEFINER FROM information_schema.ROUTINES;\"", "expected_output": None, "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER."},
-    {"category": "5. Gestion des privilèges", "number": "5.11", "name": "Restreindre le droit SET_ANY_DEFINER", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SHOW GRANTS FOR '<user>'@'<host>';\" et vérifier la présence de SET_ANY_DEFINER.", "expected_output": None, "remediation": "REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';"},
-    {"category": "5. Gestion des privilèges", "number": "5.12", "name": "Restreindre ALLOW_NONEXISTENT_DEFINER", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SHOW GRANTS FOR '<user>'@'<host>';\" et vérifier la présence de ALLOW_NONEXISTENT_DEFINER.", "expected_output": None, "remediation": "REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';"},
+    {"category": "5. Gestion des privilèges", "number": "5.1", "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.db WHERE db='mysql' AND user NOT IN ('mysql.sys', 'mysql.session', 'root') AND (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y');\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs."},
+    {"category": "5. Gestion des privilèges", "number": "5.2", "name": "Retirer le droit FILE aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE File_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';"},
+    {"category": "5. Gestion des privilèges", "number": "5.3", "name": "Retirer le droit PROCESS aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Process_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';"},
+    {"category": "5. Gestion des privilèges", "number": "5.4", "name": "Retirer le droit SUPER (prérogative obsolète)", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Super_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "Migrer vers les droits dynamiques (ex: BACKUP_ADMIN, REPLICATION_SLAVE_ADMIN) puis REVOKE SUPER ON *.* FROM '<user>'@'<host>';"},
+    {"category": "5. Gestion des privilèges", "number": "5.5", "name": "Retirer le droit SHUTDOWN", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Shutdown_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';"},
+    {"category": "5. Gestion des privilèges", "number": "5.6", "name": "Retirer CREATE USER aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Create_user_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';"},
+    {"category": "5. Gestion des privilèges", "number": "5.7", "name": "Retirer GRANT OPTION aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Grant_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';"},
+    {"category": "5. Gestion des privilèges", "number": "5.8", "name": "Limiter REPLICATION SLAVE aux comptes de réplication", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE Repl_slave_priv = 'Y' AND user NOT LIKE '%repl%';\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication."},
+    {"category": "5. Gestion des privilèges", "number": "5.9", "name": "Limiter les droits DML/DDL à des BD/comptes précis", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y') AND user NOT IN ('root', 'mysql.sys', 'mysql.session');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "Révoquer les droits superflus par base de données/compte."},
+    {"category": "5. Gestion des privilèges", "number": "5.10", "name": "Définir proprement DEFINER/INVOKER des SP/Functions", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mysql.sys@localhost');\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER."},
+    {"category": "5. Gestion des privilèges", "number": "5.11", "name": "Restreindre le droit SET_ANY_DEFINER", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='SET_ANY_DEFINER');\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';"}, # Simplifié, check dynamic privs is harder
+    {"category": "5. Gestion des privilèges", "number": "5.12", "name": "Restreindre ALLOW_NONEXISTENT_DEFINER", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='ALLOW_NONEXISTENT_DEFINER');\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';"},
 
     # Catégorie 6 - Audit & Journalisation
-    {"category": "6. Audit & Journalisation", "number": "6.1", "name": "Configurer log_error", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@log_error;\"", "expected_output": {"type": "stdout_not_contains", "value": "/dev/stderr"}, "remediation": "Définir log-error=/chemin/vers/mysql.err dans my.cnf."}, # Check it's not stderr (default if not set)
-    {"category": "6. Audit & Journalisation", "number": "6.2", "name": "Journal hors partition système", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@log_bin_basename, @@log_error;\" puis vérifier les chemins avec df -h.", "expected_output": None, "remediation": "Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système."},
+    {"category": "6. Audit & Journalisation", "number": "6.1", "name": "Configurer log_error", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@log_error;\"", "expected_output": {"type": "stdout_not_contains", "value": "/dev/stderr"}, "remediation": "Définir log-error=/chemin/vers/mysql.err dans my.cnf."},
+    {"category": "6. Audit & Journalisation", "number": "6.2", "name": "Journal hors partition système", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@log_error;\"", "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'", "expected_output": {"type": "stdout_not_equals", "value": "/"}, "remediation": "Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système."},
     {"category": "6. Audit & Journalisation", "number": "6.3", "name": "log_error_verbosity=2", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@log_error_verbosity;\"", "expected_output": {"type": "stdout_equals", "value": "2"}, "remediation": "Ajouter log_error_verbosity=2 dans my.cnf."},
-    {"category": "6. Audit & Journalisation", "number": "6.4", "name": "log-raw OFF", "type": "Manual", "test_procedure": "Vérifier la présence de 'log-raw' dans my.cnf.", "expected_output": None, "remediation": "S'assurer que 'log-raw' n'est pas activé ou est explicitement OFF dans my.cnf."}, # Difficile à vérifier automatiquement sans parser le fichier
-    {"category": "6. Audit & Journalisation", "number": "6.5", "name": "Filtrer et journaliser les connexions", "type": "Manual", "test_procedure": "Vérifier la configuration du plugin d'audit (ex: audit_log) pour la journalisation des connexions.", "expected_output": None, "remediation": "Configurer le plugin d'audit pour journaliser les succès et échecs de connexion."},
-    {"category": "6. Audit & Journalisation", "number": "6.6", "name": "Filtre << tout journaliser >>", "type": "Manual", "test_procedure": "Vérifier la configuration du plugin d'audit pour s'assurer qu'un filtre 'log_all' ou équivalent est appliqué.", "expected_output": None, "remediation": "Créer et appliquer un filtre d'audit pour journaliser toutes les actions."},
-    {"category": "6. Audit & Journalisation", "number": "6.7", "name": "audit_log_strategy = (S)SYNC", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@audit_log_strategy;\"", "expected_output": None, "remediation": "Configurer audit_log_strategy='SEMISYNCHRONOUS' ou 'SYNCHRONOUS' via le plugin d'audit."}, # Variable spécifique au plugin
-    {"category": "6. Audit & Journalisation", "number": "6.8", "name": "Interdire le déchargement du plugin audit", "type": "Manual", "test_procedure": "Vérifier si audit_log=FORCE_PLUS_PERMANENT est dans my.cnf.", "expected_output": None, "remediation": "Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf."},
+    {"category": "6. Audit & Journalisation", "number": "6.4", "name": "log-raw OFF", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'log_raw';\"", "expected_output": {"type": "stdout_contains", "value": "OFF"}, "remediation": "S'assurer que 'log-raw' n'est pas activé ou est explicitement OFF dans my.cnf."},
+    {"category": "6. Audit & Journalisation", "number": "6.5", "name": "Filtrer et journaliser les connexions", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM information_schema.plugins WHERE PLUGIN_NAME = 'audit_log' AND PLUGIN_STATUS='ACTIVE';\"", "expected_output": {"type": "stdout_equals", "value": "1"}, "remediation": "Configurer le plugin d'audit pour journaliser les succès et échecs de connexion."},
+    {"category": "6. Audit & Journalisation", "number": "6.6", "name": "Filtre << tout journaliser >>", "type": "Manual", "test_procedure": "Vérifier la configuration du plugin d'audit pour s'assurer qu'un filtre 'log_all' ou équivalent est appliqué.", "expected_output": None, "remediation": "Créer et appliquer un filtre d'audit pour journaliser toutes les actions.", "manual_steps": ["Exécuter 'SELECT * FROM mysql.audit_log_filter;'.", "Confirmer la capture des classes d'événements critiques (connection, query)."]},
+    {"category": "6. Audit & Journalisation", "number": "6.7", "name": "audit_log_strategy = (S)SYNC", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'audit_log_strategy';\"", "expected_output": {"type": "stdout_regex_match", "pattern": r"(SYNCHRONOUS|SEMISYNCHRONOUS)"}, "remediation": "Configurer audit_log_strategy='SEMISYNCHRONOUS' ou 'SYNCHRONOUS' via le plugin d'audit."},
+    {"category": "6. Audit & Journalisation", "number": "6.8", "name": "Interdire le déchargement du plugin audit", "type": "Automated", "test_procedure": "my_print_defaults mysqld | grep -q 'audit_log=FORCE_PLUS_PERMANENT' && echo 'FOUND' || echo 'NOT FOUND'", "expected_output": {"type": "stdout_equals", "value": "FOUND"}, "remediation": "Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf."},
 
     # Catégorie 7 - Authentification
     {"category": "7. Authentification", "number": "7.1", "name": "Plugin d'authentification sûr (caching_sha2_password)", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@default_authentication_plugin;\"", "expected_output": {"type": "stdout_equals", "value": "caching_sha2_password"}, "remediation": "Définir default_authentication_plugin=caching_sha2_password dans my.cnf et migrer les comptes existants."},
-    {"category": "7. Authentification", "number": "7.2", "name": "Aucun mot de passe dans le my.cnf global", "type": "Manual", "test_procedure": "Inspecter les fichiers my.cnf globaux (/etc/my.cnf, /etc/mysql/my.cnf, etc.) pour des mots de passe en clair.", "expected_output": None, "remediation": "Utiliser mysql_config_editor ou des fichiers .my.cnf privés avec permissions restreintes."},
+    {"category": "7. Authentification", "number": "7.2", "name": "Aucun mot de passe dans le my.cnf global", "type": "Automated", "test_procedure": "! grep -riE \"password|pwd|pass\" /etc/my.cnf /etc/mysql/ 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Utiliser mysql_config_editor ou des fichiers .my.cnf privés avec permissions restreintes."},
     {"category": "7. Authentification", "number": "7.3", "name": "Tous les comptes ont un mot de passe", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE authentication_string = '' OR plugin='mysql_no_login';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "ALTER USER '<user>'@'<host>' IDENTIFIED BY '<password>'; ou utiliser mysql_secure_installation."},
     {"category": "7. Authentification", "number": "7.4", "name": "Expiration annuelle des mots de passe", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@default_password_lifetime;\"", "expected_output": {"type": "stdout_is_numeric_less_equal", "value": 365}, "remediation": "SET PERSIST default_password_lifetime=365;"},
-    {"category": "7. Authentification", "number": "7.5", "name": "Politique de complexité forte", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'validate_password%';\"", "expected_output": None, "remediation": "Installer et configurer component_validate_password avec une politique forte (ex: validate_password.policy=STRONG)."},
-    {"category": "7. Authentification", "number": "7.6", "name": "Pas de wildcard '%' dans host", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE host = '%';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "ALTER USER '<user>'@'%' IDENTIFIED BY '...' RENAME TO '<user>'@'<specific_host>'; ou supprimer le compte."},
+    {"category": "7. Authentification", "number": "7.5", "name": "Politique de complexité forte", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'validate_password.policy';\"", "expected_output": {"type": "stdout_regex_match", "pattern": r"(MEDIUM|STRONG)"}, "remediation": "Installer et configurer component_validate_password avec une politique forte (ex: validate_password.policy=STRONG)."},
+    {"category": "7. Authentification", "number": "7.6", "name": "Pas de wildcard '%' dans host", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE host = '%' AND user NOT IN ('root');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "ALTER USER '<user>'@'%' IDENTIFIED BY '...' RENAME TO '<user>'@'<specific_host>'; ou supprimer le compte."},
     {"category": "7. Authentification", "number": "7.7", "name": "Supprimer les comptes anonymes", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE user = '';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "DROP USER ''@'<host>'; ou utiliser mysql_secure_installation."},
 
     # Catégorie 8 - Sécurité réseau
     {"category": "8. Sécurité réseau", "number": "8.1", "name": "Forcer SSL/TLS (require_secure_transport=ON)", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@require_secure_transport;\"", "expected_output": {"type": "stdout_equals", "value": "1"}, "remediation": "Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans my.cnf."},
-    {"category": "8. Sécurité réseau", "number": "8.2", "name": "Exiger TLS côté utilisateur (ssl_type)", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host, ssl_type FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1');\"", "expected_output": None, "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;"},
-    {"category": "8. Sécurité réseau", "number": "8.3", "name": "Limiter le nombre de connexions", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'max_connections'; SHOW VARIABLES LIKE 'max_user_connections';\"", "expected_output": None, "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins."},
+    {"category": "8. Sécurité réseau", "number": "8.2", "name": "Exiger TLS côté utilisateur (ssl_type)", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type = '';\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;"},
+    {"category": "8. Sécurité réseau", "number": "8.3", "name": "Limiter le nombre de connexions", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@max_connections;\"", "expected_output": {"type": "stdout_is_numeric_less_equal", "value": 500}, "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins."},
 
     # Catégorie 9 - Réplication
-    {"category": "9. Réplication", "number": "9.1", "name": "Chiffrer le trafic de réplication", "type": "Manual", "test_procedure": "Vérifier si la réplication utilise TLS (SOURCE_SSL=1) ou un tunnel VPN/SSH.", "expected_output": None, "remediation": "Configurer TLS pour la réplication (SOURCE_SSL=1, SOURCE_SSL_CA, etc.) ou utiliser un tunnel sécurisé."},
-    {"category": "9. Réplication", "number": "9.2", "name": "SOURCE_SSL_VERIFY_SERVER_CERT = 1", "type": "Manual", "test_procedure": "Si TLS est utilisé, exécuter SHOW REPLICA STATUS\\G et vérifier la valeur de Master_SSL_Verify_Server_Cert.", "expected_output": None, "remediation": "Exécuter CHANGE REPLICATION SOURCE TO SOURCE_SSL_VERIFY_SERVER_CERT = 1;"},
-    {"category": "9. Réplication", "number": "9.3", "name": "master_info_repository TABLE", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@master_info_repository;\"", "expected_output": {"type": "stdout_equals", "value": "TABLE"}, "remediation": "Configurer master_info_repository=TABLE dans my.cnf."},
-    {"category": "9. Réplication", "number": "9.4", "name": "Retirer SUPER aux comptes de réplication", "type": "Manual", "test_procedure": "SHOW GRANTS FOR '<repl_user>'@'<repl_host>'; vérifier l'absence de SUPER.", "expected_output": None, "remediation": "REVOKE SUPER ON *.* FROM '<repl_user>'@'<repl_host>'; et accorder les privilèges dynamiques nécessaires (ex: REPLICATION_SLAVE_ADMIN)."},
+    {"category": "9. Réplication", "number": "9.1", "name": "Chiffrer le trafic de réplication", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS;\" | grep -q .", "test_procedure": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS\\G\" | grep -E 'SSL_Allowed|Master_SSL_Verify_Server_Cert'", "expected_output": {"type": "stdout_contains", "value": "Yes"}, "remediation": "Configurer TLS pour la réplication (SOURCE_SSL=1, SOURCE_SSL_CA, etc.) ou utiliser un tunnel sécurisé."},
+    {"category": "9. Réplication", "number": "9.2", "name": "SOURCE_SSL_VERIFY_SERVER_CERT = 1", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS;\" | grep -q .", "test_procedure": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Verify_Server_Cert'", "expected_output": {"type": "stdout_contains", "value": "Yes"}, "remediation": "Exécuter CHANGE REPLICATION SOURCE TO SOURCE_SSL_VERIFY_SERVER_CERT = 1;"},
+    {"category": "9. Réplication", "number": "9.3", "name": "master_info_repository TABLE", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS;\" | grep -q .", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@master_info_repository;\"", "expected_output": {"type": "stdout_equals", "value": "TABLE"}, "remediation": "Configurer master_info_repository=TABLE dans my.cnf."},
+    {"category": "9. Réplication", "number": "9.4", "name": "Retirer SUPER aux comptes de réplication", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';\" | grep -q '[1-9]'", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%' AND Super_priv = 'Y';\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "REVOKE SUPER ON *.* FROM '<repl_user>'@'<repl_host>'; et accorder les privilèges dynamiques nécessaires (ex: REPLICATION_SLAVE_ADMIN)."},
 
     # Catégorie 10 - InnoDB Cluster / Group Replication
-    {"category": "10. InnoDB Cluster / Group Replication", "number": "10.1", "name": "Chiffrer le trafic Group Replication", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@group_replication_ssl_mode;\"", "expected_output": {"type": "stdout_not_equals", "value": "DISABLED"}, "remediation": "Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf."},
-    {"category": "10. InnoDB Cluster / Group Replication", "number": "10.2", "name": "Définir une allow-list de nœuds", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@group_replication_ip_allowlist;\"", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés."},
+    {"category": "10. InnoDB Cluster / Group Replication", "number": "10.1", "name": "Chiffrer le trafic Group Replication", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW PLUGINS;\" | grep -q 'group_replication'", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@group_replication_ssl_mode;\"", "expected_output": {"type": "stdout_not_equals", "value": "DISABLED"}, "remediation": "Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf."},
+    {"category": "10. InnoDB Cluster / Group Replication", "number": "10.2", "name": "Définir une allow-list de nœuds", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW PLUGINS;\" | grep -q 'group_replication'", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@group_replication_ip_allowlist;\"", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés."},
 ]
 
 # --- Modèle HTML (Adapté pour MySQL) ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rapport CIS MySQL 8.0 Benchmark</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Styles personnalisés si nécessaire */
-        .status-pass {{ color: #10B981; }} /* green-500 */
-        .status-fail {{ color: #EF4444; }} /* red-500 */
-        .status-manual {{ color: #F59E0B; }} /* yellow-500 */
-        .status-error {{ color: #6B7280; }} /* gray-500 */
-        .status-na {{ color: #9CA3AF; }} /* gray-400 */
-        pre {{ white-space: pre-wrap; word-wrap: break-word; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;}}
-        table {{ table-layout: fixed; width: 100%; }} /* Added for better column width control */
-        td, th {{ word-break: break-word; }} /* Allow breaking long words */
-        .chart-container {{ width: 300px; height: 300px; margin: 20px auto; }} /* Style for chart container */
-        .category-chart-container {{ width: 80%; margin: 20px auto; }} /* Style for category chart container */
-        code {{ background-color: #e5e7eb; padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace;}}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {{ font-family: 'Inter', sans-serif; }}
+        .status-pass {{ background-color: #DEF7EC; color: #03543F; }}
+        .status-fail {{ background-color: #FDE8E8; color: #9B1C1C; }}
+        .status-manual {{ background-color: #FEF3C7; color: #92400E; }}
+        .status-error {{ background-color: #F3F4F6; color: #1F2937; }}
+        .status-na {{ background-color: #E5E7EB; color: #4B5563; }}
+        pre {{ white-space: pre-wrap; word-wrap: break-word; font-size: 0.75rem; }}
+        .sidebar-link.active {{ background-color: #3B82F6; color: white; }}
     </style>
 </head>
-<body class="font-sans bg-gray-100 text-gray-800 p-6">
-    <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS MySQL 8.0 Benchmark</h1>
-        <p class="text-gray-600 mb-4">Date du rapport : {report_date}</p>
-        <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS MySQL 8.0 Benchmark (Version 1.0 du 13 Avril 2025 par Jean-Marie Renouard).</p>
+<body class="bg-gray-50 flex">
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen bg-white border-r border-gray-200 sticky top-0 overflow-y-auto hidden lg:block">
+        <div class="p-6">
+            <h2 class="text-xl font-bold text-blue-600"><i class="fas fa-shield-halved mr-2"></i>CIS MySQL 8</h2>
+            <p class="text-xs text-gray-500 mt-1">Audit Security Report</p>
+        </div>
+        <nav class="px-4 pb-6">
+            <a href="#summary" class="sidebar-link flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-1">
+                <i class="fas fa-chart-pie w-5 mr-3"></i> Synthèse
+            </a>
+            <div class="mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase px-3">Catégories</div>
+            {sidebar_links}
+        </nav>
+    </aside>
 
-        <div class="mb-8 p-4 bg-gray-50 rounded-md border border-gray-200">
-            <h2 class="text-2xl font-semibold mb-3 text-gray-800">Score Global</h2>
-            <p class="text-xl font-bold {overall_score_class}">{overall_score:.2f}%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis ({passed_automated}/{total_automated} vérifiés).</p>
-             <p class="text-gray-700">{manual_checks} contrôles nécessitent une vérification manuelle.</p>
-             <p class="text-gray-700">{error_checks} contrôles ont rencontré une erreur d'exécution.</p>
-             <p class="text-gray-700">{na_checks} contrôles ne sont pas applicables (ex: plugin non installé, commande introuvable).</p>
+    <!-- Main Content -->
+    <main class="flex-1 min-w-0">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS MySQL 8.0</h1>
+                <p class="text-sm text-gray-500">Date du rapport : {report_date}</p>
+            </div>
+            <div class="flex space-x-2">
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">MySQL 8.0.x</span>
+                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-200">v1.0</span>
+            </div>
+        </header>
 
-             <div class="chart-container">
-                 <canvas id="overallScoreChart"></canvas>
-             </div>
+        <div class="p-8 max-w-7xl mx-auto">
+            <!-- Summary Dashboard -->
+            <section id="summary" class="mb-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Score Global</span>
+                        <div class="relative flex items-center justify-center">
+                            <svg class="w-24 h-24">
+                                <circle class="text-gray-100" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48" />
+                                <circle class="{overall_score_class}" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="{overall_score_offset}" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48" />
+                            </svg>
+                            <span class="absolute text-xl font-bold">{overall_score:.1f}%</span>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-green-500">
+                        <span class="text-xs font-bold text-green-600 uppercase tracking-widest">Succès</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">{passed_automated_count}</div>
+                        <p class="text-xs text-gray-500 mt-1">Vérifications conformes</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-red-500">
+                        <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Échecs</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">{failed_automated_count}</div>
+                        <p class="text-xs text-gray-500 mt-1">Non-conformités détectées</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
+                        <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Manuels</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">{manual_checks}</div>
+                        <p class="text-xs text-gray-500 mt-1">À vérifier manuellement</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-gray-500">
+                        <span class="text-xs font-bold text-gray-600 uppercase tracking-widest">Erreurs / N/A</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">{total_other}</div>
+                        <p class="text-xs text-gray-500 mt-1">{error_automated_count} Erreurs, {na_automated_count} N/A</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-80 flex flex-col">
+                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight text-center">Répartition Automatisée</h3>
+                        <div class="flex-1 min-h-0 relative">
+                            <canvas id="overallScoreChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 h-80 flex flex-col">
+                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight">Analyse par Catégorie</h3>
+                        <div class="flex-1 min-h-0 relative">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="space-y-12">
+                {categories_reports}
+            </div>
         </div>
 
-        {categories_reports}
-
-    </div>
+        <footer class="bg-white border-t border-gray-200 p-8 mt-12 text-center">
+            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS MySQL 8 Auditor.</p>
+            <p class="text-xs text-gray-400 mt-2">Basé sur CIS MySQL 8.0 Benchmark v1.0.</p>
+        </footer>
+    </main>
 
     <script>
-        // Data for the overall pie chart
-        const overallChartData = {{
-            labels: ['Pass', 'Fail', 'Error', 'N/A'],
-            datasets: [{{
-                label: 'Résultats des contrôles automatisés',
-                data: [{passed_automated_count}, {failed_automated_count}, {error_automated_count}, {na_automated_count}],
-                backgroundColor: [
-                    '#10B981', // green-500
-                    '#EF4444', // red-500
-                    '#6B7280', // gray-500
-                    '#9CA3AF'  // gray-400
-                ],
-                hoverOffset: 4
-            }}]
-        }};
-
-        // Configuration options for the overall pie chart
-        const overallChartConfig = {{
-            type: 'pie',
-            data: overallChartData,
+        // Pie Chart
+        const overallScoreChartCtx = document.getElementById('overallScoreChart').getContext('2d');
+        new Chart(overallScoreChartCtx, {{
+            type: 'doughnut',
+            data: {{
+                labels: ['Pass', 'Fail', 'Error', 'N/A'],
+                datasets: [{{
+                    data: [{passed_automated_count}, {failed_automated_count}, {error_automated_count}, {na_automated_count}],
+                    backgroundColor: ['#10B981', '#EF4444', '#374151', '#9CA3AF'],
+                    borderWidth: 0,
+                    cutout: '70%'
+                }}]
+            }},
             options: {{
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {{
-                    legend: {{
-                        position: 'top',
-                    }},
-                    title: {{
-                        display: true,
-                        text: 'Répartition des contrôles automatisés (Global)'
-                    }}
-                }}
+                plugins: {{ legend: {{ position: 'bottom', labels: {{ usePointStyle: true, padding: 20 }} }} }}
             }}
-        }};
+        }});
 
-        // Render the overall chart
-        const overallScoreChartCtx = document.getElementById('overallScoreChart');
-        if (overallScoreChartCtx) {{
-             new Chart(overallScoreChartCtx, overallChartConfig);
-        }}
-
-
-        // Data and configuration for category bar charts
-        const categoryChartData = {{
-            labels: {category_labels}, // List of category names
-            datasets: [
-                {{
-                    label: 'Pass',
-                    data: {category_pass_counts},
-                    backgroundColor: '#10B981', // green-500
-                }},
-                {{
-                    label: 'Fail',
-                    data: {category_fail_counts},
-                    backgroundColor: '#EF4444', // red-500
-                }},
-                {{
-                    label: 'Error',
-                    data: {category_error_counts},
-                    backgroundColor: '#6B7280', // gray-500
-                }},
-                 {{
-                    label: 'N/A',
-                    data: {category_na_counts},
-                    backgroundColor: '#9CA3AF', // gray-400
-                }}
-            ]
-        }};
-
-        const categoryChartConfig = {{
+        // Bar Chart
+        const categoryScoreChartCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryScoreChartCtx, {{
             type: 'bar',
-            data: categoryChartData,
+            data: {{
+                labels: {category_labels},
+                datasets: [
+                    {{ label: 'Pass', data: {category_pass_counts}, backgroundColor: '#10B981' }},
+                    {{ label: 'Fail', data: {category_fail_counts}, backgroundColor: '#EF4444' }},
+                    {{ label: 'Manual', data: {category_manual_counts}, backgroundColor: '#F59E0B' }}
+                ]
+            }},
             options: {{
                 responsive: true,
-                maintainAspectRatio: false, // Allow chart to resize vertically
-                plugins: {{
-                    legend: {{
-                        position: 'top',
-                    }},
-                    title: {{
-                        display: true,
-                        text: 'Répartition des contrôles automatisés par catégorie'
-                    }}
-                }},
-                scales: {{
-                    x: {{
-                        stacked: true,
-                    }},
-                    y: {{
-                        stacked: true,
-                        beginAtZero: true,
-                        title: {{
-                            display: true,
-                            text: 'Nombre de contrôles'
-                        }}
-                    }}
-                }}
+                maintainAspectRatio: false,
+                scales: {{ x: {{ stacked: true, grid: {{ display: false }} }}, y: {{ stacked: true }} }},
+                plugins: {{ legend: {{ position: 'bottom', labels: {{ usePointStyle: true }} }} }}
             }}
-        }};
-
-        // Render the category bar chart
-         const categoryScoreChartCtx = document.getElementById('categoryChart');
-         if (categoryScoreChartCtx) {{
-              new Chart(categoryScoreChartCtx, categoryChartConfig);
-         }}
-
+        }});
     </script>
 </body>
 </html>
 """
 
 CATEGORY_REPORT_TEMPLATE = """
-        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
-            <h2 class="text-2xl font-semibold mb-3 text-gray-800">{category_name}</h2>
-            <p class="text-lg font-bold {category_score_class}">{category_score:.2f}%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie ({passed_automated}/{total_automated} vérifiés).</p>
-            <p class="text-gray-700">{manual_checks} contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">{error_checks} contrôles ont rencontré une erreur d'exécution.</p>
-            <p class="text-gray-700">{na_checks} contrôles ne sont pas applicables.</p>
-
-            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
-                <thead>
-                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
-                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
-                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
-                        <th class="py-3 px-4 text-left w-1/12">Type</th>
-                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
-                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
-                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
-                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
-                    {checks_rows}
-                </tbody>
-            </table>
-        </div>
+            <section id="cat-{category_id}" class="scroll-mt-24">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                    <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900">{category_name}</h2>
+                            <p class="text-sm text-gray-500 mt-1">Détails des recommandations et résultats pour cette section.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-pass bg-opacity-20 border border-green-200"><i class="fas fa-check-circle mr-1.5"></i>{passed_automated} Pass</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-fail bg-opacity-20 border border-red-200"><i class="fas fa-times-circle mr-1.5"></i>{failed_automated} Fail</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>{manual_checks} Manuel</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200"><i class="fas fa-exclamation-triangle mr-1.5"></i>{error_checks} Erreur</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100"><i class="fas fa-minus-circle mr-1.5"></i>{na_checks} N/A</span>
+                            <div class="ml-2 pl-4 border-l border-gray-200 flex items-center">
+                                <span class="text-lg font-black {category_score_class}">{category_score:.0f}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="w-16 py-3 px-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID</th>
+                                    <th class="py-3 px-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Recommandation</th>
+                                    <th class="w-32 py-3 px-4 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">Statut</th>
+                                    <th class="py-3 px-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Analyse & Remédiation</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white text-sm">
+                                {checks_rows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
 """
-
-# New template for the category bar chart canvas
-CATEGORY_CHART_CANVAS_TEMPLATE = """
-        <div class="category-chart-container" style="height: 400px;"> {/* Increased height */}
-            <canvas id="categoryChart"></canvas>
-        </div>
-"""
-
 
 CHECK_ROW_TEMPLATE = """
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-4 text-left align-top">{number}</td>
-                        <td class="py-3 px-4 text-left align-top">{name}</td>
-                        <td class="py-3 px-4 text-left align-top">{type}</td>
-                        <td class="py-3 px-4 text-left align-top"><code>{test_procedure}</code></td>
-                        <td class="py-3 px-4 text-left align-top"><span class="{status_class} font-semibold">{status_icon} {status_text}</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>{output}</pre></td>
-                        <td class="py-3 px-4 text-left align-top">{remediation}</td>
-                    </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">{number}</td>
+                                <td class="py-4 px-4 align-top">
+                                    <div class="text-sm font-bold text-gray-900 mb-1">{name}</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">{test_procedure}</div>
+                                </td>
+                                <td class="py-4 px-4 align-top text-center">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider {status_class}">
+                                        {status_icon} {status_text}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-4 text-sm align-top">
+                                    {manual_steps_html}
+                                    <div class="mb-3">
+                                        <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
+                                        <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
+                                            <pre class="overflow-x-auto">{output}</pre>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                                        <div class="text-[10px] font-bold text-blue-600 uppercase mb-1"><i class="fas fa-wrench mr-1"></i> Remédiation:</div>
+                                        <div class="text-xs text-blue-800 leading-relaxed font-medium">{remediation}</div>
+                                    </div>
+                                </td>
+                            </tr>
 """
 
 # --- Fonctions d'exécution et d'évaluation (Légèrement adaptées) ---
@@ -348,9 +368,10 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     expected_values = condition.get("values")
     regex_pattern = condition.get("pattern")
 
-    # Handle potential MySQL errors that don't necessarily mean failure of the check's intent
-    # Example: Access denied might mean the check passed (e.g., user doesn't have SUPER priv)
-    # This needs careful consideration per check, but for now, focus on direct evaluation.
+    # Si la commande a échoué avec une erreur système (ex: fichier non trouvé), 
+    # même avec '!', on ne doit pas considérer cela comme un succès de la condition.
+    if "No such file or directory" in stderr or "Permission denied" in stderr:
+        return False
 
     if condition_type == "returncode_zero":
         return returncode == 0
@@ -359,14 +380,16 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     elif condition_type == "stdout_equals":
         # MySQL output might have extra whitespace/newlines
         return stdout.strip() == str(expected_value) # Convert expected to string for comparison
+    elif condition_type == "stdout_not_equals":
+        return stdout.strip() != str(expected_value)
     elif condition_type == "stdout_contains":
         return str(expected_value) in stdout
     elif condition_type == "stdout_not_contains":
         return str(expected_value) not in stdout
     elif condition_type == "stdout_not_empty":
-        return stdout != "" and stdout is not None
+        return stdout.strip() != "" and stdout is not None
     elif condition_type == "stdout_is_empty":
-        return stdout == "" or stdout is None
+        return stdout.strip() == "" or stdout is None
     elif condition_type == "stdout_contains_any":
         if expected_values is None: return False
         return any(str(value) in stdout for value in expected_values)
@@ -378,7 +401,7 @@ def evaluate_condition(condition, stdout, stderr, returncode):
         return re.search(regex_pattern, stdout) is not None
     elif condition_type == "stdout_is_numeric_greater_than":
         try:
-            numeric_value_match = re.match(r'^(\d+)', stdout)
+            numeric_value_match = re.search(r'(\d+)', stdout)
             if numeric_value_match:
                  numeric_value = int(numeric_value_match.group(1))
                  return numeric_value > expected_value
@@ -387,7 +410,7 @@ def evaluate_condition(condition, stdout, stderr, returncode):
             return False
     elif condition_type == "stdout_is_numeric_less_equal": # Nouvelle condition pour 7.4
          try:
-             numeric_value_match = re.match(r'^(\d+)', stdout)
+             numeric_value_match = re.search(r'(\d+)', stdout)
              if numeric_value_match:
                   numeric_value = int(numeric_value_match.group(1))
                   # Handle potential '0' which means infinite lifetime, considered > 365
@@ -420,21 +443,31 @@ def perform_checks(recommendations):
             "type": rec["type"],
             "test_procedure": rec.get("test_procedure", ""),
             "remediation": rec.get("remediation", ""),
+            "manual_steps": rec.get("manual_steps", []),
             "status": "Not Applicable", # Default status
             "output": "",
             "error": ""
         }
 
-        if rec["type"] == "Manual":
-            check_result["status"] = "Manual"
-            check_result["output"] = "Ce contrôle nécessite une vérification manuelle."
-            # Store manual test procedure description for display
-            check_result["output"] += f"\n\nProcédure suggérée:\n{rec.get('test_procedure', 'N/A')}"
-        elif rec["type"] == "Automated":
-            cmd_to_run = None
-            command_executed_display = "N/A"
-            stdout, stderr, returncode = "", "", -1 # Initialize execution results
+        # Determine if we should attempt to run a command
+        should_run = False
+        cmd_to_run = None
+        command_executed_display = "N/A"
 
+        if rec["type"] == "Automated":
+            # Check pre-condition if defined
+            if "pre_condition" in rec:
+                pc_stdout, pc_stderr, pc_returncode = run_command(rec["pre_condition"])
+                if pc_returncode != 0 or not pc_stdout or pc_stdout == "0":
+                    check_result["status"] = "Not Applicable"
+                    check_result["output"] = f"Check non applicable dans cet environnement (Pré-condition non remplie).\nCommande de vérification: {rec['pre_condition']}"
+                    results[category].append(check_result)
+                    continue
+            should_run = True
+        elif rec["type"] == "Manual" and "test_procedure" in rec and ("mysql" in rec["test_procedure"].lower() or "crontab" in rec["test_procedure"].lower() or "ps" in rec["test_procedure"].lower()):
+            should_run = True # Run it to provide information even if manual
+
+        if should_run:
             try:
                 # Handle checks that require getting a dynamic path first
                 if "path_command" in rec:
@@ -442,85 +475,93 @@ def perform_checks(recommendations):
                     path_stdout, path_stderr, path_returncode = run_command(path_cmd)
 
                     if path_returncode != 0 or not path_stdout:
-                        check_result["status"] = "Error"
-                        check_result["output"] = f"Erreur lors de l'obtention du chemin via:\n`{path_cmd}`\nStdout:\n{path_stdout}\nStderr:\n{path_stderr}"
-                        check_result["error"] = path_stderr
+                        # Check if it's a missing variable that makes it N/A
+                        if "Unknown system variable" in path_stderr or "ERROR 1193" in path_stderr:
+                             check_result["status"] = "Not Applicable"
+                             check_result["output"] = f"Variable/Plugin non disponible (N/A).\nStderr:\n{path_stderr}"
+                        else:
+                             check_result["status"] = "Error"
+                             check_result["output"] = f"Erreur lors de l'obtention du chemin via:\n`{path_cmd}`\nStdout:\n{path_stdout}\nStderr:\n{path_stderr}"
+                             check_result["error"] = path_stderr
                         results[category].append(check_result)
                         continue # Skip to next recommendation
 
                     dynamic_path = path_stdout.strip()
-                    stored_outputs[check_number + "_path"] = dynamic_path # Store path specific to this check number
+                    stored_outputs[check_number + "_path"] = dynamic_path
 
                     if "test_procedure_template" in rec:
                         cmd_to_run = rec["test_procedure_template"].format(path=dynamic_path)
-                        command_executed_display = cmd_to_run # Store the formatted command
-                    else:
-                        # If only path_command is defined, maybe the check is just getting the path?
-                        # Or maybe test_procedure should have been a template? Assume error for now.
-                         check_result["status"] = "Error"
-                         check_result["output"] = f"Configuration d'audit invalide: 'path_command' défini mais pas 'test_procedure_template' pour {check_number}."
-                         results[category].append(check_result)
-                         continue
+                        command_executed_display = cmd_to_run
                 elif "test_procedure" in rec:
                     cmd_to_run = rec["test_procedure"]
                     command_executed_display = cmd_to_run
+
+                if cmd_to_run:
+                    # Execute the command
+                    stdout, stderr, returncode = run_command(cmd_to_run)
+                    check_result["output"] = f"Stdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}"
+                    check_result["error"] = stderr
+                    check_result["test_procedure"] = command_executed_display
+
+                    # --- Identification des cas "Not Applicable" (variables/plugins manquants) ---
+                    if "Unknown system variable" in stderr or "Unknown command" in stderr or "ERROR 1193" in stderr:
+                         check_result["status"] = "Not Applicable"
+                         check_result["output"] = f"Variable ou plugin non installé/activé.\n{check_result['output']}"
+                         results[category].append(check_result)
+                         continue
+
+                    # --- Evaluation ---
+                    condition = rec.get("expected_output")
+
+                    if rec["type"] == "Manual":
+                        check_result["status"] = "Manual"
+                        check_result["output"] = "Ce contrôle nécessite une vérification manuelle.\n\nRésultat de l'extraction automatique pour aide:\n" + check_result["output"]
+                    elif returncode == 127: # Command not found
+                        check_result["status"] = "Error"
+                        check_result["output"] = f"Erreur: Commande introuvable.\n{check_result['output']}"
+                    elif returncode == 124: # Timeout
+                        check_result["status"] = "Error"
+                        check_result["output"] = f"Erreur: Timeout.\n{check_result['output']}"
+                    elif "command not found" in stderr.lower() and not cmd_to_run.strip().startswith('!'):
+                         check_result["status"] = "Error"
+                         check_result["output"] = f"Erreur: Commande introuvable (détecté dans stderr).\n{check_result['output']}"
+                    elif "ERROR 1045 (28000): Access denied" in stderr:
+                         check_result["status"] = "Error"
+                         check_result["output"] = f"Erreur: Accès refusé. Vérifiez les identifiants/privilèges MySQL.\n{check_result['output']}"
+                    elif "ERROR 2002 (HY000): Can't connect" in stderr:
+                         check_result["status"] = "Error"
+                         check_result["output"] = f"Erreur: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).\n{check_result['output']}"
+                    elif condition:
+                        is_pass = evaluate_condition(condition, stdout, stderr, returncode)
+                        # Fix false positive when command fails but condition (like stdout_is_empty) is met
+                        if is_pass and returncode != 0 and condition.get("type") not in ["returncode_zero", "returncode_equals"] and not cmd_to_run.strip().startswith('!'):
+                             is_pass = False
+                             check_result["output"] += f"\n\nÉchec car la commande a retourné une erreur (code {returncode})."
+                        
+                        if is_pass:
+                            check_result["status"] = "Pass"
+                        else:
+                            check_result["status"] = "Fail"
+                            check_result["output"] += "\n\nCondition de succès non remplie."
+                    elif returncode == 0:
+                         check_result["status"] = "Pass"
+                         check_result["output"] += "\n\nNote: Commande exécutée avec succès."
+                    else:
+                         check_result["status"] = "Fail"
+                         check_result["output"] += f"\n\nLa commande a échoué (code {returncode})."
                 else:
                      check_result["status"] = "Error"
-                     check_result["output"] = f"Configuration d'audit invalide: Ni 'test_procedure' ni 'path_command' définis pour {check_number}."
-                     results[category].append(check_result)
-                     continue
-
-                # Execute the command
-                stdout, stderr, returncode = run_command(cmd_to_run)
-                check_result["output"] = f"Stdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}"
-                check_result["error"] = stderr
-                check_result["test_procedure"] = command_executed_display # Update with actual command run
-
-                # --- Evaluation ---
-                condition = rec.get("expected_output")
-
-                # Handle specific error conditions before evaluating success
-                if returncode == 127: # Command not found
-                    check_result["status"] = "Error"
-                    check_result["output"] = f"Erreur: Commande introuvable.\n{check_result['output']}"
-                elif returncode == 124: # Timeout
-                    check_result["status"] = "Error"
-                    check_result["output"] = f"Erreur: Timeout.\n{check_result['output']}"
-                elif "command not found" in stderr.lower(): # Another way to catch command not found
-                     check_result["status"] = "Error"
-                     check_result["output"] = f"Erreur: Commande introuvable (détecté dans stderr).\n{check_result['output']}"
-                elif "ERROR 1045 (28000): Access denied" in stderr:
-                     # Access denied might be a PASS for some privilege checks (e.g., trying to use a revoked priv)
-                     # Or a FAIL if the script needs access. For now, mark as Error needing review.
-                     # A more sophisticated approach could check 'rec' for expected errors.
-                     check_result["status"] = "Error"
-                     check_result["output"] = f"Erreur: Accès refusé. Vérifiez les identifiants/privilèges MySQL.\n{check_result['output']}"
-                elif returncode != 0 and stderr and not condition:
-                     # If command failed with stderr, and no specific condition to check, mark as Error
-                     check_result["status"] = "Error"
-                     check_result["output"] = f"Erreur d'exécution (code {returncode}).\n{check_result['output']}"
-                elif condition:
-                    # Evaluate the condition only if no critical error occurred above
-                    if evaluate_condition(condition, stdout, stderr, returncode):
-                        check_result["status"] = "Pass"
-                    else:
-                        # Condition not met, but command ran (potentially with non-fatal errors)
-                        check_result["status"] = "Fail"
-                        check_result["output"] += "\n\nCondition de succès non remplie."
-                elif returncode == 0 and not condition:
-                     # Command succeeded but no condition to check? Mark as Pass (e.g., informational commands)
-                     check_result["status"] = "Pass" # Or maybe Manual/NA? Let's assume Pass if rc=0.
-                     check_result["output"] += "\n\nNote: Commande exécutée avec succès, mais aucune condition de succès n'était définie pour ce test automatisé."
-                # else: Status remains 'Not Applicable' or 'Error' if set previously
-
+                     check_result["output"] = f"Configuration d'audit invalide pour {check_number}."
 
             except Exception as e:
                  check_result["status"] = "Error"
-                 check_result["output"] = f"Erreur interne du script lors de l'exécution du contrôle {check_number}: {e}\nCommande tentée: {command_executed_display}"
+                 check_result["output"] = f"Erreur interne lors du contrôle {check_number}: {e}"
                  check_result["error"] = str(e)
+        else:
+            # Manual check with no command to run
+            check_result["status"] = "Manual"
+            check_result["output"] = "Ce contrôle nécessite une vérification manuelle.\n\nProcédure suggérée:\n" + rec.get('test_procedure', 'N/A')
 
-
-        # Append the final result for this check
         results[category].append(check_result)
 
     return results
@@ -575,14 +616,15 @@ def calculate_scores(results):
                 cat_stats["manual_checks"] += 1
 
     # Calculate scores
-    overall_attempted_automated = overall["passed_automated"] + overall["failed_automated"]
-    overall_score = (overall["passed_automated"] / overall_attempted_automated * 100) if overall_attempted_automated > 0 else 0
+    # Inclusion des N/A dans les succès pour ne pas pénaliser le score
+    overall_attempted_automated = overall["passed_automated"] + overall["failed_automated"] + overall["na"]
+    overall_score = ((overall["passed_automated"] + overall["na"]) / overall_attempted_automated * 100) if overall_attempted_automated > 0 else 0
 
     for category in category_order:
          cat_stats = categories_scores[category]
-         cat_attempted_automated = cat_stats["passed_automated"] + cat_stats["failed_automated"]
+         cat_attempted_automated = cat_stats["passed_automated"] + cat_stats["failed_automated"] + cat_stats["na_checks"]
          cat_stats["total_automated"] = cat_attempted_automated # Store attempted count
-         cat_stats["score"] = (cat_stats["passed_automated"] / cat_attempted_automated * 100) if cat_attempted_automated > 0 else 0
+         cat_stats["score"] = ((cat_stats["passed_automated"] + cat_stats["na_checks"]) / cat_attempted_automated * 100) if cat_attempted_automated > 0 else 0
 
     # Prepare data for category bar chart (using the original order)
     category_labels = json.dumps(category_order)
@@ -626,90 +668,101 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
     """Génère le rapport HTML."""
     report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     overall_score_class = get_score_class(overall_score)
+    # Circle progress offset: 251.2 is full circle (100%), dashoffset = 251.2 * (1 - score/100)
+    overall_score_offset = 251.2 * (1 - overall_score / 100)
+    
     categories_html = ""
-    category_order = list(dict.fromkeys(rec["category"] for rec in RECOMMENDATIONS_DATA)) # Get order from data
+    sidebar_links_html = ""
+    category_order = list(dict.fromkeys(rec["category"] for rec in RECOMMENDATIONS_DATA))
 
-    for category in category_order:
+    for idx, category in enumerate(category_order):
+        category_id = str(idx + 1)
         checks = results.get(category, [])
         cat_info = categories_scores.get(category, {})
         category_score = cat_info.get("score", 0)
         cat_score_class = get_score_class(category_score)
-        cat_total_automated = cat_info.get("total_automated", 0) # Attempted
-        cat_passed_automated = cat_info.get("passed_automated", 0)
-        cat_manual_checks = cat_info.get("manual_checks", 0)
-        cat_error_checks = cat_info.get("error_checks", 0)
-        cat_na_checks = cat_info.get("na_checks", 0)
+        
+        # Sidebar Link
+        sidebar_links_html += f'<a href="#cat-{category_id}" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">{category_id}.</span> <span class="truncate text-sm font-medium">{category.split(". ", 1)[-1]}</span></a>'
 
         checks_rows_html = ""
-        # Sort checks within the category by number (handle potential non-numeric parts)
         def sort_key(check):
             parts = re.split(r'[._-]', check['number'])
             return [int(p) if p.isdigit() else p for p in parts]
 
         try:
              sorted_checks = sorted(checks, key=sort_key)
-        except Exception as e:
-             print(f"WARN: Could not sort checks for category '{category}'. Error: {e}")
-             sorted_checks = checks # Keep original order if sorting fails
+        except:
+             sorted_checks = checks
 
         for check in sorted_checks:
             status_icon, status_text, status_class = get_status_info(check["status"])
+            # Mapping status to Tailwind colors defined in CSS or utility classes
+            tw_status_class = ""
+            if check["status"] == "Pass": tw_status_class = "status-pass"
+            elif check["status"] == "Fail": tw_status_class = "status-fail"
+            elif check["status"] == "Manual": tw_status_class = "status-manual"
+            elif check["status"] == "Error": tw_status_class = "status-error"
+            else: tw_status_class = "status-na"
 
-            # Escape HTML special characters
-            escaped_name = html.escape(check["name"])
-            escaped_test_procedure = html.escape(check["test_procedure"])
-            # Don't escape output/remediation to allow pre/code formatting
-            output_display = html.escape(check["output"])
-            remediation_display = html.escape(check["remediation"]) if check["remediation"] else "N/A"
+            manual_steps_html = ""
+            if check.get("manual_steps"):
+                steps_list = "".join([f"<li>{html.escape(step)}</li>" for step in check["manual_steps"]])
+                manual_steps_html = f"""
+                <div class="mb-3 p-3 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg">
+                    <div class="text-[10px] font-bold text-amber-600 uppercase mb-1"><i class="fas fa-list-check mr-1"></i> Guide de Validation Manuelle:</div>
+                    <ul class="list-decimal list-inside text-xs text-amber-800 space-y-1 font-medium">
+                        {steps_list}
+                    </ul>
+                </div>
+                """
 
             checks_rows_html += CHECK_ROW_TEMPLATE.format(
                 number=check["number"],
-                name=escaped_name,
-                type=check["type"],
-                test_procedure=escaped_test_procedure,
+                name=html.escape(check["name"]),
+                test_procedure=html.escape(check["test_procedure"]),
                 status_icon=status_icon,
                 status_text=status_text,
-                status_class=status_class,
-                output=output_display,
-                remediation=remediation_display
+                status_class=tw_status_class,
+                output=html.escape(check["output"]),
+                remediation=html.escape(check["remediation"]) if check["remediation"] else "N/A",
+                manual_steps_html=manual_steps_html
             )
 
         categories_html += CATEGORY_REPORT_TEMPLATE.format(
+            category_id=category_id,
             category_name=html.escape(category),
             category_score=category_score,
             category_score_class=cat_score_class,
-            passed_automated=cat_passed_automated,
-            total_automated=cat_total_automated, # Display attempted
-            manual_checks=cat_manual_checks,
-            error_checks=cat_error_checks,
-            na_checks=cat_na_checks,
+            passed_automated=cat_info.get("passed_automated", 0),
+            failed_automated=cat_info.get("failed_automated", 0),
+            manual_checks=cat_info.get("manual_checks", 0),
+            error_checks=cat_info.get("error_checks", 0),
+            na_checks=cat_info.get("na_checks", 0),
             checks_rows=checks_rows_html
         )
 
-    # Add the category chart canvas after all category reports
-    categories_html += CATEGORY_CHART_CANVAS_TEMPLATE
+    # Manual counts for category chart (needed for the bar chart)
+    category_manual_counts = json.dumps([categories_scores[cat]["manual_checks"] for cat in category_order])
+    total_other = error_auto_count + na_auto_count
 
     html_output = HTML_TEMPLATE.format(
         report_date=report_date,
         overall_score=overall_score,
         overall_score_class=overall_score_class,
-        passed_automated=passed_auto_count, # Use the actual counts for display
-        total_automated=passed_auto_count + failed_auto_count, # Total attempted for display
-        manual_checks=total_manual,
-        error_checks=total_errors, # Use overall error count
-        na_checks=total_na,       # Use overall NA count
-        categories_reports=categories_html,
-        # Pass counts for the overall chart
+        overall_score_offset=overall_score_offset,
         passed_automated_count=passed_auto_count,
         failed_automated_count=failed_auto_count,
-        error_automated_count=error_auto_count, # Pass overall error count for chart
-        na_automated_count=na_auto_count,       # Pass overall NA count for chart
-        # Pass data for category bar chart
+        manual_checks=total_manual,
+        error_automated_count=error_auto_count,
+        na_automated_count=na_auto_count,
+        total_other=total_other,
+        categories_reports=categories_html,
+        sidebar_links=sidebar_links_html,
         category_labels=category_labels,
         category_pass_counts=category_pass_counts,
         category_fail_counts=category_fail_counts,
-        category_error_counts=category_error_counts,
-        category_na_counts=category_na_counts
+        category_manual_counts=category_manual_counts
     )
 
     try:
