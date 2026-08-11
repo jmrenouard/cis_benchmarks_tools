@@ -377,6 +377,10 @@ def evaluate_condition(condition, stdout, stderr, returncode):
         return returncode == 0
     elif condition_type == "returncode_equals":
         return returncode == expected_value
+    elif condition_type == "stdout_not_equals":
+        return stdout != expected_value
+    elif condition_type == "stdout_not_contains":
+        return expected_value not in stdout
     elif condition_type == "stdout_equals":
         # L'output peut contenir des espaces/retours à la ligne supplémentaires, on le nettoie.
         return stdout.strip() == str(expected_value) # Convertir l'attendu en chaîne pour comparaison
