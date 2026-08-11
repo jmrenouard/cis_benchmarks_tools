@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Unified CIS Benchmark Audit Suite Engine (Python Standard Library ONLY).
-Version: 1.4.3
+Version: 1.5.0
 
 Provides both a CLI runner and Programmatic Python API for 15 database targets:
   - MariaDB (10.6, 10.11)
@@ -23,7 +23,7 @@ import re
 import subprocess
 import sys
 
-__version__ = "1.4.3"
+__version__ = "1.5.0"
 
 TARGET_MAP = {
     "mariadb106": ("audit_cis_mariadb_106.py", "MariaDB 10.6", 74),
@@ -82,7 +82,7 @@ def run_single_audit(target_key, output_html=None, output_json=None):
     print(f"\n🚀 [v{__version__}] Running CIS Audit for {label} ({count} controls, {script_file})...")
     start_time = datetime.datetime.now()
 
-    cmd = [sys.executable, script_path]
+    cmd = [sys.executable, script_path, "--lang", lang]
     try:
         subprocess.run(cmd, check=True)
         elapsed = (datetime.datetime.now() - start_time).total_seconds()
@@ -132,6 +132,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("-t", "--target", choices=list(TARGET_MAP.keys()), help="Target database benchmark to audit")
+    parser.add_argument("--lang", choices=["en", "fr"], default="en", help="Language for report and CLI output (en/fr)")
     parser.add_argument("-l", "--list-targets", action="store_true", help="List all supported database targets")
     parser.add_argument("-a", "--all", action="store_true", help="Run CIS audits for ALL 15 targets sequentially")
     parser.add_argument("-d", "--auto-detect", action="store_true", help="Auto-detect running database containers and execute audits")
@@ -153,7 +154,7 @@ def main():
         print(f"🌟 [v{__version__}] Executing CIS Audit for ALL 15 database targets...")
         success_count = 0
         for target_key in TARGET_MAP:
-            if run_single_audit(target_key):
+            if run_single_audit(target_key, lang=args.lang):
                 success_count += 1
         print(f"\n🎉 Completed: {success_count}/{len(TARGET_MAP)} CIS audits succeeded.")
         sys.exit(0 if success_count == len(TARGET_MAP) else 1)

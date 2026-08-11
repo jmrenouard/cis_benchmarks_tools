@@ -16,8 +16,42 @@ CASSANDRA_ENV_PATH = "/etc/cassandra/cassandra-env.sh"
 
 # --- Structure des Recommandations (Adaptée pour Apache Cassandra 5.0) ---
 # Basée sur le document "CIS Apache Cassandra 5.0 Benchmark v1.1.0"
+
+TRANSLATIONS = {
+    "en": {
+        "report_title": "CIS Benchmark Audit Report",
+        "global_score": "Global Compliance Score",
+        "rec_id": "ID",
+        "control_title": "Control Title",
+        "category": "Category",
+        "status": "Status",
+        "output": "Execution Output",
+        "remediation": "Remediation",
+        "pass": "PASS",
+        "fail": "FAIL",
+        "generated_success": "HTML Audit Report successfully generated",
+        "running_audit": "Running CIS Audit for",
+        "completed": "Audit Completed",
+    },
+    "fr": {
+        "report_title": "Rapport d'Audit CIS Benchmark",
+        "global_score": "Score Global de Conformité",
+        "rec_id": "ID",
+        "control_title": "Titre du Contrôle",
+        "category": "Catégorie",
+        "status": "Statut",
+        "output": "Extrait de Sortie",
+        "remediation": "Remédiation",
+        "pass": "SUCCÈS",
+        "fail": "ÉCHEC",
+        "generated_success": "Rapport HTML d'audit généré avec succès",
+        "running_audit": "Exécution de l'audit CIS pour",
+        "completed": "Audit Terminé",
+    }
+}
+
 RECOMMENDATIONS_DATA = [
-    # Catégorie 1: Installation et Mises à jour
+    # Category 1: Installation et Mises à jour
     {"category": "1 Installation et Mises à jour", "number": "1.1", "name": "S'assurer qu'un utilisateur et un groupe dédiés existent pour Cassandra", "type": "Manual",
      "test_procedure": "getent group cassandra && getent passwd cassandra",
      "expected_output": None,
@@ -45,7 +79,7 @@ RECOMMENDATIONS_DATA = [
      "remediation": "Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.",
      "manual_steps": ["Vérifier que NTP/chrony est installé.", "Vérifier que la synchronisation est active.", "S'assurer que tous les nœuds utilisent la même source."]},
 
-    # Catégorie 2: Authentification et Autorisation
+    # Category 2: Authentification et Autorisation
     {"category": "2 Authentification et Autorisation", "number": "2.1", "name": "S'assurer que l'authentification est activée pour les bases de données Cassandra", "type": "Automated",
      "test_procedure": f"grep -E '^authenticator:' {CASSANDRA_CONFIG_PATH}",
      "expected_output": {"type": "stdout_contains", "value": "PasswordAuthenticator"},
@@ -55,7 +89,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "stdout_contains", "value": "CassandraAuthorizer"},
      "remediation": "Modifier cassandra.yaml pour définir 'authorizer: CassandraAuthorizer' et redémarrer Cassandra."},
 
-    # Catégorie 3: Contrôle d'accès / Politiques de mots de passe
+    # Category 3: Contrôle d'accès / Politiques de mots de passe
     {"category": "3 Contrôle d'accès", "number": "3.1", "name": "S'assurer que les rôles cassandra et superuser sont séparés", "type": "Automated",
      "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" 2>/dev/null | grep -v 'cassandra' | grep -c 'True'",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"[1-9]\d*"},
@@ -94,7 +128,7 @@ RECOMMENDATIONS_DATA = [
      "remediation": "Limiter le nombre de rôles superuser au strict nécessaire.",
      "manual_steps": ["Lister les rôles superuser.", "Vérifier que chaque rôle superuser est justifié.", "Révoquer le privilège superuser si non nécessaire."]},
 
-    # Catégorie 4: Audit et Journalisation
+    # Category 4: Audit et Journalisation
     {"category": "4 Audit et Journalisation", "number": "4.1", "name": "S'assurer que la journalisation est activée", "type": "Automated",
      "test_procedure": "ls -la /var/log/cassandra/system.log 2>/dev/null || ls -la /opt/cassandra/logs/system.log 2>/dev/null",
      "expected_output": {"type": "stdout_not_empty"},
@@ -105,7 +139,7 @@ RECOMMENDATIONS_DATA = [
      "remediation": "Activer l'audit en configurant 'audit_logging_options' dans cassandra.yaml (Cassandra 5.0+).",
      "manual_steps": ["Vérifier la configuration audit_logging_options dans cassandra.yaml.", "S'assurer que enabled: true est défini.", "Configurer les filtres d'audit appropriés."]},
 
-    # Catégorie 5: Chiffrement
+    # Category 5: Chiffrement
     {"category": "5 Chiffrement", "number": "5.1", "name": "Chiffrement inter-nœuds", "type": "Automated",
      "test_procedure": f"grep -A20 'server_encryption_options:' {CASSANDRA_CONFIG_PATH} | grep 'internode_encryption'",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"internode_encryption:\s*(all|dc|rack)"},
@@ -118,7 +152,7 @@ RECOMMENDATIONS_DATA = [
 # --- Modèle HTML pour le rapport ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -448,7 +482,7 @@ def perform_checks(recommendations):
             "type": rec["type"],
             "test_procedure": rec.get("test_procedure", ""),
             "remediation": rec.get("remediation", ""),
-            "status": "Not Applicable", # Statut par défaut (sera modifié pour les automatisés)
+            "status": "Not Applicable", # Status par défaut (sera modifié pour les automatisés)
             "output": "",
             "error": ""
         }
@@ -575,7 +609,7 @@ def calculate_scores(results):
 
     for category, checks in results.items():
         if category not in categories_scores:
-            print(f"ATTENTION : Catégorie '{category}' trouvée dans les résultats mais non pré-initialisée. Ignorée.")
+            print(f"ATTENTION : Category '{category}' trouvée dans les résultats mais non pré-initialisée. Ignorée.")
             continue
         for check in checks:
             cat_stats = categories_scores[category]
@@ -648,7 +682,7 @@ def get_status_info(status):
     else:
         return "❓", status, "status-error" # Fallback
 
-def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_cassandra_50.html"):
+def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_cassandra_50.html", lang="en"):
     """
     Génère le rapport HTML.
     """
@@ -747,7 +781,7 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
             os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             f.write(html_output)
-        print(f"Rapport généré avec succès : {filename}")
+        print(f"Rapport successfully generated : {filename}")
     except IOError as e:
         print(f"Erreur lors de l'écriture du fichier de rapport '{filename}': {e}")
 

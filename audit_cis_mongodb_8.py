@@ -19,14 +19,48 @@ MONGOD_CONFIG_PATH = "/etc/mongod.conf"
 
 # --- Structure des Recommandations (Adaptée pour MongoDB 8.0) ---
 # Basée sur le document "CIS MongoDB 8.0 Benchmark v1.0.0"
+
+TRANSLATIONS = {
+    "en": {
+        "report_title": "CIS Benchmark Audit Report",
+        "global_score": "Global Compliance Score",
+        "rec_id": "ID",
+        "control_title": "Control Title",
+        "category": "Category",
+        "status": "Status",
+        "output": "Execution Output",
+        "remediation": "Remediation",
+        "pass": "PASS",
+        "fail": "FAIL",
+        "generated_success": "HTML Audit Report successfully generated",
+        "running_audit": "Running CIS Audit for",
+        "completed": "Audit Completed",
+    },
+    "fr": {
+        "report_title": "Rapport d'Audit CIS Benchmark",
+        "global_score": "Score Global de Conformité",
+        "rec_id": "ID",
+        "control_title": "Titre du Contrôle",
+        "category": "Catégorie",
+        "status": "Statut",
+        "output": "Extrait de Sortie",
+        "remediation": "Remédiation",
+        "pass": "SUCCÈS",
+        "fail": "ÉCHEC",
+        "generated_success": "Rapport HTML d'audit généré avec succès",
+        "running_audit": "Exécution de l'audit CIS pour",
+        "completed": "Audit Terminé",
+    }
+}
+
 RECOMMENDATIONS_DATA = [
-    # Catégorie 1: Installation et Patching
+    # Category 1: Installation et Patching
     {"category": "1 Installation et Patching", "number": "1.1", "name": "S'assurer que la version/les correctifs appropriés de MongoDB sont installés", "type": "Manual",
      "test_procedure": f"Exécuter '{MONGODB_SHELL_CMD} \"print(db.version())\"' OU 'mongod --version'. Vérifier manuellement les dernières versions/correctifs sur le site de MongoDB.",
      "expected_output": None, 
      "remediation": "Sauvegarder les données, télécharger les binaires de la dernière version de MongoDB, arrêter l'instance, remplacer les binaires, redémarrer l'instance."},
 
-    # Catégorie 2: Authentification
+    # Category 2: Authentification
     {"category": "2 Authentification", "number": "2.1", "name": "S'assurer que l'authentification est configurée", "type": "Automated",
      "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"authorization\"",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"authorization:\s*\"?enabled\"?"},
@@ -41,7 +75,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "all_lines_match_regex", "patterns": [r"PEMKeyFile:", r"CAFile:", r"clusterFile:", r"clusterAuthMode:\s*x509", r"authenticationMechanisms:\s*MONGODB-X509"]},
      "remediation": "Configurer 'net.tls.mode: requireSSL', 'net.tls.PEMKeyFile', 'net.tls.CAFile', 'net.tls.clusterFile', 'security.authorization: enabled', et 'security.clusterAuthMode: x509' dans le fichier de configuration et redémarrer. Ou utiliser 'keyFile' pour le développement."},
 
-    # Catégorie 3: Authorization
+    # Category 3: Authorization
     {"category": "3 Authorization", "number": "3.1", "name": "S'assurer du moindre privilège pour les comptes de base de données", "type": "Manual",
      "test_procedure": "Exécuter '" + MONGODB_SHELL_CMD + " \"printjson(db.system.users.find({\\\"roles.role\\\": {\\\"$in\\\": [\\\"dbOwner\\\", \\\"userAdmin\\\", \\\"userAdminAnyDatabase\\\"]},\\\"roles.db\\\": \\\"admin\\\" }).toArray())\"' et analyser manuellement la sortie.",
      "expected_output": None, 
@@ -63,7 +97,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": None, 
      "remediation": "Retirer les utilisateurs des rôles de superutilisateur/administrateur s'ils n'en ont pas besoin."},
 
-    # Catégorie 4: Data Encryption
+    # Category 4: Data Encryption
     {"category": "4 Data Encryption", "number": "4.1", "name": "S'assurer que les protocoles TLS hérités sont désactivés", "type": "Automated",
      "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"disabledProtocols\"",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"disabledProtocols:\s*\[?[\"']?TLS1_0[\"']?.*[\"']?TLS1_1[\"']?\]?"}, # Gère les formats de liste et de chaîne
@@ -85,7 +119,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": None, 
      "remediation": "Activer le chiffrement des données au repos (MongoDB Enterprise uniquement) en configurant 'storage.engine: wiredTiger' et les options 'encryption'."},
 
-    # Catégorie 5: Audit Logging
+    # Category 5: Audit Logging
     {"category": "5 Audit Logging", "number": "5.1", "name": "S'assurer que l'activité du système est auditée", "type": "Automated",
      "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep -A4 \"auditLog\" | grep \"destination\"",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"destination:\s*\"?(syslog|console|file)\"?"}, # Toute destination valide est un succès
@@ -103,7 +137,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "stdout_regex_match", "pattern": r"logAppend:\s*true"},
      "remediation": "Définir 'systemLog.logAppend: true' dans le fichier de configuration."},
 
-    # Catégorie 6: Operating System Hardening
+    # Category 6: Operating System Hardening
     {"category": "6 Operating System Hardening", "number": "6.1", "name": "S'assurer que MongoDB utilise un port non-standard", "type": "Automated",
      "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"port\"",
      "expected_output": {"type": "stdout_not_contains", "value": "27017"}, # S'assurer que ce n'est pas le port par défaut 27017
@@ -117,7 +151,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": None, 
      "remediation": "Définir 'security.javascriptEnabled: false' dans le fichier de configuration si le script côté serveur n'est pas nécessaire."},
 
-    # Catégorie 7: File Permissions
+    # Category 7: File Permissions
     {"category": "7 File Permissions", "number": "7.1", "name": "S'assurer que les permissions appropriées du fichier de clés sont définies", "type": "Manual",
      "test_procedure": f"Exécuter 'cat {MONGOD_CONFIG_PATH} | grep \"keyFile:\" || cat {MONGOD_CONFIG_PATH} | grep \"PEMKeyFile:\" || cat {MONGOD_CONFIG_PATH} | grep \"CAFile:\"' pour trouver les chemins. Puis 'ls -l <chemin_fichier_clé/certificat>' et vérifier les permissions (doit être 600 et propriétaire 'mongodb:mongodb').",
      "expected_output": None, 
@@ -131,7 +165,7 @@ RECOMMENDATIONS_DATA = [
 # --- Modèle HTML pour le rapport ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -461,7 +495,7 @@ def perform_checks(recommendations):
             "type": rec["type"],
             "test_procedure": rec.get("test_procedure", ""),
             "remediation": rec.get("remediation", ""),
-            "status": "Not Applicable", # Statut par défaut (sera modifié pour les automatisés)
+            "status": "Not Applicable", # Status par défaut (sera modifié pour les automatisés)
             "output": "",
             "error": ""
         }
@@ -588,7 +622,7 @@ def calculate_scores(results):
 
     for category, checks in results.items():
         if category not in categories_scores:
-            print(f"ATTENTION : Catégorie '{category}' trouvée dans les résultats mais non pré-initialisée. Ignorée.")
+            print(f"ATTENTION : Category '{category}' trouvée dans les résultats mais non pré-initialisée. Ignorée.")
             continue
         for check in checks:
             cat_stats = categories_scores[category]
@@ -661,7 +695,7 @@ def get_status_info(status):
     else:
         return "❓", status, "status-error" # Fallback
 
-def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_mongodb_8.html"):
+def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_mongodb_8.html", lang="en"):
     """
     Génère le rapport HTML.
     """
@@ -760,7 +794,7 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
             os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             f.write(html_output)
-        print(f"Rapport généré avec succès : {filename}")
+        print(f"Rapport successfully generated : {filename}")
     except IOError as e:
         print(f"Erreur lors de l'écriture du fichier de rapport '{filename}': {e}")
 

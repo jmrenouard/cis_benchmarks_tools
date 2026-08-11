@@ -11,6 +11,40 @@ import html # Pour échapper les caractères spéciaux HTML
 # la procédure de test (commande shell), le critère de succès attendu, et la remédiation.
 # Pour les contrôles "Manual", la procédure de test et le critère attendu sont juste informatifs
 # car le script ne peut pas les exécuter.
+
+TRANSLATIONS = {
+    "en": {
+        "report_title": "CIS Benchmark Audit Report",
+        "global_score": "Global Compliance Score",
+        "rec_id": "ID",
+        "control_title": "Control Title",
+        "category": "Category",
+        "status": "Status",
+        "output": "Execution Output",
+        "remediation": "Remediation",
+        "pass": "PASS",
+        "fail": "FAIL",
+        "generated_success": "HTML Audit Report successfully generated",
+        "running_audit": "Running CIS Audit for",
+        "completed": "Audit Completed",
+    },
+    "fr": {
+        "report_title": "Rapport d'Audit CIS Benchmark",
+        "global_score": "Score Global de Conformité",
+        "rec_id": "ID",
+        "control_title": "Titre du Contrôle",
+        "category": "Catégorie",
+        "status": "Statut",
+        "output": "Extrait de Sortie",
+        "remediation": "Remédiation",
+        "pass": "SUCCÈS",
+        "fail": "ÉCHEC",
+        "generated_success": "Rapport HTML d'audit généré avec succès",
+        "running_audit": "Exécution de l'audit CIS pour",
+        "completed": "Audit Terminé",
+    }
+}
+
 RECOMMENDATIONS_DATA = [
     # 1. Installation et correctifs
     {"category": "1. Installation et correctifs", "number": "1.1", "name": "Obtenir les paquets depuis des dépôts autorisés", "type": "Manual", "test_procedure": "Vérifier dnf repolist all ou équivalent (apt-file search /usr/pgsql-*/lib/libpq.so.5) pour s’assurer que seuls les dépôts officiels sont activés.", "expected_output": None, "remediation": "Supprimer/ajouter des dépôts pour n’inclure que les sources valides (p. ex. dnf install -y https://download.postgresql.org/.../pgdg-redhat-repo-latest.noarch.rpm), puis réinstaller."},
@@ -124,7 +158,7 @@ RECOMMENDATIONS_DATA = [
 # --- Modèle HTML ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -717,7 +751,7 @@ def get_status_info(status):
         return "❓", status, "status-error" # Fallback for unexpected status
 
 
-def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_postgresql_16.html"):
+def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_postgresql_16.html", lang="en"):
     """Génère le rapport HTML."""
     report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
@@ -808,7 +842,7 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_output)
 
-    print(f"Rapport généré avec succès : {filename}")
+    print(f"Rapport successfully generated : {filename}")
 
 
 # --- Exécution principale ---

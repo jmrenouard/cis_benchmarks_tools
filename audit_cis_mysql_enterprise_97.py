@@ -15,8 +15,42 @@ MYSQL_CMD = "mysql -N -B" # -N: skip headers, -B: batch mode (tab separated)
 
 # --- Structure des Recommandations (Adaptée pour MySQL Enterprise 9.7) ---
 # Basée sur le PDF "CIS MySQL Enterprise 9.7 Benchmark – Tableau récapitulatif complet.pdf"
+
+TRANSLATIONS = {
+    "en": {
+        "report_title": "CIS Benchmark Audit Report",
+        "global_score": "Global Compliance Score",
+        "rec_id": "ID",
+        "control_title": "Control Title",
+        "category": "Category",
+        "status": "Status",
+        "output": "Execution Output",
+        "remediation": "Remediation",
+        "pass": "PASS",
+        "fail": "FAIL",
+        "generated_success": "HTML Audit Report successfully generated",
+        "running_audit": "Running CIS Audit for",
+        "completed": "Audit Completed",
+    },
+    "fr": {
+        "report_title": "Rapport d'Audit CIS Benchmark",
+        "global_score": "Score Global de Conformité",
+        "rec_id": "ID",
+        "control_title": "Titre du Contrôle",
+        "category": "Catégorie",
+        "status": "Statut",
+        "output": "Extrait de Sortie",
+        "remediation": "Remédiation",
+        "pass": "SUCCÈS",
+        "fail": "ÉCHEC",
+        "generated_success": "Rapport HTML d'audit généré avec succès",
+        "running_audit": "Exécution de l'audit CIS pour",
+        "completed": "Audit Terminé",
+    }
+}
+
 RECOMMENDATIONS_DATA = [
-    # Catégorie 1: Configuration Système d'exploitation
+    # Category 1: Configuration Système d'exploitation
     {"category": "1. Configuration Système d'exploitation", "number": "1.1", "name": "Placer les bases de données sur des partitions non-système", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@datadir;\"", "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'", "expected_output": {"type": "stdout_not_equals", "value": "/"}, "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.2", "name": "Utiliser un compte dédié et privilégié minimal pour MySQL", "type": "Automated", "test_procedure": "ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | awk '{print $1}' | head -n 1", "expected_output": {"type": "stdout_equals", "value": "mysql"}, "remediation": "Configurer le service MySQL pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.3", "name": "Désactiver l'historique des commandes MySQL", "type": "Automated", "test_procedure": "! find /home /root -name .mysql_history -print -quit 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE."},
@@ -25,7 +59,7 @@ RECOMMENDATIONS_DATA = [
     {"category": "1. Configuration Système d'exploitation", "number": "1.6", "name": "Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs", "type": "Automated", "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.7", "name": "Exécuter MySQL dans un environnement sandbox", "type": "Automated", "test_procedure": "[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'", "expected_output": {"type": "stdout_equals", "value": "DOCKER"}, "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker."},
 
-    # Catégorie 2: Installation et Planification
+    # Category 2: Installation et Planification
     {"category": "2. Installation et Planification", "number": "2.1.1", "name": "Politique de sauvegarde en place", "type": "Automated", "test_procedure": "crontab -l 2>/dev/null | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques."},
     {"category": "2. Installation et Planification", "number": "2.1.2", "name": "Validation des sauvegardes", "type": "Manual", "test_procedure": "Analyser les rapports de tests de restauration.", "expected_output": None, "remediation": "Planifier et documenter les tests de restauration périodiques.", "manual_steps": ["Identifier les fichiers de sauvegarde récents.", "Restaurer une base de test à partir de ces fichiers.", "Vérifier l'intégrité des données.", "Documenter la date et le résultat du test."]},
     {"category": "2. Installation et Planification", "number": "2.1.3", "name": "Sécuriser les identifiants de sauvegarde", "type": "Manual", "test_procedure": "Inspecter les permissions des fichiers contenant les credentials de sauvegarde.", "expected_output": None, "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.", "manual_steps": ["Rechercher les scripts de sauvegarde.", "Vérifier si les mots de passe sont en clair.", "S'assurer que les fichiers de config (.my.cnf) ont des droits 600.", "Utiliser mysql_config_editor."]},
@@ -34,7 +68,7 @@ RECOMMENDATIONS_DATA = [
     {"category": "2. Installation et Planification", "number": "2.1.6", "name": "Plan de reprise d'activité (DR)", "type": "Manual", "test_procedure": "Vérifier l'existence et la validité du plan DR.", "expected_output": None, "remediation": "Documenter et tester un plan DR incluant réplication, backups offsite.", "manual_steps": ["Consulter la documentation technique.", "Vérifier la présence d'une procédure de basculement.", "Confirmer la réplication hors-site."]},
     {"category": "2. Installation et Planification", "number": "2.1.7", "name": "Sauvegarde des fichiers de configuration", "type": "Manual", "test_procedure": "Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).", "expected_output": None, "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.", "manual_steps": ["Lister le contenu d'une sauvegarde complète.", "Vérifier la présence de /etc/my.cnf et des certificats SSL."]},
 
-    # Catégorie 3: Permissions Fichiers
+    # Category 3: Permissions Fichiers
     {"category": "3. Permissions Fichiers", "number": "3.1", "name": "Permissions adéquates sur 'datadir'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@datadir;\"", "test_procedure_template": "stat -c '%U:%G %a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^mysql:mysql\s+7[05][05]$"}, "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>"},
     {"category": "3. Permissions Fichiers", "number": "3.2", "name": "Permissions sur les fichiers 'log_bin_basename'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@log_bin_basename;\"", "test_procedure_template": "ls -l {path}* | awk '{{print $1}}' | uniq", "expected_output": {"type": "stdout_regex_match", "pattern": r"^-rw-------$"}, "remediation": "Appliquer chmod 600 sur les fichiers binaires."},
     {"category": "3. Permissions Fichiers", "number": "3.3", "name": "Permissions sur 'log_error'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@log_error;\"", "test_procedure_template": "stat -c '%a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^6[04]0$"}, "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."},
@@ -46,7 +80,7 @@ RECOMMENDATIONS_DATA = [
     {"category": "3. Permissions Fichiers", "number": "3.9", "name": "Permissions sur 'audit_log_file'", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@audit_log_file;\"", "test_procedure_template": "stat -c '%a' {path}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^6[04]0$"}, "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."},
     {"category": "3. Permissions Fichiers", "number": "3.10", "name": "Sécuriser le Keyring MySQL", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'keyring_file_data';\" | awk '{{print $2}}' | xargs stat -c '%a'", "expected_output": {"type": "stdout_equals", "value": "600"}, "remediation": "Chiffrer et restreindre l'accès au fichier keyring."},
 
-    # Catégorie 4: Général
+    # Category 4: Général
     {"category": "4. Général", "number": "4.1", "name": "Ensure the Latest Security Patches are Applied", "type": "Manual", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@version;\"", "expected_output": None, "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.", "manual_steps": ["Relever la version affichée.", "Comparer avec les Release Notes MySQL Enterprise 9.7.", "Vérifier les CVE critiques."]},
     {"category": "4. Général", "number": "4.2", "name": "Ensure Example or Test Databases are Not Installed on Production Servers", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME IN ('employees', 'world', 'world_x', 'sakila', 'airportdb', 'menagerie');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "Exécutez DROP DATABASE <database name>; pour supprimer une base de données d'exemple."},
     {"category": "4. Général", "number": "4.3", "name": "Ensure 'allow-suspicious-udfs' is Set to 'OFF'", "type": "Automated", "test_procedure": "my_print_defaults mysqld | grep -q 'allow-suspicious-udfs' && echo 'FOUND' || echo 'NOT FOUND'", "expected_output": {"type": "stdout_equals", "value": "NOT FOUND"}, "remediation": "Supprimer --allow-suspicious-udfs de la ligne de commande ou du fichier de configuration."},
@@ -58,7 +92,7 @@ RECOMMENDATIONS_DATA = [
     {"category": "4. Général", "number": "4.9", "name": "Ensure 'sql_mode' Contains 'STRICT_ALL_TABLES'", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@sql_mode;\"", "expected_output": {"type": "stdout_contains", "value": "STRICT_ALL_TABLES"}, "remediation": "Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans my.cnf."},
     {"category": "4. Général", "number": "4.10", "name": "Use MySQL TDE for At-Rest Data Encryption", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM information_schema.TABLES WHERE CREATE_OPTIONS NOT LIKE '%ENCRYPTION=\"Y\"%' AND TABLE_SCHEMA NOT IN ('mysql', 'information_schema', 'performance_schema', 'sys');\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "Activer le chiffrement pour les tables/tablespaces nécessaires via ALTER TABLE ... ENCRYPTION='Y';. Configurer le chiffrement pour les logs (binlog, redo, undo) et l'audit log si nécessaire."},
 
-    # Catégorie 5 - Gestion des privilèges
+    # Category 5 - Gestion des privilèges
     {"category": "5. Gestion des privilèges", "number": "5.1", "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.db WHERE db='mysql' AND user NOT IN ('mysql.sys', 'mysql.session', 'root') AND (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y');\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs."},
     {"category": "5. Gestion des privilèges", "number": "5.2", "name": "Retirer le droit FILE aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE File_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';"},
     {"category": "5. Gestion des privilèges", "number": "5.3", "name": "Retirer le droit PROCESS aux non-admins", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE Process_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';"},
@@ -72,7 +106,7 @@ RECOMMENDATIONS_DATA = [
     {"category": "5. Gestion des privilèges", "number": "5.11", "name": "Restreindre le droit SET_ANY_DEFINER", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='SET_ANY_DEFINER');\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';"}, # Simplifié, check dynamic privs is harder
     {"category": "5. Gestion des privilèges", "number": "5.12", "name": "Restreindre ALLOW_NONEXISTENT_DEFINER", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='ALLOW_NONEXISTENT_DEFINER');\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';"},
 
-    # Catégorie 6 - Audit & Journalisation
+    # Category 6 - Audit & Journalisation
     {"category": "6. Audit & Journalisation", "number": "6.1", "name": "Configurer log_error", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@log_error;\"", "expected_output": {"type": "stdout_not_contains", "value": "/dev/stderr"}, "remediation": "Définir log-error=/chemin/vers/mysql.err dans my.cnf."},
     {"category": "6. Audit & Journalisation", "number": "6.2", "name": "Journal hors partition système", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@log_error;\"", "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'", "expected_output": {"type": "stdout_not_equals", "value": "/"}, "remediation": "Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système."},
     {"category": "6. Audit & Journalisation", "number": "6.3", "name": "log_error_verbosity=2", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@log_error_verbosity;\"", "expected_output": {"type": "stdout_equals", "value": "2"}, "remediation": "Ajouter log_error_verbosity=2 dans my.cnf."},
@@ -82,7 +116,7 @@ RECOMMENDATIONS_DATA = [
     {"category": "6. Audit & Journalisation", "number": "6.7", "name": "audit_log_strategy = (S)SYNC", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'audit_log_strategy';\"", "expected_output": {"type": "stdout_regex_match", "pattern": r"(SYNCHRONOUS|SEMISYNCHRONOUS)"}, "remediation": "Configurer audit_log_strategy='SEMISYNCHRONOUS' ou 'SYNCHRONOUS' via le plugin d'audit."},
     {"category": "6. Audit & Journalisation", "number": "6.8", "name": "Interdire le déchargement du plugin audit", "type": "Automated", "test_procedure": "my_print_defaults mysqld | grep -q 'audit_log=FORCE_PLUS_PERMANENT' && echo 'FOUND' || echo 'NOT FOUND'", "expected_output": {"type": "stdout_equals", "value": "FOUND"}, "remediation": "Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf."},
 
-    # Catégorie 7 - Authentification
+    # Category 7 - Authentification
     {"category": "7. Authentification", "number": "7.1", "name": "Plugin d'authentification sûr (caching_sha2_password)", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@default_authentication_plugin;\"", "expected_output": {"type": "stdout_equals", "value": "caching_sha2_password"}, "remediation": "Définir default_authentication_plugin=caching_sha2_password dans my.cnf et migrer les comptes existants."},
     {"category": "7. Authentification", "number": "7.2", "name": "Aucun mot de passe dans le my.cnf global", "type": "Automated", "test_procedure": "! grep -riE \"password|pwd|pass\" /etc/my.cnf /etc/mysql/ 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Utiliser mysql_config_editor ou des fichiers .my.cnf privés avec permissions restreintes."},
     {"category": "7. Authentification", "number": "7.3", "name": "Tous les comptes ont un mot de passe", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE authentication_string = '' OR plugin='mysql_no_login';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "ALTER USER '<user>'@'<host>' IDENTIFIED BY '<password>'; ou utiliser mysql_secure_installation."},
@@ -91,18 +125,18 @@ RECOMMENDATIONS_DATA = [
     {"category": "7. Authentification", "number": "7.6", "name": "Pas de wildcard '%' dans host", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE host = '%' AND user NOT IN ('root');\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "ALTER USER '<user>'@'%' IDENTIFIED BY '...' RENAME TO '<user>'@'<specific_host>'; ou supprimer le compte."},
     {"category": "7. Authentification", "number": "7.7", "name": "Supprimer les comptes anonymes", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE user = '';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "DROP USER ''@'<host>'; ou utiliser mysql_secure_installation."},
 
-    # Catégorie 8 - Sécurité réseau
+    # Category 8 - Sécurité réseau
     {"category": "8. Sécurité réseau", "number": "8.1", "name": "Forcer SSL/TLS (require_secure_transport=ON)", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@require_secure_transport;\"", "expected_output": {"type": "stdout_equals", "value": "1"}, "remediation": "Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans my.cnf."},
     {"category": "8. Sécurité réseau", "number": "8.2", "name": "Exiger TLS côté utilisateur (ssl_type)", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type = '';\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;"},
     {"category": "8. Sécurité réseau", "number": "8.3", "name": "Limiter le nombre de connexions", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@max_connections;\"", "expected_output": {"type": "stdout_is_numeric_less_equal", "value": 500}, "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins."},
 
-    # Catégorie 9 - Réplication
+    # Category 9 - Réplication
     {"category": "9. Réplication", "number": "9.1", "name": "Chiffrer le trafic de réplication", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS;\" | grep -q .", "test_procedure": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS\\G\" | grep -E 'SSL_Allowed|Master_SSL_Verify_Server_Cert'", "expected_output": {"type": "stdout_contains", "value": "Yes"}, "remediation": "Configurer TLS pour la réplication (SOURCE_SSL=1, SOURCE_SSL_CA, etc.) ou utiliser un tunnel sécurisé."},
     {"category": "9. Réplication", "number": "9.2", "name": "SOURCE_SSL_VERIFY_SERVER_CERT = 1", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS;\" | grep -q .", "test_procedure": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Verify_Server_Cert'", "expected_output": {"type": "stdout_contains", "value": "Yes"}, "remediation": "Exécuter CHANGE REPLICATION SOURCE TO SOURCE_SSL_VERIFY_SERVER_CERT = 1;"},
     {"category": "9. Réplication", "number": "9.3", "name": "master_info_repository TABLE", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW REPLICA STATUS;\" | grep -q .", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@master_info_repository;\"", "expected_output": {"type": "stdout_equals", "value": "TABLE"}, "remediation": "Configurer master_info_repository=TABLE dans my.cnf."},
     {"category": "9. Réplication", "number": "9.4", "name": "Retirer SUPER aux comptes de réplication", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';\" | grep -q '[1-9]'", "test_procedure": f"{MYSQL_CMD} -e \"SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%' AND Super_priv = 'Y';\"", "expected_output": {"type": "stdout_equals", "value": "0"}, "remediation": "REVOKE SUPER ON *.* FROM '<repl_user>'@'<repl_host>'; et accorder les privilèges dynamiques nécessaires (ex: REPLICATION_SLAVE_ADMIN)."},
 
-    # Catégorie 10 - InnoDB Cluster / Group Replication
+    # Category 10 - InnoDB Cluster / Group Replication
     {"category": "10. InnoDB Cluster / Group Replication", "number": "10.1", "name": "Chiffrer le trafic Group Replication", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW PLUGINS;\" | grep -q 'group_replication'", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@group_replication_ssl_mode;\"", "expected_output": {"type": "stdout_not_equals", "value": "DISABLED"}, "remediation": "Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf."},
     {"category": "10. InnoDB Cluster / Group Replication", "number": "10.2", "name": "Définir une allow-list de nœuds", "type": "Automated", "pre_condition": f"{MYSQL_CMD} -e \"SHOW PLUGINS;\" | grep -q 'group_replication'", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@group_replication_ip_allowlist;\"", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés."},
 ]
@@ -141,7 +175,7 @@ HTML_TEMPLATE = """
             <a href="#summary" class="sidebar-link flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-1">
                 <i class="fas fa-chart-pie w-5 mr-3"></i> Synthèse
             </a>
-            <div class="mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase px-3">Catégories</div>
+            <div class="mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase px-3">Categorys</div>
             {sidebar_links}
         </nav>
     </aside>
@@ -204,7 +238,7 @@ HTML_TEMPLATE = """
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 h-80 flex flex-col">
-                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight">Analyse par Catégorie</h3>
+                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight">Analyse par Category</h3>
                         <div class="flex-1 min-h-0 relative">
                             <canvas id="categoryChart"></canvas>
                         </div>
@@ -294,7 +328,7 @@ CATEGORY_REPORT_TEMPLATE = """
                                 <tr>
                                     <th class="w-16 py-3 px-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID</th>
                                     <th class="py-3 px-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Recommandation</th>
-                                    <th class="w-32 py-3 px-4 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">Statut</th>
+                                    <th class="w-32 py-3 px-4 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
                                     <th class="py-3 px-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Analyse & Remédiation</th>
                                 </tr>
                             </thead>
@@ -664,7 +698,7 @@ def get_status_info(status):
     else:
         return "❓", status, "status-error" # Fallback
 
-def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_mysql_8.html"):
+def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_mysql_8.html", lang="en"):
     """Génère le rapport HTML."""
     report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     overall_score_class = get_score_class(overall_score)
@@ -770,7 +804,7 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
             os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             f.write(html_output)
-        print(f"Rapport généré avec succès : {filename}")
+        print(f"Rapport successfully generated : {filename}")
     except IOError as e:
         print(f"Erreur lors de l'écriture du fichier de rapport '{filename}': {e}")
 

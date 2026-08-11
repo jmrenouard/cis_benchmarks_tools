@@ -18,6 +18,40 @@ import re
 import subprocess
 import sys
 
+
+TRANSLATIONS = {
+    "en": {
+        "report_title": "CIS Benchmark Audit Report",
+        "global_score": "Global Compliance Score",
+        "rec_id": "ID",
+        "control_title": "Control Title",
+        "category": "Category",
+        "status": "Status",
+        "output": "Execution Output",
+        "remediation": "Remediation",
+        "pass": "PASS",
+        "fail": "FAIL",
+        "generated_success": "HTML Audit Report successfully generated",
+        "running_audit": "Running CIS Audit for",
+        "completed": "Audit Completed",
+    },
+    "fr": {
+        "report_title": "Rapport d'Audit CIS Benchmark",
+        "global_score": "Score Global de Conformité",
+        "rec_id": "ID",
+        "control_title": "Titre du Contrôle",
+        "category": "Catégorie",
+        "status": "Statut",
+        "output": "Extrait de Sortie",
+        "remediation": "Remédiation",
+        "pass": "SUCCÈS",
+        "fail": "ÉCHEC",
+        "generated_success": "Rapport HTML d'audit généré avec succès",
+        "running_audit": "Exécution de l'audit CIS pour",
+        "completed": "Audit Terminé",
+    }
+}
+
 RECOMMENDATIONS_DATA = [
     {
         "id": "1.1.1.1",
@@ -315,8 +349,9 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     return False
 
 
-def generate_html_report(results, overall_score, categories_scores, filename="reports/rapport_cis_rhel_10.html"):
+def generate_html_report(results, overall_score, categories_scores, filename="reports/rapport_cis_rhel_10.html", lang="en"):
     """Generate responsive HTML audit report for RHEL 10."""
+    t = TRANSLATIONS.get(lang, TRANSLATIONS["en"])
     if os.path.dirname(filename):
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
@@ -334,10 +369,10 @@ def generate_html_report(results, overall_score, categories_scores, filename="re
         """
 
     html_content = f"""<!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rapport d'Audit CIS Red Hat Enterprise Linux 10 v1.4.0</title>
+    <title>CIS Benchmark Audit Report Red Hat Enterprise Linux 10 v1.4.0</title>
     <style>
         body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f4f6; margin: 0; padding: 20px; color: #1f2937; }}
         .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }}
@@ -350,18 +385,18 @@ def generate_html_report(results, overall_score, categories_scores, filename="re
 <body>
     <div class="container">
         <div class="header">
-            <h1>🛡️ Rapport d'Audit CIS Red Hat Enterprise Linux 10</h1>
+            <h1>🛡️ CIS Benchmark Audit Report Red Hat Enterprise Linux 10</h1>
             <p>Version Suite: <strong>v1.4.0</strong> | Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
-            <div class="score">Score Global: {overall_score:.1f}%</div>
+            <div class="score">{t["global_score"]}: {overall_score:.1f}%</div>
         </div>
         <table>
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Titre du Contrôle</th>
-                    <th>Catégorie</th>
-                    <th>Statut</th>
-                    <th>Extrait Sortie</th>
+                    <th>{t["control_title"]}</th>
+                    <th>{t["category"]}</th>
+                    <th>{t["status"]}</th>
+                    <th>{t["output"]}</th>
                 </tr>
             </thead>
             <tbody>
@@ -374,12 +409,13 @@ def generate_html_report(results, overall_score, categories_scores, filename="re
 
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"📄 Rapport HTML RHEL 10 généré avec succès : {filename}")
+    print(f"📄 HTML Report RHEL 10 successfully generated : {filename}")
 
 
 def main():
     parser = argparse.ArgumentParser(description="CIS Red Hat Enterprise Linux 10 Audit Benchmark Suite (v1.4.0)")
     parser.add_argument("-r", "--remote", help="SSH remote target (e.g. user@hostname)")
+    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Language for report and output (en/fr)")
     parser.add_argument("-o", "--output", default="reports/rapport_cis_rhel_10.html", help="Path to output HTML report")
     args = parser.parse_args()
 
@@ -407,7 +443,7 @@ def main():
     overall_score = (passed / len(RECOMMENDATIONS_DATA)) * 100
     print(f"✅ RHEL 10 Audit Completed: {passed}/{len(RECOMMENDATIONS_DATA)} Passed ({overall_score:.1f}%)")
 
-    generate_html_report(results, overall_score, {}, filename=args.output)
+    generate_html_report(results, overall_score, {}, filename=args.output, lang=getattr(args, "lang", "en"))
 
 
 if __name__ == "__main__":
