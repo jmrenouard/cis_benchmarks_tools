@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Unified CIS Benchmark Audit Suite Engine (Python Standard Library ONLY).
-Version: 1.3.0
+Version: 1.4.0
 
 Provides both a CLI runner and Programmatic Python API for 15 database targets:
   - MariaDB (10.6, 10.11)
@@ -23,7 +23,7 @@ import re
 import subprocess
 import sys
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 TARGET_MAP = {
     "mariadb106": ("audit_cis_mariadb_106.py", "MariaDB 10.6", 74),
@@ -41,6 +41,9 @@ TARGET_MAP = {
     "cassandra40": ("audit_cis_cassandra_40.py", "Apache Cassandra 4.0", 20),
     "cassandra41": ("audit_cis_cassandra_41.py", "Apache Cassandra 4.1", 20),
     "cassandra50": ("audit_cis_cassandra_50.py", "Apache Cassandra 5.0", 20),
+    "rhel8": ("audit_cis_rhel_8.py", "Red Hat Enterprise Linux 8 (STIG)", 20),
+    "rhel9": ("audit_cis_rhel_9.py", "Red Hat Enterprise Linux 9 (STIG)", 20),
+    "rhel10": ("audit_cis_rhel_10.py", "Red Hat Enterprise Linux 10", 20),
 }
 
 
