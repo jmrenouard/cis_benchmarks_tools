@@ -18,7 +18,7 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 - [x] Prise en charge des 15 benchmarks bases de données (MariaDB 10.6/10.11, MySQL 8.0/8.4/9.7, PostgreSQL 16/17/18, MongoDB 7/8, Cassandra 4.0/4.1/5.0).
 - [x] Dockerfiles et scripts de démarrage standardisés (`scripts/start_*.sh`).
 - [x] Cibles unifiées dans le `Makefile` (`make test-all`).
-- [x] 15 rapports HTML générés et intégrés au dépôt.
+- [x] 15 rapports HTML générés et intégrés au dépôt dans `reports/`.
 - [x] Intégration des 22 spécifications Markdown dans `CIS_DATA/`.
 
 ---
@@ -27,7 +27,9 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 
 #### 1. Moteur d'Audit Unifié (`audit_cis.py`)
 - CLI centralisée d'exécution autonome avec gestion des versions (`python3 audit_cis.py --version`, `--target <target>`, `--all`, `--auto-detect`, `--list-targets`).
+- API Python programmatique native (`from audit_cis import run_single_audit, list_targets, get_target_info, TARGET_MAP`).
 - Affichage synthétique des statistiques (827 contrôles d'audit répartis sur les 15 cibles bases de données).
+- Création dynamique automatique du sous-dossier de sortie des rapports HTML/JSON.
 - Moteur d'exécution 100% PSL.
 
 #### 2. Routine Pre-Commit Python (`scripts/pre_commit_checks.py` & `make pre-commit`)
