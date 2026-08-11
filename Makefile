@@ -444,3 +444,17 @@ clean-cassandra50:
 
 test-cassandra50: clean-cassandra50 build-cassandra50 run-cassandra50 audit-cassandra50 report-cassandra50 clean-cassandra50
 	@echo "Full test cycle for Cassandra 5.0 completed."
+
+
+.PHONY: pre-commit install-hooks audit-unified
+
+pre-commit:
+	bash scripts/pre-commit.sh
+
+install-hooks:
+	chmod +x scripts/pre-commit.sh
+	cp scripts/pre-commit.sh .git/hooks/pre-commit
+	@echo "✅ Git pre-commit hook installed successfully!"
+
+audit-unified:
+	python3 audit_cis.py --list-targets

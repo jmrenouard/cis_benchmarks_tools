@@ -4,6 +4,14 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 
 ---
 
+## 🔒 Contrainte Globale d'Architecture : Python Standard Library (PSL ONLY)
+
+> [!IMPORTANT]
+> L'ensemble du code de la suite d'audit CIS (moteur d'exécution, scripts d'audit `audit_cis_*.py`, script unifié `audit_cis.py`, génération de rapports HTML/JSON) utilise **EXCLUSIVEMENT les modules de la bibliothèque standard Python (Python Standard Library - PSL)**.
+> **Aucune dépendance externe tierce** (ex. `jinja2`, `yaml`, `requests`) n'est autorisée, garantissant une exécution nomade, sans installation de paquets `pip`, dans n'importe quel environnement Linux / Docker.
+
+---
+
 ## 📅 Jalons & Phases de Développement
 
 ### Phase 1 : Consolidation & Standardisation (Réalisé ✅)
@@ -15,32 +23,29 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 
 ---
 
-### Phase 2 : Refactorisation de l'Architecture (Backlog court terme 🎯)
+### Phase 2 : Refactorisation de l'Architecture & Script Unifié (Réalisé ✅)
 
-#### 1. Moteur d'Audit Unifié (`cis_audit_engine`)
-- Mettre en place un module Python centralisé rehaussant la réutilisabilité du code entre les scripts `audit_cis_*.py`.
-- Séparer la définition des contrôles (format YAML ou JSON) du moteur d'exécution Python.
+#### 1. Script d'Audit Unifié (`audit_cis.py`)
+- Moteur d'audit centralisé permettant d'exécuter n'importe quel benchmark CIS via une CLI unique (`python3 audit_cis.py --target <target>`).
+- Auto-détection des bases de données (`--auto-detect`) et exécution globale (`--all`).
+- Respect strict de la PSL (modules `argparse`, `json`, `subprocess`, `os`, `sys`, `re`, `html`, `datetime`).
 
-#### 2. Sécurisation des Exécutions Subprocess (`shell=False`)
-- Remplacer les chaînes de commande brutes par des tableaux d'arguments stricts.
-- Valider systématiquement l'existence des binaires clients (`mysql`, `mariadb`, `psql`, `mongosh`, `cqlsh`).
+#### 2. Routine Pre-Commit (`scripts/pre-commit.sh` & `make pre-commit`)
+- Validation automatique de la syntaxe Python (`py_compile`).
+- Vérification stricte du non-usage de dépendances tierces (PSL compliance check).
+- Validation de la syntaxe des scripts shell (`bash -n`).
 
-#### 3. Rendu de Rapport via Jinja2
-- Migrer du formatage de chaîne natif Python (`str.format`) vers un moteur de template robuste (Jinja2).
-- Éliminer totalement les risques d'erreurs de syntaxe CSS (`KeyError`).
+#### 3. Sécurisation des Exécutions Subprocess (`shell=False`)
+- Remplacer les chaînes de commande brutes par des tableaux d'arguments stricts dans les prochains modules.
 
 ---
 
 ### Phase 3 : Extensions Système & CI/CD (Backlog long terme 🚀)
 
 #### 1. Extension aux Briques Système & Linux (RHEL 8 / 9 / 10 / STIG)
-- Développement des modules d'audit pour Red Hat Enterprise Linux basés sur les spécifications présentes dans `CIS_DATA/`.
+- Développement des modules d'audit pour Red Hat Enterprise Linux basés sur les spécifications présentes dans `CIS_DATA/` en utilisant la PSL.
 - Support d'audit local / SSH à distance.
 
 #### 2. Pipeline CI/CD GitHub Actions
-- Automatisation des tests de non-régression (`make test-all`) sur chaque Pull Request.
-- Validation automatique de la syntaxe des scripts (`py_compile`) et scan de sécurité (`bandit` / Sourcery).
-
-#### 3. Dashboard Centralisé & Export Multi-Formats
-- Génération d'exports JSON / SARIF pour intégration SIEM et outils DevSecOps.
-- Vue synthétique consolidée multi-bases et multi-serveurs.
+- Automatisation de la routine `make pre-commit` et `make test-all` sur chaque Pull Request.
+- Scan de sécurité statique de code.
