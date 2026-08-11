@@ -43,11 +43,11 @@ RECOMMENDATIONS_DATA = [
 
     # Catégorie 3: Authorization
     {"category": "3 Authorization", "number": "3.1", "name": "S'assurer du moindre privilège pour les comptes de base de données", "type": "Manual",
-     "test_procedure": f"Exécuter '{MONGODB_SHELL_CMD} \"printjson(db.system.users.find({{\\\"roles.role\\\": {\\\"$in\\\": [\\\"dbOwner\\\", \\\"userAdmin\\\", \\\"userAdminAnyDatabase\\\"]},\\\"roles.db\\\": \\\"admin\\\" }}).toArray())\"' et analyser manuellement la sortie.",
+     "test_procedure": "Exécuter '" + MONGODB_SHELL_CMD + " \"printjson(db.system.users.find({\"roles.role\": {\"$in\": [\"dbOwner\", \"userAdmin\", \"userAdminAnyDatabase\"]},\"roles.db\": \"admin\" }).toArray())\"' et analyser manuellement la sortie.",
      "expected_output": None, 
      "remediation": "Supprimer les comptes listés avec des rôles à privilèges élevés dans la base de données 'admin'."},
     {"category": "3 Authorization", "number": "3.2", "name": "S'assurer que le contrôle d'accès basé sur les rôles est activé et configuré correctement", "type": "Manual",
-     "test_procedure": f"Exécuter '{MONGODB_SHELL_CMD} \"printjson(db.getUser())\"' et '{MONGODB_SHELL_CMD} \"printjson(db.getRole())\"'. Vérifier manuellement les rôles et privilèges.",
+     "test_procedure": "Exécuter '" + MONGODB_SHELL_CMD + " \"printjson(db.getUser())\"' et '" + MONGODB_SHELL_CMD + " \"printjson(db.getRole())\"'. Vérifier manuellement les rôles et privilèges.",
      "expected_output": None, 
      "remediation": "Établir des rôles, assigner des privilèges appropriés aux rôles, assigner des utilisateurs aux rôles, supprimer les privilèges individuels superflus."},
     {"category": "3 Authorization", "number": "3.3", "name": "S'assurer que MongoDB est exécuté en utilisant un compte de service dédié et non privilégié", "type": "Manual",
@@ -377,6 +377,10 @@ def evaluate_condition(condition, stdout, stderr, returncode):
         return returncode == 0
     elif condition_type == "returncode_equals":
         return returncode == expected_value
+    elif condition_type == "stdout_not_equals":
+        return stdout != expected_value
+    elif condition_type == "stdout_not_contains":
+        return expected_value not in stdout
     elif condition_type == "stdout_equals":
         # L'output peut contenir des espaces/retours à la ligne supplémentaires, on le nettoie.
         return stdout.strip() == str(expected_value) # Convertir l'attendu en chaîne pour comparaison
