@@ -1,0 +1,579 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport CIS Apache Cassandra 4.0.0 Benchmark</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <style>
+        /* Styles personnalisés pour le rapport */
+        .status-pass { color: #10B981; } /* green-500 */
+        .status-fail { color: #EF4444; } /* red-500 */
+        .status-manual { color: #F59E0B; } /* yellow-500 */
+        .status-error { color: #6B7280; } /* gray-500 */
+        .status-na { color: #9CA3AF; } /* gray-400 */
+        pre { white-space: pre-wrap; word-wrap: break-word; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;}
+        table { table-layout: fixed; width: 100%; } /* Ajouté pour un meilleur contrôle de la largeur des colonnes */
+        td, th { word-break: break-word; } /* Permettre la coupure des mots longs */
+        .chart-container { width: 300px; height: 300px; margin: 20px auto; } /* Style pour le conteneur du graphique */
+        .category-chart-container { width: 80%; margin: 20px auto; } /* Style pour le conteneur du graphique par catégorie */
+        code { background-color: #e5e7eb; padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace;}
+    </style>
+</head>
+<body class="font-sans bg-gray-100 text-gray-800 p-6">
+    <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS Apache Cassandra 4.0.0 Benchmark</h1>
+        <p class="text-gray-600 mb-4">Date du rapport : 11/08/2026 14:04:15</p>
+        <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS Apache Cassandra 4.0.0 Benchmark (Version 1.3.0).</p>
+
+        <div class="mb-8 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">Score Global</h2>
+            <p class="text-xl font-bold text-yellow-600">50.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis (6/12 vérifiés).</p>
+            <p class="text-gray-700">8 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables (ex: plugin non installé, commande introuvable).</p>
+
+            <div class="chart-container">
+                <canvas id="overallScoreChart"></canvas>
+            </div>
+        </div>
+
+        
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">1 Installation et Mises à jour</h2>
+            <p class="text-lg font-bold text-green-600">100.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (4/4 vérifiés).</p>
+            <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer qu&#x27;un utilisateur et un groupe dédiés existent pour Cassandra</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>getent group cassandra &amp;&amp; getent passwd cassandra</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+getent group cassandra &amp;&amp; getent passwd cassandra</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Créer un groupe et un utilisateur dédiés : groupadd cassandra &amp;&amp; useradd -g cassandra -s /sbin/nologin cassandra.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la dernière version de Java est installée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>java -version 2&gt;&amp;1 | head -1</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+openjdk version &quot;11.0.31&quot; 2026-04-21
+Stderr:
+
+Return Code: 0</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Mettre à jour Java vers la dernière version LTS supportée (Java 11, 17 ou 21).</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.3</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la dernière version de Python est installée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>python3 --version 2&gt;&amp;1</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+Python 3.11.2
+Stderr:
+
+Return Code: 0</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Mettre à jour Python vers la dernière version 3.x.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.4</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la dernière version de Cassandra est installée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cassandra -v 2&gt;/dev/null || nodetool version 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+4.0.21
+Stderr:
+
+Return Code: 0</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Mettre à jour Cassandra vers la dernière version 4.0.x.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.5</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que le service Cassandra est exécuté en tant qu&#x27;utilisateur non-root</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>ps -ef | grep -E &#x27;[c]assandra&#x27; | awk &#x27;{print $1}&#x27; | head -n 1</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+cassand+
+Stderr:
+
+Return Code: 0</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer le service Cassandra pour qu&#x27;il s&#x27;exécute sous un utilisateur dédié (ex: &#x27;cassandra&#x27;).</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.6</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les horloges sont synchronisées sur tous les nœuds</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>timedatectl status 2&gt;/dev/null | grep &#x27;synchronized&#x27; || ntpstat 2&gt;/dev/null || chronyc tracking 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+timedatectl status 2&gt;/dev/null | grep &#x27;synchronized&#x27; || ntpstat 2&gt;/dev/null || chronyc tracking 2&gt;/dev/null</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">2 Authentification et Autorisation</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/2 vérifiés).</p>
+            <p class="text-gray-700">0 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">2.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que l&#x27;authentification est activée pour les bases de données Cassandra</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^authenticator:&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+authenticator: AllowAllAuthenticator
+Stderr:
+
+Return Code: 0
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Modifier cassandra.yaml pour définir &#x27;authenticator: PasswordAuthenticator&#x27; et redémarrer Cassandra.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">2.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que l&#x27;autorisation est activée pour les bases de données Cassandra</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^authorizer:&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+authorizer: AllowAllAuthorizer
+Stderr:
+
+Return Code: 0
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Modifier cassandra.yaml pour définir &#x27;authorizer: CassandraAuthorizer&#x27; et redémarrer Cassandra.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">3 Contrôle d&#x27;accès</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/3 vérifiés).</p>
+            <p class="text-gray-700">5 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les rôles cassandra et superuser sont séparés</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep -v &#x27;cassandra&#x27; | grep -c &#x27;True&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+0
+Stderr:
+
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH SUPERUSER = false;</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que le mot de passe par défaut du rôle cassandra est changé</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;SELECT * FROM system_auth.roles WHERE role=&#x27;cassandra&#x27;;&quot; -u cassandra -p cassandra 2&gt;&amp;1 | grep -c &#x27;AuthenticationFailed\|Unauthorized\|Bad credentials&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+0
+Stderr:
+
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = &#x27;&lt;nouveau_mot_de_passe&gt;&#x27;;</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.3</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer qu&#x27;il n&#x27;y a pas de rôles ou privilèges excessifs</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Révoquer les rôles et privilèges inutiles. Utiliser REVOKE et DROP ROLE.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.4</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que Cassandra est exécuté sous un compte de service dédié</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>ps -ef | grep -E &#x27;[c]assandra&#x27; | awk &#x27;{print $1}&#x27; | head -n 1</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+cassand+
+Stderr:
+
+Return Code: 0
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer le service Cassandra pour qu&#x27;il s&#x27;exécute sous l&#x27;utilisateur &#x27;cassandra&#x27;.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.5</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que Cassandra n&#x27;écoute que sur les interfaces autorisées</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^listen_address:|^rpc_address:&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+grep -E &#x27;^listen_address:|^rpc_address:&#x27; /etc/cassandra/cassandra.yaml</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Modifier cassandra.yaml pour définir &#x27;listen_address&#x27; et &#x27;rpc_address&#x27; sur des interfaces spécifiques.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.6</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les autorisations Data Center sont activées</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^authorizer:&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+grep -E &#x27;^authorizer:&#x27; /etc/cassandra/cassandra.yaml</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer l&#x27;autorisation par Data Center si nécessaire.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.7</td>
+                        <td class="py-3 px-4 text-left align-top">Réviser les rôles définis par l&#x27;utilisateur</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Supprimer les rôles inutiles et révoquer les privilèges excessifs.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.8</td>
+                        <td class="py-3 px-4 text-left align-top">Réviser les rôles superuser/administrateur</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep &#x27;True&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep &#x27;True&#x27;</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Limiter le nombre de rôles superuser au strict nécessaire.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">4 Audit et Journalisation</h2>
+            <p class="text-lg font-bold text-green-600">100.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/1 vérifiés).</p>
+            <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">4.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la journalisation est activée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>ls -la /var/log/cassandra/system.log 2&gt;/dev/null || ls -la /opt/cassandra/logs/system.log 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+-rw-r--r-- 1 cassandra cassandra 30294 Aug 11 14:04 /var/log/cassandra/system.log
+Stderr:
+
+Return Code: 0</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Vérifier que la journalisation est configurée dans logback.xml et que les fichiers de log existent.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">4.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que l&#x27;audit est activé</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^audit_logging_options:&#x27; /etc/cassandra/cassandra.yaml || grep -A5 &#x27;audit_logging_options&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+grep -E &#x27;^audit_logging_options:&#x27; /etc/cassandra/cassandra.yaml || grep -A5 &#x27;audit_logging_options&#x27; /etc/cassandra/cassandra.yaml</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Activer l&#x27;audit en configurant &#x27;audit_logging_options&#x27; dans cassandra.yaml (Cassandra 4.0+).</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">5 Chiffrement</h2>
+            <p class="text-lg font-bold text-yellow-600">50.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/2 vérifiés).</p>
+            <p class="text-gray-700">0 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">5.1</td>
+                        <td class="py-3 px-4 text-left align-top">Chiffrement inter-nœuds</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -A20 &#x27;server_encryption_options:&#x27; /etc/cassandra/cassandra.yaml | grep &#x27;internode_encryption&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+internode_encryption: none
+    # optional defaults to true if internode_encryption is none
+    # Set to a valid keystore if internode_encryption is dc, rack or all
+Stderr:
+
+Return Code: 0
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les certificats SSL/TLS.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">5.2</td>
+                        <td class="py-3 px-4 text-left align-top">Chiffrement client</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -A20 &#x27;client_encryption_options:&#x27; /etc/cassandra/cassandra.yaml | grep &#x27;enabled&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+enabled: false
+    # optional defaults to true when enabled is false, and false when enabled is true.
+    # Set keystore and keystore_password to valid keystores if enabled is true
+Stderr:
+
+Return Code: 0</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer client_encryption_options dans cassandra.yaml : enabled: true, et fournir les certificats SSL/TLS.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category-chart-container" style="height: 400px;"> {/* Hauteur augmentée */}
+            <canvas id="categoryChart"></canvas>
+        </div>
+
+
+    </div>
+
+    <script>
+        // Données pour le graphique global en camembert
+        const overallChartData = {
+            labels: ['Réussi', 'Échoué', 'Erreur', 'N/A'],
+            datasets: [{
+                label: 'Résultats des contrôles automatisés',
+                data: [6, 6, 0, 0],
+                backgroundColor: [
+                    '#10B981', // green-500
+                    '#EF4444', // red-500
+                    '#6B7280', // gray-500
+                    '#9CA3AF'  // gray-400
+                ],
+                hoverOffset: 4
+            }]
+        };
+
+        // Options de configuration pour le graphique global en camembert
+        const overallChartConfig = {
+            type: 'pie',
+            data: overallChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Répartition des contrôles automatisés (Global)'
+                    }
+                }
+            }
+        };
+
+        // Rendu du graphique global
+        const overallScoreChartCtx = document.getElementById('overallScoreChart');
+        if (overallScoreChartCtx) {
+            new Chart(overallScoreChartCtx, overallChartConfig);
+        }
+
+
+        // Données et configuration pour les graphiques à barres par catégorie
+        const categoryChartData = {
+            labels: ["1 Installation et Mises \u00e0 jour", "2 Authentification et Autorisation", "3 Contr\u00f4le d'acc\u00e8s", "4 Audit et Journalisation", "5 Chiffrement"], // Liste des noms de catégories
+            datasets: [
+                {
+                    label: 'Réussi',
+                    data: [4, 0, 0, 1, 1],
+                    backgroundColor: '#10B981', // green-500
+                },
+                {
+                    label: 'Échoué',
+                    data: [0, 2, 3, 0, 1],
+                    backgroundColor: '#EF4444', // red-500
+                },
+                {
+                    label: 'Erreur',
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: '#6B7280', // gray-500
+                },
+                {
+                    label: 'N/A',
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: '#9CA3AF', // gray-400
+                }
+            ]
+        };
+
+        const categoryChartConfig = {
+            type: 'bar',
+            data: categoryChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Permettre au graphique de se redimensionner verticalement
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Répartition des contrôles automatisés par catégorie'
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Nombre de contrôles'
+                        }
+                    }
+                }
+            }
+        };
+
+        // Rendu du graphique à barres par catégorie
+        const categoryScoreChartCtx = document.getElementById('categoryChart');
+        if (categoryScoreChartCtx) {
+            new Chart(categoryScoreChartCtx, categoryChartConfig);
+        }
+
+    </script>
+</body>
+</html>
