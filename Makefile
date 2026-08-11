@@ -1,40 +1,40 @@
 # Makefile for CIS Benchmark Tools
 
-# Variables
-MYSQL80_DOCKERFILE = Dockerfile_mysql80
-MYSQL80_IMAGE = mysql80-audit
-MYSQL80_CONTAINER = mysql80-test
-MYSQL80_SCRIPT = audit_cis_mysql_80.py
-MYSQL80_REPORT = rapport_cis_mysql_8.html
+# Variables for PostgreSQL 17
+POSTGRESQL17_DOCKERFILE = Dockerfile_postgresql17
+POSTGRESQL17_IMAGE = postgresql17-audit
+POSTGRESQL17_CONTAINER = postgresql17-test
+POSTGRESQL17_SCRIPT = audit_cis_postgresql_17.py
+POSTGRESQL17_REPORT = rapport_cis_postgresql_17.html
 
-.PHONY: help build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80 test-mysql80
+.PHONY: help build-postgresql17 run-postgresql17 audit-postgresql17 report-postgresql17 clean-postgresql17 test-postgresql17
 
 help:
-	@echo "Available commands:"
-	@echo "  make test-mysql80    - Complete cycle: build, run, audit, get report, and clean for MySQL 8.0"
-	@echo "  make build-mysql80   - Build the Docker image"
-	@echo "  make run-mysql80     - Start the Docker container"
-	@echo "  make audit-mysql80   - Run the audit script inside the container"
-	@echo "  make report-mysql80  - Copy the report from the container to the host"
-	@echo "  make clean-mysql80   - Remove the Docker container"
+	@echo "Available commands for PostgreSQL 17:"
+	@echo "  make test-postgresql17    - Complete cycle: build, run, audit, get report, and clean"
+	@echo "  make build-postgresql17   - Build the Docker image"
+	@echo "  make run-postgresql17     - Start the Docker container"
+	@echo "  make audit-postgresql17   - Run the audit script inside the container"
+	@echo "  make report-postgresql17  - Copy the report from the container to the host"
+	@echo "  make clean-postgresql17   - Remove the Docker container"
 
-build-mysql80:
-	docker build -f $(MYSQL80_DOCKERFILE) -t $(MYSQL80_IMAGE) .
+build-postgresql17:
+	docker build -f $(POSTGRESQL17_DOCKERFILE) -t $(POSTGRESQL17_IMAGE) .
 
-run-mysql80:
-	docker run -d --name $(MYSQL80_CONTAINER) $(MYSQL80_IMAGE)
-	@echo "Waiting for MySQL to initialize (15s)..."
+run-postgresql17:
+	docker run -d --name $(POSTGRESQL17_CONTAINER) $(POSTGRESQL17_IMAGE)
+	@echo "Waiting for PostgreSQL 17 to initialize (15s)..."
 	sleep 15
 
-audit-mysql80:
-	docker exec $(MYSQL80_CONTAINER) python3 /datas/$(MYSQL80_SCRIPT)
+audit-postgresql17:
+	docker exec $(POSTGRESQL17_CONTAINER) python3 /datas/$(POSTGRESQL17_SCRIPT)
 
-report-mysql80:
-	docker cp $(MYSQL80_CONTAINER):/datas/$(MYSQL80_REPORT) .
-	@echo "Report copied to $(MYSQL80_REPORT)"
+report-postgresql17:
+	docker cp $(POSTGRESQL17_CONTAINER):/datas/$(POSTGRESQL17_REPORT) .
+	@echo "Report copied to $(POSTGRESQL17_REPORT)"
 
-clean-mysql80:
-	docker rm -f $(MYSQL80_CONTAINER) || true
+clean-postgresql17:
+	docker rm -f $(POSTGRESQL17_CONTAINER) || true
 
-test-mysql80: clean-mysql80 build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80
-	@echo "Full test cycle for MySQL 8.0 completed."
+test-postgresql17: clean-postgresql17 build-postgresql17 run-postgresql17 audit-postgresql17 report-postgresql17 clean-postgresql17
+	@echo "Full test cycle for PostgreSQL 17 completed."
