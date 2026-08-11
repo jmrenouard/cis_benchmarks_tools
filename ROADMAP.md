@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Roadmap & Backlog (v1.2.1)
+# 🗺️ CIS Benchmarks Tools - Roadmap & Backlog (v1.2.2)
 
 Ce document présente la feuille de route stratégique, la vision d'architecture et les évolutions prévues pour la suite d'outils d'audit CIS.
 
@@ -7,7 +7,7 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 ## 🔒 Contrainte Globale d'Architecture & Processus de Release
 
 > [!IMPORTANT]
-> 1. **Python Standard Library (PSL ONLY)** : L'ensemble du code Python (moteur d'exécution, scripts d'audit `audit_cis_*.py`, script unifié `audit_cis.py`, génération de rapports, routine pre-commit) utilise **EXCLUSIVEMENT la bibliothèque standard Python**. Aucune dépendance externe (`jinja2`, `yaml`, `requests`) n'est autorisée.
+> 1. **Utiliser uniquement les modules standards Python 3 (PSL ONLY)** : L'ensemble du code Python (moteur d'exécution, scripts d'audit `audit_cis_*.py`, script unifié `audit_cis.py`, génération de rapports, routine pre-commit) utilise **EXCLUSIVEMENT la bibliothèque standard Python 3**. Aucune dépendance externe (`jinja2`, `yaml`, `requests`) n'est autorisée.
 > 2. **Mise à Jour Systématique** : À chaque modification de code Python, le numéro de version (`VERSION`), la `ROADMAP.md` et `POTENTIAL_ISSUES.md` sont **automatiquement mis à jour et validés**.
 
 ---
@@ -23,7 +23,7 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 
 ---
 
-### Phase 2 : Moteur Unifié, Modularisation PSL & Arborescence (Réalisé ✅ - v1.2.1)
+### Phase 2 : Moteur Unifié, Modularisation PSL & Arborescence (Réalisé ✅ - v1.2.2)
 
 #### 1. Moteur d'Audit Unifié (`audit_cis.py`)
 - CLI centralisée d'exécution autonome avec gestion des versions (`python3 audit_cis.py --version`, `--target <target>`, `--all`, `--auto-detect`, `--list-targets`).
