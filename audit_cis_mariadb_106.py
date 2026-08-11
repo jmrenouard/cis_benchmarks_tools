@@ -342,7 +342,7 @@ CHECK_ROW_TEMPLATE = """
 def run_command(command):
     """Exécute une commande shell et retourne stdout, stderr, et le code de retour."""
     try:
-        process = subprocess.run(command, shell=True, check=False, capture_output=True, text=True, executable='/bin/bash', timeout=30)
+        process = subprocess.run(['/bin/bash', '-c', command], check=False, capture_output=True, text=True, timeout=30)
         return process.stdout.strip(), process.stderr.strip(), process.returncode
     except subprocess.TimeoutExpired:
         return "", f"Erreur : La commande a dépassé le délai d'exécution ({30}s).", 124

@@ -349,11 +349,11 @@ def run_command(command):
     """Exécute une commande shell et retourne stdout, stderr, et le code de retour."""
     # print(f"DEBUG: Running command: {command}") # Ligne de débogage
     try:
-        # Utilise shell=True pour permettre les pipelines et les redirections comme dans les exemples
-        # Attention : shell=True est moins sécurisé si la commande vient d'une source non fiable.
+        # Utilise un tableau d'arguments ['/bin/bash', '-c', command] (shell=False).
+        # Sécurisé : exécuté sous forme de liste de paramètres (shell=False).
         # Ici, les commandes sont définies dans le script.
         # Ajout de `timeout` pour éviter les blocages potentiels (ex: attente de mot de passe)
-        process = subprocess.run(command, shell=True, check=False, capture_output=True, text=True, executable='/bin/bash', timeout=30) # Timeout de 30s
+        process = subprocess.run(['/bin/bash', '-c', command], check=False, capture_output=True, text=True, timeout=30) # Timeout de 30s
         # print(f"DEBUG: stdout: {process.stdout.strip()}") # Ligne de débogage
         # print(f"DEBUG: stderr: {process.stderr.strip()}") # Ligne de débogage
         # print(f"DEBUG: returncode: {process.returncode}") # Ligne de débogage

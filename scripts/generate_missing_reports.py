@@ -1,52 +1,82 @@
-import subprocess
-import os
-import time
+#!/usr/bin/env python3
+"""
+Generate Missing HTML Audit Reports (Python Standard Library ONLY).
+Version: 1.4.1
 
-targets = [
-    ('postgresql18', 'docker/Dockerfile_postgresql18', 'audit_cis_postgresql_18.py', 'rapport_cis_postgresql_18.html', 'test_pg18', 15, '-e POSTGRES_PASSWORD=rootpass'),
-    ('mongodb7', 'docker/Dockerfile_mongodb7', 'audit_cis_mongodb_7.py', 'rapport_cis_mongodb_7.html', 'test_mongo7', 20, ''),
-    ('mongodb8', 'docker/Dockerfile_mongodb8', 'audit_cis_mongodb_8.py', 'rapport_cis_mongodb_8.html', 'test_mongo8', 20, ''),
-    ('cassandra40', 'docker/Dockerfile_cassandra40', 'audit_cis_cassandra_40.py', 'rapport_cis_cassandra_40.html', 'test_cassandra40', 45, ''),
-    ('cassandra41', 'docker/Dockerfile_cassandra41', 'audit_cis_cassandra_41.py', 'rapport_cis_cassandra_41.html', 'test_cassandra41', 45, ''),
-    ('cassandra50', 'docker/Dockerfile_cassandra50', 'audit_cis_cassandra_50.py', 'rapport_cis_cassandra_50.html', 'test_cassandra50', 45, ''),
+Automates running audit scripts inside Docker containers for targets without reports,
+then extracts the resulting HTML report files. Zero third-party dependencies.
+"""
+
+import os
+import subprocess
+import sys
+
+DOCKER_MAPPING = [
+    ("docker/Dockerfile.mariadb_106", "mariadb_106", "audit_cis_mariadb_106.py", "rapport_cis_mariadb_10.6.html", ""),
+    ("docker/Dockerfile.mariadb_1011", "mariadb_1011", "audit_cis_mariadb_1011.py", "rapport_cis_mariadb_10.11.html", ""),
+    ("docker/Dockerfile.mysql_80", "mysql_80", "audit_cis_mysql_80.py", "rapport_cis_mysql_enterprise_8.0.html", "-e MYSQL_ROOT_PASSWORD=rootpassword"),
+    ("docker/Dockerfile.mysql_community_84", "mysql_community_84", "audit_cis_mysql_community_84.py", "rapport_cis_mysql_community_8.4.html", "-e MYSQL_ROOT_PASSWORD=rootpassword"),
+    ("docker/Dockerfile.mysql_enterprise_84", "mysql_enterprise_84", "audit_cis_mysql_enterprise_84.py", "rapport_cis_mysql_enterprise_8.4.html", "-e MYSQL_ROOT_PASSWORD=rootpassword"),
+    ("docker/Dockerfile.mysql_community_97", "mysql_community_97", "audit_cis_mysql_community_97.py", "rapport_cis_mysql_community_9.7.html", "-e MYSQL_ROOT_PASSWORD=rootpassword"),
+    ("docker/Dockerfile.mysql_enterprise_97", "mysql_enterprise_97", "audit_cis_mysql_enterprise_97.py", "rapport_cis_mysql_enterprise_9.7.html", "-e MYSQL_ROOT_PASSWORD=rootpassword"),
+    ("docker/Dockerfile.postgresql_16", "postgresql_16", "audit_cis_postgresql_16.py", "rapport_cis_postgresql_16.html", ""),
+    ("docker/Dockerfile.postgresql_17", "postgresql_17", "audit_cis_postgresql_17.py", "rapport_cis_postgresql_17.html", ""),
+    ("docker/Dockerfile.postgresql_18", "postgresql_18", "audit_cis_postgresql_18.py", "rapport_cis_postgresql_18.html", ""),
+    ("docker/Dockerfile.mongodb_7", "mongodb_7", "audit_cis_mongodb_7.py", "rapport_cis_mongodb_7.html", ""),
+    ("docker/Dockerfile.mongodb_8", "mongodb_8", "audit_cis_mongodb_8.py", "rapport_cis_mongodb_8.html", ""),
+    ("docker/Dockerfile.cassandra_40", "cassandra_40", "audit_cis_cassandra_40.py", "rapport_cis_cassandra_4.0.html", ""),
+    ("docker/Dockerfile.cassandra_41", "cassandra_41", "audit_cis_cassandra_41.py", "rapport_cis_cassandra_4.1.html", ""),
+    ("docker/Dockerfile.cassandra_50", "cassandra_50", "audit_cis_cassandra_50.py", "rapport_cis_cassandra_5.0.html", ""),
 ]
 
-for name, df, script, report, tag, wait, extra_args in targets:
-    print(f"\n==================================================")
-    print(f"Generating report for {name} ({report})...")
 
-    # Build image
-    print(f"  Building {df}...")
-    subprocess.run(f"docker build -f {df} -t {tag}:report .", shell=True, check=True)
+def run_cmd(cmd_list, check=False):
+    """Execute command as parameter list without shell=True for security."""
+    return subprocess.run(cmd_list, check=check, capture_output=True, text=True)
 
-    # Clean previous container
-    subprocess.run(f"docker rm -f {tag}_run 2>/dev/null", shell=True)
 
-    # Run container
-    print(f"  Starting container {tag}_run...")
-    subprocess.run(f"docker run -d {extra_args} --name {tag}_run {tag}:report", shell=True, check=True)
+def build_and_generate_report(df, tag, script, report, extra_args_str):
+    """Build Docker container and run audit script to extract report."""
+    print(f"🐳 Building Docker image for {tag}...")
+    run_cmd(["docker", "build", "-f", df, "-t", f"{tag}:report", "."], check=True)
 
-    print(f"  Waiting {wait}s for database initialization...")
-    time.sleep(wait)
+    run_cmd(["docker", "rm", "-f", f"{tag}_run"])
 
-    # Execute audit script
-    print(f"  Running audit script {script}...")
-    subprocess.run(f"docker exec {tag}_run python3 /datas/{script}", shell=True)
+    extra_args = extra_args_str.split() if extra_args_str else []
+    run_cmd_list = ["docker", "run", "-d"] + extra_args + ["--name", f"{tag}_run", f"{tag}:report"]
+    print(f"🚀 Running container {tag}_run...")
+    run_cmd(run_cmd_list, check=True)
 
-    # Copy report
-    print(f"  Copying report {report}...")
-    cp_res = subprocess.run(f"docker cp {tag}_run:/datas/{report} .", shell=True)
+    print(f"📊 Executing audit script inside container...")
+    run_cmd(["docker", "exec", f"{tag}_run", "python3", f"/datas/{script}"])
+
+    os.makedirs("reports", exist_ok=True)
+    target_path = os.path.join("reports", report)
+
+    print(f"📥 Copying generated report to {target_path}...")
+    cp_res = run_cmd(["docker", "cp", f"{tag}_run:/datas/{report}", target_path])
     if cp_res.returncode != 0:
-        # Fallback if report name differs
-        subprocess.run(f"docker exec {tag}_run cat /datas/{report} > {report}", shell=True)
+        with open(target_path, "w", encoding="utf-8") as out:
+            exec_cat = run_cmd(["docker", "exec", f"{tag}_run", "cat", f"/datas/{report}"])
+            out.write(exec_cat.stdout)
 
-    # Cleanup container
-    subprocess.run(f"docker rm -f {tag}_run 2>/dev/null", shell=True)
+    run_cmd(["docker", "rm", "-f", f"{tag}_run"])
+    print(f"✅ Generated report for {tag}: {target_path}")
 
-    if os.path.exists(report):
-        size = os.path.getsize(report)
-        print(f"  ✅ Report {report} generated successfully ({size} bytes)")
-    else:
-        print(f"  ❌ Report {report} generation failed")
 
-print("\n🎉 All missing reports processing completed!")
+def main():
+    print("🔄 Generating missing HTML audit reports...")
+    for df, tag, script, report, extra_args in DOCKER_MAPPING:
+        report_path = os.path.join("reports", report)
+        if not os.path.exists(report_path):
+            print(f"⚡ Report missing for {tag}, generating...")
+            try:
+                build_and_generate_report(df, tag, script, report, extra_args)
+            except Exception as e:
+                print(f"❌ Failed to generate report for {tag}: {e}")
+        else:
+            print(f"✓ Report already exists: {report_path}")
+
+
+if __name__ == "__main__":
+    main()

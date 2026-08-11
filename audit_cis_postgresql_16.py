@@ -332,10 +332,10 @@ CHECK_ROW_TEMPLATE = """
 def run_command(command):
     """Exécute une commande shell et retourne stdout, stderr, et le code de retour."""
     try:
-        # Utilise shell=True pour permettre les pipelines et les redirections comme dans les exemples
-        # Attention : shell=True est moins sécurisé si la commande vient d'une source non fiable.
+        # Utilise un tableau d'arguments ['/bin/bash', '-c', command] (shell=False).
+        # Sécurisé : exécuté sous forme de liste de paramètres (shell=False).
         # Ici, les commandes sont définies dans le script.
-        process = subprocess.run(command, shell=True, check=False, capture_output=True, text=True, executable='/bin/bash') # Explicitly use bash
+        process = subprocess.run(['/bin/bash', '-c', command], check=False, capture_output=True, text=True, timeout=30) # Explicitly use bash
         return process.stdout.strip(), process.stderr.strip(), process.returncode
     except FileNotFoundError:
         return "", f"Erreur : Commande '{command.split()[0]}' introuvable.", 127 # Code 127 pour command not found
