@@ -1,5 +1,39 @@
 #!/usr/bin/env python3
 """
+CIS Audit Engine Bundler (Python Standard Library ONLY).
+Concatenates and unifies all individual Python benchmark scripts (audit_cis_*.py)
+into the single executable `audit_cis.py` distribution file.
+"""
+
+import os
+import sys
+
+TARGET_METADATA = [
+    ("mariadb106", "audit_cis_mariadb_106.py", "MariaDB 10.6"),
+    ("mariadb1011", "audit_cis_mariadb_1011.py", "MariaDB 10.11"),
+    ("mysql80", "audit_cis_mysql_80.py", "MySQL Enterprise 8.0"),
+    ("mysql-community84", "audit_cis_mysql_community_84.py", "MySQL Community 8.4"),
+    ("mysql-enterprise84", "audit_cis_mysql_enterprise_84.py", "MySQL Enterprise 8.4"),
+    ("mysql-community97", "audit_cis_mysql_community_97.py", "MySQL Community 9.7"),
+    ("mysql-enterprise97", "audit_cis_mysql_enterprise_97.py", "MySQL Enterprise 9.7"),
+    ("postgresql16", "audit_cis_postgresql_16.py", "PostgreSQL 16"),
+    ("postgresql17", "audit_cis_postgresql_17.py", "PostgreSQL 17"),
+    ("postgresql18", "audit_cis_postgresql_18.py", "PostgreSQL 18"),
+    ("mongodb7", "audit_cis_mongodb_7.py", "MongoDB 7"),
+    ("mongodb8", "audit_cis_mongodb_8.py", "MongoDB 8"),
+    ("cassandra40", "audit_cis_cassandra_40.py", "Apache Cassandra 4.0"),
+    ("cassandra41", "audit_cis_cassandra_41.py", "Apache Cassandra 4.1"),
+    ("cassandra50", "audit_cis_cassandra_50.py", "Apache Cassandra 5.0"),
+]
+
+
+def generate_unified_audit_script():
+    """Build the unified audit_cis.py single script using PSL only."""
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    target_file = os.path.join(repo_root, "audit_cis.py")
+
+    content = '''#!/usr/bin/env python3
+"""
 Unified CIS Benchmark Audit Suite Engine (Python Standard Library ONLY).
 Runs CIS security compliance audits for all 15 supported database targets:
   - MariaDB (10.6, 10.11)
@@ -23,22 +57,12 @@ import subprocess
 import sys
 
 TARGET_MAP = {
-    "mariadb106": ("audit_cis_mariadb_106.py", "MariaDB 10.6"),
-    "mariadb1011": ("audit_cis_mariadb_1011.py", "MariaDB 10.11"),
-    "mysql80": ("audit_cis_mysql_80.py", "MySQL Enterprise 8.0"),
-    "mysql-community84": ("audit_cis_mysql_community_84.py", "MySQL Community 8.4"),
-    "mysql-enterprise84": ("audit_cis_mysql_enterprise_84.py", "MySQL Enterprise 8.4"),
-    "mysql-community97": ("audit_cis_mysql_community_97.py", "MySQL Community 9.7"),
-    "mysql-enterprise97": ("audit_cis_mysql_enterprise_97.py", "MySQL Enterprise 9.7"),
-    "postgresql16": ("audit_cis_postgresql_16.py", "PostgreSQL 16"),
-    "postgresql17": ("audit_cis_postgresql_17.py", "PostgreSQL 17"),
-    "postgresql18": ("audit_cis_postgresql_18.py", "PostgreSQL 18"),
-    "mongodb7": ("audit_cis_mongodb_7.py", "MongoDB 7"),
-    "mongodb8": ("audit_cis_mongodb_8.py", "MongoDB 8"),
-    "cassandra40": ("audit_cis_cassandra_40.py", "Apache Cassandra 4.0"),
-    "cassandra41": ("audit_cis_cassandra_41.py", "Apache Cassandra 4.1"),
-    "cassandra50": ("audit_cis_cassandra_50.py", "Apache Cassandra 5.0"),
-}
+'''
+
+    for key, script_file, label in TARGET_METADATA:
+        content += f'    "{key}": ("{script_file}", "{label}"),\n'
+
+    content += '''}
 
 
 def list_targets():
@@ -63,7 +87,7 @@ def run_single_audit(target_key, output_html=None, output_json=None):
         print(f"❌ Script not found: {script_path}", file=sys.stderr)
         return False
 
-    print(f"\n🚀 Running CIS Audit for {label} ({script_file})...")
+    print(f"\\n🚀 Running CIS Audit for {label} ({script_file})...")
     start_time = datetime.datetime.now()
 
     cmd = [sys.executable, script_path]
@@ -137,7 +161,7 @@ def main():
         for target_key in TARGET_MAP:
             if run_single_audit(target_key):
                 success_count += 1
-        print(f"\n🎉 Completed: {success_count}/{len(TARGET_MAP)} CIS audits succeeded.")
+        print(f"\\n🎉 Completed: {success_count}/{len(TARGET_MAP)} CIS audits succeeded.")
         sys.exit(0 if success_count == len(TARGET_MAP) else 1)
 
     if args.target:
@@ -149,3 +173,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''
+
+    with open(target_file, "w", encoding="utf-8") as f:
+        f.write(content)
+    os.chmod(target_file, 0o755)
+    print(f"✅ audit_cis.py successfully bundled/updated ({os.path.getsize(target_file)} bytes)")
+
+
+if __name__ == "__main__":
+    generate_unified_audit_script()

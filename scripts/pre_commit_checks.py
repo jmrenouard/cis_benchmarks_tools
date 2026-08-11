@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+"""
+Pre-Commit Validation Routine (Python Standard Library ONLY).
+Concatenates Python benchmark code into `audit_cis.py` and runs syntax/PSL integrity checks.
+"""
+
+import ast
+import glob
+import os
+import py_compile
+import subprocess
+import sys
+
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+os.chdir(REPO_ROOT)
+
+
+def step_concatenate_python_code():
+    """Concatenate and synchronize python audit code into unified audit_cis.py script."""
+    print("📦 [1/4] Concatenating & updating unified Python audit script (audit_cis.py)...")
+    from scripts.bundle_audit_cis import generate_unified_audit_script
+    generate_unified_audit_script()
+
+
+def step_validate_python_syntax():
+    """Compile all python files to verify syntax using PSL py_compile."""
+    print("🐍 [2/4] Validating Python syntax across all scripts (py_compile)...")
+    py_files = sorted(glob.glob("*.py") + glob.glob("scripts/*.py"))
+    failed = False
+    for f in py_files:
+        try:
+            py_compile.compile(f, doraise=True)
+            print(f"  ✓ {f}")
+        except Exception as e:
+            print(f"  ❌ Syntax error in {f}: {e}", file=sys.stderr)
+            failed = True
+    if failed:
+        sys.exit(1)
+
+
+def step_check_psl_compliance():
+    """Verify that audit_cis.py uses ONLY Python Standard Library modules."""
+    print("🔒 [3/4] Verifying Python Standard Library (PSL) compliance on audit_cis.py...")
+    with open("audit_cis.py", "r", encoding="utf-8") as f:
+        tree = ast.parse(f.read(), filename="audit_cis.py")
+
+    stdlib_modules = getattr(sys, 'stdlib_module_names', set([
+        'argparse', 'ast', 'asyncio', 'base64', 'collections', 'contextlib',
+        'csv', 'dataclasses', 'datetime', 'enum', 'functools', 'glob', 'html',
+        'http', 'importlib', 'io', 'json', 'logging', 'math', 'os', 'pathlib',
+        'platform', 're', 'shutil', 'socket', 'sqlite3', 'string', 'subprocess',
+        'sys', 'time', 'typing', 'unittest', 'urllib', 'xml'
+    ]))
+
+    imported_modules = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                imported_modules.add(alias.name.split('.')[0])
+        elif isinstance(node, ast.ImportFrom):
+            if node.module:
+                imported_modules.add(node.module.split('.')[0])
+
+    non_psl = [m for m in imported_modules if m not in stdlib_modules and not m.startswith('audit_cis')]
+    if non_psl:
+        print(f"❌ Non-PSL imports detected in audit_cis.py: {non_psl}", file=sys.stderr)
+        sys.exit(1)
+    else:
+        print("  ✓ audit_cis.py uses Python Standard Library ONLY!")
+
+
+def step_check_shell_scripts():
+    """Validate syntax of all shell scripts in scripts/ using bash -n."""
+    print("📜 [4/4] Validating Shell script syntax (bash -n)...")
+    sh_files = sorted(glob.glob("scripts/*.sh"))
+    for sh_file in sh_files:
+        try:
+            subprocess.run(["bash", "-n", sh_file], check=True)
+            print(f"  ✓ {sh_file}")
+        except subprocess.CalledProcessError:
+            print(f"  ❌ Shell syntax error in {sh_file}", file=sys.stderr)
+            sys.exit(1)
+
+
+def main():
+    print("🔍 Running CIS Benchmarks Pre-Commit Routine (Python PSL)...")
+    print("=" * 60)
+    step_concatenate_python_code()
+    step_validate_python_syntax()
+    step_check_psl_compliance()
+    step_check_shell_scripts()
+    print("=" * 60)
+    print("🎉 All Pre-Commit Checks PASSED successfully!")
+
+
+if __name__ == "__main__":
+    main()
