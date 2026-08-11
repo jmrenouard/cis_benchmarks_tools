@@ -1,40 +1,40 @@
 # Makefile for CIS Benchmark Tools
 
-# Variables
-MYSQL80_DOCKERFILE = Dockerfile_mysql80
-MYSQL80_IMAGE = mysql80-audit
-MYSQL80_CONTAINER = mysql80-test
-MYSQL80_SCRIPT = audit_cis_mysql_80.py
-MYSQL80_REPORT = rapport_cis_mysql_8.html
+# Variables for Cassandra 5.0
+CASSANDRA50_DOCKERFILE = Dockerfile_cassandra50
+CASSANDRA50_IMAGE = cassandra50-audit
+CASSANDRA50_CONTAINER = cassandra50-test
+CASSANDRA50_SCRIPT = audit_cis_cassandra_50.py
+CASSANDRA50_REPORT = rapport_cis_cassandra_50.html
 
-.PHONY: help build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80 test-mysql80
+.PHONY: help build-cassandra50 run-cassandra50 audit-cassandra50 report-cassandra50 clean-cassandra50 test-cassandra50
 
 help:
-	@echo "Available commands:"
-	@echo "  make test-mysql80    - Complete cycle: build, run, audit, get report, and clean for MySQL 8.0"
-	@echo "  make build-mysql80   - Build the Docker image"
-	@echo "  make run-mysql80     - Start the Docker container"
-	@echo "  make audit-mysql80   - Run the audit script inside the container"
-	@echo "  make report-mysql80  - Copy the report from the container to the host"
-	@echo "  make clean-mysql80   - Remove the Docker container"
+	@echo "Available commands for Cassandra 5.0:"
+	@echo "  make test-cassandra50    - Complete cycle: build, run, audit, get report, and clean"
+	@echo "  make build-cassandra50   - Build the Docker image"
+	@echo "  make run-cassandra50     - Start the Docker container"
+	@echo "  make audit-cassandra50   - Run the audit script inside the container"
+	@echo "  make report-cassandra50  - Copy the report from the container to the host"
+	@echo "  make clean-cassandra50   - Remove the Docker container"
 
-build-mysql80:
-	docker build -f $(MYSQL80_DOCKERFILE) -t $(MYSQL80_IMAGE) .
+build-cassandra50:
+	docker build -f $(CASSANDRA50_DOCKERFILE) -t $(CASSANDRA50_IMAGE) .
 
-run-mysql80:
-	docker run -d --name $(MYSQL80_CONTAINER) $(MYSQL80_IMAGE)
-	@echo "Waiting for MySQL to initialize (15s)..."
-	sleep 15
+run-cassandra50:
+	docker run -d --name $(CASSANDRA50_CONTAINER) $(CASSANDRA50_IMAGE)
+	@echo "Waiting for Cassandra 5.0 to initialize (60s)..."
+	sleep 60
 
-audit-mysql80:
-	docker exec $(MYSQL80_CONTAINER) python3 /datas/$(MYSQL80_SCRIPT)
+audit-cassandra50:
+	docker exec $(CASSANDRA50_CONTAINER) python3 /datas/$(CASSANDRA50_SCRIPT)
 
-report-mysql80:
-	docker cp $(MYSQL80_CONTAINER):/datas/$(MYSQL80_REPORT) .
-	@echo "Report copied to $(MYSQL80_REPORT)"
+report-cassandra50:
+	docker cp $(CASSANDRA50_CONTAINER):/datas/$(CASSANDRA50_REPORT) .
+	@echo "Report copied to $(CASSANDRA50_REPORT)"
 
-clean-mysql80:
-	docker rm -f $(MYSQL80_CONTAINER) || true
+clean-cassandra50:
+	docker rm -f $(CASSANDRA50_CONTAINER) || true
 
-test-mysql80: clean-mysql80 build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80
-	@echo "Full test cycle for MySQL 8.0 completed."
+test-cassandra50: clean-cassandra50 build-cassandra50 run-cassandra50 audit-cassandra50 report-cassandra50 clean-cassandra50
+	@echo "Full test cycle for Cassandra 5.0 completed."
