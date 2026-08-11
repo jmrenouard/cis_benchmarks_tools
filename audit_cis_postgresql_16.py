@@ -156,8 +156,8 @@ HTML_TEMPLATE = """
             <p class="text-xl font-bold {overall_score_class}">{overall_score:.2f}%</p>
             <p class="text-gray-700">des contrôles automatisés réussis ({passed_automated}/{total_automated} vérifiés).</p>
              <p class="text-gray-700">{manual_checks} contrôles nécessitent une vérification manuelle.</p>
-             <p class="text-700">{error_checks} contrôles ont rencontré une erreur d'exécution.</p>
-             <p class="text-700">{na_checks} contrôles ne sont pas applicables (paramètre non reconnu, etc.).</p>
+             <p class="text-gray-700">{error_checks} contrôles ont rencontré une erreur d'exécution.</p>
+             <p class="text-gray-700">{na_checks} contrôles ne sont pas applicables (paramètre non reconnu, etc.).</p>
 
              <div class="chart-container">
                 <canvas id="overallScoreChart"></canvas>
@@ -284,9 +284,9 @@ CATEGORY_REPORT_TEMPLATE = """
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">{category_name}</h2>
             <p class="text-lg font-bold {category_score_class}">{category_score:.2f}%</p>
             <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie ({passed_automated}/{total_automated} vérifiés).</p>
-            <p class="text-700">{manual_checks} contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-700">{error_checks} contrôles ont rencontré une erreur d'exécution.</p>
-            <p class="text-700">{na_checks} contrôles ne sont pas applicables.</p>
+            <p class="text-gray-700">{manual_checks} contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">{error_checks} contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">{na_checks} contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
                 <thead>
@@ -358,6 +358,10 @@ def evaluate_condition(condition, stdout, stderr, returncode):
         return returncode == expected_value
     elif condition_type == "stdout_equals":
         return stdout == expected_value
+    elif condition_type == "stdout_not_equals":
+        return stdout != expected_value
+    elif condition_type == "stdout_not_contains":
+        return expected_value not in stdout
     elif condition_type == "stdout_contains":
         return expected_value in stdout
     elif condition_type == "stdout_not_empty":
