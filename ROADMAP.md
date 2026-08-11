@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Roadmap & Backlog (v1.2.2)
+# 🗺️ CIS Benchmarks Tools - Roadmap & Backlog (v1.2.3)
 
 Ce document présente la feuille de route stratégique, la vision d'architecture et les évolutions prévues pour la suite d'outils d'audit CIS.
 
@@ -23,7 +23,7 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 
 ---
 
-### Phase 2 : Moteur Unifié, Modularisation PSL & Arborescence (Réalisé ✅ - v1.2.2)
+### Phase 2 : Moteur Unifié, Modularisation PSL & Arborescence (Réalisé ✅ - v1.2.3)
 
 #### 1. Moteur d'Audit Unifié (`audit_cis.py`)
 - CLI centralisée d'exécution autonome avec gestion des versions (`python3 audit_cis.py --version`, `--target <target>`, `--all`, `--auto-detect`, `--list-targets`).
@@ -38,6 +38,7 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 - Contrôle de conformité de l'AST pour bloquer tout import non-PSL.
 - Validation de la syntaxe des scripts shell (`bash -n`).
 - Contrôle d'intégrité de la structure du projet (`reports/`, `docker/`, `scripts/`, `CIS_DATA/`) et de la validité des fichiers rapports (> 1 KB).
+- Validation de l'intégrité des 22 spécifications Markdown dans `CIS_DATA/` et des permissions d'exécution (`chmod +x`).
 
 #### 3. Réorganisation Structurée des Répertoires
 - `reports/` : Sous-dossier dédié regroupant l'ensemble des rapports HTML d'audit.
