@@ -32,8 +32,6 @@ RUN echo 'root:rootpass' | chpasswd && \
   ssh-keygen -A
 
 # ⚙️ Configuration
-COPY scripts/start_mysql.sh /usr/local/bin/start_mysql.sh
-RUN chmod +x /usr/local/bin/start_mysql.sh
 
 # Exposed ports
 EXPOSE 22 3306
@@ -55,4 +53,9 @@ RUN chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa \
 COPY audit_cis_mysql_community_84.py /datas/audit_cis_mysql_community_84.py
 
 # Startup via the custom script
+
+# �� Startup Configuration using dedicated script
+COPY scripts/start_mysql.sh /usr/local/bin/start_mysql.sh
+RUN chmod +x /usr/local/bin/start_mysql.sh
+
 CMD ["/usr/local/bin/start_mysql.sh"]

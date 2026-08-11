@@ -50,4 +50,9 @@ RUN chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa \
 COPY audit_cis_mongodb_7.py /datas/audit_cis_mongodb_7.py
 
 # Startup: start SSH + MongoDB
-CMD service ssh start && docker-entrypoint.sh mongod
+
+# �� Startup Configuration using dedicated script
+COPY scripts/start_mongodb.sh /usr/local/bin/start_mongodb.sh
+RUN chmod +x /usr/local/bin/start_mongodb.sh
+
+CMD ["/usr/local/bin/start_mongodb.sh"]

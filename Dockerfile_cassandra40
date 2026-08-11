@@ -50,4 +50,9 @@ RUN chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa \
 COPY audit_cis_cassandra_40.py /datas/audit_cis_cassandra_40.py
 
 # Startup: start SSH + Cassandra
-CMD service ssh start && docker-entrypoint.sh cassandra -f
+
+# �� Startup Configuration using dedicated script
+COPY scripts/start_cassandra.sh /usr/local/bin/start_cassandra.sh
+RUN chmod +x /usr/local/bin/start_cassandra.sh
+
+CMD ["/usr/local/bin/start_cassandra.sh"]

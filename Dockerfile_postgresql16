@@ -32,9 +32,6 @@ RUN echo 'root:rootpass' | chpasswd && \
   ssh-keygen -A
 
 # Copying the PostgreSQL startup script
-COPY scripts/start_postgresql.sh /usr/local/bin/start_postgresql.sh
-RUN chmod +x /usr/local/bin/start_postgresql.sh && \
-  sed -i 's/postgresql\/17/postgresql\/16/g' /usr/local/bin/start_postgresql.sh
 
 # Exposed ports
 EXPOSE 22 5432
@@ -56,4 +53,9 @@ RUN chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa \
 COPY audit_cis_postgresql_16.py /datas/audit_cis_postgresql_16.py
 
 # Startup via the custom script
+
+# �� Startup Configuration using dedicated script
+COPY scripts/start_postgresql.sh /usr/local/bin/start_postgresql.sh
+RUN chmod +x /usr/local/bin/start_postgresql.sh
+
 CMD ["/usr/local/bin/start_postgresql.sh"]

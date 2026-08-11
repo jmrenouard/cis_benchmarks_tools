@@ -55,4 +55,9 @@ RUN chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa \
 COPY audit_cis_mariadb_1011.py /datas/audit_cis_mariadb_1011.py
 
 # Startup: start SSH + MariaDB
-CMD service ssh start && docker-entrypoint.sh mariadbd
+
+# �� Startup Configuration using dedicated script
+COPY scripts/start_mariadb.sh /usr/local/bin/start_mariadb.sh
+RUN chmod +x /usr/local/bin/start_mariadb.sh
+
+CMD ["/usr/local/bin/start_mariadb.sh"]
