@@ -14,9 +14,9 @@
 
 ### Points Forts
 - 🔒 **100% Python Standard Library (PSL ONLY)** : Aucune dépendance `pip`. S'exécute de manière autonome sur toute installation standard de Python 3.
+- 💻 **Modes d'Exécution Doubles (Local & SSH Distant)** : Auditez des machines/conteneurs locaux (`--mode local` / `--local`) ou des serveurs distants via SSH (`--mode ssh` / `--remote user@hostname` / `--ssh user@hostname`) de manière native sans Paramiko ou Ansible.
 - 🗄️ **18 Cibles d'Audit & 887 Contrôles** : Prise en charge de MariaDB, MySQL, PostgreSQL, MongoDB, Apache Cassandra et Red Hat Enterprise Linux (RHEL 8 / 9 / 10).
 - ⚡ **CLI d'Exécution Unifiée (`audit_cis.py`)** : Exécutez des audits individuels, l'ensemble des benchmarks ou l'auto-détection des cibles via une interface unique en ligne de commande.
-- 🌐 **Audit SSH à Distance** : Support natif de l'audit de serveurs distants via SSH (`--remote user@hostname`) sans nécessiter Paramiko ou Ansible.
 - 🌐 **Support Multi-Langues (i18n)** : Rapports et CLI disponibles en Anglais (`--lang en`) et Français (`--lang fr`).
 - 📄 **Exportateurs Multi-Formats (`--format html|json|xml|txt`)** : Génération de rapports visuels HTML, JSON (SIEM/DevSecOps), XML (JUnit/STIG) et TXT clair.
 - 📊 **Rapports HTML Interactifs** : Génère des rapports HTML autonomes dans `reports/` avec scores de conformité, graphiques par catégorie et remédiations détaillées.
@@ -66,19 +66,22 @@
 python3 audit_cis.py --list-targets
 ```
 
-### 2. Exécuter l'Audit d'une Cible Unique
+### 2. Exécuter un Audit en Mode Local (`--mode local` / `--local`)
 ```bash
-# Audit PostgreSQL 16 au format HTML en français
-python3 audit_cis.py --target postgresql16 --format html --lang fr
+# Audit local PostgreSQL 16 au format HTML en français
+python3 audit_cis.py --target postgresql16 --mode local --format html --lang fr
 
-# Audit Système RHEL 9 au format JSON pour SIEM
-python3 audit_cis.py --target rhel9 --format json -o reports/audit_rhel9.json
+# Audit local Système RHEL 9 au format JSON pour SIEM
+python3 audit_cis.py --target rhel9 --local --format json -o reports/audit_rhel9.json
 ```
 
-### 3. Audit d'un Serveur Distant via SSH
+### 3. Exécuter un Audit en Mode SSH Distant (`--mode ssh` / `--remote user@host`)
 ```bash
 # Exécuter l'audit CIS/STIG RHEL 8 à distance via SSH
-python3 audit_cis_rhel_8.py --remote root@192.168.1.50 --lang fr -o reports/rapport_remote_rhel8_fr.html
+python3 audit_cis.py --target rhel8 --mode ssh --remote root@192.168.1.50 -f txt
+
+# Exécuter l'audit PostgreSQL 18 à distance via SSH
+python3 audit_cis_postgresql_18.py --ssh admin@db-server.domain.com --format json
 ```
 
 ### 4. Exécuter Tous les Audits / Auto-Détection

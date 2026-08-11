@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Unified CIS Benchmark Audit Engine v1.6.0
-Automated security audit suite for databases and Linux operating systems.
+Automated security audit suite for databases and Linux operating systems (Local & SSH Remote Modes).
 100% Python Standard Library (PSL ONLY).
 """
 
@@ -46,8 +46,8 @@ def list_targets():
     print()
 
 
-def run_single_audit(target_key, output_file=None, fmt="html", lang="en"):
-    """Run audit for a single target."""
+def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="local", remote_host=None):
+    """Run audit for a single target in Local or SSH Remote mode."""
     if target_key not in TARGET_MAP:
         print(f"❌ Unknown target '{target_key}'. Use --list-targets to view valid keys.", file=sys.stderr)
         return False
@@ -59,10 +59,13 @@ def run_single_audit(target_key, output_file=None, fmt="html", lang="en"):
         print(f"❌ Script not found: {script_path}", file=sys.stderr)
         return False
 
-    print(f"\n🚀 [v{__version__}] Running CIS Audit for {label} ({count} controls, {script_file})...")
+    mode_label = f"SSH Remote Mode ({remote_host})" if (mode == "ssh" or remote_host) else "Local Mode"
+    print(f"\n🚀 [v{__version__}] Running CIS Audit for {label} [{mode_label}] ({count} controls, {script_file})...")
     start_time = datetime.datetime.now()
 
-    cmd = [sys.executable, script_path, "--format", fmt, "--lang", lang]
+    cmd = [sys.executable, script_path, "--format", fmt, "--lang", lang, "--mode", mode]
+    if remote_host:
+        cmd.extend(["--remote", remote_host])
     if output_file:
         cmd.extend(["--output", output_file])
 
@@ -104,10 +107,13 @@ def auto_detect_and_run():
 
 def main():
     parser = argparse.ArgumentParser(
-        description=f"Unified CIS Benchmark Audit Suite v{__version__} (Python Standard Library ONLY)",
+        description=f"Unified CIS Benchmark Audit Suite v{__version__} (Local & SSH Remote Modes, PSL ONLY)",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("-t", "--target", choices=list(TARGET_MAP.keys()), help="Target database benchmark to audit")
+    parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
+    parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
+    parser.add_argument("--local", action="store_true", help="Force local audit execution mode")
     parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
     parser.add_argument("--lang", choices=["en", "fr"], default="en", help="Language for report and CLI output (en/fr)")
     parser.add_argument("-l", "--list-targets", action="store_true", help="List all supported database targets")
@@ -127,11 +133,13 @@ def main():
         auto_detect_and_run()
         sys.exit(0)
 
+    exec_mode = "ssh" if (args.mode == "ssh" or args.remote_host) else "local"
+
     if args.all:
-        print(f"🌟 [v{__version__}] Executing CIS Audit for ALL targets...")
+        print(f"🌟 [v{__version__}] Executing CIS Audit for ALL targets [Mode: {exec_mode}]...")
         success_count = 0
         for target_key in TARGET_MAP:
-            if run_single_audit(target_key, fmt=args.format, lang=args.lang):
+            if run_single_audit(target_key, fmt=args.format, lang=args.lang, mode=exec_mode, remote_host=args.remote_host):
                 success_count += 1
         print(f"\n🎉 Completed: {success_count}/{len(TARGET_MAP)} CIS audits succeeded.")
         sys.exit(0 if success_count == len(TARGET_MAP) else 1)
@@ -139,7 +147,7 @@ def main():
     if args.target:
         out = args.output_html or args.output_json
         fmt = "json" if args.output_json and not args.output_html else args.format
-        success = run_single_audit(args.target, output_file=out, fmt=fmt, lang=args.lang)
+        success = run_single_audit(args.target, output_file=out, fmt=fmt, lang=args.lang, mode=exec_mode, remote_host=args.remote_host)
         sys.exit(0 if success else 1)
 
     parser.print_help()

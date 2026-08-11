@@ -283,22 +283,52 @@ RECOMMENDATIONS_DATA = [
 
 
 def run_command(command, remote_host=None):
-    """Execute command safely with timeout=5 and stdin=DEVNULL."""
+    """Execute command locally or via SSH remote execution without shell=True (PSL ONLY)."""
     try:
         if isinstance(command, str):
             cmd_args = ["/bin/bash", "-c", command]
         else:
-            cmd_args = command
+            cmd_args = list(command)
 
         if remote_host:
             cmd_args = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", remote_host] + cmd_args
 
-        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=5)
+        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10)
         return process.stdout.strip(), process.stderr.strip(), process.returncode
     except subprocess.TimeoutExpired:
-        return "", "Command execution timed out after 5 seconds", -1
+        return "", "Command execution timed out after 10 seconds", -1
     except Exception as e:
         return "", str(e), -1
+
+
+
+def perform_checks(recommendations, remote_host=None):
+    """Execute all RHEL CIS & STIG security audit controls locally or remotely over SSH."""
+    results = []
+    for rec in recommendations:
+        stdout, stderr, code = run_command(rec["audit"], remote_host=remote_host)
+        is_pass = evaluate_condition(rec["condition"], stdout, stderr, code)
+        status = "PASS" if is_pass else "FAIL"
+
+        results.append({
+            "id": rec.get("id", rec.get("number", "N/A")),
+            "title": rec.get("title", rec.get("name", "N/A")),
+            "category": rec.get("category", "General"),
+            "status": status,
+            "stdout": stdout,
+            "stderr": stderr,
+            "code": code,
+            "output": stdout or stderr,
+            "remediation": rec.get("remediation", "")
+        })
+    return results
+
+def calculate_scores(results):
+    """Calculate compliance score statistics."""
+    passed = sum(1 for r in results if r["status"] == "PASS")
+    total = len(results) if results else 1
+    overall_score = (passed / total) * 100
+    return overall_score, {}
 
 
 
@@ -474,40 +504,26 @@ def generate_html_report(results, overall_score, categories_scores, filename="re
     print(f"📄 RHEL 9 HTML report successfully generated: {filename}")
 
 
-def main():
-    parser = argparse.ArgumentParser(description="CIS Red Hat Enterprise Linux 9 Audit Benchmark Suite (v1.4.0)")
-    parser.add_argument("-r", "--remote", help="SSH remote target (e.g. user@hostname)")
-    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
-    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Language for report and CLI output (en/fr)")
-    parser.add_argument("-o", "--output", default="reports/rapport_cis_rhel_9.html", help="Path to output HTML report")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="CIS Audit Benchmark (Local & SSH Remote Modes)")
+    parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
+    parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
+    parser.add_argument("--local", action="store_true", help="Force local audit execution mode")
+    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format")
+    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Report language choice (en/fr)")
+    parser.add_argument("-o", "--output", default=None, help="Custom output report file path")
     args = parser.parse_args()
 
-    print(f"🚀 Running CIS Audit for Red Hat Enterprise Linux 9 (20 controls)...")
-    results = []
-    passed = 0
+    remote_target = None
+    if args.mode == "ssh" or args.remote_host:
+        remote_target = args.remote_host
+        if not remote_target:
+            print("❌ SSH mode requires a remote host target via --remote user@hostname or --ssh user@hostname", file=sys.stderr)
+            sys.exit(1)
+        print(f"🌐 Running Audit in SSH Remote Mode on host: '{remote_target}'...")
+    else:
+        print("🖥️  Running Audit in Local Mode on local machine...")
 
-    for rec in RECOMMENDATIONS_DATA:
-        stdout, stderr, code = run_command(rec["audit"], remote_host=args.remote)
-        is_pass = evaluate_condition(rec["condition"], stdout, stderr, code)
-        status = "PASS" if is_pass else "FAIL"
-        if is_pass:
-            passed += 1
-
-        results.append({
-            "id": rec["id"],
-            "title": rec["title"],
-            "category": rec["category"],
-            "status": status,
-            "stdout": stdout,
-            "stderr": stderr,
-            "code": code
-        })
-
-    overall_score = (passed / len(RECOMMENDATIONS_DATA)) * 100
-    print(f"✅ RHEL 9 Audit Completed: {passed}/{len(RECOMMENDATIONS_DATA)} Passed ({overall_score:.1f}%)")
-
-    export_results(results, overall_score, {}, target_name=BENCHMARK_NAME if "BENCHMARK_NAME" in globals() else "CIS Audit", filename=args.output, fmt=getattr(args, "format", "html"), lang=getattr(args, "lang", "en"))
-
-
-if __name__ == "__main__":
-    main()
+    check_results = perform_checks(RECOMMENDATIONS_DATA, remote_host=remote_target)
+    (overall_score, categories_scores, *rest) = calculate_scores(check_results)
+    export_results(check_results, overall_score, categories_scores, target_name="rhel_9", filename=args.output, fmt=args.format, lang=args.lang)

@@ -1,6 +1,6 @@
-# 🛡️ CIS Benchmarks Tools Suite (v1.4.2)
+# 🛡️ CIS Benchmarks Tools Suite (v1.6.0)
 
-> **Automated Security Compliance Audit Engine for Databases and Linux Operating Systems (100% Python Standard Library - PSL ONLY).**
+> **Automated Security Compliance Audit Engine for Databases and Linux Systems (100% Python Standard Library - PSL ONLY).**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
@@ -10,14 +10,16 @@
 
 ## 📋 Overview
 
-**CIS Benchmarks Tools** is a lightweight, zero-dependency, automated security audit suite designed to evaluate system and database configurations against official **CIS (Center for Internet Security) Benchmarks** and **DISA STIG** guidelines.
+**CIS Benchmarks Tools** is a lightweight, zero-dependency automated security audit suite designed to evaluate system and database configurations against official **CIS (Center for Internet Security) Benchmarks** and **DISA STIG** guidelines.
 
 ### Key Highlights
-- 🔒 **100% Python Standard Library (PSL ONLY)**: Zero `pip` dependencies. Runs natively out-of-the-box on any standard Python 3 installation.
-- 🗄️ **18 Target Benchmarks & 887 Audit Controls**: Covers MariaDB, MySQL, PostgreSQL, MongoDB, Apache Cassandra, and Red Hat Enterprise Linux (RHEL 8 / 9 / 10).
-- ⚡ **Unified Execution CLI (`audit_cis.py`)**: Execute individual audits, run all benchmarks, or auto-detect environment targets from a single command-line interface.
-- 🌐 **Remote SSH Auditing**: Built-in support for remote server auditing via SSH (`--remote user@hostname`) without requiring Paramiko or Ansible.
-- 📊 **Responsive HTML Reports**: Generates standalone, self-contained HTML audit reports in `reports/` with compliance scores, category breakdowns, and explicit remediation procedures.
+- 🔒 **100% Python Standard Library (PSL ONLY)**: Zero `pip` dependencies. Runs standalone on any standard Python 3 installation.
+- 💻 **Dual Execution Modes (Local & SSH Remote)**: Audit local machines/containers (`--mode local` / `--local`) or remote servers over SSH (`--mode ssh` / `--remote user@hostname` / `--ssh user@hostname`) natively without Paramiko or Ansible.
+- 🗄️ **18 Audit Targets & 887 Controls**: Comprehensive coverage for MariaDB, MySQL, PostgreSQL, MongoDB, Apache Cassandra, and Red Hat Enterprise Linux (RHEL 8 / 9 / 10).
+- ⚡ **Unified Execution CLI (`audit_cis.py`)**: Execute single audits, full benchmark suites, or auto-detect active targets via a single command-line interface.
+- 🌐 **Multi-Language Support (i18n)**: English (`--lang en`) and French (`--lang fr`) CLI messages and HTML reports.
+- 📄 **Multi-Format Exporters (`--format html|json|xml|txt`)**: Compliance output in HTML, JSON (SIEM/DevSecOps), XML (JUnit/STIG), and TXT text formats.
+- 📊 **Interactive HTML Reports**: Standalone HTML reports generated in `reports/` with compliance scores, category charts, and detailed remediations.
 
 ---
 
@@ -25,7 +27,7 @@
 
 ### Database Engines (15 Benchmarks)
 
-| Target ID | Database Engine | Version / Profile | CIS Benchmark | Audit Controls | Script |
+| Target Key | Database Engine | Version / Profile | CIS Benchmark | Controls | Script |
 |---|---|---|---|:---:|---|
 | `mariadb106` | MariaDB | 10.6 | v1.3.0 | 74 | [`audit_cis_mariadb_106.py`](audit_cis_mariadb_106.py) |
 | `mariadb1011` | MariaDB | 10.11 | v1.0.0 | 75 | [`audit_cis_mariadb_1011.py`](audit_cis_mariadb_1011.py) |
@@ -45,7 +47,7 @@
 
 ### Linux Operating Systems & STIG (3 Benchmarks)
 
-| Target ID | Operating System | Profile / STIG | CIS Benchmark | Audit Controls | Script |
+| Target Key | Operating System | Profile / STIG | CIS Benchmark | Controls | Script |
 |---|---|---|---|:---:|---|
 | `rhel8` | Red Hat Enterprise Linux | RHEL 8 CIS & STIG | v4.0.0 / v2.0.0 | 20 | [`audit_cis_rhel_8.py`](audit_cis_rhel_8.py) |
 | `rhel9` | Red Hat Enterprise Linux | RHEL 9 CIS & STIG | v2.0.0 / v1.0.0 | 20 | [`audit_cis_rhel_9.py`](audit_cis_rhel_9.py) |
@@ -64,19 +66,22 @@
 python3 audit_cis.py --list-targets
 ```
 
-### 2. Run Single Target Audit
+### 2. Run Audit in Local Mode (`--mode local` / `--local`)
 ```bash
-# Local PostgreSQL 16 Audit
-python3 audit_cis.py --target postgresql16
+# Local PostgreSQL 16 Audit in HTML format
+python3 audit_cis.py --target postgresql16 --mode local --format html
 
-# Local RHEL 9 System Audit
-python3 audit_cis.py --target rhel9
+# Local RHEL 9 System Audit in JSON format
+python3 audit_cis.py --target rhel9 --local --format json -o reports/audit_rhel9.json
 ```
 
-### 3. Remote Server Audit over SSH
+### 3. Run Audit in Remote SSH Mode (`--mode ssh` / `--remote user@host`)
 ```bash
-# Execute RHEL 8 CIS/STIG Audit on a remote host via SSH
-python3 audit_cis_rhel_8.py --remote root@192.168.1.50 -o reports/rapport_remote_rhel8.html
+# Execute RHEL 8 CIS/STIG Audit on a remote server via SSH
+python3 audit_cis.py --target rhel8 --mode ssh --remote root@192.168.1.50 -f txt
+
+# Execute PostgreSQL 18 Audit remotely over SSH
+python3 audit_cis_postgresql_18.py --ssh admin@db-server.domain.com --format json
 ```
 
 ### 4. Run All Audits / Auto-Detect
@@ -94,7 +99,12 @@ python3 audit_cis.py --all
 
 ```
 cis_benchmarks_tools/
-├── audit_cis.py                       # Unified CLI Audit Engine (v1.4.2)
+├── .github/
+│   └── workflows/
+│       └── ci.yml                     # GitHub Actions CI/CD Pipeline (Python 3.8-3.12)
+├── README.md                          # Main Documentation (English)
+├── README_fr.md                       # Synchronized Documentation (French)
+├── audit_cis.py                       # Unified CLI Audit Engine (v1.6.0)
 ├── audit_cis_mariadb_106.py           # MariaDB 10.6 Audit Script
 ├── audit_cis_mariadb_1011.py          # MariaDB 10.11 Audit Script
 ├── audit_cis_mysql_80.py              # MySQL Enterprise 8.0 Audit Script
@@ -113,25 +123,28 @@ cis_benchmarks_tools/
 ├── audit_cis_rhel_8.py                # RHEL 8 CIS/STIG Audit Script
 ├── audit_cis_rhel_9.py                # RHEL 9 CIS/STIG Audit Script
 ├── audit_cis_rhel_10.py               # RHEL 10 CIS Audit Script
-├── reports/                           # Generated HTML Audit Reports
+├── reports/                           # Generated Audit Reports (HTML, JSON, XML, TXT)
 ├── docker/                            # Test Container Dockerfiles (16 targets)
+├── tests/
+│   └── test_evaluate_condition.py     # Automated PSL Unit Test Suite (unittest)
 ├── scripts/
 │   ├── bundle_audit_cis.py            # Automatic Script Bundler
-│   ├── pre_commit_checks.py           # 7-Step Quality & Security Pre-Commit Checker
+│   ├── pre_commit_checks.py           # 8-Step Quality & Security Pre-Commit Checker
+│   ├── run_e2e_tests.py               # Automated E2E Test & Quality Analysis Engine
 │   └── start_*.sh                     # Database Container Startup Scripts
 ├── CIS_DATA/                          # 22 Reference Markdown Specifications
-├── VERSION                            # Current Release Version (v1.4.2)
+├── VERSION                            # Current Release Version (v1.6.0)
 ├── ROADMAP.md                         # Strategic Roadmap & Completed Milestones
-└── POTENTIAL_ISSUES.md                # Resolved Debt & Technical Backlog
+└── POTENTIAL_ISSUES.md                # Technical Debt & Resolved Backlog
 ```
 
 ---
 
 ## 🔒 Security & Architecture Standards
 
-- **PSL Compliance**: Strictly enforces Python 3 Standard Library modules ONLY (`subprocess`, `os`, `sys`, `json`, `ast`, `re`, `html`). External packages (`pip`, `jinja2`, `yaml`, `requests`) are prohibited and blocked by pre-commit AST checks.
+- **PSL Compliance**: Strictly enforces Python 3 Standard Library modules ONLY (`subprocess`, `os`, `sys`, `json`, `ast`, `re`, `html`, `xml`, `unittest`). External packages (`pip`, `jinja2`, `yaml`, `requests`) are prohibited and blocked by pre-commit AST checks.
 - **Command Injection Prevention**: All system command executions rely on strict parameter list arguments (`shell=False`) to eliminate command injection vulnerabilities (`python.lang.security.audit.subprocess-shell-true`).
-- **Quality Assurance**: Automated 7-step pre-commit validation routine:
+- **Quality Assurance**: Automated 8-step pre-commit validation routine:
   ```bash
   make pre-commit
   ```
@@ -146,4 +159,4 @@ This project is licensed under the **MIT License**. See the `LICENSE` file for d
 
 - [CIS Benchmarks Official Site](https://www.cisecurity.org/cis-benchmarks)
 - [Red Hat Enterprise Linux Security Guides](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/)
-- [DISA STIG Guidelines](https://public.cyber.mil/stigs/)
+- [DISA STIG Directives](https://public.cyber.mil/stigs/)

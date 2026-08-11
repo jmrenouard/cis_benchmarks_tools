@@ -342,20 +342,20 @@ CHECK_ROW_TEMPLATE = """
 # --- Execution and evaluation functions ---
 
 def run_command(command, remote_host=None):
-    """Execute command safely with timeout=5 and stdin=DEVNULL."""
+    """Execute command locally or via SSH remote execution without shell=True (PSL ONLY)."""
     try:
         if isinstance(command, str):
             cmd_args = ["/bin/bash", "-c", command]
         else:
-            cmd_args = command
+            cmd_args = list(command)
 
         if remote_host:
             cmd_args = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", remote_host] + cmd_args
 
-        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=5)
+        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10)
         return process.stdout.strip(), process.stderr.strip(), process.returncode
     except subprocess.TimeoutExpired:
-        return "", "Command execution timed out after 5 seconds", -1
+        return "", "Command execution timed out after 10 seconds", -1
     except Exception as e:
         return "", str(e), -1
 
@@ -442,7 +442,7 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     print(f"ATTENTION : Type de condition inconnu '{condition_type}'")
     return False
 
-def perform_checks(recommendations):
+def perform_checks(recommendations, remote_host=None):
     """
     Exécute tous les contrôles définis dans les recommandations et stocke les résultats.
     """
@@ -481,7 +481,7 @@ def perform_checks(recommendations):
                 # Gérer les contrôles qui nécessitent d'obtenir d'abord un chemin dynamique (non utilisé pour MongoDB ici, mais conservé)
                 if "path_command" in rec:
                     path_cmd = rec["path_command"]
-                    path_stdout, path_stderr, path_returncode = run_command(path_cmd)
+                    path_stdout, path_stderr, path_returncode = run_command(path_cmd, remote_host=remote_host)
 
                     if path_returncode != 0 or not path_stdout:
                         check_result["status"] = "Error"
@@ -512,7 +512,7 @@ def perform_checks(recommendations):
                     continue
 
                 # Exécuter la commande
-                stdout, stderr, returncode = run_command(cmd_to_run)
+                stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host)
                 check_result["output"] = f"Stdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}"
                 check_result["error"] = stderr
                 check_result["test_procedure"] = command_executed_display # Met à jour avec la commande réellement exécutée
@@ -861,12 +861,25 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
 
 # --- Main Execution ---
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="CIS Benchmark Audit Script")
+    parser = argparse.ArgumentParser(description="CIS Audit Benchmark (Local & SSH Remote Modes)")
+    parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
+    parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
+    parser.add_argument("--local", action="store_true", help="Force local audit execution mode")
     parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format")
-    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Language choice (en/fr)")
-    parser.add_argument("-o", "--output", default="reports/rapport_cis_mongodb_7.html", help="Output file path")
+    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Report language choice (en/fr)")
+    parser.add_argument("-o", "--output", default=None, help="Custom output report file path")
     args = parser.parse_args()
 
-    check_results = perform_checks(RECOMMENDATIONS_DATA)
+    remote_target = None
+    if args.mode == "ssh" or args.remote_host:
+        remote_target = args.remote_host
+        if not remote_target:
+            print("❌ SSH mode requires a remote host target via --remote user@hostname or --ssh user@hostname", file=sys.stderr)
+            sys.exit(1)
+        print(f"🌐 Running Audit in SSH Remote Mode on host: '{remote_target}'...")
+    else:
+        print("🖥️  Running Audit in Local Mode on local machine...")
+
+    check_results = perform_checks(RECOMMENDATIONS_DATA, remote_host=remote_target)
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
     export_results(check_results, overall_score, categories_scores, target_name="mongodb_7", filename=args.output, fmt=args.format, lang=args.lang)
