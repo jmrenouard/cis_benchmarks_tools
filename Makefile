@@ -1,40 +1,40 @@
 # Makefile for CIS Benchmark Tools
 
-# Variables
-MYSQL80_DOCKERFILE = Dockerfile_mysql80
-MYSQL80_IMAGE = mysql80-audit
-MYSQL80_CONTAINER = mysql80-test
-MYSQL80_SCRIPT = audit_cis_mysql_80.py
-MYSQL80_REPORT = rapport_cis_mysql_8.html
+# Variables for MariaDB 10.11
+MARIADB1011_DOCKERFILE = Dockerfile_mariadb1011
+MARIADB1011_IMAGE = mariadb1011-audit
+MARIADB1011_CONTAINER = mariadb1011-test
+MARIADB1011_SCRIPT = audit_cis_mariadb_1011.py
+MARIADB1011_REPORT = rapport_cis_mariadb_1011.html
 
-.PHONY: help build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80 test-mysql80
+.PHONY: help build-mariadb1011 run-mariadb1011 audit-mariadb1011 report-mariadb1011 clean-mariadb1011 test-mariadb1011
 
 help:
-	@echo "Available commands:"
-	@echo "  make test-mysql80    - Complete cycle: build, run, audit, get report, and clean for MySQL 8.0"
-	@echo "  make build-mysql80   - Build the Docker image"
-	@echo "  make run-mysql80     - Start the Docker container"
-	@echo "  make audit-mysql80   - Run the audit script inside the container"
-	@echo "  make report-mysql80  - Copy the report from the container to the host"
-	@echo "  make clean-mysql80   - Remove the Docker container"
+	@echo "Available commands for MariaDB 10.11:"
+	@echo "  make test-mariadb1011    - Complete cycle: build, run, audit, get report, and clean"
+	@echo "  make build-mariadb1011   - Build the Docker image"
+	@echo "  make run-mariadb1011     - Start the Docker container"
+	@echo "  make audit-mariadb1011   - Run the audit script inside the container"
+	@echo "  make report-mariadb1011  - Copy the report from the container to the host"
+	@echo "  make clean-mariadb1011   - Remove the Docker container"
 
-build-mysql80:
-	docker build -f $(MYSQL80_DOCKERFILE) -t $(MYSQL80_IMAGE) .
+build-mariadb1011:
+	docker build -f $(MARIADB1011_DOCKERFILE) -t $(MARIADB1011_IMAGE) .
 
-run-mysql80:
-	docker run -d --name $(MYSQL80_CONTAINER) $(MYSQL80_IMAGE)
-	@echo "Waiting for MySQL to initialize (15s)..."
-	sleep 15
+run-mariadb1011:
+	docker run -d --name $(MARIADB1011_CONTAINER) $(MARIADB1011_IMAGE)
+	@echo "Waiting for MariaDB 10.11 to initialize (30s)..."
+	sleep 30
 
-audit-mysql80:
-	docker exec $(MYSQL80_CONTAINER) python3 /datas/$(MYSQL80_SCRIPT)
+audit-mariadb1011:
+	docker exec $(MARIADB1011_CONTAINER) python3 /datas/$(MARIADB1011_SCRIPT)
 
-report-mysql80:
-	docker cp $(MYSQL80_CONTAINER):/datas/$(MYSQL80_REPORT) .
-	@echo "Report copied to $(MYSQL80_REPORT)"
+report-mariadb1011:
+	docker cp $(MARIADB1011_CONTAINER):/datas/$(MARIADB1011_REPORT) .
+	@echo "Report copied to $(MARIADB1011_REPORT)"
 
-clean-mysql80:
-	docker rm -f $(MYSQL80_CONTAINER) || true
+clean-mariadb1011:
+	docker rm -f $(MARIADB1011_CONTAINER) || true
 
-test-mysql80: clean-mysql80 build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80
-	@echo "Full test cycle for MySQL 8.0 completed."
+test-mariadb1011: clean-mariadb1011 build-mariadb1011 run-mariadb1011 audit-mariadb1011 report-mariadb1011 clean-mariadb1011
+	@echo "Full test cycle for MariaDB 10.11 completed."
