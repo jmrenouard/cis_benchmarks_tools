@@ -274,7 +274,7 @@ build-postgresql16:
 	docker build -f $(POSTGRESQL16_DOCKERFILE) -t $(POSTGRESQL16_IMAGE) .
 
 run-postgresql16:
-	docker run -d --name $(POSTGRESQL16_CONTAINER) $(POSTGRESQL16_IMAGE)
+	docker run -d -e POSTGRES_PASSWORD=rootpass --name $(POSTGRESQL16_CONTAINER) $(POSTGRESQL16_IMAGE)
 	@echo "Waiting for PostgreSQL 16 to initialize (15s)..."
 	sleep 15
 
@@ -296,7 +296,7 @@ build-postgresql17:
 	docker build -f $(POSTGRESQL17_DOCKERFILE) -t $(POSTGRESQL17_IMAGE) .
 
 run-postgresql17:
-	docker run -d --name $(POSTGRESQL17_CONTAINER) $(POSTGRESQL17_IMAGE)
+	docker run -d -e POSTGRES_PASSWORD=rootpass --name $(POSTGRESQL17_CONTAINER) $(POSTGRESQL17_IMAGE)
 	@echo "Waiting for PostgreSQL 17 to initialize (15s)..."
 	sleep 15
 
@@ -318,7 +318,7 @@ build-postgresql18:
 	docker build -f $(POSTGRESQL18_DOCKERFILE) -t $(POSTGRESQL18_IMAGE) .
 
 run-postgresql18:
-	docker run -d --name $(POSTGRESQL18_CONTAINER) $(POSTGRESQL18_IMAGE)
+	docker run -d -e POSTGRES_PASSWORD=rootpass --name $(POSTGRESQL18_CONTAINER) $(POSTGRESQL18_IMAGE)
 	@echo "Waiting for PostgreSQL 18 to initialize (15s)..."
 	sleep 15
 
