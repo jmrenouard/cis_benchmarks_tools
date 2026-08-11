@@ -1,6 +1,6 @@
-# ⚠️ Potential Issues & Technical Debt Backlog (v1.2.0)
+# ⚠️ Potential Issues & Technical Debt Backlog (v1.2.1)
 
-Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #53) identifiés sur le projet **CIS Benchmarks Tools**.
+Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #61) identifiés sur le projet **CIS Benchmarks Tools**.
 
 ---
 
@@ -12,12 +12,13 @@ Ce document recense les problèmes potentiels, risques de bugs, remarques de sé
 
 ---
 
-## 1. Résolus dans la version v1.2.0 ✅
+## 1. Résolus dans les versions v1.2.0 - v1.2.1 ✅
 
 - [x] **Échappement des templates HTML/CSS** : Correction des accolades simples dans les blocs `<style>` de tous les templates d'audit.
 - [x] **Contrainte PSL vérifiée** : Suppression de toute référence à Jinja2/PyYAML et intégration d'un vérificateur d'imports PSL dans la routine pre-commit.
 - [x] **Organisation de l'arborescence** : Déplacement de tous les rapports dans `reports/` et des Dockerfiles dans `docker/`.
 - [x] **Moteur d'Audit Unifié & Bundler** : Implémentation du script `audit_cis.py` alimenté par `scripts/bundle_audit_cis.py`.
+- [x] **Validation d'Intégrité des Rapports** : Ajout du contrôle systématique des tailles de rapports HTML (> 1 KB) et de l'arborescence du dépôt dans la routine pre-commit.
 
 ---
 
