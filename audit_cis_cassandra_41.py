@@ -34,7 +34,7 @@ RECOMMENDATIONS_DATA = [
     {"category": "1 Installation et Mises à jour", "number": "1.4", "name": "S'assurer que la dernière version de Cassandra est installée", "type": "Automated",
      "test_procedure": "cassandra -v 2>/dev/null || nodetool version 2>/dev/null",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"4\.0\.\d+"},
-     "remediation": "Mettre à jour Cassandra vers la dernière version 4.0.x."},
+     "remediation": "Mettre à jour Cassandra vers la dernière version 4.1.x."},
     {"category": "1 Installation et Mises à jour", "number": "1.5", "name": "S'assurer que le service Cassandra est exécuté en tant qu'utilisateur non-root", "type": "Automated",
      "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
      "expected_output": {"type": "stdout_not_equals", "value": "root"},
@@ -71,7 +71,7 @@ RECOMMENDATIONS_DATA = [
      "manual_steps": ["Lister tous les rôles (LIST ROLES;).", "Identifier les rôles avec des privilèges excessifs.", "Révoquer les privilèges non nécessaires."]},
     {"category": "3 Contrôle d'accès", "number": "3.4", "name": "S'assurer que Cassandra est exécuté sous un compte de service dédié", "type": "Automated",
      "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
-     "expected_output": {"type": "stdout_equals", "value": "cassandr"},
+     "expected_output": {"type": "stdout_equals", "value": "cassandra"},
      "remediation": "Configurer le service Cassandra pour qu'il s'exécute sous l'utilisateur 'cassandra'."},
     {"category": "3 Contrôle d'accès", "number": "3.5", "name": "S'assurer que Cassandra n'écoute que sur les interfaces autorisées", "type": "Manual",
      "test_procedure": f"grep -E '^listen_address:|^rpc_address:' {CASSANDRA_CONFIG_PATH}",
@@ -364,6 +364,10 @@ def evaluate_condition(condition, stdout, stderr, returncode):
         return returncode == 0
     elif condition_type == "returncode_equals":
         return returncode == expected_value
+    elif condition_type == "stdout_not_equals":
+        return stdout != expected_value
+    elif condition_type == "stdout_not_contains":
+        return expected_value not in stdout
     elif condition_type == "stdout_equals":
         # L'output peut contenir des espaces/retours à la ligne supplémentaires, on le nettoie.
         return stdout.strip() == str(expected_value) # Convertir l'attendu en chaîne pour comparaison
@@ -750,7 +754,7 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
 if __name__ == "__main__":
     print("🚀 Démarrage de l'audit CIS Apache Cassandra 4.1.0 Benchmark ...")
     print(f"ℹ️ Vérification des configurations dans: '{CASSANDRA_CONFIG_PATH}'")
-    print(f"ℹ️ Utilisation du client Apache Cassandra: '{MONGODB_SHELL_CMD}' (Assurez-vous que la connexion est configurée)")
+    print(f"ℹ️ Utilisation du client Apache Cassandra: '{CQLSH_CMD}' (Assurez-vous que la connexion est configurée)")
 
     # Exécuter les contrôles
     check_results = perform_checks(RECOMMENDATIONS_DATA)
