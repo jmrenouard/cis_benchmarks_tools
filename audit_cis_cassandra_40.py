@@ -749,7 +749,7 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
 # --- Exécution principale ---
 if __name__ == "__main__":
     print("🚀 Démarrage de l'audit CIS Apache Cassandra 4.0.0 Benchmark ...")
-    print(f"ℹ️ Vérification des configurations dans: '{MONGOD_CONFIG_PATH}'")
+    print(f"ℹ️ Vérification des configurations dans: '{CASSANDRA_CONFIG_PATH}'")
     print(f"ℹ️ Utilisation du client Apache Cassandra: '{MONGODB_SHELL_CMD}' (Assurez-vous que la connexion est configurée)")
 
     # Exécuter les contrôles
