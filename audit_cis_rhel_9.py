@@ -283,19 +283,23 @@ RECOMMENDATIONS_DATA = [
 
 
 def run_command(command, remote_host=None):
-    """Execute command locally or via SSH remote execution without shell=True."""
+    """Execute command safely with timeout=5 and stdin=DEVNULL."""
     try:
-        if remote_host:
-            cmd_args = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", remote_host, command]
-        else:
+        if isinstance(command, str):
             cmd_args = ["/bin/bash", "-c", command]
+        else:
+            cmd_args = command
 
-        process = subprocess.run(cmd_args, check=False, capture_output=True, text=True, timeout=30)
+        if remote_host:
+            cmd_args = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", remote_host] + cmd_args
+
+        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=5)
         return process.stdout.strip(), process.stderr.strip(), process.returncode
-    except FileNotFoundError:
-        return "", f"Command '{command.split()[0]}' not found.", 127
+    except subprocess.TimeoutExpired:
+        return "", "Command execution timed out after 5 seconds", -1
     except Exception as e:
-        return "", f"Execution error: {e}", 1
+        return "", str(e), -1
+
 
 
 def evaluate_condition(condition, stdout, stderr, returncode):
@@ -315,6 +319,8 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     return False
 
 
+
+
 def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en"):
     """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
     import json
@@ -330,26 +336,37 @@ def export_results(results, overall_score, categories_scores, target_name, filen
     if os.path.dirname(filename):
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
+    # Flatten results if dictionary categorized
+    flat_results = []
+    if isinstance(results, dict):
+        for cat, checks in results.items():
+            for c in checks:
+                c_copy = dict(c)
+                c_copy["category"] = cat
+                flat_results.append(c_copy)
+    else:
+        flat_results = results
+
     if fmt == "json":
         data = {
             "benchmark": target_name,
             "report_date": datetime.now().isoformat(),
             "overall_score": overall_score,
-            "total_checks": len(results),
-            "results": results
+            "total_checks": len(flat_results),
+            "results": flat_results
         }
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
         print(f"📄 JSON Report successfully generated: {filename}")
 
     elif fmt == "xml":
-        root = ET.Element("testsuite", name=target_name, tests=str(len(results)), failures=str(sum(1 for r in results if r.get("status") == "FAIL")), timestamp=datetime.now().isoformat())
-        for r in results:
+        root = ET.Element("testsuite", name=target_name, tests=str(len(flat_results)), failures=str(sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])), timestamp=datetime.now().isoformat())
+        for r in flat_results:
             tc = ET.SubElement(root, "testcase", id=str(r.get("number", r.get("id", ""))), name=str(r.get("name", r.get("title", ""))), classname=str(r.get("category", "")))
-            if r.get("status") == "FAIL":
+            if r.get("status") in ["FAIL", "Fail"]:
                 failure = ET.SubElement(tc, "failure", message="Control failed")
                 failure.text = str(r.get("output", r.get("stdout", "")))
-            elif r.get("status") == "ERROR":
+            elif r.get("status") in ["ERROR", "Error"]:
                 err = ET.SubElement(tc, "error", message="Control execution error")
                 err.text = str(r.get("output", r.get("stderr", "")))
         tree = ET.ElementTree(root)
@@ -365,9 +382,9 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             "=" * 70,
             ""
         ]
-        for r in results:
+        for r in flat_results:
             status = r.get("status", "")
-            status_icon = "[PASS]" if status == "PASS" else ("[FAIL]" if status == "FAIL" else "[MANUAL]")
+            status_icon = "[PASS]" if status in ["PASS", "Pass"] else ("[FAIL]" if status in ["FAIL", "Fail"] else "[MANUAL]")
             rec_id = r.get("number", r.get("id", ""))
             rec_name = r.get("name", r.get("title", ""))
             lines.append(f"{status_icon} {rec_id} - {rec_name}")
@@ -376,7 +393,7 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             if out:
                 lines.append(f"  Output: {str(out).strip()}")
             rem = r.get('remediation', '')
-            if rem and status == "FAIL":
+            if rem and status in ["FAIL", "Fail"]:
                 lines.append(f"  Remediation: {str(rem).strip()}")
             lines.append("-" * 70)
         with open(filename, "w", encoding="utf-8") as f:
@@ -387,7 +404,11 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         try:
             generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
         except TypeError:
-            generate_html_report(results, overall_score, categories_scores, filename=filename)
+            try:
+                generate_html_report(results, overall_score, categories_scores, filename=filename)
+            except TypeError:
+                # Legacy positional args fallback
+                generate_html_report(results, overall_score, categories_scores, 0, 0, 0, 0, 0, 0, 0, [], [], [], [], [], filename)
 
 
 

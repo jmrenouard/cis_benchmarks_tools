@@ -1,0 +1,188 @@
+{
+  "benchmark": "CIS Audit",
+  "report_date": "2026-08-11T19:36:18.318467",
+  "overall_score": 45.0,
+  "total_checks": 20,
+  "results": [
+    {
+      "id": "1.1.1.1",
+      "title": "Ensure cramfs kernel module is not available",
+      "category": "Initial Setup",
+      "status": "FAIL",
+      "stdout": "insmod /lib/modules/6.18.33.2-microsoft-standard-WSL2/kernel/fs/cramfs/cramfs.ko",
+      "stderr": "",
+      "code": 0
+    },
+    {
+      "id": "1.1.1.2",
+      "title": "Ensure freevxfs kernel module is not available",
+      "category": "Initial Setup",
+      "status": "PASS",
+      "stdout": "",
+      "stderr": "modprobe: FATAL: Module freevxfs not found in directory /lib/modules/6.18.33.2-microsoft-standard-WSL2",
+      "code": 1
+    },
+    {
+      "id": "1.1.1.3",
+      "title": "Ensure hfs kernel module is not available",
+      "category": "Initial Setup",
+      "status": "PASS",
+      "stdout": "",
+      "stderr": "modprobe: FATAL: Module hfs not found in directory /lib/modules/6.18.33.2-microsoft-standard-WSL2",
+      "code": 1
+    },
+    {
+      "id": "1.1.1.4",
+      "title": "Ensure hfsplus kernel module is not available",
+      "category": "Initial Setup",
+      "status": "PASS",
+      "stdout": "",
+      "stderr": "modprobe: FATAL: Module hfsplus not found in directory /lib/modules/6.18.33.2-microsoft-standard-WSL2",
+      "code": 1
+    },
+    {
+      "id": "1.1.1.5",
+      "title": "Ensure jffs2 kernel module is not available",
+      "category": "Initial Setup",
+      "status": "PASS",
+      "stdout": "",
+      "stderr": "modprobe: FATAL: Module jffs2 not found in directory /lib/modules/6.18.33.2-microsoft-standard-WSL2",
+      "code": 1
+    },
+    {
+      "id": "1.1.1.6",
+      "title": "Ensure squashfs kernel module is not available",
+      "category": "Initial Setup",
+      "status": "PASS",
+      "stdout": "",
+      "stderr": "",
+      "code": 0
+    },
+    {
+      "id": "1.1.1.7",
+      "title": "Ensure udf kernel module is not available",
+      "category": "Initial Setup",
+      "status": "PASS",
+      "stdout": "",
+      "stderr": "",
+      "code": 0
+    },
+    {
+      "id": "1.1.1.8",
+      "title": "Ensure usb-storage kernel module is disabled",
+      "category": "Initial Setup",
+      "status": "PASS",
+      "stdout": "insmod /lib/modules/6.18.33.2-microsoft-standard-WSL2/kernel/drivers/usb/common/usb-common.ko \ninsmod /lib/modules/6.18.33.2-microsoft-standard-WSL2/kernel/drivers/usb/core/usbcore.ko \ninsmod /lib/modules/6.18.33.2-microsoft-standard-WSL2/kernel/drivers/usb/storage/usb-storage.ko",
+      "stderr": "",
+      "code": 0
+    },
+    {
+      "id": "1.3.1.1",
+      "title": "Ensure SELinux is installed and active",
+      "category": "Initial Setup",
+      "status": "FAIL",
+      "stdout": "",
+      "stderr": "/bin/bash: line 1: sestatus: command not found",
+      "code": 1
+    },
+    {
+      "id": "1.3.1.2",
+      "title": "Ensure SELinux state is enforcing",
+      "category": "Initial Setup",
+      "status": "FAIL",
+      "stdout": "",
+      "stderr": "/bin/bash: line 1: getenforce: command not found",
+      "code": 127
+    },
+    {
+      "id": "1.4.1",
+      "title": "Ensure AIDE is installed",
+      "category": "Initial Setup",
+      "status": "FAIL",
+      "stdout": "",
+      "stderr": "/bin/bash: line 1: rpm: command not found",
+      "code": 127
+    },
+    {
+      "id": "2.1.1",
+      "title": "Ensure xinetd is not installed",
+      "category": "Services",
+      "status": "FAIL",
+      "stdout": "",
+      "stderr": "/bin/bash: line 1: rpm: command not found",
+      "code": 127
+    },
+    {
+      "id": "2.2.1",
+      "title": "Ensure telnet server is not installed",
+      "category": "Services",
+      "status": "FAIL",
+      "stdout": "",
+      "stderr": "/bin/bash: line 1: rpm: command not found",
+      "code": 127
+    },
+    {
+      "id": "3.1.1",
+      "title": "Ensure IP forwarding is disabled",
+      "category": "Network Configuration",
+      "status": "FAIL",
+      "stdout": "net.ipv4.ip_forward = 1",
+      "stderr": "",
+      "code": 0
+    },
+    {
+      "id": "3.1.2",
+      "title": "Ensure packet redirect sending is disabled",
+      "category": "Network Configuration",
+      "status": "FAIL",
+      "stdout": "net.ipv4.conf.all.send_redirects = 1",
+      "stderr": "",
+      "code": 0
+    },
+    {
+      "id": "3.4.1",
+      "title": "Ensure firewalld is installed and running",
+      "category": "Network Configuration",
+      "status": "PASS",
+      "stdout": "inactive",
+      "stderr": "",
+      "code": 4
+    },
+    {
+      "id": "5.1.1",
+      "title": "Ensure auditd service is enabled and running",
+      "category": "Logging and Auditing",
+      "status": "PASS",
+      "stdout": "inactive",
+      "stderr": "",
+      "code": 4
+    },
+    {
+      "id": "5.2.1",
+      "title": "Ensure SSH PermitRootLogin is disabled",
+      "category": "Access Control",
+      "status": "FAIL",
+      "stdout": "",
+      "stderr": "",
+      "code": 1
+    },
+    {
+      "id": "5.2.2",
+      "title": "Ensure SSH PermitEmptyPasswords is disabled",
+      "category": "Access Control",
+      "status": "FAIL",
+      "stdout": "",
+      "stderr": "",
+      "code": 1
+    },
+    {
+      "id": "5.3.1",
+      "title": "Ensure crypto policy is DEFAULT or FUTURE",
+      "category": "System Cryptography",
+      "status": "FAIL",
+      "stdout": "",
+      "stderr": "/bin/bash: line 1: update-crypto-policies: command not found",
+      "code": 127
+    }
+  ]
+}

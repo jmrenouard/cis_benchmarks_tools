@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapport CIS MongoDB 7.0 Benchmark</title>
+    <title>CIS Benchmark Audit Report MongoDB 7.0 Benchmark</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <style>
@@ -24,16 +24,16 @@
 </head>
 <body class="font-sans bg-gray-100 text-gray-800 p-6">
     <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS MongoDB 7.0 Benchmark</h1>
-        <p class="text-gray-600 mb-4">Date du rapport : 11/08/2026 14:08:23</p>
+        <h1 class="text-3xl font-bold mb-6 text-gray-900">CIS Benchmark Audit Report MongoDB 7.0 Benchmark</h1>
+        <p class="text-gray-600 mb-4">Report Date: 11/08/2026 19:34:26</p>
         <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS MongoDB 7.0 Benchmark (Version 1.0 du 11 Novembre 2023 par CIS).</p>
 
         <div class="mb-8 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">Score Global</h2>
             <p class="text-xl font-bold text-red-600">9.09%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis (1/11 vérifiés).</p>
-            <p class="text-gray-700">12 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">des contrôles automatisés réussis (0/0 vérifiés).</p>
+            <p class="text-gray-700">0 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables (ex: plugin non installé, commande introuvable).</p>
 
             <div class="chart-container">
@@ -47,7 +47,7 @@
             <p class="text-lg font-bold text-red-600">0.00%</p>
             <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/0 vérifiés).</p>
             <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
@@ -58,8 +58,8 @@
                         <th class="py-3 px-4 text-left w-1/12">Type</th>
                         <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
                         <th class="py-3 px-4 text-left w-1/12">Résultat</th>
-                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
-                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
@@ -70,7 +70,7 @@
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;print(db.version())&quot;&#x27; OU &#x27;mongod --version&#x27;. Vérifier manuellement les dernières versions/correctifs sur le site de MongoDB.</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 Exécuter &#x27;mongosh --quiet --eval &quot;print(db.version())&quot;&#x27; OU &#x27;mongod --version&#x27;. Vérifier manuellement les dernières versions/correctifs sur le site de MongoDB.</pre></td>
@@ -86,7 +86,7 @@ Exécuter &#x27;mongosh --quiet --eval &quot;print(db.version())&quot;&#x27; OU 
             <p class="text-lg font-bold text-red-600">0.00%</p>
             <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/3 vérifiés).</p>
             <p class="text-gray-700">0 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
@@ -97,8 +97,8 @@ Exécuter &#x27;mongosh --quiet --eval &quot;print(db.version())&quot;&#x27; OU 
                         <th class="py-3 px-4 text-left w-1/12">Type</th>
                         <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
                         <th class="py-3 px-4 text-left w-1/12">Résultat</th>
-                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
-                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
@@ -160,7 +160,7 @@ Condition de succès non remplie.</pre></td>
             <p class="text-lg font-bold text-red-600">0.00%</p>
             <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/0 vérifiés).</p>
             <p class="text-gray-700">5 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
@@ -171,8 +171,8 @@ Condition de succès non remplie.</pre></td>
                         <th class="py-3 px-4 text-left w-1/12">Type</th>
                         <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
                         <th class="py-3 px-4 text-left w-1/12">Résultat</th>
-                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
-                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
@@ -183,7 +183,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.system.users.find({&quot;roles.role&quot;: {&quot;$in&quot;: [&quot;dbOwner&quot;, &quot;userAdmin&quot;, &quot;userAdminAnyDatabase&quot;]},&quot;roles.db&quot;: &quot;admin&quot; }).toArray())&quot;&#x27; et analyser manuellement la sortie.</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.system.users.find({&quot;roles.role&quot;: {&quot;$in&quot;: [&quot;dbOwner&quot;, &quot;userAdmin&quot;, &quot;userAdminAnyDatabase&quot;]},&quot;roles.db&quot;: &quot;admin&quot; }).toArray())&quot;&#x27; et analyser manuellement la sortie.</pre></td>
@@ -196,7 +196,7 @@ Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.system.users.find({&qu
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.getUser())&quot;&#x27; et &#x27;mongosh --quiet --eval &quot;printjson(db.getRole())&quot;&#x27;. Vérifier manuellement les rôles et privilèges.</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.getUser())&quot;&#x27; et &#x27;mongosh --quiet --eval &quot;printjson(db.getRole())&quot;&#x27;. Vérifier manuellement les rôles et privilèges.</pre></td>
@@ -209,7 +209,7 @@ Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.getUser())&quot;&#x27;
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;ps -ef | grep -E &quot;mongos | mongod&quot;&#x27; et vérifier l&#x27;utilisateur sous lequel les processus s&#x27;exécutent (doit être un utilisateur non-root dédié comme &#x27;mongodb&#x27;).</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 Exécuter &#x27;ps -ef | grep -E &quot;mongos | mongod&quot;&#x27; et vérifier l&#x27;utilisateur sous lequel les processus s&#x27;exécutent (doit être un utilisateur non-root dédié comme &#x27;mongodb&#x27;).</pre></td>
@@ -222,7 +222,7 @@ Exécuter &#x27;ps -ef | grep -E &quot;mongos | mongod&quot;&#x27; et vérifier 
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo: 1, showPrivileges: true, showBuiltinRoles: true} ))&quot;&#x27; et analyser manuellement les rôles et privilèges.</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo: 1, showPrivileges: true, showBuiltinRoles: true} ))&quot;&#x27; et analyser manuellement les rôles et privilèges.</pre></td>
@@ -235,7 +235,7 @@ Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo: \&quot;dbowner\&quot;} ))&quot;&#x27; et des commandes similaires pour &#x27;userAdmin&#x27;, &#x27;userAdminAnyDatabase&#x27;, &#x27;root&#x27;, &#x27;readWriteAnyDatabase&#x27;, &#x27;dbAdminAnyDatabase&#x27;, &#x27;clusterAdmin&#x27;, &#x27;hostManager&#x27;. Analyser manuellement les sorties.</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo: \&quot;dbowner\&quot;} ))&quot;&#x27; et des commandes similaires pour &#x27;userAdmin&#x27;, &#x27;userAdminAnyDatabase&#x27;, &#x27;root&#x27;, &#x27;readWriteAnyDatabase&#x27;, &#x27;dbAdminAnyDatabase&#x27;, &#x27;clusterAdmin&#x27;, &#x27;hostManager&#x27;. Analyser manuellement les sorties.</pre></td>
@@ -251,7 +251,7 @@ Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo
             <p class="text-lg font-bold text-red-600">0.00%</p>
             <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/4 vérifiés).</p>
             <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
@@ -262,8 +262,8 @@ Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo
                         <th class="py-3 px-4 text-left w-1/12">Type</th>
                         <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
                         <th class="py-3 px-4 text-left w-1/12">Résultat</th>
-                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
-                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
@@ -338,7 +338,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryptionKeyFile&quot;. (Fonctionnalité MongoDB Enterprise uniquement)</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryptionKeyFile&quot;. (Fonctionnalité MongoDB Enterprise uniquement)</pre></td>
@@ -354,7 +354,7 @@ cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryption
             <p class="text-lg font-bold text-red-600">0.00%</p>
             <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/3 vérifiés).</p>
             <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
@@ -365,8 +365,8 @@ cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryption
                         <th class="py-3 px-4 text-left w-1/12">Type</th>
                         <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
                         <th class="py-3 px-4 text-left w-1/12">Résultat</th>
-                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
-                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
@@ -393,7 +393,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep -A10 &quot;auditLog&quot; | grep &quot;filter&quot;. (Fonctionnalité MongoDB Enterprise uniquement)</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 cat /etc/mongod.conf | grep -A10 &quot;auditLog&quot; | grep &quot;filter&quot;. (Fonctionnalité MongoDB Enterprise uniquement)</pre></td>
@@ -441,7 +441,7 @@ Condition de succès non remplie.</pre></td>
             <p class="text-lg font-bold text-green-600">100.00%</p>
             <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/1 vérifiés).</p>
             <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
@@ -452,8 +452,8 @@ Condition de succès non remplie.</pre></td>
                         <th class="py-3 px-4 text-left w-1/12">Type</th>
                         <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
                         <th class="py-3 px-4 text-left w-1/12">Résultat</th>
-                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
-                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
@@ -478,7 +478,7 @@ Return Code: 1</pre></td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;ps -ef | grep mongod&#x27; pour obtenir le PID, puis &#x27;cat /proc/&lt;PID&gt;/limits&#x27; (remplacer &lt;PID&gt; par le PID réel). Vérifier les limites &#x27;f&#x27; (file size), &#x27;t&#x27; (cpu time), &#x27;v&#x27; (virtual memory), &#x27;n&#x27; (open files), &#x27;m&#x27; (memory size), &#x27;u&#x27; (processes/threads).</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 Exécuter &#x27;ps -ef | grep mongod&#x27; pour obtenir le PID, puis &#x27;cat /proc/&lt;PID&gt;/limits&#x27; (remplacer &lt;PID&gt; par le PID réel). Vérifier les limites &#x27;f&#x27; (file size), &#x27;t&#x27; (cpu time), &#x27;v&#x27; (virtual memory), &#x27;n&#x27; (open files), &#x27;m&#x27; (memory size), &#x27;u&#x27; (processes/threads).</pre></td>
@@ -491,7 +491,7 @@ Exécuter &#x27;ps -ef | grep mongod&#x27; pour obtenir le PID, puis &#x27;cat /
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep -A10 &quot;security&quot; | grep &quot;javascriptEnabled&quot;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 cat /etc/mongod.conf | grep -A10 &quot;security&quot; | grep &quot;javascriptEnabled&quot;</pre></td>
@@ -507,7 +507,7 @@ cat /etc/mongod.conf | grep -A10 &quot;security&quot; | grep &quot;javascriptEna
             <p class="text-lg font-bold text-red-600">0.00%</p>
             <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/0 vérifiés).</p>
             <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
@@ -518,8 +518,8 @@ cat /etc/mongod.conf | grep -A10 &quot;security&quot; | grep &quot;javascriptEna
                         <th class="py-3 px-4 text-left w-1/12">Type</th>
                         <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
                         <th class="py-3 px-4 text-left w-1/12">Résultat</th>
-                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
-                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
@@ -530,7 +530,7 @@ cat /etc/mongod.conf | grep -A10 &quot;security&quot; | grep &quot;javascriptEna
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;cat /etc/mongod.conf | grep &quot;keyFile:&quot; || cat /etc/mongod.conf | grep &quot;PEMKeyFile:&quot; || cat /etc/mongod.conf | grep &quot;CAFile:&quot;&#x27; pour trouver les chemins. Puis &#x27;ls -l &lt;chemin_fichier_clé/certificat&gt;&#x27; et vérifier les permissions (doit être 600 et propriétaire &#x27;mongodb:mongodb&#x27;).</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 Exécuter &#x27;cat /etc/mongod.conf | grep &quot;keyFile:&quot; || cat /etc/mongod.conf | grep &quot;PEMKeyFile:&quot; || cat /etc/mongod.conf | grep &quot;CAFile:&quot;&#x27; pour trouver les chemins. Puis &#x27;ls -l &lt;chemin_fichier_clé/certificat&gt;&#x27; et vérifier les permissions (doit être 600 et propriétaire &#x27;mongodb:mongodb&#x27;).</pre></td>
@@ -543,7 +543,7 @@ Exécuter &#x27;cat /etc/mongod.conf | grep &quot;keyFile:&quot; || cat /etc/mon
                         <td class="py-3 px-4 text-left align-top">Manual</td>
                         <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;cat /etc/mongod.conf | grep &quot;dbpath&quot; || cat /etc/mongod.conf | grep &quot;dbPath&quot;&#x27; pour trouver le chemin. Puis &#x27;stat -c &#x27;%a&#x27; &lt;chemin_base_de_données&gt;&#x27; et vérifier les permissions (doit être 770 ou plus restrictif pour &#x27;mongodb:mongodb&#x27;).</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
 Exécuter &#x27;cat /etc/mongod.conf | grep &quot;dbpath&quot; || cat /etc/mongod.conf | grep &quot;dbPath&quot;&#x27; pour trouver le chemin. Puis &#x27;stat -c &#x27;%a&#x27; &lt;chemin_base_de_données&gt;&#x27; et vérifier les permissions (doit être 770 ou plus restrictif pour &#x27;mongodb:mongodb&#x27;).</pre></td>
@@ -564,10 +564,10 @@ Exécuter &#x27;cat /etc/mongod.conf | grep &quot;dbpath&quot; || cat /etc/mongo
     <script>
         // Données pour le graphique global en camembert
         const overallChartData = {
-            labels: ['Réussi', 'Échoué', 'Erreur', 'N/A'],
+            labels: ['Réussi', 'Échoué', 'Error', 'N/A'],
             datasets: [{
                 label: 'Résultats des contrôles automatisés',
-                data: [1, 10, 0, 0],
+                data: [0, 0, 0, 0],
                 backgroundColor: [
                     '#10B981', // green-500
                     '#EF4444', // red-500
@@ -606,26 +606,26 @@ Exécuter &#x27;cat /etc/mongod.conf | grep &quot;dbpath&quot; || cat /etc/mongo
 
         // Données et configuration pour les graphiques à barres par catégorie
         const categoryChartData = {
-            labels: ["1 Installation et Patching", "2 Authentification", "3 Authorization", "4 Data Encryption", "5 Audit Logging", "6 Operating System Hardening", "7 File Permissions"], // Liste des noms de catégories
+            labels: [], // Liste des noms de catégories
             datasets: [
                 {
                     label: 'Réussi',
-                    data: [0, 0, 0, 0, 0, 1, 0],
+                    data: [],
                     backgroundColor: '#10B981', // green-500
                 },
                 {
                     label: 'Échoué',
-                    data: [0, 3, 0, 4, 3, 0, 0],
+                    data: [],
                     backgroundColor: '#EF4444', // red-500
                 },
                 {
-                    label: 'Erreur',
-                    data: [0, 0, 0, 0, 0, 0, 0],
+                    label: 'Error',
+                    data: [],
                     backgroundColor: '#6B7280', // gray-500
                 },
                 {
                     label: 'N/A',
-                    data: [0, 0, 0, 0, 0, 0, 0],
+                    data: [],
                     backgroundColor: '#9CA3AF', // gray-400
                 }
             ]

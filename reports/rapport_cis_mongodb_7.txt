@@ -1,0 +1,208 @@
+======================================================================
+🛡️  mongodb_7 - CIS Benchmark Audit Report
+Report Date: 2026-08-11 19:34:26
+Global Score: 9.1%
+======================================================================
+
+[MANUAL] 1.1 - S'assurer que la version/les correctifs appropriés de MongoDB sont installés
+  Category: 1 Installation et Patching
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Exécuter 'mongosh --quiet --eval "print(db.version())"' OU 'mongod --version'. Vérifier manuellement les dernières versions/correctifs sur le site de MongoDB.
+----------------------------------------------------------------------
+[FAIL] 2.1 - S'assurer que l'authentification est configurée
+  Category: 2 Authentification
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Démarrer l'instance sans authentification, créer un utilisateur administrateur, configurer 'security.authorization: enabled' dans le fichier de configuration et redémarrer.
+----------------------------------------------------------------------
+[FAIL] 2.2 - S'assurer que MongoDB ne contourne pas l'authentification via l'exception localhost
+  Category: 2 Authentification
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir 'setParameter.enableLocalhostAuthBypass: false' dans le fichier de configuration ou exécuter 'mongod --setParameter enableLocalhostAuthBypass=0'.
+----------------------------------------------------------------------
+[FAIL] 2.3 - S'assurer que l'authentification est activée dans le cluster sharded
+  Category: 2 Authentification
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Configurer 'net.tls.mode: requireSSL', 'net.tls.PEMKeyFile', 'net.tls.CAFile', 'net.tls.clusterFile', 'security.authorization: enabled', et 'security.clusterAuthMode: x509' dans le fichier de configuration et redémarrer. Ou utiliser 'keyFile' pour le développement.
+----------------------------------------------------------------------
+[MANUAL] 3.1 - S'assurer du moindre privilège pour les comptes de base de données
+  Category: 3 Authorization
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Exécuter 'mongosh --quiet --eval "printjson(db.system.users.find({"roles.role": {"$in": ["dbOwner", "userAdmin", "userAdminAnyDatabase"]},"roles.db": "admin" }).toArray())"' et analyser manuellement la sortie.
+----------------------------------------------------------------------
+[MANUAL] 3.2 - S'assurer que le contrôle d'accès basé sur les rôles est activé et configuré correctement
+  Category: 3 Authorization
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Exécuter 'mongosh --quiet --eval "printjson(db.getUser())"' et 'mongosh --quiet --eval "printjson(db.getRole())"'. Vérifier manuellement les rôles et privilèges.
+----------------------------------------------------------------------
+[MANUAL] 3.3 - S'assurer que MongoDB est exécuté en utilisant un compte de service dédié et non privilégié
+  Category: 3 Authorization
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Exécuter 'ps -ef | grep -E "mongos | mongod"' et vérifier l'utilisateur sous lequel les processus s'exécutent (doit être un utilisateur non-root dédié comme 'mongodb').
+----------------------------------------------------------------------
+[MANUAL] 3.4 - S'assurer que chaque rôle pour chaque base de données MongoDB est nécessaire et n'accorde que les privilèges nécessaires
+  Category: 3 Authorization
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Exécuter 'mongosh --quiet --eval "printjson(db.runCommand( {rolesInfo: 1, showPrivileges: true, showBuiltinRoles: true} ))"' et analyser manuellement les rôles et privilèges.
+----------------------------------------------------------------------
+[MANUAL] 3.5 - Réviser les rôles de superutilisateur/administrateur
+  Category: 3 Authorization
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Exécuter 'mongosh --quiet --eval "printjson(db.runCommand( {rolesInfo: \"dbowner\"} ))"' et des commandes similaires pour 'userAdmin', 'userAdminAnyDatabase', 'root', 'readWriteAnyDatabase', 'dbAdminAnyDatabase', 'clusterAdmin', 'hostManager'. Analyser manuellement les sorties.
+----------------------------------------------------------------------
+[FAIL] 4.1 - S'assurer que les protocoles TLS hérités sont désactivés
+  Category: 4 Data Encryption
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir 'net.tls.disabledProtocols: [TLS1_0, TLS1_1]' (ou équivalent) dans le fichier de configuration et redémarrer.
+----------------------------------------------------------------------
+[FAIL] 4.2 - S'assurer que les protocoles faibles sont désactivés
+  Category: 4 Data Encryption
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir 'net.ssl.disabledProtocols: TLS1_0, TLS1_1' dans le fichier de configuration et redémarrer.
+----------------------------------------------------------------------
+[FAIL] 4.3 - S'assurer du chiffrement des données en transit TLS ou SSL (chiffrement de transport)
+  Category: 4 Data Encryption
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir 'net.tls.mode: requireTLS', 'net.tls.certificateKeyFile', 'net.tls.CAFile' dans le fichier de configuration et redémarrer.
+----------------------------------------------------------------------
+[FAIL] 4.4 - S'assurer que la norme FIPS (Federal Information Processing Standard) est activée
+  Category: 4 Data Encryption
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir 'net.tls.FIPSMode: true' dans le fichier de configuration et redémarrer.
+----------------------------------------------------------------------
+[MANUAL] 4.5 - S'assurer du chiffrement des données au repos
+  Category: 4 Data Encryption
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+cat /etc/mongod.conf | grep "enableEncryption" | grep "encryptionKeyFile". (Fonctionnalité MongoDB Enterprise uniquement)
+----------------------------------------------------------------------
+[FAIL] 5.1 - S'assurer que l'activité du système est auditée
+  Category: 5 Audit Logging
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir 'auditLog.destination' sur 'syslog', 'console' ou 'file' dans le fichier de configuration.
+----------------------------------------------------------------------
+[MANUAL] 5.2 - S'assurer que les filtres d'audit sont configurés correctement
+  Category: 5 Audit Logging
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+cat /etc/mongod.conf | grep -A10 "auditLog" | grep "filter". (Fonctionnalité MongoDB Enterprise uniquement)
+----------------------------------------------------------------------
+[FAIL] 5.3 - S'assurer que la journalisation capture autant d'informations que possible
+  Category: 5 Audit Logging
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir 'systemLog.quiet: false' dans le fichier de configuration.
+----------------------------------------------------------------------
+[FAIL] 5.4 - S'assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal
+  Category: 5 Audit Logging
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir 'systemLog.logAppend: true' dans le fichier de configuration.
+----------------------------------------------------------------------
+[PASS] 6.1 - S'assurer que MongoDB utilise un port non-standard
+  Category: 6 Operating System Hardening
+  Output: Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 6.2 - S'assurer que les limites de ressources du système d'exploitation sont définies pour MongoDB
+  Category: 6 Operating System Hardening
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Exécuter 'ps -ef | grep mongod' pour obtenir le PID, puis 'cat /proc/<PID>/limits' (remplacer <PID> par le PID réel). Vérifier les limites 'f' (file size), 't' (cpu time), 'v' (virtual memory), 'n' (open files), 'm' (memory size), 'u' (processes/threads).
+----------------------------------------------------------------------
+[MANUAL] 6.3 - S'assurer que le script côté serveur est désactivé si non nécessaire
+  Category: 6 Operating System Hardening
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+cat /etc/mongod.conf | grep -A10 "security" | grep "javascriptEnabled"
+----------------------------------------------------------------------
+[MANUAL] 7.1 - S'assurer que les permissions appropriées du fichier de clés sont définies
+  Category: 7 File Permissions
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Exécuter 'cat /etc/mongod.conf | grep "keyFile:" || cat /etc/mongod.conf | grep "PEMKeyFile:" || cat /etc/mongod.conf | grep "CAFile:"' pour trouver les chemins. Puis 'ls -l <chemin_fichier_clé/certificat>' et vérifier les permissions (doit être 600 et propriétaire 'mongodb:mongodb').
+----------------------------------------------------------------------
+[MANUAL] 7.2 - S'assurer que les permissions appropriées du fichier de base de données sont définies
+  Category: 7 File Permissions
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Exécuter 'cat /etc/mongod.conf | grep "dbpath" || cat /etc/mongod.conf | grep "dbPath"' pour trouver le chemin. Puis 'stat -c '%a' <chemin_base_de_données>' et vérifier les permissions (doit être 770 ou plus restrictif pour 'mongodb:mongodb').
+----------------------------------------------------------------------

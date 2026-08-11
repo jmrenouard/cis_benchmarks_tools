@@ -1,0 +1,598 @@
+======================================================================
+🛡️  postgresql_17 - CIS Benchmark Audit Report
+Report Date: 2026-08-11 19:35:45
+Global Score: 17.9%
+======================================================================
+
+[MANUAL] 1.1 - Obtenir les paquets depuis des dépôts autorisés
+  Category: 1. Installation et correctifs
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 1.2 - Installer uniquement les paquets requis
+  Category: 1. Installation et correctifs
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[FAIL] 1.3 - Activer le service systemd
+  Category: 1. Installation et correctifs
+  Output: Stdout:
+not-found
+not-found
+Stderr:
+
+Return Code: 4
+
+Condition de succès non remplie.
+  Remediation: systemctl enable postgresql@17-main || systemctl enable postgresql-17
+----------------------------------------------------------------------
+[FAIL] 1.4 - Initialiser correctement le cluster de données
+  Category: 1. Installation et correctifs
+  Output: --- Command 1: systemctl is-active postgresql@17-main.service || systemctl is-active postgresql-17.service ---
+Stdout:
+inactive
+inactive
+Stderr:
+
+Return Code: 4
+---
+Condition de succès non remplie.
+  Remediation: Supprimer le répertoire de données et relancer initdb (avec checksums si souhaité), puis démarrer le service. Assurer les bonnes permissions sur le répertoire de données.
+----------------------------------------------------------------------
+[MANUAL] 1.5 - Appliquer les derniers correctifs de sécurité
+  Category: 1. Installation et correctifs
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[PASS] 1.6 - Vérifier que PGPASSWORD n'est pas défini dans les profils
+  Category: 1. Installation et correctifs
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[PASS] 1.7 - Vérifier que PGPASSWORD n'est pas utilisé par un processus
+  Category: 1. Installation et correctifs
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 2.1 - Masque de permissions (umask)
+  Category: 2. Permissions de répertoires et fichiers
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 2.2 - Propriétaire et permissions du répertoire d’extensions
+  Category: 2. Permissions de répertoires et fichiers
+  Output: --- Command pour obtenir le chemin: sudo -u postgres pg_config --sharedir ---
+Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+---
+----------------------------------------------------------------------
+[PASS] 2.3 - Désactiver l’historique des commandes psql
+  Category: 2. Permissions de répertoires et fichiers
+  Output: Stdout:
+/home/jmren/.psql_history
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 2.4 - Ne pas stocker de mots de passe dans les fichiers de service
+  Category: 2. Permissions de répertoires et fichiers
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[FAIL] 3.1.2 - Configurer log_destination
+  Category: 3. Journalisation et audit
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir la ou les destinations de logs (stderr, csvlog, syslog, jsonlog).
+ALTER SYSTEM SET log_destination = 'csvlog'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[FAIL] 3.1.3 - Activer logging_collector
+  Category: 3. Journalisation et audit
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Capturer stderr dans des fichiers via le démon collector.
+ALTER SYSTEM SET logging_collector = 'on'; puis systemctl restart postgresql@17-main || systemctl restart postgresql-17.
+----------------------------------------------------------------------
+[MANUAL] 3.2 - Activer l’extension pgAudit
+  Category: 3. Journalisation et audit
+  Output: Execution error: Command not found.
+Stdout:
+
+Stderr:
+/bin/bash: line 1: Installer: command not found
+/bin/bash: line 2: SELECT: command not found
+Return Code: 127
+
+Condition de succès non remplie.
+----------------------------------------------------------------------
+[FAIL] 3.1.4 - Définir log_directory
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Spécifier le répertoire de sortie des fichiers de logs (ex. /var/log/postgres).
+ALTER SYSTEM SET log_directory = '/var/log/postgres'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[FAIL] 3.1.5 - Définir log_filename
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Choisir un motif de nom de fichier strftime (e.g. postgresql-%Y%m%d.log).
+ALTER SYSTEM SET log_filename = 'postgresql-%Y%m%d.log'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[FAIL] 3.1.6 - Configurer log_file_mode
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Fixer les permissions des fichiers de log à 0600 (ou 0640 selon le groupe).
+ALTER SYSTEM SET log_file_mode = '0600'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[FAIL] 3.1.7 - Activer log_truncate_on_rotation
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Tronquer les fichiers existants lors de la rotation si même nom.
+ALTER SYSTEM SET log_truncate_on_rotation = 'on'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[PASS] 3.1.8 - Définir log_rotation_age
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+----------------------------------------------------------------------
+[PASS] 3.1.9 - Définir log_rotation_size
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 3.1.10 - Choisir syslog_facility
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[FAIL] 3.1.11 - Activer syslog_split_messages
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Couper les messages trop longs (>1024 octets) pour Syslog.
+ALTER SYSTEM SET syslog_split_messages = 'on'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[FAIL] 3.1.12 - Prévenir la perte de messages Syslog
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Éviter la suppression des messages volumineux dans Syslog.
+Même que 3.1.11.
+----------------------------------------------------------------------
+[FAIL] 3.1.13 - Configurer syslog_ident
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir l’identifiant de programme dans Syslog (ex. postgres).
+ALTER SYSTEM SET syslog_ident = 'proddb'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[MANUAL] 3.1.14 - Assurer les bons messages dans le log serveur
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 3.1.15 - Enregistrer les SQL en erreur
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[FAIL] 3.1.16 - Désactiver debug_print_parse
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Ne pas afficher les arbres d’analyse SQL dans les logs (réduction du bruit).
+ALTER SYSTEM SET debug_print_parse = 'off'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[FAIL] 3.1.17 - Désactiver debug_print_rewritten
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Ne pas afficher les arbres réécrits SQL dans les logs.
+ALTER SYSTEM SET debug_print_rewritten = 'off'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[FAIL] 3.1.18 - Désactiver debug_print_plan
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Ne pas afficher les plans d’exécution SQL dans les logs.
+ALTER SYSTEM SET debug_print_plan = 'off'; SELECT pg_reload_conf();
+----------------------------------------------------------------------
+[FAIL] 3.1.19 - Activer debug_pretty_print
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Formater lisiblement les arbres d’analyse/réécriture dans les logs.
+ALTER SYSTEM SET debug_pretty_print = 'on'; SELECT pg_reload_conf();.
+----------------------------------------------------------------------
+[FAIL] 3.1.20 - Activer log_connections
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Enregistrer chaque nouvelle connexion à PostgreSQL.
+ALTER SYSTEM SET log_connections = 'on'; SELECT pg_reload_conf();.
+----------------------------------------------------------------------
+[FAIL] 3.1.21 - Activer log_disconnections
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Enregistrer chaque déconnexion de PostgreSQL.
+ALTER SYSTEM SET log_disconnections = 'on'; SELECT pg_reload_conf();.
+----------------------------------------------------------------------
+[FAIL] 3.1.22 - Configurer log_error_verbosity
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Contrôler la verbosité des messages d’erreur (DEFAULT, VERBOSE).
+ALTER SYSTEM SET log_error_verbosity = 'verbose'; SELECT pg_reload_conf();.
+----------------------------------------------------------------------
+[FAIL] 3.1.23 - Configurer log_hostname
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Indiquer le nom d’hôte ou l’IP dans les logs de connexion.
+ALTER SYSTEM SET log_hostname = 'off'; SELECT pg_reload_conf();.
+----------------------------------------------------------------------
+[FAIL] 3.1.24 - Configurer log_line_prefix
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Définir le préfixe de ligne (timestamp, utilisateur, base, etc.) dans chaque log.
+ALTER SYSTEM SET log_line_prefix = '%m [%p] user=%u db=%d '; SELECT pg_reload_conf();.
+----------------------------------------------------------------------
+[FAIL] 3.1.25 - Configurer log_statement
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Choisir le niveau de requêtes à logger (none, ddl, mod, all).
+ALTER SYSTEM SET log_statement = 'ddl'; SELECT pg_reload_conf();.
+----------------------------------------------------------------------
+[FAIL] 3.1.26 - Configurer log_timezone
+  Category: 3.1. Journalisation des erreurs serveur
+  Output: Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Uniformiser le fuseau horaire des horodatages des logs (ex. UTC).
+ALTER SYSTEM SET log_timezone = 'UTC'; SELECT pg_reload_conf();.
+----------------------------------------------------------------------
+[MANUAL] 4.1 - Désactiver la connexion interactive
+  Category: 4. Accès et autorisations utilisateur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 4.2 - Configurer sudo correctement
+  Category: 4. Accès et autorisations utilisateur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 4.3 - Révoquer les privilèges administratifs excessifs
+  Category: 4. Accès et autorisations utilisateur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 4.4 - Verrouiller les comptes inactifs
+  Category: 4. Accès et autorisations utilisateur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 4.5 - Révoquer les privilèges de fonction excessifs
+  Category: 4. Accès et autorisations utilisateur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 4.6 - Révoquer les privilèges DML excessifs
+  Category: 4. Accès et autorisations utilisateur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 4.7 - Configurer Row Level Security (RLS)
+  Category: 4. Accès et autorisations utilisateur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 4.8 - Installer l’extension set_user
+  Category: 4. Accès et autorisations utilisateur
+  Output: Execution error: Command not found.
+Stdout:
+
+Stderr:
+/bin/bash: line 1: Utiliser: command not found
+/bin/bash: line 2: SELECT: command not found
+Return Code: 127
+
+Condition de succès non remplie.
+----------------------------------------------------------------------
+[MANUAL] 4.9 - Utiliser les rôles prédéfinis
+  Category: 4. Accès et autorisations utilisateur
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 5.1 - Ne pas passer de mot de passe en ligne de commande
+  Category: 5. Connexion et authentification
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 5.2 - Lier PostgreSQL à une adresse IP
+  Category: 5. Connexion et authentification
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 5.3 - Configurer la connexion UNIX locale
+  Category: 5. Connexion et authentification
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 5.4 - Configurer la connexion TCP/IP
+  Category: 5. Connexion et authentification
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 5.5 - Limites de connexion par compte
+  Category: 5. Connexion et authentification
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 5.6 - Configurer la complexité des mots de passe
+  Category: 5. Connexion et authentification
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 6.1 - Comprendre vecteurs d’attaque et paramètres runtime
+  Category: 6. Paramètres PostgreSQL
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 6.2 - Configurer les paramètres backend
+  Category: 6. Paramètres PostgreSQL
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 6.3 - Configurer Postmaster runtime parameters
+  Category: 6. Paramètres PostgreSQL
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 6.4 - Configurer les signaux SIGHUP
+  Category: 6. Paramètres PostgreSQL
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 6.5 - Configurer les paramètres Superuser
+  Category: 6. Paramètres PostgreSQL
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 6.6 - Configurer les paramètres User
+  Category: 6. Paramètres PostgreSQL
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 6.7 - Utiliser la cryptographie FIPS 140-2
+  Category: 6. Paramètres PostgreSQL
+  Output: Execution error: Command not found.
+Stdout:
+
+Stderr:
+/bin/bash: line 1: S’assurer: command not found
+/bin/bash: line 2: SHOW: command not found
+/bin/bash: line 2: et: command not found
+Return Code: 127
+
+Condition de succès non remplie.
+----------------------------------------------------------------------
+[MANUAL] 6.8 - Activer et configurer TLS
+  Category: 6. Paramètres PostgreSQL
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 6.9 - Configurer TLSv1.3+
+  Category: 6. Paramètres PostgreSQL
+  Output: Execution error: Command not found.
+Stdout:
+
+Stderr:
+/bin/bash: line 1: Forcer: command not found
+/bin/bash: line 2: SHOW: command not found
+/bin/bash: line 2: doit: command not found
+Return Code: 127
+
+Condition de succès non remplie.
+----------------------------------------------------------------------
+[MANUAL] 6.10 - Désactiver les cipher suites faibles
+  Category: 6. Paramètres PostgreSQL
+  Output: Execution error: Command not found.
+Stdout:
+
+Stderr:
+/bin/bash: line 1: Exclure: command not found
+/bin/bash: line 2: SHOW: command not found
+/bin/bash: line 2: vérifier: command not found
+Return Code: 127
+----------------------------------------------------------------------
+[MANUAL] 6.11 - Installer et configurer pgcrypto
+  Category: 6. Paramètres PostgreSQL
+  Output: Execution error: Command not found.
+Stdout:
+
+Stderr:
+/bin/bash: line 1: Activer: command not found
+/bin/bash: line 2: SELECT: command not found
+Return Code: 127
+
+Condition de succès non remplie.
+----------------------------------------------------------------------
+[MANUAL] 7.1 - Créer un utilisateur de réplication dédié
+  Category: 7. Réplication
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 7.2 - Journaliser les commandes de réplication
+  Category: 7. Réplication
+  Output: Execution error: Command not found.
+Stdout:
+
+Stderr:
+/bin/bash: line 1: Activer: command not found
+/bin/bash: line 2: SHOW: command not found
+/bin/bash: line 2: doit: command not found
+Return Code: 127
+
+Condition de succès non remplie.
+----------------------------------------------------------------------
+[MANUAL] 7.3 - Configurer les sauvegardes de base
+  Category: 7. Réplication
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 7.4 - Configurer l’archivage WAL
+  Category: 7. Réplication
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 7.5 - Configurer les paramètres de streaming
+  Category: 7. Réplication
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[MANUAL] 8.1 - Emplacements hors du cluster de données
+  Category: 8. Considérations spéciales de configuration
+  Output: This control requires manual verification.
+----------------------------------------------------------------------
+[FAIL] 8.2 - Installer/configurer pgBackRest
+  Category: 8. Considérations spéciales de configuration
+  Output: Stdout:
+
+Stderr:
+Command execution timed out after 5 seconds
+Return Code: -1
+
+Condition de succès non remplie.
+  Remediation: Utiliser pgBackRest pour des sauvegardes et restaurations robustes.
+Installer le paquet pgbackrest et configurer au moins une stanza (pgbackrest stanza-create).
+----------------------------------------------------------------------
+[MANUAL] 8.3 - Vérifier autres paramètres divers
+  Category: 8. Considérations spéciales de configuration
+  Output: This control requires manual verification.
+----------------------------------------------------------------------

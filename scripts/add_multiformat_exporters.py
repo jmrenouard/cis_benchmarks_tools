@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
+"""
+Inject Standard CLI Argument Parsing (-f/--format, -l/--lang, -o/--output) and export_results()
+across ALL 18 Audit Scripts (PSL ONLY).
+"""
+
 import glob
 import re
 
 audit_files = sorted(glob.glob("audit_cis_*.py"))
-print(f"Injecting Multi-Format Exporters into {len(audit_files)} audit scripts...")
+print(f"Standardizing CLI argument parsing and Multi-Format Exporters across {len(audit_files)} scripts...")
 
 exporter_func = r'''def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en"):
     """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
@@ -20,26 +25,37 @@ exporter_func = r'''def export_results(results, overall_score, categories_scores
     if os.path.dirname(filename):
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
+    # Flatten results if dictionary categorized
+    flat_results = []
+    if isinstance(results, dict):
+        for cat, checks in results.items():
+            for c in checks:
+                c_copy = dict(c)
+                c_copy["category"] = cat
+                flat_results.append(c_copy)
+    else:
+        flat_results = results
+
     if fmt == "json":
         data = {
             "benchmark": target_name,
             "report_date": datetime.now().isoformat(),
             "overall_score": overall_score,
-            "total_checks": len(results),
-            "results": results
+            "total_checks": len(flat_results),
+            "results": flat_results
         }
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
         print(f"📄 JSON Report successfully generated: {filename}")
 
     elif fmt == "xml":
-        root = ET.Element("testsuite", name=target_name, tests=str(len(results)), failures=str(sum(1 for r in results if r.get("status") == "FAIL")), timestamp=datetime.now().isoformat())
-        for r in results:
+        root = ET.Element("testsuite", name=target_name, tests=str(len(flat_results)), failures=str(sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])), timestamp=datetime.now().isoformat())
+        for r in flat_results:
             tc = ET.SubElement(root, "testcase", id=str(r.get("number", r.get("id", ""))), name=str(r.get("name", r.get("title", ""))), classname=str(r.get("category", "")))
-            if r.get("status") == "FAIL":
+            if r.get("status") in ["FAIL", "Fail"]:
                 failure = ET.SubElement(tc, "failure", message="Control failed")
                 failure.text = str(r.get("output", r.get("stdout", "")))
-            elif r.get("status") == "ERROR":
+            elif r.get("status") in ["ERROR", "Error"]:
                 err = ET.SubElement(tc, "error", message="Control execution error")
                 err.text = str(r.get("output", r.get("stderr", "")))
         tree = ET.ElementTree(root)
@@ -55,9 +71,9 @@ exporter_func = r'''def export_results(results, overall_score, categories_scores
             "=" * 70,
             ""
         ]
-        for r in results:
+        for r in flat_results:
             status = r.get("status", "")
-            status_icon = "[PASS]" if status == "PASS" else ("[FAIL]" if status == "FAIL" else "[MANUAL]")
+            status_icon = "[PASS]" if status in ["PASS", "Pass"] else ("[FAIL]" if status in ["FAIL", "Fail"] else "[MANUAL]")
             rec_id = r.get("number", r.get("id", ""))
             rec_name = r.get("name", r.get("title", ""))
             lines.append(f"{status_icon} {rec_id} - {rec_name}")
@@ -66,7 +82,7 @@ exporter_func = r'''def export_results(results, overall_score, categories_scores
             if out:
                 lines.append(f"  Output: {str(out).strip()}")
             rem = r.get('remediation', '')
-            if rem and status == "FAIL":
+            if rem and status in ["FAIL", "Fail"]:
                 lines.append(f"  Remediation: {str(rem).strip()}")
             lines.append("-" * 70)
         with open(filename, "w", encoding="utf-8") as f:
@@ -77,7 +93,11 @@ exporter_func = r'''def export_results(results, overall_score, categories_scores
         try:
             generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
         except TypeError:
-            generate_html_report(results, overall_score, categories_scores, filename=filename)
+            try:
+                generate_html_report(results, overall_score, categories_scores, filename=filename)
+            except TypeError:
+                # Legacy positional args fallback
+                generate_html_report(results, overall_score, categories_scores, 0, 0, 0, 0, 0, 0, 0, [], [], [], [], [], filename)
 '''
 
 for fpath in audit_files:
@@ -90,26 +110,28 @@ for fpath in audit_files:
     if "def export_results(" not in content:
         content = content.replace("def generate_html_report(", exporter_func + "\n\n\ndef generate_html_report(")
 
-    # Ensure -f / --format in main parser
-    if 'add_argument("-f", "--format"' not in content:
-        content = content.replace(
-            'parser.add_argument("-o", "--output"',
-            'parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")\n    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Language for report and CLI output (en/fr)")\n    parser.add_argument("-o", "--output"'
-        )
+    # Ensure argparse imported
+    if "import argparse" not in content:
+        content = content.replace("import subprocess", "import argparse\nimport subprocess")
 
-    # In main(), replace call to generate_html_report with export_results
-    main_split = content.split("def main():")
-    if len(main_split) == 2:
-        pre_main = main_split[0]
-        main_body = main_split[1]
-        main_body = re.sub(
-            r'generate_html_report\([^)]+\)',
-            'export_results(results, overall_score, {}, target_name=BENCHMARK_NAME if "BENCHMARK_NAME" in globals() else "CIS Audit", filename=args.output, fmt=getattr(args, "format", "html"), lang=getattr(args, "lang", "en"))',
-            main_body
-        )
-        content = pre_main + "def main():" + main_body
+    # Add standard CLI argument parser if missing in __main__
+    if 'argparse.ArgumentParser' not in content:
+        target_name = fpath.replace("audit_cis_", "").replace(".py", "")
+        cli_code = f'''
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="CIS Benchmark Audit Script")
+    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format")
+    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Language choice (en/fr)")
+    parser.add_argument("-o", "--output", default="reports/rapport_cis_{target_name}.html", help="Output file path")
+    args = parser.parse_args()
+
+    check_results = perform_checks(RECOMMENDATIONS_DATA)
+    (overall_score, categories_scores, *rest) = calculate_scores(check_results)
+    export_results(check_results, overall_score, categories_scores, target_name="{target_name}", filename=args.output, fmt=args.format, lang=args.lang)
+'''
+        content = re.sub(r'if __name__ == "__main__":.*$', cli_code.strip(), content, flags=re.DOTALL)
 
     with open(fpath, "w", encoding="utf-8") as f:
         f.write(content)
 
-print("✅ Updated Multi-Format Exporters across all 18 audit scripts!")
+print("✅ Standardized CLI parsing and Multi-Format Exporters across all 18 audit scripts!")

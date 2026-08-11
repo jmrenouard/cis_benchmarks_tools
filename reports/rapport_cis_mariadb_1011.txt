@@ -1,0 +1,712 @@
+======================================================================
+🛡️  mariadb_1011 - CIS Benchmark Audit Report
+Report Date: 2026-08-11 19:34:19
+Global Score: 80.0%
+======================================================================
+
+[MANUAL] 1.1 - Placer les bases de données sur des partitions non-système
+  Category: 1. Configuration Système d'exploitation
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+----------------------------------------------------------------------
+[FAIL] 1.2 - Utiliser un compte dédié et privilégié minimal pour MariaDB
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer le service MariaDB pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux.
+----------------------------------------------------------------------
+[PASS] 1.3 - Désactiver l'historique des commandes MariaDB
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+/home/jmren/.mysql_history
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[PASS] 1.4 - Vérifier que MYSQL_PWD n'est pas utilisé
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[FAIL] 1.5 - Désactiver l'accès interactif pour l'utilisateur MySQL
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).
+----------------------------------------------------------------------
+[PASS] 1.6 - Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 1.7 - Exécuter MariaDB dans un environnement sandbox
+  Category: 1. Configuration Système d'exploitation
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'
+----------------------------------------------------------------------
+[MANUAL] 2.1.1 - Politique de sauvegarde en place
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+AUCUNE_SAUVEGARDE_PLANIFIEE
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 2.1.2 - Validation des sauvegardes
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Analyser les rapports de tests de restauration.
+----------------------------------------------------------------------
+[MANUAL] 2.1.3 - Sécuriser les identifiants de sauvegarde
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Inspecter les permissions des fichiers contenant les credentials de sauvegarde.
+----------------------------------------------------------------------
+[MANUAL] 2.1.4 - Sécuriser les fichiers de sauvegarde
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.
+----------------------------------------------------------------------
+[MANUAL] 2.1.5 - Point-in-Time Recovery
+  Category: 2. Installation et Planification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 2.1.6 - Plan de reprise d'activité (DR)
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Vérifier l'existence et la validité du plan DR.
+----------------------------------------------------------------------
+[MANUAL] 2.1.7 - Sauvegarde des fichiers de configuration
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+/bin/bash: -c: line 1: syntax error near unexpected token `('
+/bin/bash: -c: line 1: `Contrôler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, clés SSL, etc.).'
+Return Code: 2
+----------------------------------------------------------------------
+[MANUAL] 2.2 - Dédier la machine à MariaDB
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Vérifier les services actifs sur la machine.
+----------------------------------------------------------------------
+[MANUAL] 2.3 - Ne pas spécifier de mots de passe en ligne de commande
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 2.4 - Ne pas réutiliser les noms d'utilisateurs
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 2.5 - S'assurer que le matériel cryptographique est unique et non par défaut
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+/bin/bash: line 1: Vérifier: command not found
+Return Code: 127
+----------------------------------------------------------------------
+[MANUAL] 2.6 - Assurer que password_lifetime <= 365
+  Category: 2. Installation et Planification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 2.7 - Verrouiller les comptes inutilisés
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 2.8 - Utilisation appropriée de l'authentification Socket Peer-Credential
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 2.9 - S'assurer que MariaDB est lié à une adresse IP
+  Category: 2. Installation et Planification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 2.10 - Limiter les versions TLS acceptées
+  Category: 2. Installation et Planification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 2.11 - Exiger des certificats côté client (X.509)
+  Category: 2. Installation et Planification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 2.12 - S'assurer que seuls les chiffrement approuvés sont utilisés
+  Category: 2. Installation et Planification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 3.1 - Permissions adéquates sur 'datadir'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+----------------------------------------------------------------------
+[MANUAL] 3.2 - Permissions sur les fichiers 'log_bin_basename'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_bin_basename;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+----------------------------------------------------------------------
+[MANUAL] 3.3 - Permissions sur 'log_error'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_error;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+----------------------------------------------------------------------
+[MANUAL] 3.4 - Permissions sur 'slow_query_log'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@slow_query_log_file;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+----------------------------------------------------------------------
+[MANUAL] 3.5 - Permissions sur 'relay_log_basename'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@relay_log_basename;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+----------------------------------------------------------------------
+[MANUAL] 3.6 - Permissions sur 'general_log_file'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@general_log_file;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+----------------------------------------------------------------------
+[MANUAL] 3.7 - Permissions sur les fichiers de clés SSL
+  Category: 3. Permissions Fichiers
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123
+----------------------------------------------------------------------
+[MANUAL] 3.8 - Permissions sur le répertoire des plugins
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@plugin_dir;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+----------------------------------------------------------------------
+[MANUAL] 3.9 - Permissions sur 'server_audit_file_path'
+  Category: 3. Permissions Fichiers
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123
+----------------------------------------------------------------------
+[MANUAL] 3.10 - Permissions sur les fichiers du plugin File Key Management
+  Category: 3. Permissions Fichiers
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123
+----------------------------------------------------------------------
+[MANUAL] 4.1 - S'assurer que les derniers correctifs de sécurité sont appliqués
+  Category: 4. Général
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 4.2 - S'assurer que les bases de test ne sont pas installées en production
+  Category: 4. Général
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[PASS] 4.3 - S'assurer que 'allow-suspicious-udfs' est à 'OFF'
+  Category: 4. Général
+  Output: Stdout:
+NOT FOUND
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 4.4 - Renforcer l'utilisation de 'local_infile' sur les clients MariaDB
+  Category: 4. Général
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[PASS] 4.5 - S'assurer que mariadb n'est pas démarré avec '--skip-grant-tables'
+  Category: 4. Général
+  Output: Stdout:
+NOT FOUND
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 4.6 - S'assurer que les liens symboliques sont désactivés
+  Category: 4. Général
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 4.7 - S'assurer que 'secure_file_priv' est configuré correctement
+  Category: 4. Général
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 4.8 - S'assurer que sql_mode contient STRICT_ALL_TABLES
+  Category: 4. Général
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 4.9 - Activer le chiffrement des données au repos dans MariaDB
+  Category: 4. Général
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.1 - Limiter l'accès complet à mysql.* aux seuls administrateurs
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.2 - Retirer le droit FILE aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.3 - Retirer le droit PROCESS aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.4 - Retirer le droit SUPER aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.5 - Retirer le droit SHUTDOWN aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.6 - Retirer CREATE USER aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.7 - Retirer GRANT OPTION aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.8 - Limiter REPLICATION SLAVE aux comptes de réplication
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.9 - Limiter les droits DML/DDL à des BD/comptes précis
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 5.10 - Définir proprement DEFINER/INVOKER des SP/Functions
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 6.1 - Configurer log_error correctement
+  Category: 6. Audit & Journalisation
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 6.2 - Journal hors partition système
+  Category: 6. Audit & Journalisation
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_bin_basename;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+----------------------------------------------------------------------
+[MANUAL] 6.3 - log_warnings=2
+  Category: 6. Audit & Journalisation
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 6.4 - Activer la journalisation d'audit (server_audit)
+  Category: 6. Audit & Journalisation
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 6.5 - Interdire le déchargement du plugin d'audit
+  Category: 6. Audit & Journalisation
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 6.6 - Chiffrer les Binary et Relay Logs
+  Category: 6. Audit & Journalisation
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 7.1 - Désactiver mysql_old_password (old_passwords=OFF, secure_auth=ON)
+  Category: 7. Authentification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[PASS] 7.2 - Aucun mot de passe dans la configuration globale
+  Category: 7. Authentification
+  Output: Stdout:
+
+Stderr:
+
+Return Code: 0
+----------------------------------------------------------------------
+[MANUAL] 7.3 - Authentification forte pour tous les comptes
+  Category: 7. Authentification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 7.4 - Politique de complexité des mots de passe (simple_password_check)
+  Category: 7. Authentification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 7.5 - Pas de wildcard '%' dans host
+  Category: 7. Authentification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 7.6 - Supprimer les comptes anonymes
+  Category: 7. Authentification
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 7.7 - Empêcher la réutilisation des mots de passe (password_reuse_check)
+  Category: 7. Authentification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 8.1 - Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES)
+  Category: 8. Sécurité réseau
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 8.2 - Exiger TLS côté utilisateur (ssl_type)
+  Category: 8. Sécurité réseau
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 8.3 - Limiter le nombre de connexions
+  Category: 8. Sécurité réseau
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 9.1 - Chiffrer le trafic de réplication
+  Category: 9. Réplication
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 9.2 - MASTER_SSL_VERIFY_SERVER_CERT activé
+  Category: 9. Réplication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
+----------------------------------------------------------------------
+[MANUAL] 9.3 - Pas de SUPER pour les utilisateurs de réplication
+  Category: 9. Réplication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';" | grep -q '[1-9]'
+----------------------------------------------------------------------
+[MANUAL] 9.4 - Chiffrement approuvé pour la réplication
+  Category: 9. Réplication
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------
+[MANUAL] 9.5 - TLS mutuel activé pour la réplication
+  Category: 9. Réplication
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+----------------------------------------------------------------------

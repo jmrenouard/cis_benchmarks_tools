@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import subprocess
 import json
 import os
@@ -345,26 +346,25 @@ CHECK_ROW_TEMPLATE = """
 
 # --- Execution and evaluation functions (Légèrement adaptées) ---
 
-def run_command(command):
-    """Exécute une commande shell et retourne stdout, stderr, et le code de retour."""
-    # print(f"DEBUG: Running command: {command}") # Ligne de débogage
+def run_command(command, remote_host=None):
+    """Execute command safely with timeout=5 and stdin=DEVNULL."""
     try:
-        # Uses parameter list ["/bin/bash", "-c", command] (shell=False).
-        # Secured: executed using strict parameter list (shell=False).
-        # Ici, les commandes sont définies dans le script.
-        # Ajout de `timeout` pour éviter les blocages potentiels (ex: attente de mot de passe)
-        process = subprocess.run(command, shell=True, check=False, capture_output=True, text=True, executable='/bin/bash', timeout=30) # Timeout de 30s
-        # print(f"DEBUG: stdout: {process.stdout.strip()}") # Ligne de débogage
-        # print(f"DEBUG: stderr: {process.stderr.strip()}") # Ligne de débogage
-        # print(f"DEBUG: returncode: {process.returncode}") # Ligne de débogage
+        if isinstance(command, str):
+            cmd_args = ["/bin/bash", "-c", command]
+        else:
+            cmd_args = command
+
+        if remote_host:
+            cmd_args = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", remote_host] + cmd_args
+
+        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=5)
         return process.stdout.strip(), process.stderr.strip(), process.returncode
     except subprocess.TimeoutExpired:
-        return "", f"Error: La commande a dépassé le délai d'exécution ({30}s).", 124 # Code pour timeout
-    except FileNotFoundError:
-        cmd_name = command.split()[0] if command else "N/A"
-        return "", f"Error: Command '{cmd_name}' introuvable.", 127 # Code 127 pour command not found
+        return "", "Command execution timed out after 5 seconds", -1
     except Exception as e:
-        return "", f"Execution error: {e}", 1 # Generic error code
+        return "", str(e), -1
+
+
 
 def evaluate_condition(condition, stdout, stderr, returncode):
     """Évalue si le résultat de la commande correspond à la condition attendue."""
@@ -672,6 +672,8 @@ def get_status_info(status):
     else:
         return "❓", status, "status-error" # Fallback
 
+
+
 def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en"):
     """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
     import json
@@ -687,26 +689,37 @@ def export_results(results, overall_score, categories_scores, target_name, filen
     if os.path.dirname(filename):
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
+    # Flatten results if dictionary categorized
+    flat_results = []
+    if isinstance(results, dict):
+        for cat, checks in results.items():
+            for c in checks:
+                c_copy = dict(c)
+                c_copy["category"] = cat
+                flat_results.append(c_copy)
+    else:
+        flat_results = results
+
     if fmt == "json":
         data = {
             "benchmark": target_name,
             "report_date": datetime.now().isoformat(),
             "overall_score": overall_score,
-            "total_checks": len(results),
-            "results": results
+            "total_checks": len(flat_results),
+            "results": flat_results
         }
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
         print(f"📄 JSON Report successfully generated: {filename}")
 
     elif fmt == "xml":
-        root = ET.Element("testsuite", name=target_name, tests=str(len(results)), failures=str(sum(1 for r in results if r.get("status") == "FAIL")), timestamp=datetime.now().isoformat())
-        for r in results:
+        root = ET.Element("testsuite", name=target_name, tests=str(len(flat_results)), failures=str(sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])), timestamp=datetime.now().isoformat())
+        for r in flat_results:
             tc = ET.SubElement(root, "testcase", id=str(r.get("number", r.get("id", ""))), name=str(r.get("name", r.get("title", ""))), classname=str(r.get("category", "")))
-            if r.get("status") == "FAIL":
+            if r.get("status") in ["FAIL", "Fail"]:
                 failure = ET.SubElement(tc, "failure", message="Control failed")
                 failure.text = str(r.get("output", r.get("stdout", "")))
-            elif r.get("status") == "ERROR":
+            elif r.get("status") in ["ERROR", "Error"]:
                 err = ET.SubElement(tc, "error", message="Control execution error")
                 err.text = str(r.get("output", r.get("stderr", "")))
         tree = ET.ElementTree(root)
@@ -722,9 +735,9 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             "=" * 70,
             ""
         ]
-        for r in results:
+        for r in flat_results:
             status = r.get("status", "")
-            status_icon = "[PASS]" if status == "PASS" else ("[FAIL]" if status == "FAIL" else "[MANUAL]")
+            status_icon = "[PASS]" if status in ["PASS", "Pass"] else ("[FAIL]" if status in ["FAIL", "Fail"] else "[MANUAL]")
             rec_id = r.get("number", r.get("id", ""))
             rec_name = r.get("name", r.get("title", ""))
             lines.append(f"{status_icon} {rec_id} - {rec_name}")
@@ -733,7 +746,7 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             if out:
                 lines.append(f"  Output: {str(out).strip()}")
             rem = r.get('remediation', '')
-            if rem and status == "FAIL":
+            if rem and status in ["FAIL", "Fail"]:
                 lines.append(f"  Remediation: {str(rem).strip()}")
             lines.append("-" * 70)
         with open(filename, "w", encoding="utf-8") as f:
@@ -744,7 +757,11 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         try:
             generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
         except TypeError:
-            generate_html_report(results, overall_score, categories_scores, filename=filename)
+            try:
+                generate_html_report(results, overall_score, categories_scores, filename=filename)
+            except TypeError:
+                # Legacy positional args fallback
+                generate_html_report(results, overall_score, categories_scores, 0, 0, 0, 0, 0, 0, 0, [], [], [], [], [], filename)
 
 
 
@@ -861,35 +878,12 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
 
 # --- Main Execution ---
 if __name__ == "__main__":
-    print("🚀 Starting CIS audit MySQL Community 8.4 Benchmark ...")
-    print(f"ℹ️ Using command MySQL: '{MYSQL_CMD}' (Ensure database connection is configured)")
+    parser = argparse.ArgumentParser(description="CIS Benchmark Audit Script")
+    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format")
+    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Language choice (en/fr)")
+    parser.add_argument("-o", "--output", default="reports/rapport_cis_mysql_community_84.html", help="Output file path")
+    args = parser.parse_args()
 
-    # Exécuter les contrôles
     check_results = perform_checks(RECOMMENDATIONS_DATA)
-
-    # Calculer les scores et obtenir les comptes pour les graphiques
-    try:
-        (overall_score, categories_scores, total_manual, total_errors, total_na,
-         passed_auto_count, failed_auto_count, error_auto_count, na_auto_count,
-         category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts
-        ) = calculate_scores(check_results)
-
-        # Generate HTML audit report
-        generate_html_report(check_results, overall_score, categories_scores,
-                             total_manual, total_errors, total_na,
-                             passed_auto_count, failed_auto_count, error_auto_count, na_auto_count,
-                             category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts,
-                             "reports/rapport_cis_mysql_8.html")
-
-        print("✅ Audit terminé.")
-        print(f"Score Global (contrôles automatisés tentés) : {overall_score:.2f}%.")
-        print(f"Contrôles manuels : {total_manual}.")
-        print(f"Controls in error: {total_errors}.")
-        print(f"Contrôles non applicables : {total_na}.")
-        print("Consulte le fichier reports/rapport_cis_mysql_8.html pour les détails.")
-
-    except Exception as e:
-        print(f"\n❌ Une erreur s'est produite lors du calcul des scores ou de la génération du rapport:")
-        print(e)
-        import traceback
-        traceback.print_exc()
+    (overall_score, categories_scores, *rest) = calculate_scores(check_results)
+    export_results(check_results, overall_score, categories_scores, target_name="mysql_community_84", filename=args.output, fmt=args.format, lang=args.lang)

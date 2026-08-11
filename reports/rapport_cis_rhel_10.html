@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>CIS Benchmark Audit Report Red Hat Enterprise Linux 10 v1.4.0</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f4f6; margin: 0; padding: 20px; color: #1f2937; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .header { border-bottom: 2px solid #3b82f6; padding-bottom: 20px; margin-bottom: 20px; }
+        .score { font-size: 36px; font-weight: bold; color: #2563eb; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #f9fafb; padding: 12px; text-align: left; border-bottom: 2px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ CIS Benchmark Audit Report Red Hat Enterprise Linux 10</h1>
+            <p>Version Suite: <strong>v1.4.0</strong> | Date: 2026-08-11 19:36:17</p>
+            <div class="score">Score Global: 45.0%</div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Control Title</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Execution Output</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.1.1.1</td>
+            <td style="padding: 12px;">Ensure cramfs kernel module is not available</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;">insmod /lib/modules/6.18.33.2-microsoft-standard-WSL2/kernel/fs/cramfs/cramfs.ko</td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.1.1.2</td>
+            <td style="padding: 12px;">Ensure freevxfs kernel module is not available</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.1.1.3</td>
+            <td style="padding: 12px;">Ensure hfs kernel module is not available</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.1.1.4</td>
+            <td style="padding: 12px;">Ensure hfsplus kernel module is not available</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.1.1.5</td>
+            <td style="padding: 12px;">Ensure jffs2 kernel module is not available</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.1.1.6</td>
+            <td style="padding: 12px;">Ensure squashfs kernel module is not available</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.1.1.7</td>
+            <td style="padding: 12px;">Ensure udf kernel module is not available</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.1.1.8</td>
+            <td style="padding: 12px;">Ensure usb-storage kernel module is disabled</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;">insmod /lib/modules/6.18.33.2-microsoft-standard-WSL2/kernel/drivers/usb/common/usb-common.ko 
+insmo</td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.3.1.1</td>
+            <td style="padding: 12px;">Ensure SELinux is installed and active</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.3.1.2</td>
+            <td style="padding: 12px;">Ensure SELinux state is enforcing</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">1.4.1</td>
+            <td style="padding: 12px;">Ensure AIDE is installed</td>
+            <td style="padding: 12px;">Initial Setup</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">2.1.1</td>
+            <td style="padding: 12px;">Ensure xinetd is not installed</td>
+            <td style="padding: 12px;">Services</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">2.2.1</td>
+            <td style="padding: 12px;">Ensure telnet server is not installed</td>
+            <td style="padding: 12px;">Services</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">3.1.1</td>
+            <td style="padding: 12px;">Ensure IP forwarding is disabled</td>
+            <td style="padding: 12px;">Network Configuration</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;">net.ipv4.ip_forward = 1</td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">3.1.2</td>
+            <td style="padding: 12px;">Ensure packet redirect sending is disabled</td>
+            <td style="padding: 12px;">Network Configuration</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;">net.ipv4.conf.all.send_redirects = 1</td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">3.4.1</td>
+            <td style="padding: 12px;">Ensure firewalld is installed and running</td>
+            <td style="padding: 12px;">Network Configuration</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;">inactive</td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">5.1.1</td>
+            <td style="padding: 12px;">Ensure auditd service is enabled and running</td>
+            <td style="padding: 12px;">Logging and Auditing</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;">inactive</td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">5.2.1</td>
+            <td style="padding: 12px;">Ensure SSH PermitRootLogin is disabled</td>
+            <td style="padding: 12px;">Access Control</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">5.2.2</td>
+            <td style="padding: 12px;">Ensure SSH PermitEmptyPasswords is disabled</td>
+            <td style="padding: 12px;">Access Control</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold;">5.3.1</td>
+            <td style="padding: 12px;">Ensure crypto policy is DEFAULT or FUTURE</td>
+            <td style="padding: 12px;">System Cryptography</td>
+            <td style="padding: 12px; text-align: center;"><span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span></td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"></td>
+        </tr>
+        
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

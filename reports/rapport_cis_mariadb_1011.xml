@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="mariadb_1011" tests="75" failures="2" timestamp="2026-08-11T19:34:18.309531"><testcase id="1.1" name="Placer les bases de données sur des partitions non-système" classname="1. Configuration Système d'exploitation"><error message="Control execution error">Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="1.2" name="Utiliser un compte dédié et privilégié minimal pour MariaDB" classname="1. Configuration Système d'exploitation"><failure message="Control failed">Stdout:
+
+Stderr:
+
+Return Code: 0
+
+Condition de succès non remplie.</failure></testcase><testcase id="1.3" name="Désactiver l'historique des commandes MariaDB" classname="1. Configuration Système d'exploitation" /><testcase id="1.4" name="Vérifier que MYSQL_PWD n'est pas utilisé" classname="1. Configuration Système d'exploitation" /><testcase id="1.5" name="Désactiver l'accès interactif pour l'utilisateur MySQL" classname="1. Configuration Système d'exploitation"><failure message="Control failed">Stdout:
+
+Stderr:
+
+Return Code: 0
+
+Condition de succès non remplie.</failure></testcase><testcase id="1.6" name="Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs" classname="1. Configuration Système d'exploitation" /><testcase id="1.7" name="Exécuter MariaDB dans un environnement sandbox" classname="1. Configuration Système d'exploitation" /><testcase id="2.1.1" name="Politique de sauvegarde en place" classname="2. Installation et Planification" /><testcase id="2.1.2" name="Validation des sauvegardes" classname="2. Installation et Planification" /><testcase id="2.1.3" name="Sécuriser les identifiants de sauvegarde" classname="2. Installation et Planification" /><testcase id="2.1.4" name="Sécuriser les fichiers de sauvegarde" classname="2. Installation et Planification" /><testcase id="2.1.5" name="Point-in-Time Recovery" classname="2. Installation et Planification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="2.1.6" name="Plan de reprise d'activité (DR)" classname="2. Installation et Planification" /><testcase id="2.1.7" name="Sauvegarde des fichiers de configuration" classname="2. Installation et Planification" /><testcase id="2.2" name="Dédier la machine à MariaDB" classname="2. Installation et Planification" /><testcase id="2.3" name="Ne pas spécifier de mots de passe en ligne de commande" classname="2. Installation et Planification" /><testcase id="2.4" name="Ne pas réutiliser les noms d'utilisateurs" classname="2. Installation et Planification" /><testcase id="2.5" name="S'assurer que le matériel cryptographique est unique et non par défaut" classname="2. Installation et Planification" /><testcase id="2.6" name="Assurer que password_lifetime &lt;= 365" classname="2. Installation et Planification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="2.7" name="Verrouiller les comptes inutilisés" classname="2. Installation et Planification" /><testcase id="2.8" name="Utilisation appropriée de l'authentification Socket Peer-Credential" classname="2. Installation et Planification" /><testcase id="2.9" name="S'assurer que MariaDB est lié à une adresse IP" classname="2. Installation et Planification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="2.10" name="Limiter les versions TLS acceptées" classname="2. Installation et Planification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="2.11" name="Exiger des certificats côté client (X.509)" classname="2. Installation et Planification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="2.12" name="S'assurer que seuls les chiffrement approuvés sont utilisés" classname="2. Installation et Planification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="3.1" name="Permissions adéquates sur 'datadir'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.2" name="Permissions sur les fichiers 'log_bin_basename'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_bin_basename;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.3" name="Permissions sur 'log_error'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_error;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.4" name="Permissions sur 'slow_query_log'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@slow_query_log_file;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.5" name="Permissions sur 'relay_log_basename'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@relay_log_basename;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.6" name="Permissions sur 'general_log_file'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@general_log_file;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.7" name="Permissions sur les fichiers de clés SSL" classname="3. Permissions Fichiers"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123</error></testcase><testcase id="3.8" name="Permissions sur le répertoire des plugins" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@plugin_dir;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.9" name="Permissions sur 'server_audit_file_path'" classname="3. Permissions Fichiers"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123</error></testcase><testcase id="3.10" name="Permissions sur les fichiers du plugin File Key Management" classname="3. Permissions Fichiers"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123</error></testcase><testcase id="4.1" name="S'assurer que les derniers correctifs de sécurité sont appliqués" classname="4. Général" /><testcase id="4.2" name="S'assurer que les bases de test ne sont pas installées en production" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="4.3" name="S'assurer que 'allow-suspicious-udfs' est à 'OFF'" classname="4. Général" /><testcase id="4.4" name="Renforcer l'utilisation de 'local_infile' sur les clients MariaDB" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="4.5" name="S'assurer que mariadb n'est pas démarré avec '--skip-grant-tables'" classname="4. Général" /><testcase id="4.6" name="S'assurer que les liens symboliques sont désactivés" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="4.7" name="S'assurer que 'secure_file_priv' est configuré correctement" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 0</error></testcase><testcase id="4.8" name="S'assurer que sql_mode contient STRICT_ALL_TABLES" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="4.9" name="Activer le chiffrement des données au repos dans MariaDB" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="5.1" name="Limiter l'accès complet à mysql.* aux seuls administrateurs" classname="5. Permissions MariaDB" /><testcase id="5.2" name="Retirer le droit FILE aux non-admins" classname="5. Permissions MariaDB" /><testcase id="5.3" name="Retirer le droit PROCESS aux non-admins" classname="5. Permissions MariaDB" /><testcase id="5.4" name="Retirer le droit SUPER aux non-admins" classname="5. Permissions MariaDB" /><testcase id="5.5" name="Retirer le droit SHUTDOWN aux non-admins" classname="5. Permissions MariaDB" /><testcase id="5.6" name="Retirer CREATE USER aux non-admins" classname="5. Permissions MariaDB" /><testcase id="5.7" name="Retirer GRANT OPTION aux non-admins" classname="5. Permissions MariaDB" /><testcase id="5.8" name="Limiter REPLICATION SLAVE aux comptes de réplication" classname="5. Permissions MariaDB" /><testcase id="5.9" name="Limiter les droits DML/DDL à des BD/comptes précis" classname="5. Permissions MariaDB" /><testcase id="5.10" name="Définir proprement DEFINER/INVOKER des SP/Functions" classname="5. Permissions MariaDB" /><testcase id="6.1" name="Configurer log_error correctement" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 0</error></testcase><testcase id="6.2" name="Journal hors partition système" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_bin_basename;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="6.3" name="log_warnings=2" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="6.4" name="Activer la journalisation d'audit (server_audit)" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="6.5" name="Interdire le déchargement du plugin d'audit" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="6.6" name="Chiffrer les Binary et Relay Logs" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="7.1" name="Désactiver mysql_old_password (old_passwords=OFF, secure_auth=ON)" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="7.2" name="Aucun mot de passe dans la configuration globale" classname="7. Authentification" /><testcase id="7.3" name="Authentification forte pour tous les comptes" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="7.4" name="Politique de complexité des mots de passe (simple_password_check)" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="7.5" name="Pas de wildcard '%' dans host" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="7.6" name="Supprimer les comptes anonymes" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="7.7" name="Empêcher la réutilisation des mots de passe (password_reuse_check)" classname="7. Authentification" /><testcase id="8.1" name="Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES)" classname="8. Sécurité réseau"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="8.2" name="Exiger TLS côté utilisateur (ssl_type)" classname="8. Sécurité réseau"><error message="Control execution error">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1</error></testcase><testcase id="8.3" name="Limiter le nombre de connexions" classname="8. Sécurité réseau" /><testcase id="9.1" name="Chiffrer le trafic de réplication" classname="9. Réplication" /><testcase id="9.2" name="MASTER_SSL_VERIFY_SERVER_CERT activé" classname="9. Réplication" /><testcase id="9.3" name="Pas de SUPER pour les utilisateurs de réplication" classname="9. Réplication" /><testcase id="9.4" name="Chiffrement approuvé pour la réplication" classname="9. Réplication" /><testcase id="9.5" name="TLS mutuel activé pour la réplication" classname="9. Réplication" /></testsuite>
