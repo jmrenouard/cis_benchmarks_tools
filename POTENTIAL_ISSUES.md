@@ -1,6 +1,6 @@
-# ⚠️ Potential Issues & Technical Debt Backlog (v1.2.3)
+# ⚠️ Potential Issues & Technical Debt Backlog (v1.2.4)
 
-Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #67) identifiés sur le projet **CIS Benchmarks Tools**.
+Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #69) identifiés sur le projet **CIS Benchmarks Tools**.
 
 ---
 
@@ -12,7 +12,7 @@ Ce document recense les problèmes potentiels, risques de bugs, remarques de sé
 
 ---
 
-## 1. Résolus dans les versions v1.2.0 - v1.2.3 ✅
+## 1. Résolus dans les versions v1.2.0 - v1.2.4 ✅
 
 - [x] **Échappement des templates HTML/CSS** : Correction des accolades simples dans les blocs `<style>` de tous les templates d'audit.
 - [x] **Contrainte PSL vérifiée** : Suppression de toute référence à Jinja2/PyYAML et intégration d'un vérificateur d'imports PSL dans la routine pre-commit.
