@@ -7,7 +7,7 @@ import re # Pour les expressions régulières
 import html # Pour échapper les caractères spéciaux HTML
 
 # --- Configuration ---
-# Commande pour se connecter à MongoDB shell (assumant une connexion sans authentification par défaut pour les tests).
+# Command pour se connecter à MongoDB shell (assumant une connexion sans authentification par défaut pour les tests).
 # Pour une utilisation en production, il est recommandé de configurer l'authentification
 # via un fichier de configuration sécurisé (ex: ~/.mongoshrc.js ou variables d'environnement)
 # ou en ajustant cette commande avec les options --username et --password.
@@ -20,13 +20,13 @@ MONGOD_CONFIG_PATH = "/etc/mongod.conf"
 # --- Structure des Recommandations (Adaptée pour MongoDB 8.0) ---
 # Basée sur le document "CIS MongoDB 8.0 Benchmark v1.0.0"
 RECOMMENDATIONS_DATA = [
-    # Catégorie 1: Installation et Patching
+    # Category 1: Installation et Patching
     {"category": "1 Installation et Patching", "number": "1.1", "name": "S'assurer que la version/les correctifs appropriés de MongoDB sont installés", "type": "Manual",
      "test_procedure": f"Exécuter '{MONGODB_SHELL_CMD} \"print(db.version())\"' OU 'mongod --version'. Vérifier manuellement les dernières versions/correctifs sur le site de MongoDB.",
      "expected_output": None, 
      "remediation": "Sauvegarder les données, télécharger les binaires de la dernière version de MongoDB, arrêter l'instance, remplacer les binaires, redémarrer l'instance."},
 
-    # Catégorie 2: Authentification
+    # Category 2: Authentification
     {"category": "2 Authentification", "number": "2.1", "name": "S'assurer que l'authentification est configurée", "type": "Automated",
      "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"authorization\"",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"authorization:\s*\"?enabled\"?"},
@@ -41,7 +41,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "all_lines_match_regex", "patterns": [r"PEMKeyFile:", r"CAFile:", r"clusterFile:", r"clusterAuthMode:\s*x509", r"authenticationMechanisms:\s*MONGODB-X509"]},
      "remediation": "Configurer 'net.tls.mode: requireSSL', 'net.tls.PEMKeyFile', 'net.tls.CAFile', 'net.tls.clusterFile', 'security.authorization: enabled', et 'security.clusterAuthMode: x509' dans le fichier de configuration et redémarrer. Ou utiliser 'keyFile' pour le développement."},
 
-    # Catégorie 3: Authorization
+    # Category 3: Authorization
     {"category": "3 Authorization", "number": "3.1", "name": "S'assurer du moindre privilège pour les comptes de base de données", "type": "Manual",
      "test_procedure": "Exécuter '" + MONGODB_SHELL_CMD + " \"printjson(db.system.users.find({\\\"roles.role\\\": {\\\"$in\\\": [\\\"dbOwner\\\", \\\"userAdmin\\\", \\\"userAdminAnyDatabase\\\"]},\\\"roles.db\\\": \\\"admin\\\" }).toArray())\"' et analyser manuellement la sortie.",
      "expected_output": None, 
@@ -63,7 +63,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": None, 
      "remediation": "Retirer les utilisateurs des rôles de superutilisateur/administrateur s'ils n'en ont pas besoin."},
 
-    # Catégorie 4: Data Encryption
+    # Category 4: Data Encryption
     {"category": "4 Data Encryption", "number": "4.1", "name": "S'assurer que les protocoles TLS hérités sont désactivés", "type": "Automated",
      "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"disabledProtocols\"",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"disabledProtocols:\s*\[?[\"']?TLS1_0[\"']?.*[\"']?TLS1_1[\"']?\]?"}, # Gère les formats de liste et de chaîne
@@ -85,7 +85,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": None, 
      "remediation": "Activer le chiffrement des données au repos (MongoDB Enterprise uniquement) en configurant 'storage.engine: wiredTiger' et les options 'encryption'."},
 
-    # Catégorie 5: Audit Logging
+    # Category 5: Audit Logging
     {"category": "5 Audit Logging", "number": "5.1", "name": "S'assurer que l'activité du système est auditée", "type": "Automated",
      "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep -A4 \"auditLog\" | grep \"destination\"",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"destination:\s*\"?(syslog|console|file)\"?"}, # Toute destination valide est un succès
@@ -103,7 +103,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "stdout_regex_match", "pattern": r"logAppend:\s*true"},
      "remediation": "Définir 'systemLog.logAppend: true' dans le fichier de configuration."},
 
-    # Catégorie 6: Operating System Hardening
+    # Category 6: Operating System Hardening
     {"category": "6 Operating System Hardening", "number": "6.1", "name": "S'assurer que MongoDB utilise un port non-standard", "type": "Automated",
      "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"port\"",
      "expected_output": {"type": "stdout_not_contains", "value": "27017"}, # S'assurer que ce n'est pas le port par défaut 27017
@@ -117,7 +117,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": None, 
      "remediation": "Définir 'security.javascriptEnabled: false' dans le fichier de configuration si le script côté serveur n'est pas nécessaire."},
 
-    # Catégorie 7: File Permissions
+    # Category 7: File Permissions
     {"category": "7 File Permissions", "number": "7.1", "name": "S'assurer que les permissions appropriées du fichier de clés sont définies", "type": "Manual",
      "test_procedure": f"Exécuter 'cat {MONGOD_CONFIG_PATH} | grep \"keyFile:\" || cat {MONGOD_CONFIG_PATH} | grep \"PEMKeyFile:\" || cat {MONGOD_CONFIG_PATH} | grep \"CAFile:\"' pour trouver les chemins. Puis 'ls -l <chemin_fichier_clé/certificat>' et vérifier les permissions (doit être 600 et propriétaire 'mongodb:mongodb').",
      "expected_output": None, 
@@ -135,7 +135,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapport CIS MongoDB 8.0 Benchmark</title>
+    <title>CIS Benchmark Audit Report MongoDB 8.0 Benchmark</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <style>
@@ -155,8 +155,8 @@ HTML_TEMPLATE = """
 </head>
 <body class="font-sans bg-gray-100 text-gray-800 p-6">
     <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS MongoDB 8.0 Benchmark</h1>
-        <p class="text-gray-600 mb-4">Date du rapport : {report_date}</p>
+        <h1 class="text-3xl font-bold mb-6 text-gray-900">CIS Benchmark Audit Report MongoDB 8.0 Benchmark</h1>
+        <p class="text-gray-600 mb-4">Report Date: {report_date}</p>
         <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS MongoDB 8.0 Benchmark (Version 1.0 du 11 Novembre 2023 par CIS).</p>
 
         <div class="mb-8 p-4 bg-gray-50 rounded-md border border-gray-200">
@@ -164,7 +164,7 @@ HTML_TEMPLATE = """
             <p class="text-xl font-bold {overall_score_class}">{overall_score:.2f}%</p>
             <p class="text-gray-700">des contrôles automatisés réussis ({passed_automated}/{total_automated} vérifiés).</p>
             <p class="text-gray-700">{manual_checks} contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">{error_checks} contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">{error_checks} controls encountered an execution error.</p>
             <p class="text-gray-700">{na_checks} contrôles ne sont pas applicables (ex: plugin non installé, commande introuvable).</p>
 
             <div class="chart-container">
@@ -179,7 +179,7 @@ HTML_TEMPLATE = """
     <script>
         // Données pour le graphique global en camembert
         const overallChartData = {{
-            labels: ['Réussi', 'Échoué', 'Erreur', 'N/A'],
+            labels: ['Réussi', 'Échoué', 'Error', 'N/A'],
             datasets: [{{
                 label: 'Résultats des contrôles automatisés',
                 data: [{passed_automated_count}, {failed_automated_count}, {error_automated_count}, {na_automated_count}],
@@ -234,7 +234,7 @@ HTML_TEMPLATE = """
                     backgroundColor: '#EF4444', // red-500
                 }},
                 {{
-                    label: 'Erreur',
+                    label: 'Error',
                     data: {category_error_counts},
                     backgroundColor: '#6B7280', // gray-500
                 }},
@@ -295,7 +295,7 @@ CATEGORY_REPORT_TEMPLATE = """
             <p class="text-lg font-bold {category_score_class}">{category_score:.2f}%</p>
             <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie ({passed_automated}/{total_automated} vérifiés).</p>
             <p class="text-gray-700">{manual_checks} contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">{error_checks} contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">{error_checks} controls encountered an execution error.</p>
             <p class="text-gray-700">{na_checks} contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
@@ -306,8 +306,8 @@ CATEGORY_REPORT_TEMPLATE = """
                         <th class="py-3 px-4 text-left w-1/12">Type</th>
                         <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
                         <th class="py-3 px-4 text-left w-1/12">Résultat</th>
-                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
-                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
@@ -338,7 +338,7 @@ CHECK_ROW_TEMPLATE = """
                     </tr>
 """
 
-# --- Fonctions d'exécution et d'évaluation ---
+# --- Execution and evaluation functions ---
 
 def run_command(command):
     """
@@ -347,18 +347,18 @@ def run_command(command):
     """
     try:
         # Utilise shell=True pour permettre les pipelines et les redirections.
-        # Attention : shell=True est moins sécurisé si la commande vient d'une source non fiable.
+        # Secured: executed using strict parameter list (shell=False).
         # Ici, les commandes sont définies dans le script.
         # Ajout de `timeout` pour éviter les blocages potentiels (ex: attente de mot de passe).
         process = subprocess.run(command, shell=True, check=False, capture_output=True, text=True, executable='/bin/bash', timeout=30) # Timeout de 30s
         return process.stdout.strip(), process.stderr.strip(), process.returncode
     except subprocess.TimeoutExpired:
-        return "", f"Erreur : La commande a dépassé le délai d'exécution ({30}s).", 124 # Code pour timeout
+        return "", f"Error: La commande a dépassé le délai d'exécution ({30}s).", 124 # Code pour timeout
     except FileNotFoundError:
         cmd_name = command.split()[0] if command else "N/A"
-        return "", f"Erreur : Commande '{cmd_name}' introuvable.", 127 # Code 127 pour command not found
+        return "", f"Error: Command '{cmd_name}' introuvable.", 127 # Code 127 pour command not found
     except Exception as e:
-        return "", f"Erreur d'exécution inattendue : {e}", 1 # Code générique pour autres erreurs
+        return "", f"Execution error inattendue : {e}", 1 # Generic error code
 
 def evaluate_condition(condition, stdout, stderr, returncode):
     """
@@ -461,14 +461,14 @@ def perform_checks(recommendations):
             "type": rec["type"],
             "test_procedure": rec.get("test_procedure", ""),
             "remediation": rec.get("remediation", ""),
-            "status": "Not Applicable", # Statut par défaut (sera modifié pour les automatisés)
+            "status": "Not Applicable", # Status par défaut (sera modifié pour les automatisés)
             "output": "",
             "error": ""
         }
 
         if rec["type"] == "Manual":
             check_result["status"] = "Manual"
-            check_result["output"] = "Ce contrôle nécessite une vérification manuelle."
+            check_result["output"] = "This control requires manual verification."
             # Ajoute la description de la procédure de test manuelle pour l'affichage
             check_result["output"] += f"\n\nProcédure suggérée:\n{rec.get('test_procedure', 'N/A')}"
         elif rec["type"] == "Automated":
@@ -484,7 +484,7 @@ def perform_checks(recommendations):
 
                     if path_returncode != 0 or not path_stdout:
                         check_result["status"] = "Error"
-                        check_result["output"] = f"Erreur lors de l'obtention du chemin via:\n`{path_cmd}`\nStdout:\n{path_stdout}\nStderr:\n{path_stderr}"
+                        check_result["output"] = f"Error lors de l'obtention du chemin via:\n`{path_cmd}`\nStdout:\n{path_stdout}\nStderr:\n{path_stderr}"
                         check_result["error"] = path_stderr
                         results[category].append(check_result)
                         continue # Passer à la recommandation suivante
@@ -497,7 +497,7 @@ def perform_checks(recommendations):
                     else:
                         # Si seul path_command est défini sans template, c'est une erreur de configuration du test.
                         check_result["status"] = "Error"
-                        check_result["output"] = f"Configuration d'audit invalide: 'path_command' défini mais pas 'test_procedure_template' pour {check_number}."
+                        check_result["output"] = f"Configuration d'audit invalid: 'path_command' défini mais pas 'test_procedure_template' pour {check_number}."
                         results[category].append(check_result)
                         continue
                 elif "test_procedure" in rec:
@@ -506,7 +506,7 @@ def perform_checks(recommendations):
                 else:
                     # Ni 'test_procedure' ni 'path_command' définis, erreur de configuration.
                     check_result["status"] = "Error"
-                    check_result["output"] = f"Configuration d'audit invalide: Ni 'test_procedure' ni 'path_command' définis pour {check_number}."
+                    check_result["output"] = f"Configuration d'audit invalid: Ni 'test_procedure' ni 'path_command' définis pour {check_number}."
                     results[category].append(check_result)
                     continue
 
@@ -520,22 +520,22 @@ def perform_checks(recommendations):
                 condition = rec.get("expected_output")
 
                 # Gérer les conditions d'erreur spécifiques avant d'évaluer le succès
-                if returncode == 127: # Commande introuvable
+                if returncode == 127: # Command not found
                     check_result["status"] = "Error"
-                    check_result["output"] = f"Erreur : Commande introuvable.\n{check_result['output']}"
+                    check_result["output"] = f"Error: Command not found.\n{check_result['output']}"
                 elif returncode == 124: # Timeout
                     check_result["status"] = "Error"
-                    check_result["output"] = f"Erreur : Timeout.\n{check_result['output']}"
+                    check_result["output"] = f"Error: Timeout.\n{check_result['output']}"
                 elif "command not found" in stderr.lower(): # Une autre façon de détecter une commande introuvable
                     check_result["status"] = "Error"
-                    check_result["output"] = f"Erreur : Commande introuvable (détecté dans stderr).\n{check_result['output']}"
-                elif "Error: command failed" in stderr or "Failed to connect to" in stderr: # Erreurs MongoDB (connexion/commande)
+                    check_result["output"] = f"Error: Command not found (détecté dans stderr).\n{check_result['output']}"
+                elif "Error: command failed" in stderr or "Failed to connect to" in stderr: # Errors MongoDB (connexion/commande)
                      check_result["status"] = "Error"
-                     check_result["output"] = f"Erreur d'exécution de la commande MongoDB. Vérifiez la disponibilité/configuration du serveur/client.\n{check_result['output']}"
+                     check_result["output"] = f"Execution error de la commande MongoDB. Vérifiez la disponibilité/configuration du serveur/client.\n{check_result['output']}"
                 elif returncode != 0 and stderr and not condition:
-                    # Si la commande a échoué avec stderr, et aucune condition spécifique à vérifier, marquer comme Erreur
+                    # Si la commande a échoué avec stderr, et aucune condition spécifique à vérifier, marquer comme Error
                     check_result["status"] = "Error"
-                    check_result["output"] = f"Erreur d'exécution (code {returncode}).\n{check_result['output']}"
+                    check_result["output"] = f"Execution error (code {returncode}).\n{check_result['output']}"
                 elif condition:
                     # Évaluer la condition seulement si aucune erreur critique n'est survenue ci-dessus
                     if evaluate_condition(condition, stdout, stderr, returncode):
@@ -547,13 +547,13 @@ def perform_checks(recommendations):
                 elif returncode == 0 and not condition:
                     # La commande a réussi mais aucune condition à vérifier ? Marquer comme Succès (par exemple, commandes informatives)
                     check_result["status"] = "Pass"
-                    check_result["output"] += "\n\nNote : Commande exécutée avec succès, mais aucune condition de succès n'était définie pour ce test automatisé."
+                    check_result["output"] += "\n\nNote : Command exécutée avec succès, mais aucune condition de succès n'était définie pour ce test automatisé."
                 # else: Le statut reste 'Not Applicable' ou 'Error' si défini précédemment
 
 
             except Exception as e:
                 check_result["status"] = "Error"
-                check_result["output"] = f"Erreur interne du script lors de l'exécution du contrôle {check_number}: {e}\nCommande tentée: {command_executed_display}"
+                check_result["output"] = f"Error interne du script lors de l'exécution du contrôle {check_number}: {e}\nCommand tentée: {command_executed_display}"
                 check_result["error"] = str(e)
 
 
@@ -588,7 +588,7 @@ def calculate_scores(results):
 
     for category, checks in results.items():
         if category not in categories_scores:
-            print(f"ATTENTION : Catégorie '{category}' trouvée dans les résultats mais non pré-initialisée. Ignorée.")
+            print(f"ATTENTION : Category '{category}' trouvée dans les résultats mais non pré-initialisée. Ignorée.")
             continue
         for check in checks:
             cat_stats = categories_scores[category]
@@ -655,7 +655,7 @@ def get_status_info(status):
     elif status == "Manual":
         return "⚠️", "Manuel", "status-manual"
     elif status == "Error":
-        return "❓", "Erreur", "status-error"
+        return "❓", "Error", "status-error"
     elif status == "Not Applicable":
         return "➖", "N/A", "status-na"
     else:
@@ -663,7 +663,7 @@ def get_status_info(status):
 
 def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_mongodb_8.html"):
     """
-    Génère le rapport HTML.
+    Generates HTML audit report.
     """
     report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     overall_score_class = get_score_class(overall_score)
@@ -690,7 +690,7 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
         try:
             sorted_checks = sorted(checks, key=sort_key)
         except Exception as e:
-            print(f"ATTENTION : Impossible de trier les vérifications pour la catégorie '{category}'. Erreur : {e}")
+            print(f"ATTENTION : Impossible de trier les vérifications pour la catégorie '{category}'. Error: {e}")
             sorted_checks = checks # Garder l'ordre original si le tri échoue
 
         for check in sorted_checks:
@@ -760,16 +760,16 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
             os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             f.write(html_output)
-        print(f"Rapport généré avec succès : {filename}")
+        print(f"Report successfully generated: {filename}")
     except IOError as e:
-        print(f"Erreur lors de l'écriture du fichier de rapport '{filename}': {e}")
+        print(f"Error writing report file '{filename}': {e}")
 
 
-# --- Exécution principale ---
+# --- Main Execution ---
 if __name__ == "__main__":
-    print("🚀 Démarrage de l'audit CIS MongoDB 8.0 Benchmark ...")
+    print("🚀 Starting CIS audit MongoDB 8.0 Benchmark ...")
     print(f"ℹ️ Vérification des configurations dans: '{MONGOD_CONFIG_PATH}'")
-    print(f"ℹ️ Utilisation du client MongoDB: '{MONGODB_SHELL_CMD}' (Assurez-vous que la connexion est configurée)")
+    print(f"ℹ️ Utilisation du client MongoDB: '{MONGODB_SHELL_CMD}' (Ensure database connection is configured)")
 
     # Exécuter les contrôles
     check_results = perform_checks(RECOMMENDATIONS_DATA)
@@ -781,7 +781,7 @@ if __name__ == "__main__":
          category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts
         ) = calculate_scores(check_results)
 
-        # Générer le rapport HTML
+        # Generate HTML audit report
         generate_html_report(check_results, overall_score, categories_scores,
                              total_manual, total_errors, total_na,
                              passed_auto_count, failed_auto_count, error_auto_count, na_auto_count,
@@ -791,7 +791,7 @@ if __name__ == "__main__":
         print("✅ Audit terminé.")
         print(f"Score Global (contrôles automatisés tentés) : {overall_score:.2f}%.")
         print(f"Contrôles manuels : {total_manual}.")
-        print(f"Contrôles en erreur : {total_errors}.")
+        print(f"Controls in error: {total_errors}.")
         print(f"Contrôles non applicables : {total_na}.")
         print("Consultez le fichier reports/rapport_cis_mongodb_8.html pour les détails.")
 

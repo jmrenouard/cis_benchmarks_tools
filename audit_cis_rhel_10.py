@@ -337,7 +337,7 @@ def generate_html_report(results, overall_score, categories_scores, filename="re
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Rapport d'Audit CIS Red Hat Enterprise Linux 10 v1.4.0</title>
+    <title>CIS Benchmark Audit Report Red Hat Enterprise Linux 10 v1.4.0</title>
     <style>
         body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f3f4f6; margin: 0; padding: 20px; color: #1f2937; }}
         .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }}
@@ -350,7 +350,7 @@ def generate_html_report(results, overall_score, categories_scores, filename="re
 <body>
     <div class="container">
         <div class="header">
-            <h1>🛡️ Rapport d'Audit CIS Red Hat Enterprise Linux 10</h1>
+            <h1>🛡️ CIS Benchmark Audit Report Red Hat Enterprise Linux 10</h1>
             <p>Version Suite: <strong>v1.4.0</strong> | Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             <div class="score">Score Global: {overall_score:.1f}%</div>
         </div>
@@ -358,10 +358,10 @@ def generate_html_report(results, overall_score, categories_scores, filename="re
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Titre du Contrôle</th>
-                    <th>Catégorie</th>
-                    <th>Statut</th>
-                    <th>Extrait Sortie</th>
+                    <th>Control Title</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Execution Output</th>
                 </tr>
             </thead>
             <tbody>
@@ -374,7 +374,7 @@ def generate_html_report(results, overall_score, categories_scores, filename="re
 
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_content)
-    print(f"📄 Rapport HTML RHEL 10 généré avec succès : {filename}")
+    print(f"📄 RHEL 10 HTML report successfully generated: {filename}")
 
 
 def main():
