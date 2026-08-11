@@ -1,6 +1,6 @@
-# ⚠️ Potential Issues & Technical Debt Backlog
+# ⚠️ Potential Issues & Technical Debt Backlog (v1.2.0)
 
-Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #39) identifiés sur le projet **CIS Benchmarks Tools**.
+Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #53) identifiés sur le projet **CIS Benchmarks Tools**.
 
 ---
 
@@ -8,10 +8,20 @@ Ce document recense les problèmes potentiels, risques de bugs, remarques de sé
 
 > [!IMPORTANT]
 > L'ensemble du projet respecte la règle **Python Standard Library (PSL) ONLY**. Aucune bibliothèque externe (telle que `jinja2`, `yaml`, `requests`) ne doit être introduite.
+> Cette contrainte est automatiquement vérifiée lors du `make pre-commit` via l'analyse d'AST dans `scripts/pre_commit_checks.py`.
 
 ---
 
-## 1. Sécurité et Injections de Commandes (`subprocess`)
+## 1. Résolus dans la version v1.2.0 ✅
+
+- [x] **Échappement des templates HTML/CSS** : Correction des accolades simples dans les blocs `<style>` de tous les templates d'audit.
+- [x] **Contrainte PSL vérifiée** : Suppression de toute référence à Jinja2/PyYAML et intégration d'un vérificateur d'imports PSL dans la routine pre-commit.
+- [x] **Organisation de l'arborescence** : Déplacement de tous les rapports dans `reports/` et des Dockerfiles dans `docker/`.
+- [x] **Moteur d'Audit Unifié & Bundler** : Implémentation du script `audit_cis.py` alimenté par `scripts/bundle_audit_cis.py`.
+
+---
+
+## 2. Sécurité et Injections de Commandes (`subprocess`)
 
 > [!WARNING]
 > Plusieurs scripts d'audit et utilitaires utilisent `subprocess.run(..., shell=True)` avec interpolation dynamique de chaînes.
@@ -22,25 +32,14 @@ Ce document recense les problèmes potentiels, risques de bugs, remarques de sé
 
 ---
 
-## 2. Évaluation des Conditions et Dépendances entre Contrôles
+## 3. Évaluation des Conditions et Dépendances entre Contrôles
 
 > [!IMPORTANT]
 > Les sous-contrôles dépendant de variables stockées (`store_output_as`) nécessitent une exécution séquentielle stricte et un moteur d'évaluation complet.
 
 ### Constats & Recommandations :
-- **Opérateurs d'évaluation** : L'évaluateur `evaluate_condition` prend désormais en charge `stdout_equals`, `stdout_contains`, `stdout_not_equals`, `stdout_not_contains`, `file_exists`, `file_contains`, `exit_code_equals`.
+- **Opérateurs d'évaluation** : L'évaluateur `evaluate_condition` prend en charge `stdout_equals`, `stdout_contains`, `stdout_not_equals`, `stdout_not_contains`, `file_exists`, `file_contains`, `exit_code_equals`.
 - **Action Backlog** : Ajouter une suite de tests unitaires automatisés basés sur le module `unittest` de la PSL pour valider l'évaluateur de condition sur chaque type d'opérateur sans nécessiter de conteneur en cours d'exécution.
-
----
-
-## 3. Échappement des Templates HTML / CSS (PSL Native)
-
-> [!NOTE]
-> Les blocs `<style>` dans les templates HTML `str.format` doivent obligatoirement utiliser des accolades doubles (`{{` et `}}`) ou le module PSL `string.Template`.
-
-### Constats & Recommandations :
-- **Risque `KeyError`** : Des déclarations CSS avec accolades simples (`.status-pass { color: ... }`) ont provoqué des `KeyError: ' color'` lors des appels à `.format()`.
-- **Action Backlog** : Utiliser `string.Template` ou isoler les blocs CSS dans le moteur de rendu natif PSL (`html` / `string.Template`) pour éliminer tout risque d'erreur de formatage sans recourir à des dépendances tierces comme Jinja2.
 
 ---
 
