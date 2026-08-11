@@ -1,4 +1,4 @@
-# 🛡️ Suite d'Outils CIS Benchmarks (v1.6.0)
+# 🛡️ Suite d'Outils CIS Benchmarks (v1.7.0)
 
 > **Moteur d'Audit Automatisé de Conformité de Sécurité pour Bases de Données et Systèmes Linux (100% Python Standard Library - PSL ONLY).**
 
@@ -14,12 +14,13 @@
 
 ### Points Forts
 - 🔒 **100% Python Standard Library (PSL ONLY)** : Aucune dépendance `pip`. S'exécute de manière autonome sur toute installation standard de Python 3.
+- 📁 **Spécifications de Règles Découplées (`rules/*.json`)** : Les règles de contrôles d'audit sont externalisées dans un répertoire dédié `rules/` au format JSON pour une gestion, édition et maintenance facilitées.
+- 📊 **Moteur de Graphiques 100% Offline en SVG Inline Pure** : Graphiques Donut et diagrammes en barres empilées générés nativement en SVG Python PSL, sans aucune bibliothèque JavaScript ou CDN.
 - 💻 **Modes d'Exécution Doubles (Local & SSH Distant)** : Auditez des machines/conteneurs locaux (`--mode local` / `--local`) ou des serveurs distants via SSH (`--mode ssh` / `--remote user@hostname` / `--ssh user@hostname`) de manière native sans Paramiko ou Ansible.
 - 🗄️ **18 Cibles d'Audit & 887 Contrôles** : Prise en charge de MariaDB, MySQL, PostgreSQL, MongoDB, Apache Cassandra et Red Hat Enterprise Linux (RHEL 8 / 9 / 10).
 - ⚡ **CLI d'Exécution Unifiée (`audit_cis.py`)** : Exécutez des audits individuels, l'ensemble des benchmarks ou l'auto-détection des cibles via une interface unique en ligne de commande.
 - 🌐 **Support Multi-Langues (i18n)** : Rapports et CLI disponibles en Anglais (`--lang en`) et Français (`--lang fr`).
 - 📄 **Exportateurs Multi-Formats (`--format html|json|xml|txt`)** : Génération de rapports visuels HTML, JSON (SIEM/DevSecOps), XML (JUnit/STIG) et TXT clair.
-- 📊 **Rapports HTML Interactifs** : Génère des rapports HTML autonomes dans `reports/` avec scores de conformité, graphiques par catégorie et remédiations détaillées.
 
 ---
 
@@ -27,31 +28,31 @@
 
 ### Moteurs de Bases de Données (15 Benchmarks)
 
-| Identifiant | Moteur de BD | Version / Profil | CIS Benchmark | Contrôles | Script |
-|---|---|---|---|:---:|---|
-| `mariadb106` | MariaDB | 10.6 | v1.3.0 | 74 | [`audit_cis_mariadb_106.py`](audit_cis_mariadb_106.py) |
-| `mariadb1011` | MariaDB | 10.11 | v1.0.0 | 75 | [`audit_cis_mariadb_1011.py`](audit_cis_mariadb_1011.py) |
-| `mysql80` | MySQL Enterprise | 8.0 | v1.5.0 | 70 | [`audit_cis_mysql_80.py`](audit_cis_mysql_80.py) |
-| `mysql-community84` | MySQL Community | 8.4 LTS | v1.1.0 | 79 | [`audit_cis_mysql_community_84.py`](audit_cis_mysql_community_84.py) |
-| `mysql-enterprise84` | MySQL Enterprise | 8.4 LTS | v1.1.0 | 70 | [`audit_cis_mysql_enterprise_84.py`](audit_cis_mysql_enterprise_84.py) |
-| `mysql-community97` | MySQL Community | 9.7 Innovation | v1.0.0 | 70 | [`audit_cis_mysql_community_97.py`](audit_cis_mysql_community_97.py) |
-| `mysql-enterprise97` | MySQL Enterprise | 9.7 Innovation | v1.0.0 | 70 | [`audit_cis_mysql_enterprise_97.py`](audit_cis_mysql_enterprise_97.py) |
-| `postgresql16` | PostgreSQL | 16 | v1.1.0 | 71 | [`audit_cis_postgresql_16.py`](audit_cis_postgresql_16.py) |
-| `postgresql17` | PostgreSQL | 17 | v1.1.0 | 71 | [`audit_cis_postgresql_17.py`](audit_cis_postgresql_17.py) |
-| `postgresql18` | PostgreSQL | 18 | v1.0.0 | 71 | [`audit_cis_postgresql_18.py`](audit_cis_postgresql_18.py) |
-| `mongodb7` | MongoDB | 7.0 | v1.2.0 | 23 | [`audit_cis_mongodb_7.py`](audit_cis_mongodb_7.py) |
-| `mongodb8` | MongoDB | 8.0 | v1.0.0 | 23 | [`audit_cis_mongodb_8.py`](audit_cis_mongodb_8.py) |
-| `cassandra40` | Apache Cassandra | 4.0 | v1.3.0 | 20 | [`audit_cis_cassandra_40.py`](audit_cis_cassandra_40.py) |
-| `cassandra41` | Apache Cassandra | 4.1 | v1.0.0 | 20 | [`audit_cis_cassandra_41.py`](audit_cis_cassandra_41.py) |
-| `cassandra50` | Apache Cassandra | 5.0 | v1.1.0 | 20 | [`audit_cis_cassandra_50.py`](audit_cis_cassandra_50.py) |
+| Identifiant | Moteur de BD | Version / Profil | CIS Benchmark | Contrôles | Script | Spécification de Règle |
+|---|---|---|---|:---:|---|---|
+| `mariadb106` | MariaDB | 10.6 | v1.3.0 | 74 | [`audit_cis_mariadb_106.py`](audit_cis_mariadb_106.py) | [`rules/mariadb_106.json`](rules/mariadb_106.json) |
+| `mariadb1011` | MariaDB | 10.11 | v1.0.0 | 75 | [`audit_cis_mariadb_1011.py`](audit_cis_mariadb_1011.py) | [`rules/mariadb_1011.json`](rules/mariadb_1011.json) |
+| `mysql80` | MySQL Enterprise | 8.0 | v1.5.0 | 70 | [`audit_cis_mysql_80.py`](audit_cis_mysql_80.py) | [`rules/mysql_80.json`](rules/mysql_80.json) |
+| `mysql-community84` | MySQL Community | 8.4 LTS | v1.1.0 | 79 | [`audit_cis_mysql_community_84.py`](audit_cis_mysql_community_84.py) | [`rules/mysql_community_84.json`](rules/mysql_community_84.json) |
+| `mysql-enterprise84` | MySQL Enterprise | 8.4 LTS | v1.1.0 | 70 | [`audit_cis_mysql_enterprise_84.py`](audit_cis_mysql_enterprise_84.py) | [`rules/mysql_enterprise_84.json`](rules/mysql_enterprise_84.json) |
+| `mysql-community97` | MySQL Community | 9.7 Innovation | v1.0.0 | 70 | [`audit_cis_mysql_community_97.py`](audit_cis_mysql_community_97.py) | [`rules/mysql_community_97.json`](rules/mysql_community_97.json) |
+| `mysql-enterprise97` | MySQL Enterprise | 9.7 Innovation | v1.0.0 | 70 | [`audit_cis_mysql_enterprise_97.py`](audit_cis_mysql_enterprise_97.py) | [`rules/mysql_enterprise_97.json`](rules/mysql_enterprise_97.json) |
+| `postgresql16` | PostgreSQL | 16 | v1.1.0 | 71 | [`audit_cis_postgresql_16.py`](audit_cis_postgresql_16.py) | [`rules/postgresql_16.json`](rules/postgresql_16.json) |
+| `postgresql17` | PostgreSQL | 17 | v1.1.0 | 71 | [`audit_cis_postgresql_17.py`](audit_cis_postgresql_17.py) | [`rules/postgresql_17.json`](rules/postgresql_17.json) |
+| `postgresql18` | PostgreSQL | 18 | v1.0.0 | 71 | [`audit_cis_postgresql_18.py`](audit_cis_postgresql_18.py) | [`rules/postgresql_18.json`](rules/postgresql_18.json) |
+| `mongodb7` | MongoDB | 7.0 | v1.2.0 | 23 | [`audit_cis_mongodb_7.py`](audit_cis_mongodb_7.py) | [`rules/mongodb_7.json`](rules/mongodb_7.json) |
+| `mongodb8` | MongoDB | 8.0 | v1.0.0 | 23 | [`audit_cis_mongodb_8.py`](audit_cis_mongodb_8.py) | [`rules/mongodb_8.json`](rules/mongodb_8.json) |
+| `cassandra40` | Apache Cassandra | 4.0 | v1.3.0 | 20 | [`audit_cis_cassandra_40.py`](audit_cis_cassandra_40.py) | [`rules/cassandra_40.json`](rules/cassandra_40.json) |
+| `cassandra41` | Apache Cassandra | 4.1 | v1.0.0 | 20 | [`audit_cis_cassandra_41.py`](audit_cis_cassandra_41.py) | [`rules/cassandra_41.json`](rules/cassandra_41.json) |
+| `cassandra50` | Apache Cassandra | 5.0 | v1.1.0 | 20 | [`audit_cis_cassandra_50.py`](audit_cis_cassandra_50.py) | [`rules/cassandra_50.json`](rules/cassandra_50.json) |
 
 ### Systèmes d'Exploitation Linux & STIG (3 Benchmarks)
 
-| Identifiant | Système d'Exploitation | Profil / STIG | CIS Benchmark | Contrôles | Script |
-|---|---|---|---|:---:|---|
-| `rhel8` | Red Hat Enterprise Linux | RHEL 8 CIS & STIG | v4.0.0 / v2.0.0 | 20 | [`audit_cis_rhel_8.py`](audit_cis_rhel_8.py) |
-| `rhel9` | Red Hat Enterprise Linux | RHEL 9 CIS & STIG | v2.0.0 / v1.0.0 | 20 | [`audit_cis_rhel_9.py`](audit_cis_rhel_9.py) |
-| `rhel10` | Red Hat Enterprise Linux | RHEL 10 CIS | v1.0.1 | 20 | [`audit_cis_rhel_10.py`](audit_cis_rhel_10.py) |
+| Identifiant | Système d'Exploitation | Profil / STIG | CIS Benchmark | Contrôles | Script | Spécification de Règle |
+|---|---|---|---|:---:|---|---|
+| `rhel8` | Red Hat Enterprise Linux | RHEL 8 CIS & STIG | v4.0.0 / v2.0.0 | 20 | [`audit_cis_rhel_8.py`](audit_cis_rhel_8.py) | [`rules/rhel_8.json`](rules/rhel_8.json) |
+| `rhel9` | Red Hat Enterprise Linux | RHEL 9 CIS & STIG | v2.0.0 / v1.0.0 | 20 | [`audit_cis_rhel_9.py`](audit_cis_rhel_9.py) | [`rules/rhel_9.json`](rules/rhel_9.json) |
+| `rhel10` | Red Hat Enterprise Linux | RHEL 10 CIS | v1.0.1 | 20 | [`audit_cis_rhel_10.py`](audit_cis_rhel_10.py) | [`rules/rhel_10.json`](rules/rhel_10.json) |
 
 ---
 
@@ -104,7 +105,7 @@ cis_benchmarks_tools/
 │       └── ci.yml                     # Pipeline CI/CD GitHub Actions (Python 3.8-3.12)
 ├── README.md                          # Documentation Principale (Anglais)
 ├── README_fr.md                       # Documentation Synchronisée (Français)
-├── audit_cis.py                       # Moteur d'Audit Centralisé (v1.6.0)
+├── audit_cis.py                       # Moteur d'Audit Centralisé (v1.7.0)
 ├── audit_cis_mariadb_106.py           # Script d'Audit MariaDB 10.6
 ├── audit_cis_mariadb_1011.py          # Script d'Audit MariaDB 10.11
 ├── audit_cis_mysql_80.py              # Script d'Audit MySQL Enterprise 8.0
@@ -123,6 +124,7 @@ cis_benchmarks_tools/
 ├── audit_cis_rhel_8.py                # Script d'Audit RHEL 8 CIS/STIG
 ├── audit_cis_rhel_9.py                # Script d'Audit RHEL 9 CIS/STIG
 ├── audit_cis_rhel_10.py               # Script d'Audit RHEL 10 CIS
+├── rules/                             # 18 Spécifications de Règles JSON Externalisées (rules/*.json)
 ├── reports/                           # Rapports Générés (HTML, JSON, XML, TXT)
 ├── docker/                            # Dockerfiles de Test (16 cibles)
 ├── tests/
@@ -133,7 +135,7 @@ cis_benchmarks_tools/
 │   ├── run_e2e_tests.py               # Moteur d'Analyse et de Tests E2E Automatisés
 │   └── start_*.sh                     # Scripts de Démarrage des Conteneurs
 ├── CIS_DATA/                          # 22 Spécifications Markdown de Référence
-├── VERSION                            # Version Courante du Produit (v1.6.0)
+├── VERSION                            # Version Courante du Produit (v1.7.0)
 ├── ROADMAP.md                         # Feuille de Route et Jalons Réalisés
 └── POTENTIAL_ISSUES.md                # Backlog et Dette Technique Résolue
 ```
@@ -153,7 +155,7 @@ cis_benchmarks_tools/
 
 ## 📄 Licence
 
-Ce projet est distribué sous licence **MIT**. Consulter le fichier `LICENSE` pour plus de détails.
+Ce produit est distribué sous licence **MIT**. Consulter le fichier `LICENSE` pour plus de détails.
 
 ## 📚 Références
 

@@ -1,0 +1,941 @@
+[
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.1",
+    "name": "Placer les bases de données sur des partitions non-système",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@datadir;\"",
+    "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'",
+    "expected_output": {
+      "type": "stdout_not_equals",
+      "value": "/"
+    },
+    "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MariaDB, redémarrer le service."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.2",
+    "name": "Utiliser un compte dédié et privilégié minimal pour MariaDB",
+    "type": "Automated",
+    "test_procedure": "ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | awk '{print $1}' | head -n 1",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "mysql"
+    },
+    "remediation": "Configurer le service MariaDB pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.3",
+    "name": "Désactiver l'historique des commandes MariaDB",
+    "type": "Automated",
+    "test_procedure": "! find /home /root -name .mysql_history -print -quit 2>/dev/null",
+    "expected_output": {
+      "type": "returncode_zero"
+    },
+    "remediation": "Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.4",
+    "name": "Vérifier que MYSQL_PWD n'est pas utilisé",
+    "type": "Automated",
+    "test_procedure": "! grep -qs MYSQL_PWD /proc/*/environ",
+    "expected_output": {
+      "type": "returncode_zero"
+    },
+    "remediation": "Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser des méthodes d'authentification sécurisées."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.5",
+    "name": "Désactiver l'accès interactif pour l'utilisateur MySQL",
+    "type": "Automated",
+    "test_procedure": "getent passwd mysql | cut -d: -f7",
+    "expected_output": {
+      "type": "stdout_contains_any",
+      "values": [
+        "/bin/false",
+        "/sbin/nologin"
+      ]
+    },
+    "remediation": "Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql)."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.6",
+    "name": "Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs",
+    "type": "Automated",
+    "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null",
+    "expected_output": {
+      "type": "returncode_zero"
+    },
+    "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.7",
+    "name": "Exécuter MariaDB dans un environnement sandbox",
+    "type": "Manual",
+    "test_procedure": "[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'",
+    "expected_output": null,
+    "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MariaDB sous Docker.",
+    "manual_steps": [
+      "Vérifier si MariaDB utilise chroot.",
+      "Vérifier si MariaDB est géré par systemd.",
+      "Vérifier si MariaDB fonctionne dans un conteneur Docker."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.1",
+    "name": "Politique de sauvegarde en place",
+    "type": "Manual",
+    "test_procedure": "crontab -l 2>/dev/null | grep -E 'mariabackup|mysqldump|xtrabackup' || echo 'AUCUNE_SAUVEGARDE_PLANIFIEE'",
+    "expected_output": null,
+    "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques.",
+    "manual_steps": [
+      "Vérifier la présence d'un cron de sauvegarde.",
+      "Confirmer l'utilisation de mariabackup ou mysqldump.",
+      "Documenter la politique de sauvegarde."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.2",
+    "name": "Validation des sauvegardes",
+    "type": "Manual",
+    "test_procedure": "Analyser les rapports de tests de restauration.",
+    "expected_output": null,
+    "remediation": "Planifier et documenter les tests de restauration périodiques.",
+    "manual_steps": [
+      "Identifier les fichiers de sauvegarde récents.",
+      "Restaurer une base de test à partir de ces fichiers.",
+      "Vérifier l'intégrité des données.",
+      "Documenter la date et le résultat du test."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.3",
+    "name": "Sécuriser les identifiants de sauvegarde",
+    "type": "Manual",
+    "test_procedure": "Inspecter les permissions des fichiers contenant les credentials de sauvegarde.",
+    "expected_output": null,
+    "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.",
+    "manual_steps": [
+      "Rechercher les scripts de sauvegarde.",
+      "Vérifier si les mots de passe sont en clair.",
+      "S'assurer que les fichiers de config (.my.cnf) ont des droits 600."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.4",
+    "name": "Sécuriser les fichiers de sauvegarde",
+    "type": "Manual",
+    "test_procedure": "Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.",
+    "expected_output": null,
+    "remediation": "Utiliser le chiffrement des sauvegardes (mariabackup + openssl enc).",
+    "manual_steps": [
+      "Localiser le stockage des sauvegardes.",
+      "Vérifier les ACLs.",
+      "Confirmer que les fichiers sont chiffrés au repos (AES-256/GPG)."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.5",
+    "name": "Point-in-Time Recovery",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE variable_name = 'binlog_expire_logs_seconds';\"",
+    "expected_output": {
+      "type": "stdout_is_numeric_greater_than",
+      "value": 0
+    },
+    "remediation": "Activer les binlogs, configurer binlog_expire_logs_seconds dans mariadb.cnf, tester les restaurations PITR."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.6",
+    "name": "Plan de reprise d'activité (DR)",
+    "type": "Manual",
+    "test_procedure": "Vérifier l'existence et la validité du plan DR.",
+    "expected_output": null,
+    "remediation": "Documenter et tester un plan DR incluant réplication Galera, backups offsite.",
+    "manual_steps": [
+      "Consulter la documentation technique.",
+      "Vérifier la présence d'une procédure de basculement.",
+      "Confirmer la réplication hors-site."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.7",
+    "name": "Sauvegarde des fichiers de configuration",
+    "type": "Manual",
+    "test_procedure": "Contrôler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, clés SSL, etc.).",
+    "expected_output": null,
+    "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.",
+    "manual_steps": [
+      "Lister le contenu d'une sauvegarde complète.",
+      "Vérifier la présence de /etc/mysql/mariadb.cnf et des certificats SSL."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.2",
+    "name": "Dédier la machine à MariaDB",
+    "type": "Manual",
+    "test_procedure": "Vérifier les services actifs sur la machine.",
+    "expected_output": null,
+    "remediation": "Utiliser un serveur dédié ou un conteneur pour MariaDB.",
+    "manual_steps": [
+      "Lister les services actifs (systemctl list-units --type=service).",
+      "S'assurer qu'aucun autre service de base de données ou applicatif majeur ne tourne."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.3",
+    "name": "Ne pas spécifier de mots de passe en ligne de commande",
+    "type": "Manual",
+    "test_procedure": "ps -ef | grep -E 'mysql|mariadb' | grep -v grep | grep -E '\\-p[^ ]'",
+    "expected_output": null,
+    "remediation": "Utiliser des fichiers d'options (.my.cnf) ou des méthodes d'authentification alternatives.",
+    "manual_steps": [
+      "Vérifier les processus en cours.",
+      "Inspecter les scripts de démarrage et crontab.",
+      "S'assurer que -p<password> n'apparaît nulle part."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.4",
+    "name": "Ne pas réutiliser les noms d'utilisateurs",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT host, user, plugin FROM mysql.user WHERE user NOT IN ('mysql.infoschema', 'mysql.session', 'mysql.sys', 'mariadb.sys') ORDER BY user;\"",
+    "expected_output": null,
+    "remediation": "Ajouter/Supprimer les utilisateurs pour que chaque compte soit dédié à un usage spécifique.",
+    "manual_steps": [
+      "Lister les utilisateurs MariaDB.",
+      "Vérifier que chaque nom de compte n'est utilisé que pour un seul rôle."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.5",
+    "name": "S'assurer que le matériel cryptographique est unique et non par défaut",
+    "type": "Manual",
+    "test_procedure": "Vérifier les certificats SSL utilisés par MariaDB.",
+    "expected_output": null,
+    "remediation": "Générer de nouveaux certificats, clés et autre matériel cryptographique pour chaque instance.",
+    "manual_steps": [
+      "Examiner les certificats via openssl x509 -in server-cert.pem -subject -noout.",
+      "Vérifier qu'ils ne contiennent pas 'Auto_Generated'."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.6",
+    "name": "Assurer que password_lifetime <= 365",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@default_password_lifetime;\"",
+    "expected_output": {
+      "type": "stdout_is_numeric_less_equal",
+      "value": 365
+    },
+    "remediation": "SET GLOBAL default_password_lifetime=365;"
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.7",
+    "name": "Verrouiller les comptes inutilisés",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT CONCAT(user, '@', host) FROM mysql.global_priv;\"",
+    "expected_output": null,
+    "remediation": "ALTER USER 'user'@'host' ACCOUNT LOCK; pour chaque compte inutilisé.",
+    "manual_steps": [
+      "Lister les comptes.",
+      "Identifier les comptes dormants.",
+      "Verrouiller les comptes non utilisés."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.8",
+    "name": "Utilisation appropriée de l'authentification Socket Peer-Credential",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT PLUGIN_NAME, PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'unix_socket';\"",
+    "expected_output": null,
+    "remediation": "Configurer unix_socket=ON/OFF selon les besoins. ALTER USER ... IDENTIFIED VIA unix_socket.",
+    "manual_steps": [
+      "Vérifier si unix_socket est activé.",
+      "Lister les utilisateurs configurés avec unix_socket.",
+      "S'assurer que seuls les accès locaux autorisés l'utilisent."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.9",
+    "name": "S'assurer que MariaDB est lié à une adresse IP",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME = 'bind_address';\"",
+    "expected_output": {
+      "type": "stdout_not_contains_any",
+      "values": [
+        "*",
+        "::"
+      ]
+    },
+    "remediation": "Configurer bind_address=<adresse_IP_spécifique> dans mariadb.cnf."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.10",
+    "name": "Limiter les versions TLS acceptées",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME = 'tls_version';\"",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "TLSv1.2"
+    },
+    "remediation": "Configurer tls_version=TLSv1.2,TLSv1.3 dans mariadb.cnf."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.11",
+    "name": "Exiger des certificats côté client (X.509)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type NOT IN ('ANY', 'X509', 'SPECIFIED');\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "ALTER USER '<user>'@'<host>' REQUIRE X509;"
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.12",
+    "name": "S'assurer que seuls les chiffrement approuvés sont utilisés",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME = 'ssl_cipher';\"",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
+    "remediation": "Configurer ssl_cipher avec une liste de chiffrements approuvés dans mariadb.cnf."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.1",
+    "name": "Permissions adéquates sur 'datadir'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@datadir;\"",
+    "test_procedure_template": "stat -c '%U:%G %a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^mysql:mysql\\s+7[05][05]$"
+    },
+    "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>"
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.2",
+    "name": "Permissions sur les fichiers 'log_bin_basename'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@log_bin_basename;\"",
+    "test_procedure_template": "ls -l {path}* | awk '{{print $1}}' | uniq",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^-rw-------$"
+    },
+    "remediation": "Appliquer chmod 600 sur les fichiers binaires."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.3",
+    "name": "Permissions sur 'log_error'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@log_error;\"",
+    "test_procedure_template": "stat -c '%a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^6[04]0$"
+    },
+    "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.4",
+    "name": "Permissions sur 'slow_query_log'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@slow_query_log_file;\"",
+    "test_procedure_template": "stat -c '%a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^6[04]0$"
+    },
+    "remediation": "Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600)."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.5",
+    "name": "Permissions sur 'relay_log_basename'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@relay_log_basename;\"",
+    "test_procedure_template": "ls -l {path}* | awk '{{print $1}}' | uniq",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^-rw-------$"
+    },
+    "remediation": "Appliquer chmod 600."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.6",
+    "name": "Permissions sur 'general_log_file'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@general_log_file;\"",
+    "test_procedure_template": "stat -c '%a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^6[04]0$"
+    },
+    "remediation": "Restreindre les droits d'accès (ex: 640 ou 600)."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.7",
+    "name": "Permissions sur les fichiers de clés SSL",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'ssl_key';\" | awk '{print $2}' | xargs stat -c '%a'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "600"
+    },
+    "remediation": "Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.8",
+    "name": "Permissions sur le répertoire des plugins",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@plugin_dir;\"",
+    "test_procedure_template": "stat -c '%U:%G %a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^(mysql|root):(mysql|root)\\s+7[57]5$"
+    },
+    "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>"
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.9",
+    "name": "Permissions sur 'server_audit_file_path'",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'server_audit_file_path';\" | awk '{print $2}' | xargs stat -c '%a'",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^6[04]0$"
+    },
+    "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.10",
+    "name": "Permissions sur les fichiers du plugin File Key Management",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'file_key_management_filename';\" | awk '{print $2}' | xargs stat -c '%a'",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^6[04]0$"
+    },
+    "remediation": "Restreindre l'accès aux fichiers de clés de chiffrement (chmod 640)."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.1",
+    "name": "S'assurer que les derniers correctifs de sécurité sont appliqués",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT @@version;\"",
+    "expected_output": null,
+    "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.",
+    "manual_steps": [
+      "Relever la version affichée.",
+      "Comparer avec les Release Notes MariaDB 10.6.",
+      "Vérifier les CVE critiques."
+    ]
+  },
+  {
+    "category": "4. Général",
+    "number": "4.2",
+    "name": "S'assurer que les bases de test ne sont pas installées en production",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME IN ('employees', 'world', 'world_x', 'sakila', 'airportdb', 'menagerie', 'test');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "Exécutez DROP DATABASE <database name>; pour supprimer une base de données d'exemple."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.3",
+    "name": "S'assurer que 'allow-suspicious-udfs' est à 'OFF'",
+    "type": "Automated",
+    "test_procedure": "my_print_defaults mysqld 2>/dev/null | grep -q 'allow-suspicious-udfs' && echo 'FOUND' || echo 'NOT FOUND'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "NOT FOUND"
+    },
+    "remediation": "Supprimer --allow-suspicious-udfs de la ligne de commande ou du fichier de configuration."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.4",
+    "name": "Renforcer l'utilisation de 'local_infile' sur les clients MariaDB",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@local_infile;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "Ajouter local-infile=0 à la section [mariadbd] et [client] du fichier de configuration MariaDB."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.5",
+    "name": "S'assurer que mariadb n'est pas démarré avec '--skip-grant-tables'",
+    "type": "Automated",
+    "test_procedure": "ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | grep -q 'skip-grant-tables' && echo 'FOUND' || echo 'NOT FOUND'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "NOT FOUND"
+    },
+    "remediation": "Supprimer l'option --skip-grant-tables de la ligne de commande ou du fichier de configuration."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.6",
+    "name": "S'assurer que les liens symboliques sont désactivés",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@have_symlink;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "DISABLED"
+    },
+    "remediation": "Ajouter skip-symbolic-links dans la section [mariadbd] du fichier mariadb.cnf."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.7",
+    "name": "S'assurer que 'secure_file_priv' est configuré correctement",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW GLOBAL VARIABLES WHERE Variable_name = 'secure_file_priv';\" | awk '{print $2}'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
+    "remediation": "Configurer secure_file_priv sur NULL (pour désactiver) ou sur un chemin spécifique dans mariadb.cnf."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.8",
+    "name": "S'assurer que sql_mode contient STRICT_ALL_TABLES",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@sql_mode;\"",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "STRICT_ALL_TABLES"
+    },
+    "remediation": "Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans mariadb.cnf."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.9",
+    "name": "Activer le chiffrement des données au repos dans MariaDB",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE variable_name = 'innodb_encrypt_tables';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "ON"
+    },
+    "remediation": "Configurer file_key_management plugin et innodb_encrypt_tables=ON dans mariadb.cnf."
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.1",
+    "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges WHERE grantee NOT LIKE ('\\\\'mysql.%localhost\\\\'');\"",
+    "expected_output": null,
+    "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs.",
+    "manual_steps": [
+      "Examiner les utilisateurs retournés.",
+      "Vérifier que seuls les administrateurs ont un accès complet.",
+      "REVOKE les privilèges excessifs."
+    ]
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.2",
+    "name": "Retirer le droit FILE aux non-admins",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'FILE';\"",
+    "expected_output": null,
+    "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Vérifier les utilisateurs ayant le droit FILE.",
+      "S'assurer que seuls les administrateurs l'ont."
+    ]
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.3",
+    "name": "Retirer le droit PROCESS aux non-admins",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'PROCESS';\"",
+    "expected_output": null,
+    "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Vérifier les utilisateurs ayant le droit PROCESS.",
+      "S'assurer que seuls les administrateurs l'ont."
+    ]
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.4",
+    "name": "Retirer le droit SUPER aux non-admins",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SUPER';\"",
+    "expected_output": null,
+    "remediation": "REVOKE SUPER ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Vérifier les utilisateurs ayant le droit SUPER.",
+      "S'assurer que seuls les administrateurs l'ont."
+    ]
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.5",
+    "name": "Retirer le droit SHUTDOWN aux non-admins",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SHUTDOWN';\"",
+    "expected_output": null,
+    "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Vérifier les utilisateurs ayant le droit SHUTDOWN.",
+      "S'assurer que seuls les administrateurs l'ont."
+    ]
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.6",
+    "name": "Retirer CREATE USER aux non-admins",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'CREATE USER';\"",
+    "expected_output": null,
+    "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Vérifier les utilisateurs ayant le droit CREATE USER.",
+      "S'assurer que seuls les administrateurs l'ont."
+    ]
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.7",
+    "name": "Retirer GRANT OPTION aux non-admins",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE IS_GRANTABLE = 'YES';\"",
+    "expected_output": null,
+    "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Vérifier les utilisateurs ayant GRANT OPTION.",
+      "S'assurer que seuls les administrateurs l'ont."
+    ]
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.8",
+    "name": "Limiter REPLICATION SLAVE aux comptes de réplication",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'REPLICATION SLAVE';\"",
+    "expected_output": null,
+    "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication.",
+    "manual_steps": [
+      "Vérifier les utilisateurs ayant REPLICATION SLAVE.",
+      "S'assurer que seuls les comptes de réplication l'ont."
+    ]
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.9",
+    "name": "Limiter les droits DML/DDL à des BD/comptes précis",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE, PRIVILEGE_TYPE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE IN ('SELECT','INSERT','UPDATE','DELETE','CREATE','DROP','ALTER');\"",
+    "expected_output": null,
+    "remediation": "Révoquer les droits superflus par base de données/compte.",
+    "manual_steps": [
+      "Vérifier les droits DML/DDL par utilisateur.",
+      "S'assurer du principe du moindre privilège."
+    ]
+  },
+  {
+    "category": "5. Permissions MariaDB",
+    "number": "5.10",
+    "name": "Définir proprement DEFINER/INVOKER des SP/Functions",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT ROUTINE_SCHEMA, ROUTINE_NAME, DEFINER, SECURITY_TYPE FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mariadb.sys@localhost');\"",
+    "expected_output": null,
+    "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.",
+    "manual_steps": [
+      "Lister les routines et leurs DEFINER.",
+      "Vérifier que les DEFINER sont appropriés."
+    ]
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.1",
+    "name": "Configurer log_error correctement",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'log_error';\" | awk '{print $2}'",
+    "expected_output": {
+      "type": "stdout_not_contains",
+      "value": "stderr"
+    },
+    "remediation": "Définir log-error=/chemin/vers/mariadb.err dans mariadb.cnf."
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.2",
+    "name": "Journal hors partition système",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@log_bin_basename;\"",
+    "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'",
+    "expected_output": {
+      "type": "stdout_not_equals",
+      "value": "/"
+    },
+    "remediation": "Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système."
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.3",
+    "name": "log_warnings=2",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@log_warnings;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "2"
+    },
+    "remediation": "Ajouter log_warnings=2 dans mariadb.cnf."
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.4",
+    "name": "Activer la journalisation d'audit (server_audit)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT PLUGIN_STATUS FROM information_schema.plugins WHERE PLUGIN_NAME = 'SERVER_AUDIT';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "ACTIVE"
+    },
+    "remediation": "Installer et configurer le plugin server_audit : plugin_load_add=server_audit, server_audit_logging=ON dans mariadb.cnf."
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.5",
+    "name": "Interdire le déchargement du plugin d'audit",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT LOAD_OPTION FROM information_schema.plugins WHERE PLUGIN_NAME='SERVER_AUDIT';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "FORCE_PLUS_PERMANENT"
+    },
+    "remediation": "Ajouter server_audit=FORCE_PLUS_PERMANENT dans mariadb.cnf."
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.6",
+    "name": "Chiffrer les Binary et Relay Logs",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE variable_name = 'encrypt_binlog';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "ON"
+    },
+    "remediation": "Ajouter encrypt_binlog=ON dans mariadb.cnf (nécessite un plugin de gestion de clés)."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.1",
+    "name": "Désactiver mysql_old_password (old_passwords=OFF, secure_auth=ON)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@old_passwords;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "Configurer old_passwords=0 et secure_auth=ON dans mariadb.cnf et redémarrer."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.2",
+    "name": "Aucun mot de passe dans la configuration globale",
+    "type": "Automated",
+    "test_procedure": "! grep -riE 'password|pwd|pass' /etc/mysql/ /etc/my.cnf 2>/dev/null | grep -v '#' | grep -v 'password_lifetime' | grep -v 'password_check' | grep -v 'validate_password' | grep -v 'strict_password' | grep -v 'old_passwords' | grep -v 'default_password_lifetime' | grep -v 'password_last_changed'",
+    "expected_output": {
+      "type": "returncode_zero"
+    },
+    "remediation": "Utiliser des fichiers .my.cnf privés ou mysql_config_editor avec permissions restreintes."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.3",
+    "name": "Authentification forte pour tous les comptes",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT User, host FROM mysql.user WHERE (plugin IN('mysql_native_password', 'mysql_old_password','') AND NOT (User = 'root' AND authentication_string = 'invalid') AND NOT (User = 'mysql' AND authentication_string = 'invalid'));\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.4",
+    "name": "Politique de complexité des mots de passe (simple_password_check)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT PLUGIN_STATUS FROM information_schema.plugins WHERE PLUGIN_NAME = 'simple_password_check';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "ACTIVE"
+    },
+    "remediation": "Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_password_check';"
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.5",
+    "name": "Pas de wildcard '%' dans host",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE host = '%';\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "ALTER USER '<user>'@'%' ... ou supprimer le compte."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.6",
+    "name": "Supprimer les comptes anonymes",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE user = '';\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "DROP USER ''@'<host>'; ou utiliser mariadb-secure-installation."
+  },
+  {
+    "category": "8. Sécurité réseau",
+    "number": "8.1",
+    "name": "Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@require_secure_transport;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "1"
+    },
+    "remediation": "Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf."
+  },
+  {
+    "category": "8. Sécurité réseau",
+    "number": "8.2",
+    "name": "Exiger TLS côté utilisateur (ssl_type)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type = '';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;"
+  },
+  {
+    "category": "8. Sécurité réseau",
+    "number": "8.3",
+    "name": "Limiter le nombre de connexions",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT VARIABLE_NAME, VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME LIKE 'max_%connections';\"",
+    "expected_output": null,
+    "remediation": "Ajuster max_connections et max_user_connections dans mariadb.cnf selon les besoins.",
+    "manual_steps": [
+      "Vérifier les valeurs de max_connections et max_user_connections.",
+      "S'assurer que des limites raisonnables sont définies."
+    ]
+  },
+  {
+    "category": "9. Réplication",
+    "number": "9.1",
+    "name": "Chiffrer le trafic de réplication",
+    "type": "Manual",
+    "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
+    "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Allowed'",
+    "expected_output": null,
+    "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL=1; START REPLICA;",
+    "manual_steps": [
+      "Vérifier si la réplication est active.",
+      "Vérifier Master_SSL_Allowed.",
+      "Configurer TLS pour la réplication si nécessaire."
+    ]
+  },
+  {
+    "category": "9. Réplication",
+    "number": "9.2",
+    "name": "MASTER_SSL_VERIFY_SERVER_CERT activé",
+    "type": "Automated",
+    "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
+    "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Verify_Server_Cert'",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "Yes"
+    },
+    "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL_VERIFY_SERVER_CERT=1; START REPLICA;"
+  },
+  {
+    "category": "9. Réplication",
+    "number": "9.3",
+    "name": "Pas de SUPER pour les utilisateurs de réplication",
+    "type": "Automated",
+    "pre_condition": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';\" | grep -q '[1-9]'",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%' AND Super_priv = 'Y';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "REVOKE SUPER ON *.* FROM '<repl_user>'@'<repl_host>';"
+  },
+  {
+    "category": "9. Réplication",
+    "number": "9.4",
+    "name": "Chiffrement approuvé pour la réplication",
+    "type": "Manual",
+    "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
+    "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Cipher'",
+    "expected_output": null,
+    "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL_CIPHER='ECDHE-ECDSA-AES128-GCM-SHA256'; START REPLICA;",
+    "manual_steps": [
+      "Vérifier le cipher utilisé pour la réplication.",
+      "S'assurer qu'un cipher fort est configuré."
+    ]
+  },
+  {
+    "category": "9. Réplication",
+    "number": "9.5",
+    "name": "TLS mutuel activé pour la réplication",
+    "type": "Manual",
+    "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
+    "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep -E 'Master_SSL_Cert|Master_SSL_Key'",
+    "expected_output": null,
+    "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL_CERT='...', MASTER_SSL_KEY='...'; START REPLICA; ALTER USER <repl_user> REQUIRE X509;",
+    "manual_steps": [
+      "Vérifier Master_SSL_Cert et Master_SSL_Key sur le replica.",
+      "Vérifier ssl_type=X509 pour les utilisateurs de réplication sur le primary."
+    ]
+  }
+]
