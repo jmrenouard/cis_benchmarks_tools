@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Unified CIS Benchmark Audit Suite Engine (Python Standard Library ONLY).
+Version: 1.1.0
+
 Runs CIS security compliance audits for all 15 supported database targets:
   - MariaDB (10.6, 10.11)
   - MySQL (8.0, Community 8.4/9.7, Enterprise 8.4/9.7)
@@ -20,6 +22,8 @@ import os
 import re
 import subprocess
 import sys
+
+__version__ = "1.1.0"
 
 TARGET_MAP = {
     "mariadb106": ("audit_cis_mariadb_106.py", "MariaDB 10.6", 74),
@@ -42,7 +46,7 @@ TARGET_MAP = {
 
 def list_targets():
     """List all supported CIS benchmark targets with recommendation counts."""
-    print("📋 Supported CIS Benchmark Audit Targets:")
+    print(f"📋 CIS Benchmarks Tools Suite v{__version__} - Supported Audit Targets:")
     print("=" * 65)
     print(f"  {'Target ID':<22} {'Database Engine':<25} {'Rules':<6} {'File'}")
     print("-" * 65)
@@ -67,7 +71,7 @@ def run_single_audit(target_key, output_html=None, output_json=None):
         print(f"❌ Script not found: {script_path}", file=sys.stderr)
         return False
 
-    print(f"\n🚀 Running CIS Audit for {label} ({count} controls, {script_file})...")
+    print(f"\n🚀 [v{__version__}] Running CIS Audit for {label} ({count} controls, {script_file})...")
     start_time = datetime.datetime.now()
 
     cmd = [sys.executable, script_path]
@@ -89,7 +93,7 @@ def run_single_audit(target_key, output_html=None, output_json=None):
 
 def auto_detect_and_run():
     """Detect running database containers or services and run matching CIS audits."""
-    print("🔍 Auto-detecting active database containers...")
+    print(f"🔍 [v{__version__}] Auto-detecting active database containers...")
     detected = []
 
     try:
@@ -115,7 +119,7 @@ def auto_detect_and_run():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Unified CIS Benchmark Audit Suite (Python Standard Library ONLY)",
+        description=f"Unified CIS Benchmark Audit Suite v{__version__} (Python Standard Library ONLY)",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("-t", "--target", choices=list(TARGET_MAP.keys()), help="Target database benchmark to audit")
@@ -124,6 +128,7 @@ def main():
     parser.add_argument("-d", "--auto-detect", action="store_true", help="Auto-detect running database containers and execute audits")
     parser.add_argument("-o", "--output-html", help="Path to save custom HTML report")
     parser.add_argument("-j", "--output-json", help="Path to save JSON summary report")
+    parser.add_argument("-v", "--version", action="version", version=f"CIS Benchmarks Suite v{__version__}")
 
     args = parser.parse_args()
 
@@ -136,7 +141,7 @@ def main():
         sys.exit(0)
 
     if args.all:
-        print("🌟 Executing CIS Audit for ALL 15 database targets...")
+        print(f"🌟 [v{__version__}] Executing CIS Audit for ALL 15 database targets...")
         success_count = 0
         for target_key in TARGET_MAP:
             if run_single_audit(target_key):

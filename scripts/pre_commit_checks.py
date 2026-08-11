@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Pre-Commit Validation Routine (Python Standard Library ONLY).
-Concatenates Python benchmark code into `audit_cis.py` and runs syntax/PSL integrity checks.
+Concatenates Python benchmark code into `audit_cis.py` and runs syntax/PSL/version integrity checks.
 """
 
 import ast
@@ -17,16 +17,30 @@ if REPO_ROOT not in sys.path:
 os.chdir(REPO_ROOT)
 
 
+def step_verify_and_sync_version():
+    """Verify VERSION file exists and synchronize version across unified script."""
+    print("🏷️ [1/5] Verifying repository VERSION file...")
+    version_file = os.path.join(REPO_ROOT, "VERSION")
+    if not os.path.exists(version_file):
+        print("❌ VERSION file missing in repository root!", file=sys.stderr)
+        sys.exit(1)
+
+    with open(version_file, "r", encoding="utf-8") as f:
+        version = f.read().strip()
+    print(f"  ✓ Repository Version: v{version}")
+    return version
+
+
 def step_concatenate_python_code():
     """Concatenate and synchronize python audit code into unified audit_cis.py script."""
-    print("📦 [1/4] Concatenating & updating unified Python audit script (audit_cis.py)...")
+    print("📦 [2/5] Concatenating & updating unified Python audit script (audit_cis.py)...")
     from scripts.bundle_audit_cis import generate_unified_audit_script
     generate_unified_audit_script()
 
 
 def step_validate_python_syntax():
     """Compile all python files to verify syntax using PSL py_compile."""
-    print("🐍 [2/4] Validating Python syntax across all scripts (py_compile)...")
+    print("🐍 [3/5] Validating Python syntax across all scripts (py_compile)...")
     py_files = sorted(glob.glob("*.py") + glob.glob("scripts/*.py"))
     failed = False
     for f in py_files:
@@ -42,7 +56,7 @@ def step_validate_python_syntax():
 
 def step_check_psl_compliance():
     """Verify that audit_cis.py uses ONLY Python Standard Library modules."""
-    print("🔒 [3/4] Verifying Python Standard Library (PSL) compliance on audit_cis.py...")
+    print("🔒 [4/5] Verifying Python Standard Library (PSL) compliance on audit_cis.py...")
     with open("audit_cis.py", "r", encoding="utf-8") as f:
         tree = ast.parse(f.read(), filename="audit_cis.py")
 
@@ -73,7 +87,7 @@ def step_check_psl_compliance():
 
 def step_check_shell_scripts():
     """Validate syntax of all shell scripts in scripts/ using bash -n."""
-    print("📜 [4/4] Validating Shell script syntax (bash -n)...")
+    print("📜 [5/5] Validating Shell script syntax (bash -n)...")
     sh_files = sorted(glob.glob("scripts/*.sh"))
     for sh_file in sh_files:
         try:
@@ -87,6 +101,7 @@ def step_check_shell_scripts():
 def main():
     print("🔍 Running CIS Benchmarks Pre-Commit Routine (Python PSL)...")
     print("=" * 60)
+    step_verify_and_sync_version()
     step_concatenate_python_code()
     step_validate_python_syntax()
     step_check_psl_compliance()

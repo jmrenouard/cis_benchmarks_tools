@@ -2,7 +2,7 @@
 """
 CIS Audit Engine Bundler (Python Standard Library ONLY).
 Unifies all 15 database benchmarks into a standalone single-file distribution `audit_cis.py`.
-Extracts RECOMMENDATIONS_DATA definitions from each audit script and embeds them into `audit_cis.py`.
+Extracts RECOMMENDATIONS_DATA definitions and embeds repository VERSION into `audit_cis.py`.
 """
 
 import ast
@@ -31,6 +31,15 @@ TARGET_METADATA = [
 ]
 
 
+def read_repo_version(repo_root):
+    """Read version string from VERSION file."""
+    version_file = os.path.join(repo_root, "VERSION")
+    if os.path.exists(version_file):
+        with open(version_file, "r", encoding="utf-8") as f:
+            return f.read().strip()
+    return "1.0.0"
+
+
 def extract_recommendations_count(script_path):
     """Count recommendations in an audit script using AST parsing."""
     try:
@@ -48,9 +57,10 @@ def extract_recommendations_count(script_path):
 
 
 def generate_unified_audit_script():
-    """Build the unified audit_cis.py single script using PSL only."""
+    """Build the unified audit_cis.py single script with VERSION using PSL only."""
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     target_file = os.path.join(repo_root, "audit_cis.py")
+    version = read_repo_version(repo_root)
 
     target_stats = {}
     for key, script_file, label in TARGET_METADATA:
@@ -61,6 +71,8 @@ def generate_unified_audit_script():
     content = f'''#!/usr/bin/env python3
 """
 Unified CIS Benchmark Audit Suite Engine (Python Standard Library ONLY).
+Version: {version}
+
 Runs CIS security compliance audits for all 15 supported database targets:
   - MariaDB (10.6, 10.11)
   - MySQL (8.0, Community 8.4/9.7, Enterprise 8.4/9.7)
@@ -81,6 +93,8 @@ import re
 import subprocess
 import sys
 
+__version__ = "{version}"
+
 TARGET_MAP = {{
 '''
 
@@ -88,63 +102,63 @@ TARGET_MAP = {{
         count = target_stats[key]
         content += f'    "{key}": ("{script_file}", "{label}", {count}),\n'
 
-    content += '''}
+    content += f'''}}
 
 
 def list_targets():
     """List all supported CIS benchmark targets with recommendation counts."""
-    print("📋 Supported CIS Benchmark Audit Targets:")
+    print(f"📋 CIS Benchmarks Tools Suite v{{__version__}} - Supported Audit Targets:")
     print("=" * 65)
-    print(f"  {'Target ID':<22} {'Database Engine':<25} {'Rules':<6} {'File'}")
+    print(f"  {{'Target ID':<22}} {{'Database Engine':<25}} {{'Rules':<6}} {{'File'}}")
     print("-" * 65)
     total_rules = 0
     for key, (script_file, label, count) in TARGET_MAP.items():
-        print(f"  • {key:<20} {label:<25} {count:<6} ({script_file})")
+        print(f"  • {{key:<20}} {{label:<25}} {{count:<6}} ({{script_file}})")
         total_rules += count
     print("=" * 65)
-    print(f"Total Database Targets: {len(TARGET_MAP)} | Total Audit Controls: {total_rules}")
+    print(f"Total Database Targets: {{len(TARGET_MAP)}} | Total Audit Controls: {{total_rules}}")
 
 
 def run_single_audit(target_key, output_html=None, output_json=None):
     """Execute a single CIS audit benchmark script using standard library subprocess."""
     if target_key not in TARGET_MAP:
-        print(f"❌ Unknown target: '{target_key}'. Use --list-targets to view valid choices.", file=sys.stderr)
+        print(f"❌ Unknown target: '{{target_key}}'. Use --list-targets to view valid choices.", file=sys.stderr)
         return False
 
     script_file, label, count = TARGET_MAP[target_key]
     script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), script_file)
 
     if not os.path.exists(script_path):
-        print(f"❌ Script not found: {script_path}", file=sys.stderr)
+        print(f"❌ Script not found: {{script_path}}", file=sys.stderr)
         return False
 
-    print(f"\\n🚀 Running CIS Audit for {label} ({count} controls, {script_file})...")
+    print(f"\\n🚀 [v{{__version__}}] Running CIS Audit for {{label}} ({{count}} controls, {{script_file}})...")
     start_time = datetime.datetime.now()
 
     cmd = [sys.executable, script_path]
     try:
         subprocess.run(cmd, check=True)
         elapsed = (datetime.datetime.now() - start_time).total_seconds()
-        print(f"✅ {label} CIS Audit completed successfully in {elapsed:.2f}s")
+        print(f"✅ {{label}} CIS Audit completed successfully in {{elapsed:.2f}}s")
 
-        default_report = f"rapport_cis_{target_key.replace('-', '_')}.html"
+        default_report = f"rapport_cis_{{target_key.replace('-', '_')}}.html"
         if output_html and os.path.exists(default_report):
             os.rename(default_report, output_html)
-            print(f"📄 HTML report saved to: {output_html}")
+            print(f"📄 HTML report saved to: {{output_html}}")
 
         return True
     except subprocess.CalledProcessError as e:
-        print(f"❌ CIS Audit for {label} failed with exit code {e.returncode}", file=sys.stderr)
+        print(f"❌ CIS Audit for {{label}} failed with exit code {{e.returncode}}", file=sys.stderr)
         return False
 
 
 def auto_detect_and_run():
     """Detect running database containers or services and run matching CIS audits."""
-    print("🔍 Auto-detecting active database containers...")
+    print(f"🔍 [v{{__version__}}] Auto-detecting active database containers...")
     detected = []
 
     try:
-        ps_out = subprocess.check_output(["docker", "ps", "--format", "{{.Names}} {{.Image}}"], text=True)
+        ps_out = subprocess.check_output(["docker", "ps", "--format", "{{{{.Names}}}} {{{{.Image}}}}"], text=True)
         for line in ps_out.splitlines():
             line_lower = line.lower()
             for key in TARGET_MAP:
@@ -152,21 +166,21 @@ def auto_detect_and_run():
                     if key not in detected:
                         detected.append(key)
     except Exception as e:
-        print(f"⚠️ Docker auto-detection note: {e}")
+        print(f"⚠️ Docker auto-detection note: {{e}}")
 
     if not detected:
         print("ℹ️ No specific containers auto-detected. Listing available targets.")
         list_targets()
         return
 
-    print(f"🎯 Auto-detected targets: {', '.join(detected)}")
+    print(f"🎯 Auto-detected targets: {{', '.join(detected)}}")
     for target in detected:
         run_single_audit(target)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Unified CIS Benchmark Audit Suite (Python Standard Library ONLY)",
+        description=f"Unified CIS Benchmark Audit Suite v{{__version__}} (Python Standard Library ONLY)",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("-t", "--target", choices=list(TARGET_MAP.keys()), help="Target database benchmark to audit")
@@ -175,6 +189,7 @@ def main():
     parser.add_argument("-d", "--auto-detect", action="store_true", help="Auto-detect running database containers and execute audits")
     parser.add_argument("-o", "--output-html", help="Path to save custom HTML report")
     parser.add_argument("-j", "--output-json", help="Path to save JSON summary report")
+    parser.add_argument("-v", "--version", action="version", version=f"CIS Benchmarks Suite v{{__version__}}")
 
     args = parser.parse_args()
 
@@ -187,12 +202,12 @@ def main():
         sys.exit(0)
 
     if args.all:
-        print("🌟 Executing CIS Audit for ALL 15 database targets...")
+        print(f"🌟 [v{{__version__}}] Executing CIS Audit for ALL 15 database targets...")
         success_count = 0
         for target_key in TARGET_MAP:
             if run_single_audit(target_key):
                 success_count += 1
-        print(f"\\n🎉 Completed: {success_count}/{len(TARGET_MAP)} CIS audits succeeded.")
+        print(f"\\n🎉 Completed: {{success_count}}/{{len(TARGET_MAP)}} CIS audits succeeded.")
         sys.exit(0 if success_count == len(TARGET_MAP) else 1)
 
     if args.target:
@@ -209,7 +224,7 @@ if __name__ == "__main__":
     with open(target_file, "w", encoding="utf-8") as f:
         f.write(content)
     os.chmod(target_file, 0o755)
-    print(f"✅ audit_cis.py successfully bundled/updated ({os.path.getsize(target_file)} bytes)")
+    print(f"✅ audit_cis.py successfully bundled/updated (v{version}, {os.path.getsize(target_file)} bytes)")
 
 
 if __name__ == "__main__":
