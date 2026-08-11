@@ -1,5 +1,14 @@
 # Workspace Rules for CIS Benchmarks Tools
 
+## Mandatory Core Architecture Rule
+
+> [!IMPORTANT]
+> **Utiliser uniquement les modules standards Python 3 (Python Standard Library - PSL ONLY).**
+> - Aucun paquet externe tierce partie (`pip`, `jinja2`, `yaml`, `requests`, etc.) n'est autorisé.
+> - L'ensemble des scripts d'audit, utilitaires, bundlers et moteurs doivent s'exécuter de manière 100% autonome sur n'importe quelle installation Python 3 standard.
+
+---
+
 ## Mandatory Git & Release Lifecycle for ALL Modifications
 
 For EVERY modification (code change, script edit, refactoring, documentation update):
@@ -9,7 +18,7 @@ For EVERY modification (code change, script edit, refactoring, documentation upd
 2. **Feature Branch**:
    - Create a new feature branch from `main`: `git checkout -b feat/<descriptive-name>`.
 3. **Code Modification & Mandatory Synchronization**:
-   - Write clean, maintainable code following **Python Standard Library (PSL ONLY)** rule. No external packages allowed.
+   - Write clean, maintainable code following **Python 3 Standard Library (PSL ONLY)** rule. No external packages allowed.
    - **Whenever Python code is modified**:
      - Increment version in `VERSION`.
      - Update `ROADMAP.md` with new features/fixes.
