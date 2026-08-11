@@ -1,0 +1,63 @@
+FROM mariadb:10.6
+
+# Define environment variables to avoid interactions during installation
+ENV DEBIAN_FRONTEND=noninteractive \
+  TERM=xterm \
+  MARIADB_ROOT_PASSWORD=rootpass
+
+# 🛠️ Installation of system utilities and SSH
+RUN apt-get update && apt-get install -y \
+  openssh-server \
+  openssl \
+  rsync \
+  vim \
+  nano \
+  net-tools \
+  procps \
+  wget \
+  curl \
+  git \
+  unzip \
+  python3 \
+  python3-pip \
+  ca-certificates && \
+  mkdir -p /var/run/sshd /exemples /datas && \
+  apt-get clean && \
+  rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/*
+
+# 🔐 SSH Configuration (root password - Use for DEV only)
+RUN echo 'root:rootpass' | chpasswd && \
+  sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+  sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+  ssh-keygen -A
+
+# ⚙️ MariaDB Configuration
+# Create a .my.cnf for root to allow passwordless local connections
+RUN echo "[client]\nuser=root\npassword=rootpass" > /root/.my.cnf && \
+  chmod 600 /root/.my.cnf
+
+# Exposed ports
+EXPOSE 22 3306
+
+# Volumes and Working Directory
+VOLUME ["/datas"]
+WORKDIR /datas
+
+# 1. SSH directory creation
+# 2. Copying public key from build context to image
+# 3. Applying STRICT permissions (Essential for SSH)
+
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+
+COPY id_rsa.pub /root/.ssh/authorized_keys
+COPY id_rsa.pub /root/.ssh/id_rsa.pub
+COPY id_rsa /root/.ssh/id_rsa
+
+RUN chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa \
+  && chown -R root:root /root/.ssh
+
+# Copy the audit script for testing
+COPY audit_cis_mariadb_106.py /datas/audit_cis_mariadb_106.py
+
+# Startup: start SSH + MariaDB
+CMD service ssh start && docker-entrypoint.sh mariadbd
