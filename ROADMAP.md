@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.6.0)
+# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.7.0)
 
 This document outlines the strategic roadmap, architecture principles, and key milestones for the CIS Benchmarks Tools suite.
 
@@ -58,23 +58,35 @@ This document outlines the strategic roadmap, architecture principles, and key m
 
 #### 2. Multi-Language Support (i18n) & Synchronized Documentation
 - [x] Added `--lang {en,fr}` flag to CLI and HTML audit reports.
-- [x] Synchronized `README_fr.md` (French) with `README.md` (English) in 1:1 structure.
+- [x] French translation of `README.md` (`README_fr.md`) 100% synchronized.
 
-#### 3. Subprocess Security Migration (`shell=False` / Parameter Lists)
-- [x] Migration of 100% of `subprocess.run` calls to strict parameter lists (`['/bin/bash', '-c', command]`, `['docker', ...]`).
-- [x] Total elimination of `shell=True` across all Python files to prevent command injection risks.
+#### 3. Subprocess Command Injection Prevention (`shell=False`)
+- [x] Migrated all system command calls to strict parameter lists (`shell=False`).
 
 ---
 
 ### Phase 4: Multi-Format Exporters, E2E Testing & CI/CD Pipeline (Completed ✅ - v1.6.0)
 
-#### 1. Multi-Format Exporter (`--format json|xml|html|txt`)
-- [x] Added `--format` / `-f` CLI option to export compliance audit results into HTML, JSON, XML (JUnit/STIG), and TXT text formats using PSL ONLY (`json`, `xml.etree.ElementTree`, `html`).
+#### 1. Multi-Format Exporters (`--format html|json|xml|txt`)
+- [x] Structured JSON compliance reports (`json` module).
+- [x] STIG / JUnit XML formatted output (`xml.etree.ElementTree` module).
+- [x] Plain-text TXT CLI summary logging.
+- [x] Self-contained responsive HTML reports in `reports/`.
 
-#### 2. Automated E2E Testing Suite & Post-Execution Analysis (`scripts/run_e2e_tests.py` & `make test-e2e`)
-- [x] Automated E2E test runner that builds Docker images, runs containers, executes audit scripts, and validates report integrity and syntax across all targets.
-- [x] Post-execution analysis engine checking exit codes, file sizes (> 1 KB), HTML tag validity, JSON/XML syntax parsing, and summary statistics.
+#### 2. Automated E2E Testing & CI/CD
+- [x] GitHub Actions CI/CD pipeline (`.github/workflows/ci.yml`).
+- [x] Automated PSL unit test suite (`tests/test_evaluate_condition.py`).
+- [x] E2E test runner (`scripts/run_e2e_tests.py` / `make test-e2e`).
 
-#### 3. CI/CD Pipeline & Automated Unit Test Suite
-- [x] GitHub Actions CI/CD pipeline (`.github/workflows/ci.yml`) automating `make pre-commit` and unit tests across Python 3.8 - 3.12.
-- [x] 100% Code Coverage automated unit test suite based on Python `unittest` PSL module (`tests/test_evaluate_condition.py`).
+---
+
+### Phase 5: Rule Spec Externalization & Offline SVG Charts Engine (Completed ✅ - v1.7.0)
+
+#### 1. External Rule Specs Directory (`rules/*.json`)
+- [x] Decoupled audit control specification rules from Python scripts into `rules/` directory (`rules/mariadb_106.json`, `rules/cassandra_40.json`, etc.).
+- [x] Dynamic rule loader (`load_recommendations()`) in `audit_cis_*.py` and `audit_cis.py` with inline fallback.
+
+#### 2. 100% Offline Pure Inline SVG Charts Engine
+- [x] Self-contained Inline SVG Donut Chart showing global pass/fail ratios and center score percentage (zero JS library dependencies).
+- [x] Responsive Category Stacked Bar Charts for visual compliance breakdown.
+- [x] 100% Python Standard Library (PSL ONLY) compliance.

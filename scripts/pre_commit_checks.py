@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-Pre-Commit Validation Routine (Python Standard Library ONLY).
-Concatenates Python benchmark code into `audit_cis.py` and runs syntax/PSL/version/structure/permissions/tests integrity checks.
+Pre-Commit Quality Assurance Routine for CIS Benchmarks Suite.
+Validates PSL compliance, syntax, repository structure, report integrity, rules/ JSON integrity, and unit tests.
+100% Python Standard Library (PSL ONLY).
 """
 
 import ast
 import glob
+import json
 import os
 import py_compile
 import subprocess
@@ -15,76 +17,76 @@ import unittest
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
-os.chdir(REPO_ROOT)
+
+VERSION_FILE = os.path.join(REPO_ROOT, "VERSION")
 
 
 def step_verify_and_sync_version():
-    """Verify VERSION file exists and synchronize version across unified script."""
+    """Verify repository VERSION file exists and reads clean semantic version string."""
     print("🏷️ [1/8] Verifying repository VERSION file...")
-    version_file = os.path.join(REPO_ROOT, "VERSION")
-    if not os.path.exists(version_file):
-        print("❌ VERSION file missing in repository root!", file=sys.stderr)
+    if not os.path.exists(VERSION_FILE):
+        print(f"❌ Version file missing: {VERSION_FILE}", file=sys.stderr)
         sys.exit(1)
-
-    with open(version_file, "r", encoding="utf-8") as f:
+    with open(VERSION_FILE, "r", encoding="utf-8") as f:
         version = f.read().strip()
     print(f"  ✓ Repository Version: v{version}")
-    return version
 
 
 def step_concatenate_python_code():
-    """Concatenate and synchronize python audit code into unified audit_cis.py script."""
+    """Build audit_cis.py by calling bundle_audit_cis.py."""
     print("📦 [2/8] Concatenating & updating unified Python audit script (audit_cis.py)...")
-    from scripts.bundle_audit_cis import generate_unified_audit_script
-    generate_unified_audit_script()
-
-
-def step_validate_python_syntax():
-    """Compile all python files to verify syntax using PSL py_compile."""
-    print("🐍 [3/8] Validating Python syntax across all scripts (py_compile)...")
-    py_files = sorted(glob.glob("*.py") + glob.glob("scripts/*.py") + glob.glob("tests/*.py"))
-    failed = False
-    for f in py_files:
-        try:
-            py_compile.compile(f, doraise=True)
-            print(f"  ✓ {f}")
-        except Exception as e:
-            print(f"  ❌ Syntax error in {f}: {e}", file=sys.stderr)
-            failed = True
-    if failed:
+    bundler_script = os.path.join(REPO_ROOT, "scripts", "bundle_audit_cis.py")
+    try:
+        subprocess.run([sys.executable, bundler_script], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to run script bundler {bundler_script}: {e}", file=sys.stderr)
         sys.exit(1)
 
 
-def step_check_psl_compliance():
-    """Verify that audit_cis.py uses ONLY Python Standard Library modules."""
-    print("🔒 [4/8] Verifying Python Standard Library (PSL) compliance on audit_cis.py...")
-    with open("audit_cis.py", "r", encoding="utf-8") as f:
-        tree = ast.parse(f.read())
+def step_validate_python_syntax():
+    """Check Python syntax for all .py files using py_compile."""
+    print("🐍 [3/8] Validating Python syntax across all scripts (py_compile)...")
+    py_files = sorted(glob.glob("**/*.py", recursive=True))
+    for py in py_files:
+        try:
+            py_compile.compile(py, doraise=True)
+            print(f"  ✓ {py}")
+        except py_compile.PyCompileError as e:
+            print(f"❌ Syntax error in {py}: {e}", file=sys.stderr)
+            sys.exit(1)
 
-    allowed_modules = {
-        "argparse", "ast", "datetime", "glob", "html", "json", "os", "py_compile",
-        "re", "subprocess", "sys", "time", "xml", "xml.etree.ElementTree", "unittest", "tempfile"
+
+def step_check_psl_compliance():
+    """AST check to ensure NO third-party imports are used in audit_cis.py."""
+    print("🔒 [4/8] Verifying Python Standard Library (PSL) compliance on audit_cis.py...")
+    audit_script = os.path.join(REPO_ROOT, "audit_cis.py")
+    with open(audit_script, "r", encoding="utf-8") as f:
+        tree = ast.parse(f.read(), filename="audit_cis.py")
+
+    allowed_std_libs = {
+        "argparse", "datetime", "json", "os", "subprocess", "sys", "re",
+        "ast", "py_compile", "glob", "unittest", "html", "xml", "math"
     }
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
-                module = alias.name.split(".")[0]
-                if module not in allowed_modules:
-                    print(f"❌ NON-PSL Import Detected: {alias.name}", file=sys.stderr)
+                name = alias.name.split('.')[0]
+                if name not in allowed_std_libs:
+                    print(f"❌ Forbidden non-PSL import '{name}' detected in audit_cis.py!", file=sys.stderr)
                     sys.exit(1)
         elif isinstance(node, ast.ImportFrom):
             if node.module:
-                module = node.module.split(".")[0]
-                if module not in allowed_modules:
-                    print(f"❌ NON-PSL ImportFrom Detected: {node.module}", file=sys.stderr)
+                name = node.module.split('.')[0]
+                if name not in allowed_std_libs:
+                    print(f"❌ Forbidden non-PSL import '{name}' detected in audit_cis.py!", file=sys.stderr)
                     sys.exit(1)
 
     print("  ✓ audit_cis.py uses Python Standard Library ONLY!")
 
 
 def step_check_shell_scripts():
-    """Verify shell script syntax using bash -n."""
+    """Validate syntax of shell scripts using bash -n."""
     print("📜 [5/8] Validating Shell script syntax (bash -n)...")
     shell_files = sorted(glob.glob("scripts/*.sh"))
     for sh in shell_files:
@@ -97,14 +99,27 @@ def step_check_shell_scripts():
 
 
 def step_validate_reports_and_structure():
-    """Verify repository sub-directories and report file integrity (> 1 KB)."""
-    print("📁 [6/8] Validating repository structure and report integrity...")
-    required_dirs = ["reports", "docker", "scripts", "CIS_DATA", "tests"]
+    """Verify repository sub-directories, rules/ JSON specs, and report file integrity (> 1 KB)."""
+    print("📁 [6/8] Validating repository structure, rules specs, and report integrity...")
+    required_dirs = ["reports", "docker", "scripts", "CIS_DATA", "tests", "rules"]
     for d in required_dirs:
         if not os.path.isdir(d):
             print(f"❌ Required directory missing: {d}", file=sys.stderr)
             sys.exit(1)
         print(f"  ✓ Directory present: {d}/")
+
+    rule_files = glob.glob("rules/*.json")
+    for rfile in rule_files:
+        try:
+            with open(rfile, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if not isinstance(data, list) or len(data) == 0:
+                    print(f"❌ Rule file {rfile} is empty or not a valid JSON list", file=sys.stderr)
+                    sys.exit(1)
+        except Exception as e:
+            print(f"❌ Invalid JSON rule file {rfile}: {e}", file=sys.stderr)
+            sys.exit(1)
+    print(f"  ✓ {len(rule_files)} JSON rule specification files validated in rules/")
 
     reports = glob.glob("reports/rapport_cis_*.html")
     valid_reports = 0

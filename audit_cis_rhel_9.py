@@ -282,6 +282,116 @@ RECOMMENDATIONS_DATA = [
 ]
 
 
+
+def build_inline_svg_donut_chart(passed, failed, errors, na, score):
+    """Generate 100% self-contained Inline SVG Donut Chart (PSL ONLY, Zero JS)."""
+    total = passed + failed + errors + na
+    p_pass = (passed / total * 100) if total > 0 else 0
+    p_fail = (failed / total * 100) if total > 0 else 0
+    p_err = (errors / total * 100) if total > 0 else 0
+    p_na = (na / total * 100) if total > 0 else 0
+
+    offset_pass = 25
+    offset_fail = 25 - p_pass
+    offset_err = offset_fail - p_fail
+    offset_na = offset_err - p_err
+
+    return f"""
+    <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin: 20px 0; flex-wrap: wrap;">
+      <div style="position: relative; width: 170px; height: 170px;">
+        <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+          <path stroke-dasharray="100 100" stroke="#e5e7eb" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="{p_na:.1f} 100" stroke-dashoffset="{offset_na:.1f}" stroke="#9ca3af" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="{p_err:.1f} 100" stroke-dashoffset="{offset_err:.1f}" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="{p_fail:.1f} 100" stroke-dashoffset="{offset_fail:.1f}" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="{p_pass:.1f} 100" stroke-dashoffset="{offset_pass:.1f}" stroke="#10b981" stroke-width="3.8" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+        </svg>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <span style="font-size: 24px; font-weight: 800; color: #111827;">{score:.1f}%</span>
+          <span style="font-size: 11px; color: #6b7280; font-weight: 600;">Score Global</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> <strong>Réussi (PASS) :</strong> {passed}</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> <strong>Échoué (FAIL) :</strong> {failed}</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> {errors}</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> <strong>Non Applicable (N/A) :</strong> {na}</div>
+      </div>
+    </div>
+    """
+
+
+def build_inline_svg_category_chart(categories_scores):
+    """Generate 100% self-contained Inline SVG/HTML5 Horizontal Stacked Bar Charts per category (PSL ONLY, Zero JS)."""
+    if not categories_scores or not isinstance(categories_scores, dict):
+        return ""
+    items_html = []
+    for label, cat in categories_scores.items():
+        p = cat.get("passed_automated", cat.get("passed", 0))
+        f = cat.get("failed_automated", cat.get("failed", 0))
+        e = cat.get("error_checks", cat.get("errors", 0))
+        n = cat.get("na_checks", cat.get("na", 0))
+        cat_total = p + f + e + n
+        cat_score = cat.get("score", (p / cat_total * 100) if cat_total > 0 else 0)
+
+        p_pass = (p / cat_total * 100) if cat_total > 0 else 0
+        p_fail = (f / cat_total * 100) if cat_total > 0 else 0
+        p_err = (e / cat_total * 100) if cat_total > 0 else 0
+        p_na = (n / cat_total * 100) if cat_total > 0 else 0
+
+        badge_color = "#10b981" if cat_score >= 80 else ("#f59e0b" if cat_score >= 50 else "#ef4444")
+
+        bar_segments = []
+        if p > 0: bar_segments.append(f'<div style="width: {p_pass:.1f}%; background: #10b981;" title="Réussi: {p}"></div>')
+        if f > 0: bar_segments.append(f'<div style="width: {p_fail:.1f}%; background: #ef4444;" title="Échoué: {f}"></div>')
+        if e > 0: bar_segments.append(f'<div style="width: {p_err:.1f}%; background: #6b7280;" title="Error: {e}"></div>')
+        if n > 0: bar_segments.append(f'<div style="width: {p_na:.1f}%; background: #9ca3af;" title="N/A: {n}"></div>')
+        if not bar_segments:
+            bar_segments.append('<div style="width: 100%; background: #e5e7eb;" title="Aucun contrôle"></div>')
+
+        items_html.append(f"""
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">{label}</span>
+            <span style="font-weight: 700; font-size: 13px; color: {badge_color};">{cat_score:.1f}% ({p}/{cat_total})</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            {''.join(bar_segments)}
+          </div>
+        </div>
+        """)
+
+    legend_html = """
+    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; font-size: 13px;">
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> Réussi</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> Échoué</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> Erreur</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> N/A</div>
+    </div>
+    """
+
+    return f"""
+    <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 24px;">
+      <h3 style="font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 16px; text-align: center;">Répartition des contrôles automatisés par catégorie</h3>
+      {legend_html}
+      {''.join(items_html)}
+    </div>
+    """
+
+
+def load_recommendations(target_key):
+    """Load audit control specifications from rules/<target_key>.json with inline fallback (PSL ONLY)."""
+    json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "rules", f"{target_key}.json")
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"⚠️ Warning: Could not load rule spec '{json_path}': {e}", file=sys.stderr)
+    return RECOMMENDATIONS_DATA
+
+
+
 def run_command(command, remote_host=None):
     """Execute command locally or via SSH remote execution without shell=True (PSL ONLY)."""
     try:
@@ -431,18 +541,11 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         print(f"📄 TXT Report successfully generated: {filename}")
 
     else:
-        try:
-            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
-        except TypeError:
-            try:
-                generate_html_report(results, overall_score, categories_scores, filename=filename)
-            except TypeError:
-                # Legacy positional args fallback
-                generate_html_report(results, overall_score, categories_scores, 0, 0, 0, 0, 0, 0, 0, [], [], [], [], [], filename)
+        generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
 
 
 
-def generate_html_report(results, overall_score, categories_scores, filename="reports/rapport_cis_rhel_9.html"):
+def generate_html_report(results, overall_score, categories_scores, filename=None, lang="en"):
     """Generate responsive HTML audit report for RHEL 9."""
     if os.path.dirname(filename):
         os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -524,6 +627,7 @@ if __name__ == "__main__":
     else:
         print("🖥️  Running Audit in Local Mode on local machine...")
 
-    check_results = perform_checks(RECOMMENDATIONS_DATA, remote_host=remote_target)
+    rules_data = load_recommendations("rhel_9")
+    check_results = perform_checks(rules_data, remote_host=remote_target)
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
     export_results(check_results, overall_score, categories_scores, target_name="rhel_9", filename=args.output, fmt=args.format, lang=args.lang)

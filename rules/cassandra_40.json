@@ -1,0 +1,256 @@
+[
+  {
+    "category": "1 Installation et Mises à jour",
+    "number": "1.1",
+    "name": "S'assurer qu'un utilisateur et un groupe dédiés existent pour Cassandra",
+    "type": "Manual",
+    "test_procedure": "getent group cassandra && getent passwd cassandra",
+    "expected_output": null,
+    "remediation": "Créer un groupe et un utilisateur dédiés : groupadd cassandra && useradd -g cassandra -s /sbin/nologin cassandra.",
+    "manual_steps": [
+      "Vérifier que le groupe 'cassandra' existe.",
+      "Vérifier que l'utilisateur 'cassandra' existe.",
+      "Vérifier que l'utilisateur appartient au bon groupe."
+    ]
+  },
+  {
+    "category": "1 Installation et Mises à jour",
+    "number": "1.2",
+    "name": "S'assurer que la dernière version de Java est installée",
+    "type": "Automated",
+    "test_procedure": "java -version 2>&1 | head -1",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "(11|17|21)\\.\\d+"
+    },
+    "remediation": "Mettre à jour Java vers la dernière version LTS supportée (Java 11, 17 ou 21)."
+  },
+  {
+    "category": "1 Installation et Mises à jour",
+    "number": "1.3",
+    "name": "S'assurer que la dernière version de Python est installée",
+    "type": "Automated",
+    "test_procedure": "python3 --version 2>&1",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "Python 3\\.\\d+"
+    },
+    "remediation": "Mettre à jour Python vers la dernière version 3.x."
+  },
+  {
+    "category": "1 Installation et Mises à jour",
+    "number": "1.4",
+    "name": "S'assurer que la dernière version de Cassandra est installée",
+    "type": "Automated",
+    "test_procedure": "cassandra -v 2>/dev/null || nodetool version 2>/dev/null",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "4\\.0\\.\\d+"
+    },
+    "remediation": "Mettre à jour Cassandra vers la dernière version 4.0.x."
+  },
+  {
+    "category": "1 Installation et Mises à jour",
+    "number": "1.5",
+    "name": "S'assurer que le service Cassandra est exécuté en tant qu'utilisateur non-root",
+    "type": "Automated",
+    "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
+    "expected_output": {
+      "type": "stdout_not_equals",
+      "value": "root"
+    },
+    "remediation": "Configurer le service Cassandra pour qu'il s'exécute sous un utilisateur dédié (ex: 'cassandra')."
+  },
+  {
+    "category": "1 Installation et Mises à jour",
+    "number": "1.6",
+    "name": "S'assurer que les horloges sont synchronisées sur tous les nœuds",
+    "type": "Manual",
+    "test_procedure": "timedatectl status 2>/dev/null | grep 'synchronized' || ntpstat 2>/dev/null || chronyc tracking 2>/dev/null",
+    "expected_output": null,
+    "remediation": "Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.",
+    "manual_steps": [
+      "Vérifier que NTP/chrony est installé.",
+      "Vérifier que la synchronisation est active.",
+      "S'assurer que tous les nœuds utilisent la même source."
+    ]
+  },
+  {
+    "category": "2 Authentification et Autorisation",
+    "number": "2.1",
+    "name": "S'assurer que l'authentification est activée pour les bases de données Cassandra",
+    "type": "Automated",
+    "test_procedure": "grep -E '^authenticator:' /etc/cassandra/cassandra.yaml",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "PasswordAuthenticator"
+    },
+    "remediation": "Modifier cassandra.yaml pour définir 'authenticator: PasswordAuthenticator' et redémarrer Cassandra."
+  },
+  {
+    "category": "2 Authentification et Autorisation",
+    "number": "2.2",
+    "name": "S'assurer que l'autorisation est activée pour les bases de données Cassandra",
+    "type": "Automated",
+    "test_procedure": "grep -E '^authorizer:' /etc/cassandra/cassandra.yaml",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "CassandraAuthorizer"
+    },
+    "remediation": "Modifier cassandra.yaml pour définir 'authorizer: CassandraAuthorizer' et redémarrer Cassandra."
+  },
+  {
+    "category": "3 Contrôle d'accès",
+    "number": "3.1",
+    "name": "S'assurer que les rôles cassandra et superuser sont séparés",
+    "type": "Automated",
+    "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null | grep -v 'cassandra' | grep -c 'True'",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "[1-9]\\d*"
+    },
+    "remediation": "Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH SUPERUSER = false;"
+  },
+  {
+    "category": "3 Contrôle d'accès",
+    "number": "3.2",
+    "name": "S'assurer que le mot de passe par défaut du rôle cassandra est changé",
+    "type": "Automated",
+    "test_procedure": "cqlsh -e \"SELECT * FROM system_auth.roles WHERE role='cassandra';\" -u cassandra -p cassandra 2>&1 | grep -c 'AuthenticationFailed\\|Unauthorized\\|Bad credentials'",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "[1-9]"
+    },
+    "remediation": "Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = '<nouveau_mot_de_passe>';"
+  },
+  {
+    "category": "3 Contrôle d'accès",
+    "number": "3.3",
+    "name": "S'assurer qu'il n'y a pas de rôles ou privilèges excessifs",
+    "type": "Manual",
+    "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null",
+    "expected_output": null,
+    "remediation": "Révoquer les rôles et privilèges inutiles. Utiliser REVOKE et DROP ROLE.",
+    "manual_steps": [
+      "Lister tous les rôles (LIST ROLES;).",
+      "Identifier les rôles avec des privilèges excessifs.",
+      "Révoquer les privilèges non nécessaires."
+    ]
+  },
+  {
+    "category": "3 Contrôle d'accès",
+    "number": "3.4",
+    "name": "S'assurer que Cassandra est exécuté sous un compte de service dédié",
+    "type": "Automated",
+    "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "cassandra"
+    },
+    "remediation": "Configurer le service Cassandra pour qu'il s'exécute sous l'utilisateur 'cassandra'."
+  },
+  {
+    "category": "3 Contrôle d'accès",
+    "number": "3.5",
+    "name": "S'assurer que Cassandra n'écoute que sur les interfaces autorisées",
+    "type": "Manual",
+    "test_procedure": "grep -E '^listen_address:|^rpc_address:' /etc/cassandra/cassandra.yaml",
+    "expected_output": null,
+    "remediation": "Modifier cassandra.yaml pour définir 'listen_address' et 'rpc_address' sur des interfaces spécifiques.",
+    "manual_steps": [
+      "Vérifier listen_address dans cassandra.yaml.",
+      "Vérifier rpc_address dans cassandra.yaml.",
+      "S'assurer que les adresses ne sont pas 0.0.0.0 sauf si justifié."
+    ]
+  },
+  {
+    "category": "3 Contrôle d'accès",
+    "number": "3.6",
+    "name": "S'assurer que les autorisations Data Center sont activées",
+    "type": "Manual",
+    "test_procedure": "grep -E '^authorizer:' /etc/cassandra/cassandra.yaml",
+    "expected_output": null,
+    "remediation": "Configurer l'autorisation par Data Center si nécessaire.",
+    "manual_steps": [
+      "Vérifier la configuration de l'authorizer.",
+      "Vérifier les permissions par DC."
+    ]
+  },
+  {
+    "category": "3 Contrôle d'accès",
+    "number": "3.7",
+    "name": "Réviser les rôles définis par l'utilisateur",
+    "type": "Manual",
+    "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null",
+    "expected_output": null,
+    "remediation": "Supprimer les rôles inutiles et révoquer les privilèges excessifs.",
+    "manual_steps": [
+      "Lister les rôles avec LIST ROLES;.",
+      "Identifier les rôles personnalisés.",
+      "Vérifier les privilèges de chaque rôle."
+    ]
+  },
+  {
+    "category": "3 Contrôle d'accès",
+    "number": "3.8",
+    "name": "Réviser les rôles superuser/administrateur",
+    "type": "Manual",
+    "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null | grep 'True'",
+    "expected_output": null,
+    "remediation": "Limiter le nombre de rôles superuser au strict nécessaire.",
+    "manual_steps": [
+      "Lister les rôles superuser.",
+      "Vérifier que chaque rôle superuser est justifié.",
+      "Révoquer le privilège superuser si non nécessaire."
+    ]
+  },
+  {
+    "category": "4 Audit et Journalisation",
+    "number": "4.1",
+    "name": "S'assurer que la journalisation est activée",
+    "type": "Automated",
+    "test_procedure": "ls -la /var/log/cassandra/system.log 2>/dev/null || ls -la /opt/cassandra/logs/system.log 2>/dev/null",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
+    "remediation": "Vérifier que la journalisation est configurée dans logback.xml et que les fichiers de log existent."
+  },
+  {
+    "category": "4 Audit et Journalisation",
+    "number": "4.2",
+    "name": "S'assurer que l'audit est activé",
+    "type": "Manual",
+    "test_procedure": "grep -E '^audit_logging_options:' /etc/cassandra/cassandra.yaml || grep -A5 'audit_logging_options' /etc/cassandra/cassandra.yaml",
+    "expected_output": null,
+    "remediation": "Activer l'audit en configurant 'audit_logging_options' dans cassandra.yaml (Cassandra 4.0+).",
+    "manual_steps": [
+      "Vérifier la configuration audit_logging_options dans cassandra.yaml.",
+      "S'assurer que enabled: true est défini.",
+      "Configurer les filtres d'audit appropriés."
+    ]
+  },
+  {
+    "category": "5 Chiffrement",
+    "number": "5.1",
+    "name": "Chiffrement inter-nœuds",
+    "type": "Automated",
+    "test_procedure": "grep -A20 'server_encryption_options:' /etc/cassandra/cassandra.yaml | grep 'internode_encryption'",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "internode_encryption:\\s*(all|dc|rack)"
+    },
+    "remediation": "Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les certificats SSL/TLS."
+  },
+  {
+    "category": "5 Chiffrement",
+    "number": "5.2",
+    "name": "Chiffrement client",
+    "type": "Automated",
+    "test_procedure": "grep -A20 'client_encryption_options:' /etc/cassandra/cassandra.yaml | grep 'enabled'",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "true"
+    },
+    "remediation": "Configurer client_encryption_options dans cassandra.yaml : enabled: true, et fournir les certificats SSL/TLS."
+  }
+]

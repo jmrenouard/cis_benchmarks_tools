@@ -1,0 +1,972 @@
+[
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.1",
+    "name": "Placer les bases de données sur des partitions non-système",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@datadir;\"",
+    "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'",
+    "expected_output": {
+      "type": "stdout_not_equals",
+      "value": "/"
+    },
+    "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.2",
+    "name": "Utiliser un compte dédié et privilégié minimal pour MySQL",
+    "type": "Automated",
+    "test_procedure": "ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | awk '{print $1}' | head -n 1",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "mysql"
+    },
+    "remediation": "Configurer le service MySQL pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.3",
+    "name": "Désactiver l'historique des commandes MySQL",
+    "type": "Automated",
+    "test_procedure": "! find /home /root -name .mysql_history -print -quit 2>/dev/null",
+    "expected_output": {
+      "type": "returncode_zero"
+    },
+    "remediation": "Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.4",
+    "name": "Vérifier que MYSQL_PWD n'est pas utilisé",
+    "type": "Automated",
+    "test_procedure": "! grep -qs MYSQL_PWD /proc/*/environ",
+    "expected_output": {
+      "type": "returncode_zero"
+    },
+    "remediation": "Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifiée."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.5",
+    "name": "Désactiver l'accès interactif pour l'utilisateur MySQL",
+    "type": "Automated",
+    "test_procedure": "getent passwd mysql | cut -d: -f7",
+    "expected_output": {
+      "type": "stdout_contains_any",
+      "values": [
+        "/bin/false",
+        "/sbin/nologin"
+      ]
+    },
+    "remediation": "Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql)."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.6",
+    "name": "Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs",
+    "type": "Automated",
+    "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null",
+    "expected_output": {
+      "type": "returncode_zero"
+    },
+    "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD."
+  },
+  {
+    "category": "1. Configuration Système d'exploitation",
+    "number": "1.7",
+    "name": "Exécuter MySQL dans un environnement sandbox",
+    "type": "Automated",
+    "test_procedure": "[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "DOCKER"
+    },
+    "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.1",
+    "name": "Politique de sauvegarde en place",
+    "type": "Automated",
+    "test_procedure": "crontab -l 2>/dev/null | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
+    "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.2",
+    "name": "Validation des sauvegardes",
+    "type": "Manual",
+    "test_procedure": "Analyser les rapports de tests de restauration.",
+    "expected_output": null,
+    "remediation": "Planifier et documenter les tests de restauration périodiques.",
+    "manual_steps": [
+      "Identifier les fichiers de sauvegarde récents.",
+      "Restaurer une base de test à partir de ces fichiers.",
+      "Vérifier l'intégrité des données.",
+      "Documenter la date et le résultat du test."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.3",
+    "name": "Sécuriser les identifiants de sauvegarde",
+    "type": "Manual",
+    "test_procedure": "Inspecter les permissions des fichiers contenant les credentials de sauvegarde.",
+    "expected_output": null,
+    "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.",
+    "manual_steps": [
+      "Rechercher les scripts de sauvegarde.",
+      "Vérifier si les mots de passe sont en clair.",
+      "S'assurer que les fichiers de config (.my.cnf) ont des droits 600.",
+      "Utiliser mysql_config_editor."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.4",
+    "name": "Point-in-Time Recovery",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@log_bin;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "1"
+    },
+    "remediation": "Activer log_bin dans my.cnf, configurer binlog_expire_logs_seconds, tester les restaurations PITR."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.5",
+    "name": "Plan de reprise d'activité (DR)",
+    "type": "Manual",
+    "test_procedure": "Vérifier l'existence et la validité du plan DR.",
+    "expected_output": null,
+    "remediation": "Documenter et tester un plan DR incluant réplication, backups offsite.",
+    "manual_steps": [
+      "Consulter la documentation technique.",
+      "Vérifier la présence d'une procédure de basculement.",
+      "Confirmer la réplication hors-site."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.1.6",
+    "name": "Sauvegarde des fichiers de configuration",
+    "type": "Manual",
+    "test_procedure": "Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).",
+    "expected_output": null,
+    "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.",
+    "manual_steps": [
+      "Lister le contenu d'une sauvegarde complète.",
+      "Vérifier la présence de /etc/my.cnf et des certificats SSL."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.2.1",
+    "name": "Chiffrer les binary et relay logs",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@binlog_encryption;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "1"
+    },
+    "remediation": "Configurer binlog_encryption=ON dans my.cnf et installer un plugin keyring."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.3",
+    "name": "Dédier la machine MySQL",
+    "type": "Manual",
+    "test_procedure": "Vérifier qu'aucun autre service n'est hébergé sur le serveur.",
+    "expected_output": null,
+    "remediation": "Dédier le serveur à MySQL uniquement.",
+    "manual_steps": [
+      "Lister les services actifs (systemctl list-units).",
+      "S'assurer que seuls MySQL et les services système essentiels sont présents."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.4",
+    "name": "Ne pas spécifier de mots de passe en ligne de commande",
+    "type": "Manual",
+    "test_procedure": "Vérifier les processus et l'historique des commandes.",
+    "expected_output": null,
+    "remediation": "Utiliser mysql_config_editor ou des fichiers de configuration protégés.",
+    "manual_steps": [
+      "Examiner l'historique bash.",
+      "Vérifier les scripts cron.",
+      "S'assurer qu'aucune commande ne contient -p suivi d'un mot de passe."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.5",
+    "name": "Ne pas réutiliser les noms d'utilisateurs",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user;\"",
+    "expected_output": null,
+    "remediation": "Attribuer des comptes individuels et éviter les comptes génériques partagés.",
+    "manual_steps": [
+      "Lister les comptes MySQL.",
+      "Vérifier qu'aucun compte n'est partagé entre plusieurs personnes."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.6",
+    "name": "Matériel cryptographique unique et non-par-défaut",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'ssl_cert';\"",
+    "expected_output": null,
+    "remediation": "Générer et utiliser des certificats TLS personnalisés, ne pas utiliser ceux par défaut.",
+    "manual_steps": [
+      "Vérifier les certificats SSL actuels.",
+      "S'assurer qu'ils ne sont pas auto-générés par MySQL."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.7",
+    "name": "Durée de vie des mots de passe ≤ 365 jours",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@default_password_lifetime;\"",
+    "expected_output": {
+      "type": "stdout_is_numeric_less_equal",
+      "value": 365
+    },
+    "remediation": "SET PERSIST default_password_lifetime=365;"
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.8",
+    "name": "Exiger des mots de passe forts lors de la réinitialisation",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'validate_password.policy';\"",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "(MEDIUM|STRONG)"
+    },
+    "remediation": "Installer component_validate_password et configurer validate_password.policy=STRONG."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.9",
+    "name": "Exiger le mot de passe actuel pour changer le mot de passe",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@password_require_current;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "1"
+    },
+    "remediation": "SET PERSIST password_require_current=ON;"
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.10",
+    "name": "Utiliser les mots de passe doubles pour rotation fréquente",
+    "type": "Manual",
+    "test_procedure": "Vérifier la politique de rotation des mots de passe.",
+    "expected_output": null,
+    "remediation": "ALTER USER '<user>'@'<host>' IDENTIFIED BY '<new_pass>' RETAIN CURRENT PASSWORD;",
+    "manual_steps": [
+      "Vérifier la politique de mots de passe.",
+      "S'assurer que les applications supportent le double mot de passe."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.11",
+    "name": "Verrouiller les comptes inutilisés",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host, account_locked FROM mysql.user WHERE account_locked = 'N';\"",
+    "expected_output": null,
+    "remediation": "ALTER USER '<user>'@'<host>' ACCOUNT LOCK;",
+    "manual_steps": [
+      "Lister les comptes non verrouillés.",
+      "Identifier ceux qui ne sont plus utilisés.",
+      "Les verrouiller."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.12",
+    "name": "Configurer le mode de chiffrement AES",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@block_encryption_mode;\"",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "aes-256-cbc"
+    },
+    "remediation": "SET PERSIST block_encryption_mode='aes-256-cbc';"
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.13",
+    "name": "Authentification socket peer-credential appropriée",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host, plugin FROM mysql.user WHERE plugin='auth_socket';\"",
+    "expected_output": null,
+    "remediation": "Limiter l'utilisation de auth_socket aux comptes locaux appropriés.",
+    "manual_steps": [
+      "Vérifier les comptes utilisant auth_socket.",
+      "S'assurer que seuls les comptes système légitimes l'utilisent."
+    ]
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.14",
+    "name": "MySQL est lié à une adresse IP spécifique",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@bind_address;\"",
+    "expected_output": {
+      "type": "stdout_not_equals",
+      "value": "*"
+    },
+    "remediation": "Configurer bind-address dans my.cnf pour écouter sur une IP spécifique plutôt que sur toutes les interfaces."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.15",
+    "name": "Limiter les versions TLS acceptées",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@tls_version;\"",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "TLSv1.3"
+    },
+    "remediation": "Configurer tls_version='TLSv1.2,TLSv1.3' dans my.cnf."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.16",
+    "name": "Exiger les certificats côté client (X.509)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type NOT IN ('X509', 'SPECIFIED');\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "ALTER USER '<user>'@'<host>' REQUIRE X509;"
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.17",
+    "name": "Utiliser uniquement des ciphers approuvés",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'ssl_cipher';\"",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
+    "remediation": "Configurer ssl-cipher dans my.cnf avec des ciphers forts uniquement."
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.18",
+    "name": "Délais de connexion pour limiter les tentatives échouées",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@connection_control_min_connection_delay;\"",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
+    "remediation": "INSTALL COMPONENT 'file://component_connection_control'; SET PERSIST connection_control_min_connection_delay=1000;"
+  },
+  {
+    "category": "2. Installation et Planification",
+    "number": "2.19",
+    "name": "Utiliser le chiffrement OpenSSL FIPS 140-2",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'ssl_fips_mode';\"",
+    "expected_output": null,
+    "remediation": "Activer le mode FIPS si requis par la politique de sécurité.",
+    "manual_steps": [
+      "Vérifier si le mode FIPS est activé.",
+      "Configurer ssl_fips_mode si nécessaire."
+    ]
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.1",
+    "name": "Permissions adéquates sur 'datadir'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@datadir;\"",
+    "test_procedure_template": "stat -c '%U:%G %a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^mysql:mysql\\s+7[05][05]$"
+    },
+    "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>"
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.2",
+    "name": "Permissions sur les fichiers 'log_bin_basename'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@log_bin_basename;\"",
+    "test_procedure_template": "ls -l {path}* | awk '{{print $1}}' | uniq",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^-rw-------$"
+    },
+    "remediation": "Appliquer chmod 600 sur les fichiers binaires."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.3",
+    "name": "Permissions sur 'log_error'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@log_error;\"",
+    "test_procedure_template": "stat -c '%a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^6[04]0$"
+    },
+    "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.4",
+    "name": "Permissions sur 'slow_query_log'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@slow_query_log_file;\"",
+    "test_procedure_template": "stat -c '%a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^6[04]0$"
+    },
+    "remediation": "Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600)."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.5",
+    "name": "Permissions sur 'relay_log_basename'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@relay_log_basename;\"",
+    "test_procedure_template": "ls -l {path}* | awk '{{print $1}}' | uniq",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^-rw-------$"
+    },
+    "remediation": "Appliquer chmod 600."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.6",
+    "name": "Permissions sur 'general_log_file'",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@general_log_file;\"",
+    "test_procedure_template": "stat -c '%a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^6[04]0$"
+    },
+    "remediation": "Restreindre les droits d'accès (ex: 640 ou 600)."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.7",
+    "name": "Permissions sur les fichiers de clés SSL",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'ssl_key';\" | awk '{print $2}' | xargs stat -c '%a'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "600"
+    },
+    "remediation": "Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql."
+  },
+  {
+    "category": "3. Permissions Fichiers",
+    "number": "3.8",
+    "name": "Permissions sur le répertoire des plugins",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@plugin_dir;\"",
+    "test_procedure_template": "stat -c '%U:%G %a' {path}",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "^mysql:mysql\\s+755$"
+    },
+    "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>"
+  },
+  {
+    "category": "4. Général",
+    "number": "4.1",
+    "name": "Appliquer les derniers correctifs de sécurité",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT @@version;\"",
+    "expected_output": null,
+    "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.",
+    "manual_steps": [
+      "Relever la version affichée.",
+      "Comparer avec les Release Notes MySQL Community 8.4.",
+      "Vérifier les CVE critiques."
+    ]
+  },
+  {
+    "category": "4. Général",
+    "number": "4.2",
+    "name": "S'assurer que les bases de test ne sont pas installées en production",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME IN ('employees', 'world', 'world_x', 'sakila', 'airportdb', 'menagerie');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "Exécutez DROP DATABASE <database name>; pour supprimer une base de données d'exemple."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.3",
+    "name": "S'assurer que 'allow-suspicious-udfs' est à 'OFF'",
+    "type": "Automated",
+    "test_procedure": "my_print_defaults mysqld | grep -q 'allow-suspicious-udfs' && echo 'FOUND' || echo 'NOT FOUND'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "NOT FOUND"
+    },
+    "remediation": "Supprimer --allow-suspicious-udfs de la ligne de commande ou du fichier de configuration."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.4",
+    "name": "Renforcer l'utilisation de 'local_infile' sur les clients MySQL",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@local_infile;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "Ajouter local-infile=0 à la section [mysqld] et [mysql] du fichier de configuration MySQL."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.5",
+    "name": "S'assurer que mysqld n'est pas démarré avec '--skip-grant-tables'",
+    "type": "Automated",
+    "test_procedure": "ps -ef | grep mysqld | grep -v grep | grep -q 'skip-grant-tables' && echo 'FOUND' || echo 'NOT FOUND'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "NOT FOUND"
+    },
+    "remediation": "Supprimer l'option --skip-grant-tables de la ligne de commande ou du fichier de configuration."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.6",
+    "name": "Désactiver les liens symboliques",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@have_symlink;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "DISABLED"
+    },
+    "remediation": "Ajouter skip-symbolic-links dans la section [mysqld] du fichier my.cnf."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.7",
+    "name": "Configurer 'secure_file_priv' correctement",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@secure_file_priv;\"",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
+    "remediation": "Définir secure_file_priv sur NULL (pour désactiver) ou sur un chemin spécifique dans my.cnf."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.8",
+    "name": "S'assurer que 'sql_mode' contient 'STRICT_ALL_TABLES'",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@sql_mode;\"",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "STRICT_ALL_TABLES"
+    },
+    "remediation": "Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans my.cnf."
+  },
+  {
+    "category": "4. Général",
+    "number": "4.9",
+    "name": "Chiffrement des données au repos avec TDE",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM information_schema.TABLES WHERE CREATE_OPTIONS NOT LIKE '%ENCRYPTION=\\\"Y\\\"%' AND TABLE_SCHEMA NOT IN ('mysql', 'information_schema', 'performance_schema', 'sys');\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "Activer le chiffrement via ALTER TABLE ... ENCRYPTION='Y'; et configurer un plugin keyring."
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.1",
+    "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.db WHERE db='mysql' AND user NOT IN ('mysql.sys', 'mysql.session', 'root') AND (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y');\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs."
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.2",
+    "name": "Retirer le droit FILE aux non-admins",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE File_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';"
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.3",
+    "name": "Retirer le droit PROCESS aux non-admins",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Process_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';"
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.4",
+    "name": "Retirer le droit SUPER",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Super_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "Migrer vers les droits dynamiques puis REVOKE SUPER ON *.* FROM '<user>'@'<host>';"
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.5",
+    "name": "Retirer le droit SHUTDOWN",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Shutdown_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';"
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.6",
+    "name": "Retirer CREATE USER aux non-admins",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Create_user_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';"
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.7",
+    "name": "Retirer GRANT OPTION aux non-admins",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Grant_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';"
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.8",
+    "name": "Limiter REPLICATION SLAVE aux comptes de réplication",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE Repl_slave_priv = 'Y' AND user NOT LIKE '%repl%';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication."
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.9",
+    "name": "Limiter les droits DML/DDL à des BD/comptes précis",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y') AND user NOT IN ('root', 'mysql.sys', 'mysql.session');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "Révoquer les droits superflus par base de données/compte."
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.10",
+    "name": "Définir proprement DEFINER/INVOKER des SP/Functions",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mysql.sys@localhost');\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER."
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.11",
+    "name": "Restreindre le droit SET_ANY_DEFINER",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges WHERE PRIVILEGE_TYPE='SET_ANY_DEFINER';\"",
+    "expected_output": null,
+    "remediation": "REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Lister les utilisateurs avec SET_ANY_DEFINER.",
+      "S'assurer que seuls les administrateurs légitimes le possèdent."
+    ]
+  },
+  {
+    "category": "5. Gestion des privilèges",
+    "number": "5.12",
+    "name": "Restreindre ALLOW_NONEXISTENT_DEFINER",
+    "type": "Manual",
+    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges WHERE PRIVILEGE_TYPE='ALLOW_NONEXISTENT_DEFINER';\"",
+    "expected_output": null,
+    "remediation": "REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Lister les utilisateurs avec ALLOW_NONEXISTENT_DEFINER.",
+      "S'assurer que seuls les administrateurs légitimes le possèdent."
+    ]
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.1",
+    "name": "Configurer log_error",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@log_error;\"",
+    "expected_output": {
+      "type": "stdout_not_contains",
+      "value": "/dev/stderr"
+    },
+    "remediation": "Définir log-error=/chemin/vers/mysql.err dans my.cnf."
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.2",
+    "name": "Journal hors partition système",
+    "type": "Automated",
+    "path_command": "mysql -N -B -e \"SELECT @@log_error;\"",
+    "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'",
+    "expected_output": {
+      "type": "stdout_not_equals",
+      "value": "/"
+    },
+    "remediation": "Déplacer les répertoires des journaux hors des partitions système."
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.3",
+    "name": "log_error_verbosity=2",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@log_error_verbosity;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "2"
+    },
+    "remediation": "Ajouter log_error_verbosity=2 dans my.cnf."
+  },
+  {
+    "category": "6. Audit & Journalisation",
+    "number": "6.4",
+    "name": "log-raw OFF",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'log_raw';\"",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "OFF"
+    },
+    "remediation": "S'assurer que 'log-raw' n'est pas activé dans my.cnf."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.1",
+    "name": "Politique d'authentification sécurisée (authentication_policy)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@authentication_policy;\"",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "caching_sha2_password"
+    },
+    "remediation": "SET PERSIST authentication_policy='caching_sha2_password,,';"
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.2",
+    "name": "Aucun mot de passe dans le my.cnf global",
+    "type": "Automated",
+    "test_procedure": "! grep -riE \"password|pwd|pass\" /etc/my.cnf /etc/mysql/ 2>/dev/null",
+    "expected_output": {
+      "type": "returncode_zero"
+    },
+    "remediation": "Utiliser mysql_config_editor ou des fichiers .my.cnf privés avec permissions restreintes."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.3",
+    "name": "Tous les comptes ont un mot de passe",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE authentication_string = '' OR plugin='mysql_no_login';\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "ALTER USER '<user>'@'<host>' IDENTIFIED BY '<password>'; ou utiliser mysql_secure_installation."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.4",
+    "name": "Expiration annuelle des mots de passe",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@default_password_lifetime;\"",
+    "expected_output": {
+      "type": "stdout_is_numeric_less_equal",
+      "value": 365
+    },
+    "remediation": "SET PERSIST default_password_lifetime=365;"
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.5",
+    "name": "Politique de complexité forte",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SHOW VARIABLES LIKE 'validate_password.policy';\"",
+    "expected_output": {
+      "type": "stdout_regex_match",
+      "pattern": "(MEDIUM|STRONG)"
+    },
+    "remediation": "Installer et configurer component_validate_password avec validate_password.policy=STRONG."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.6",
+    "name": "Pas de wildcard '%' dans host",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE host = '%' AND user NOT IN ('root');\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "ALTER USER '<user>'@'%' ... RENAME TO '<user>'@'<specific_host>'; ou supprimer le compte."
+  },
+  {
+    "category": "7. Authentification",
+    "number": "7.7",
+    "name": "Supprimer les comptes anonymes",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE user = '';\"",
+    "expected_output": {
+      "type": "stdout_is_empty"
+    },
+    "remediation": "DROP USER ''@'<host>'; ou utiliser mysql_secure_installation."
+  },
+  {
+    "category": "8. Sécurité réseau",
+    "number": "8.1",
+    "name": "Forcer SSL/TLS (require_secure_transport=ON)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@require_secure_transport;\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "1"
+    },
+    "remediation": "Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans my.cnf."
+  },
+  {
+    "category": "8. Sécurité réseau",
+    "number": "8.2",
+    "name": "Exiger TLS côté utilisateur (ssl_type)",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type = '';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;"
+  },
+  {
+    "category": "8. Sécurité réseau",
+    "number": "8.3",
+    "name": "Limiter le nombre de connexions",
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT @@max_connections;\"",
+    "expected_output": {
+      "type": "stdout_is_numeric_less_equal",
+      "value": 500
+    },
+    "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins."
+  },
+  {
+    "category": "9. Réplication",
+    "number": "9.1",
+    "name": "Chiffrer le trafic de réplication",
+    "type": "Manual",
+    "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
+    "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep -E 'SSL_Allowed|Master_SSL_Verify_Server_Cert'",
+    "expected_output": null,
+    "remediation": "Configurer TLS pour la réplication (SOURCE_SSL=1, SOURCE_SSL_CA, etc.).",
+    "manual_steps": [
+      "Vérifier si la réplication est active.",
+      "Vérifier SSL_Allowed.",
+      "Configurer TLS pour la réplication si nécessaire."
+    ]
+  },
+  {
+    "category": "9. Réplication",
+    "number": "9.2",
+    "name": "SOURCE_SSL_VERIFY_SERVER_CERT = YES",
+    "type": "Automated",
+    "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
+    "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Verify_Server_Cert'",
+    "expected_output": {
+      "type": "stdout_contains",
+      "value": "Yes"
+    },
+    "remediation": "CHANGE REPLICATION SOURCE TO SOURCE_SSL_VERIFY_SERVER_CERT = 1;"
+  },
+  {
+    "category": "9. Réplication",
+    "number": "9.3",
+    "name": "Retirer SUPER aux comptes de réplication",
+    "type": "Automated",
+    "pre_condition": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';\" | grep -q '[1-9]'",
+    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%' AND Super_priv = 'Y';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
+    "remediation": "REVOKE SUPER ON *.* FROM '<repl_user>'@'<repl_host>';"
+  },
+  {
+    "category": "10. InnoDB Cluster / Group Replication",
+    "number": "10.1",
+    "name": "Chiffrer le trafic Group Replication",
+    "type": "Automated",
+    "pre_condition": "mysql -N -B -e \"SHOW PLUGINS;\" | grep -q 'group_replication'",
+    "test_procedure": "mysql -N -B -e \"SELECT @@group_replication_ssl_mode;\"",
+    "expected_output": {
+      "type": "stdout_not_equals",
+      "value": "DISABLED"
+    },
+    "remediation": "Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf."
+  },
+  {
+    "category": "10. InnoDB Cluster / Group Replication",
+    "number": "10.2",
+    "name": "Définir une allow-list de nœuds",
+    "type": "Automated",
+    "pre_condition": "mysql -N -B -e \"SHOW PLUGINS;\" | grep -q 'group_replication'",
+    "test_procedure": "mysql -N -B -e \"SELECT @@group_replication_ip_allowlist;\"",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
+    "remediation": "Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés."
+  }
+]
