@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Pre-Commit Validation Routine (Python Standard Library ONLY).
-Concatenates Python benchmark code into `audit_cis.py` and runs syntax/PSL/version/structure/permissions integrity checks.
+Concatenates Python benchmark code into `audit_cis.py` and runs syntax/PSL/version/structure/permissions/tests integrity checks.
 """
 
 import ast
@@ -10,6 +10,7 @@ import os
 import py_compile
 import subprocess
 import sys
+import unittest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
@@ -19,7 +20,7 @@ os.chdir(REPO_ROOT)
 
 def step_verify_and_sync_version():
     """Verify VERSION file exists and synchronize version across unified script."""
-    print("🏷️ [1/7] Verifying repository VERSION file...")
+    print("🏷️ [1/8] Verifying repository VERSION file...")
     version_file = os.path.join(REPO_ROOT, "VERSION")
     if not os.path.exists(version_file):
         print("❌ VERSION file missing in repository root!", file=sys.stderr)
@@ -33,15 +34,15 @@ def step_verify_and_sync_version():
 
 def step_concatenate_python_code():
     """Concatenate and synchronize python audit code into unified audit_cis.py script."""
-    print("📦 [2/7] Concatenating & updating unified Python audit script (audit_cis.py)...")
+    print("📦 [2/8] Concatenating & updating unified Python audit script (audit_cis.py)...")
     from scripts.bundle_audit_cis import generate_unified_audit_script
     generate_unified_audit_script()
 
 
 def step_validate_python_syntax():
     """Compile all python files to verify syntax using PSL py_compile."""
-    print("🐍 [3/7] Validating Python syntax across all scripts (py_compile)...")
-    py_files = sorted(glob.glob("*.py") + glob.glob("scripts/*.py"))
+    print("🐍 [3/8] Validating Python syntax across all scripts (py_compile)...")
+    py_files = sorted(glob.glob("*.py") + glob.glob("scripts/*.py") + glob.glob("tests/*.py"))
     failed = False
     for f in py_files:
         try:
@@ -56,52 +57,49 @@ def step_validate_python_syntax():
 
 def step_check_psl_compliance():
     """Verify that audit_cis.py uses ONLY Python Standard Library modules."""
-    print("🔒 [4/7] Verifying Python Standard Library (PSL) compliance on audit_cis.py...")
+    print("🔒 [4/8] Verifying Python Standard Library (PSL) compliance on audit_cis.py...")
     with open("audit_cis.py", "r", encoding="utf-8") as f:
-        tree = ast.parse(f.read(), filename="audit_cis.py")
+        tree = ast.parse(f.read())
 
-    stdlib_modules = getattr(sys, 'stdlib_module_names', set([
-        'argparse', 'ast', 'asyncio', 'base64', 'collections', 'contextlib',
-        'csv', 'dataclasses', 'datetime', 'enum', 'functools', 'glob', 'html',
-        'http', 'importlib', 'io', 'json', 'logging', 'math', 'os', 'pathlib',
-        'platform', 're', 'shutil', 'socket', 'sqlite3', 'string', 'subprocess',
-        'sys', 'time', 'typing', 'unittest', 'urllib', 'xml'
-    ]))
+    allowed_modules = {
+        "argparse", "ast", "datetime", "glob", "html", "json", "os", "py_compile",
+        "re", "subprocess", "sys", "time", "xml", "xml.etree.ElementTree", "unittest", "tempfile"
+    }
 
-    imported_modules = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
-                imported_modules.add(alias.name.split('.')[0])
+                module = alias.name.split(".")[0]
+                if module not in allowed_modules:
+                    print(f"❌ NON-PSL Import Detected: {alias.name}", file=sys.stderr)
+                    sys.exit(1)
         elif isinstance(node, ast.ImportFrom):
             if node.module:
-                imported_modules.add(node.module.split('.')[0])
+                module = node.module.split(".")[0]
+                if module not in allowed_modules:
+                    print(f"❌ NON-PSL ImportFrom Detected: {node.module}", file=sys.stderr)
+                    sys.exit(1)
 
-    non_psl = [m for m in imported_modules if m not in stdlib_modules and not m.startswith('audit_cis')]
-    if non_psl:
-        print(f"❌ Non-PSL imports detected in audit_cis.py: {non_psl}", file=sys.stderr)
-        sys.exit(1)
-    else:
-        print("  ✓ audit_cis.py uses Python Standard Library ONLY!")
+    print("  ✓ audit_cis.py uses Python Standard Library ONLY!")
 
 
 def step_check_shell_scripts():
-    """Validate syntax of all shell scripts in scripts/ using bash -n."""
-    print("📜 [5/7] Validating Shell script syntax (bash -n)...")
-    sh_files = sorted(glob.glob("scripts/*.sh"))
-    for sh_file in sh_files:
+    """Verify shell script syntax using bash -n."""
+    print("📜 [5/8] Validating Shell script syntax (bash -n)...")
+    shell_files = sorted(glob.glob("scripts/*.sh"))
+    for sh in shell_files:
         try:
-            subprocess.run(["bash", "-n", sh_file], check=True)
-            print(f"  ✓ {sh_file}")
+            subprocess.run(["bash", "-n", sh], check=True)
+            print(f"  ✓ {sh}")
         except subprocess.CalledProcessError:
-            print(f"  ❌ Shell syntax error in {sh_file}", file=sys.stderr)
+            print(f"❌ Shell syntax error in {sh}", file=sys.stderr)
             sys.exit(1)
 
 
 def step_validate_reports_and_structure():
     """Verify repository sub-directories and report file integrity (> 1 KB)."""
-    print("📁 [6/7] Validating repository structure and report integrity...")
-    required_dirs = ["reports", "docker", "scripts", "CIS_DATA"]
+    print("📁 [6/8] Validating repository structure and report integrity...")
+    required_dirs = ["reports", "docker", "scripts", "CIS_DATA", "tests"]
     for d in required_dirs:
         if not os.path.isdir(d):
             print(f"❌ Required directory missing: {d}", file=sys.stderr)
@@ -121,7 +119,7 @@ def step_validate_reports_and_structure():
 
 def step_validate_cisdata_and_permissions():
     """Verify CIS_DATA markdown specifications and script executable permissions."""
-    print("🔒 [7/7] Validating CIS_DATA specs and executable permissions...")
+    print("🔒 [7/8] Validating CIS_DATA specs and executable permissions...")
     md_files = glob.glob("CIS_DATA/*.md")
     if not md_files:
         print("❌ No Markdown specification files found in CIS_DATA/", file=sys.stderr)
@@ -140,6 +138,18 @@ def step_validate_cisdata_and_permissions():
             print(f"  ✓ Executable permission confirmed: {script}")
 
 
+def step_run_unit_tests():
+    """Run automated unit tests using unittest PSL module."""
+    print("🧪 [8/8] Running automated unit test suite (unittest)...")
+    suite = unittest.defaultTestLoader.discover(os.path.join(REPO_ROOT, "tests"))
+    runner = unittest.TextTestRunner(verbosity=1)
+    result = runner.run(suite)
+    if not result.wasSuccessful():
+        print("❌ Unit test failures detected!", file=sys.stderr)
+        sys.exit(1)
+    print(f"  ✓ All {result.testsRun} unit tests PASSED successfully!")
+
+
 def main():
     print("🔍 Running CIS Benchmarks Pre-Commit Routine (Python PSL)...")
     print("=" * 60)
@@ -150,6 +160,7 @@ def main():
     step_check_shell_scripts()
     step_validate_reports_and_structure()
     step_validate_cisdata_and_permissions()
+    step_run_unit_tests()
     print("=" * 60)
     print("🎉 All Pre-Commit Checks PASSED successfully!")
 

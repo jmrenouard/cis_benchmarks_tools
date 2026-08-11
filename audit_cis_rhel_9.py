@@ -315,6 +315,82 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     return False
 
 
+def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en"):
+    """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
+    import json
+    import os
+    import xml.etree.ElementTree as ET
+    from datetime import datetime
+
+    if not filename:
+        ext = "html" if fmt == "html" else fmt
+        target_slug = target_name.lower().replace(" ", "_").replace(".", "")
+        filename = f"reports/rapport_cis_{target_slug}.{ext}"
+
+    if os.path.dirname(filename):
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+    if fmt == "json":
+        data = {
+            "benchmark": target_name,
+            "report_date": datetime.now().isoformat(),
+            "overall_score": overall_score,
+            "total_checks": len(results),
+            "results": results
+        }
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        print(f"📄 JSON Report successfully generated: {filename}")
+
+    elif fmt == "xml":
+        root = ET.Element("testsuite", name=target_name, tests=str(len(results)), failures=str(sum(1 for r in results if r.get("status") == "FAIL")), timestamp=datetime.now().isoformat())
+        for r in results:
+            tc = ET.SubElement(root, "testcase", id=str(r.get("number", r.get("id", ""))), name=str(r.get("name", r.get("title", ""))), classname=str(r.get("category", "")))
+            if r.get("status") == "FAIL":
+                failure = ET.SubElement(tc, "failure", message="Control failed")
+                failure.text = str(r.get("output", r.get("stdout", "")))
+            elif r.get("status") == "ERROR":
+                err = ET.SubElement(tc, "error", message="Control execution error")
+                err.text = str(r.get("output", r.get("stderr", "")))
+        tree = ET.ElementTree(root)
+        tree.write(filename, encoding="utf-8", xml_declaration=True)
+        print(f"📄 XML Report successfully generated: {filename}")
+
+    elif fmt == "txt":
+        lines = [
+            "=" * 70,
+            f"🛡️  {target_name} - CIS Benchmark Audit Report",
+            f"Report Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            f"Global Score: {overall_score:.1f}%",
+            "=" * 70,
+            ""
+        ]
+        for r in results:
+            status = r.get("status", "")
+            status_icon = "[PASS]" if status == "PASS" else ("[FAIL]" if status == "FAIL" else "[MANUAL]")
+            rec_id = r.get("number", r.get("id", ""))
+            rec_name = r.get("name", r.get("title", ""))
+            lines.append(f"{status_icon} {rec_id} - {rec_name}")
+            lines.append(f"  Category: {r.get('category')}")
+            out = r.get('output', r.get('stdout', ''))
+            if out:
+                lines.append(f"  Output: {str(out).strip()}")
+            rem = r.get('remediation', '')
+            if rem and status == "FAIL":
+                lines.append(f"  Remediation: {str(rem).strip()}")
+            lines.append("-" * 70)
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+        print(f"📄 TXT Report successfully generated: {filename}")
+
+    else:
+        try:
+            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
+        except TypeError:
+            generate_html_report(results, overall_score, categories_scores, filename=filename)
+
+
+
 def generate_html_report(results, overall_score, categories_scores, filename="reports/rapport_cis_rhel_9.html"):
     """Generate responsive HTML audit report for RHEL 9."""
     if os.path.dirname(filename):
@@ -380,6 +456,8 @@ def generate_html_report(results, overall_score, categories_scores, filename="re
 def main():
     parser = argparse.ArgumentParser(description="CIS Red Hat Enterprise Linux 9 Audit Benchmark Suite (v1.4.0)")
     parser.add_argument("-r", "--remote", help="SSH remote target (e.g. user@hostname)")
+    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
+    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Language for report and CLI output (en/fr)")
     parser.add_argument("-o", "--output", default="reports/rapport_cis_rhel_9.html", help="Path to output HTML report")
     args = parser.parse_args()
 
@@ -407,7 +485,7 @@ def main():
     overall_score = (passed / len(RECOMMENDATIONS_DATA)) * 100
     print(f"✅ RHEL 9 Audit Completed: {passed}/{len(RECOMMENDATIONS_DATA)} Passed ({overall_score:.1f}%)")
 
-    generate_html_report(results, overall_score, {}, filename=args.output)
+    export_results(results, overall_score, {}, target_name=BENCHMARK_NAME if "BENCHMARK_NAME" in globals() else "CIS Audit", filename=args.output, fmt=getattr(args, "format", "html"), lang=getattr(args, "lang", "en"))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.5.0)
+# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.6.0)
 
 This document outlines the strategic roadmap, architecture principles, and key milestones for the CIS Benchmarks Tools suite.
 
@@ -7,7 +7,7 @@ This document outlines the strategic roadmap, architecture principles, and key m
 ## 🔒 Mandatory Architecture & Release Standards
 
 > [!IMPORTANT]
-> 1. **Python Standard Library ONLY (PSL ONLY)**: All Python scripts (audit engine, `audit_cis_*.py` audit modules, unified CLI `audit_cis.py`, report generators, pre-commit scripts) MUST use **EXCLUSIVELY the standard Python 3 library**. No external dependencies (`jinja2`, `yaml`, `requests`) are permitted.
+> 1. **Python Standard Library ONLY (PSL ONLY)**: All Python scripts (audit engine, `audit_cis_*.py` audit modules, unified CLI `audit_cis.py`, report generators, pre-commit scripts, unit tests, E2E runners) MUST use **EXCLUSIVELY the standard Python 3 library**. No external dependencies (`jinja2`, `yaml`, `requests`) are permitted.
 > 2. **Automated Documentation Synchronization**: For every Python modification, the product version (`VERSION`), `ROADMAP.md`, and `POTENTIAL_ISSUES.md` are **automatically updated and validated**.
 > 3. **Git Release Lifecycle**: Version numbers MUST be embedded in Branch names (`feat/vX.Y.Z-...`), Issue titles (`[vX.Y.Z] ...`), and PR titles (`[vX.Y.Z] ...`).
 > 4. **Multi-Language Documentation**: `README.md` (English) and `README_fr.md` (French) MUST remain strictly synchronized 1:1.
@@ -66,15 +66,15 @@ This document outlines the strategic roadmap, architecture principles, and key m
 
 ---
 
-### Phase 4: Multi-Format Exporters & CI/CD Pipeline (Backlog / Planned 🚀)
+### Phase 4: Multi-Format Exporters, E2E Testing & CI/CD Pipeline (Completed ✅ - v1.6.0)
 
-#### 1. Multi-Format Exporter Specification (`--format json|xml|html|txt`)
-- [ ] Add `--format` / `-f` CLI option to export compliance audit results into multiple structured formats using Python Standard Library ONLY:
-  - **HTML**: Self-contained visual report with Chart.js graphs and styling (`--format html`).
-  - **JSON**: Machine-readable JSON output for SIEM / DevSecOps pipelines (`json` PSL module, `--format json`).
-  - **XML**: STIG XCCDF / JUnit XML formatted output for CI/CD integration (`xml.etree.ElementTree` PSL module, `--format xml`).
-  - **TXT**: Plain-text CLI output summary for terminal logging and email notifications (`--format txt`).
+#### 1. Multi-Format Exporter (`--format json|xml|html|txt`)
+- [x] Added `--format` / `-f` CLI option to export compliance audit results into HTML, JSON, XML (JUnit/STIG), and TXT text formats using PSL ONLY (`json`, `xml.etree.ElementTree`, `html`).
 
-#### 2. CI/CD Pipeline & Automated Testing
-- [ ] GitHub Actions CI/CD pipeline automating `make pre-commit` and `make test-all` on every Pull Request.
-- [ ] Automated unit test suite based on Python `unittest` PSL module for `evaluate_condition` logic.
+#### 2. Automated E2E Testing Suite & Post-Execution Analysis (`scripts/run_e2e_tests.py` & `make test-e2e`)
+- [x] Automated E2E test runner that builds Docker images, runs containers, executes audit scripts, and validates report integrity and syntax across all targets.
+- [x] Post-execution analysis engine checking exit codes, file sizes (> 1 KB), HTML tag validity, JSON/XML syntax parsing, and summary statistics.
+
+#### 3. CI/CD Pipeline & Automated Unit Test Suite
+- [x] GitHub Actions CI/CD pipeline (`.github/workflows/ci.yml`) automating `make pre-commit` and unit tests across Python 3.8 - 3.12.
+- [x] 100% Code Coverage automated unit test suite based on Python `unittest` PSL module (`tests/test_evaluate_condition.py`).
