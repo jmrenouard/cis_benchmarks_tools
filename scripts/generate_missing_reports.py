@@ -3,12 +3,12 @@ import os
 import time
 
 targets = [
-    ('postgresql18', 'Dockerfile_postgresql18', 'audit_cis_postgresql_18.py', 'rapport_cis_postgresql_18.html', 'test_pg18', 15, '-e POSTGRES_PASSWORD=rootpass'),
-    ('mongodb7', 'Dockerfile_mongodb7', 'audit_cis_mongodb_7.py', 'rapport_cis_mongodb_7.html', 'test_mongo7', 20, ''),
-    ('mongodb8', 'Dockerfile_mongodb8', 'audit_cis_mongodb_8.py', 'rapport_cis_mongodb_8.html', 'test_mongo8', 20, ''),
-    ('cassandra40', 'Dockerfile_cassandra40', 'audit_cis_cassandra_40.py', 'rapport_cis_cassandra_40.html', 'test_cassandra40', 45, ''),
-    ('cassandra41', 'Dockerfile_cassandra41', 'audit_cis_cassandra_41.py', 'rapport_cis_cassandra_41.html', 'test_cassandra41', 45, ''),
-    ('cassandra50', 'Dockerfile_cassandra50', 'audit_cis_cassandra_50.py', 'rapport_cis_cassandra_50.html', 'test_cassandra50', 45, ''),
+    ('postgresql18', 'docker/Dockerfile_postgresql18', 'audit_cis_postgresql_18.py', 'rapport_cis_postgresql_18.html', 'test_pg18', 15, '-e POSTGRES_PASSWORD=rootpass'),
+    ('mongodb7', 'docker/Dockerfile_mongodb7', 'audit_cis_mongodb_7.py', 'rapport_cis_mongodb_7.html', 'test_mongo7', 20, ''),
+    ('mongodb8', 'docker/Dockerfile_mongodb8', 'audit_cis_mongodb_8.py', 'rapport_cis_mongodb_8.html', 'test_mongo8', 20, ''),
+    ('cassandra40', 'docker/Dockerfile_cassandra40', 'audit_cis_cassandra_40.py', 'rapport_cis_cassandra_40.html', 'test_cassandra40', 45, ''),
+    ('cassandra41', 'docker/Dockerfile_cassandra41', 'audit_cis_cassandra_41.py', 'rapport_cis_cassandra_41.html', 'test_cassandra41', 45, ''),
+    ('cassandra50', 'docker/Dockerfile_cassandra50', 'audit_cis_cassandra_50.py', 'rapport_cis_cassandra_50.html', 'test_cassandra50', 45, ''),
 ]
 
 for name, df, script, report, tag, wait, extra_args in targets:
