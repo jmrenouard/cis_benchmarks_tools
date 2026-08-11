@@ -3,6 +3,7 @@
 CIS Audit Engine Bundler (Python Standard Library ONLY).
 Unifies all 15 database benchmarks into a standalone single-file distribution `audit_cis.py`.
 Extracts RECOMMENDATIONS_DATA definitions and embeds repository VERSION into `audit_cis.py`.
+Provides both CLI interface and Programmatic Python PSL API.
 """
 
 import ast
@@ -37,7 +38,7 @@ def read_repo_version(repo_root):
     if os.path.exists(version_file):
         with open(version_file, "r", encoding="utf-8") as f:
             return f.read().strip()
-    return "1.0.0"
+    return "1.2.0"
 
 
 def extract_recommendations_count(script_path):
@@ -57,7 +58,7 @@ def extract_recommendations_count(script_path):
 
 
 def generate_unified_audit_script():
-    """Build the unified audit_cis.py single script with VERSION using PSL only."""
+    """Build the unified audit_cis.py single script with Programmatic API using PSL only."""
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     target_file = os.path.join(repo_root, "audit_cis.py")
     version = read_repo_version(repo_root)
@@ -73,7 +74,7 @@ def generate_unified_audit_script():
 Unified CIS Benchmark Audit Suite Engine (Python Standard Library ONLY).
 Version: {version}
 
-Runs CIS security compliance audits for all 15 supported database targets:
+Provides both a CLI runner and Programmatic Python API for 15 database targets:
   - MariaDB (10.6, 10.11)
   - MySQL (8.0, Community 8.4/9.7, Enterprise 8.4/9.7)
   - PostgreSQL (16, 17, 18)
@@ -119,8 +120,13 @@ def list_targets():
     print(f"Total Database Targets: {{len(TARGET_MAP)}} | Total Audit Controls: {{total_rules}}")
 
 
+def get_target_info(target_key):
+    """Programmatic API: Get metadata tuple (script_file, label, count) for a target."""
+    return TARGET_MAP.get(target_key)
+
+
 def run_single_audit(target_key, output_html=None, output_json=None):
-    """Execute a single CIS audit benchmark script using standard library subprocess."""
+    """Programmatic API & CLI: Execute a single CIS audit benchmark script using PSL subprocess."""
     if target_key not in TARGET_MAP:
         print(f"❌ Unknown target: '{{target_key}}'. Use --list-targets to view valid choices.", file=sys.stderr)
         return False
@@ -141,8 +147,9 @@ def run_single_audit(target_key, output_html=None, output_json=None):
         elapsed = (datetime.datetime.now() - start_time).total_seconds()
         print(f"✅ {{label}} CIS Audit completed successfully in {{elapsed:.2f}}s")
 
-        default_report = f"reports/rapport_cis_{{target_key.replace('-', '_')}}.html"
+        default_report = os.path.join("reports", f"rapport_cis_{{target_key.replace('-', '_')}}.html")
         if output_html and os.path.exists(default_report):
+            os.makedirs(os.path.dirname(output_html), exist_ok=True)
             os.rename(default_report, output_html)
             print(f"📄 HTML report saved to: {{output_html}}")
 
@@ -153,7 +160,7 @@ def run_single_audit(target_key, output_html=None, output_json=None):
 
 
 def auto_detect_and_run():
-    """Detect running database containers or services and run matching CIS audits."""
+    """Programmatic API & CLI: Detect running database containers and execute audits."""
     print(f"🔍 [v{{__version__}}] Auto-detecting active database containers...")
     detected = []
 
