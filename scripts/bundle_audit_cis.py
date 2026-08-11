@@ -29,6 +29,9 @@ TARGET_METADATA = [
     ("cassandra40", "audit_cis_cassandra_40.py", "Apache Cassandra 4.0"),
     ("cassandra41", "audit_cis_cassandra_41.py", "Apache Cassandra 4.1"),
     ("cassandra50", "audit_cis_cassandra_50.py", "Apache Cassandra 5.0"),
+    ("rhel8", "audit_cis_rhel_8.py", "Red Hat Enterprise Linux 8 (STIG)"),
+    ("rhel9", "audit_cis_rhel_9.py", "Red Hat Enterprise Linux 9 (STIG)"),
+    ("rhel10", "audit_cis_rhel_10.py", "Red Hat Enterprise Linux 10"),
 ]
 
 
