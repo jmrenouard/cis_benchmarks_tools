@@ -140,17 +140,17 @@ HTML_TEMPLATE = """
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <style>
         /* Styles personnalisés pour le rapport */
-        .status-pass { color: #10B981; } /* green-500 */
-        .status-fail { color: #EF4444; } /* red-500 */
-        .status-manual { color: #F59E0B; } /* yellow-500 */
-        .status-error { color: #6B7280; } /* gray-500 */
-        .status-na { color: #9CA3AF; } /* gray-400 */
-        pre { white-space: pre-wrap; word-wrap: break-word; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;}
-        table { table-layout: fixed; width: 100%; } /* Ajouté pour un meilleur contrôle de la largeur des colonnes */
-        td, th { word-break: break-word; } /* Permettre la coupure des mots longs */
-        .chart-container { width: 300px; height: 300px; margin: 20px auto; } /* Style pour le conteneur du graphique */
-        .category-chart-container { width: 80%; margin: 20px auto; } /* Style pour le conteneur du graphique par catégorie */
-        code { background-color: #e5e7eb; padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace;}
+        .status-pass {{ color: #10B981; }} /* green-500 */
+        .status-fail {{ color: #EF4444; }} /* red-500 */
+        .status-manual {{ color: #F59E0B; }} /* yellow-500 */
+        .status-error {{ color: #6B7280; }} /* gray-500 */
+        .status-na {{ color: #9CA3AF; }} /* gray-400 */
+        pre {{ white-space: pre-wrap; word-wrap: break-word; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;}}
+        table {{ table-layout: fixed; width: 100%; }} /* Ajouté pour un meilleur contrôle de la largeur des colonnes */
+        td, th {{ word-break: break-word; }} /* Permettre la coupure des mots longs */
+        .chart-container {{ width: 300px; height: 300px; margin: 20px auto; }} /* Style pour le conteneur du graphique */
+        .category-chart-container {{ width: 80%; margin: 20px auto; }} /* Style pour le conteneur du graphique par catégorie */
+        code {{ background-color: #e5e7eb; padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace;}}
     </style>
 </head>
 <body class="font-sans bg-gray-100 text-gray-800 p-6">

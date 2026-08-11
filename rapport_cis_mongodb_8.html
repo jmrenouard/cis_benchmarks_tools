@@ -1,0 +1,673 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport CIS MongoDB 8.0 Benchmark</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <style>
+        /* Styles personnalisés pour le rapport */
+        .status-pass { color: #10B981; } /* green-500 */
+        .status-fail { color: #EF4444; } /* red-500 */
+        .status-manual { color: #F59E0B; } /* yellow-500 */
+        .status-error { color: #6B7280; } /* gray-500 */
+        .status-na { color: #9CA3AF; } /* gray-400 */
+        pre { white-space: pre-wrap; word-wrap: break-word; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;}
+        table { table-layout: fixed; width: 100%; } /* Ajouté pour un meilleur contrôle de la largeur des colonnes */
+        td, th { word-break: break-word; } /* Permettre la coupure des mots longs */
+        .chart-container { width: 300px; height: 300px; margin: 20px auto; } /* Style pour le conteneur du graphique */
+        .category-chart-container { width: 80%; margin: 20px auto; } /* Style pour le conteneur du graphique par catégorie */
+        code { background-color: #e5e7eb; padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace;}
+    </style>
+</head>
+<body class="font-sans bg-gray-100 text-gray-800 p-6">
+    <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS MongoDB 8.0 Benchmark</h1>
+        <p class="text-gray-600 mb-4">Date du rapport : 11/08/2026 14:08:26</p>
+        <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS MongoDB 8.0 Benchmark (Version 1.0 du 11 Novembre 2023 par CIS).</p>
+
+        <div class="mb-8 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">Score Global</h2>
+            <p class="text-xl font-bold text-red-600">9.09%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis (1/11 vérifiés).</p>
+            <p class="text-gray-700">12 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables (ex: plugin non installé, commande introuvable).</p>
+
+            <div class="chart-container">
+                <canvas id="overallScoreChart"></canvas>
+            </div>
+        </div>
+
+        
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">1 Installation et Patching</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/0 vérifiés).</p>
+            <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la version/les correctifs appropriés de MongoDB sont installés</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;print(db.version())&quot;&#x27; OU &#x27;mongod --version&#x27;. Vérifier manuellement les dernières versions/correctifs sur le site de MongoDB.</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+Exécuter &#x27;mongosh --quiet --eval &quot;print(db.version())&quot;&#x27; OU &#x27;mongod --version&#x27;. Vérifier manuellement les dernières versions/correctifs sur le site de MongoDB.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Sauvegarder les données, télécharger les binaires de la dernière version de MongoDB, arrêter l&#x27;instance, remplacer les binaires, redémarrer l&#x27;instance.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">2 Authentification</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/3 vérifiés).</p>
+            <p class="text-gray-700">0 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">2.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que l&#x27;authentification est configurée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;authorization&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Démarrer l&#x27;instance sans authentification, créer un utilisateur administrateur, configurer &#x27;security.authorization: enabled&#x27; dans le fichier de configuration et redémarrer.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">2.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que MongoDB ne contourne pas l&#x27;authentification via l&#x27;exception localhost</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;enableLocalhostAuthBypass&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir &#x27;setParameter.enableLocalhostAuthBypass: false&#x27; dans le fichier de configuration ou exécuter &#x27;mongod --setParameter enableLocalhostAuthBypass=0&#x27;.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">2.3</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que l&#x27;authentification est activée dans le cluster sharded</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;PEMKeyFile&quot; &amp;&amp; cat /etc/mongod.conf | grep &quot;CAFile&quot; &amp;&amp; cat /etc/mongod.conf | grep &quot;clusterFile&quot; &amp;&amp; cat /etc/mongod.conf | grep &quot;clusterAuthMode&quot; &amp;&amp; cat /etc/mongod.conf | grep &quot;authenticationMechanisms:&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer &#x27;net.tls.mode: requireSSL&#x27;, &#x27;net.tls.PEMKeyFile&#x27;, &#x27;net.tls.CAFile&#x27;, &#x27;net.tls.clusterFile&#x27;, &#x27;security.authorization: enabled&#x27;, et &#x27;security.clusterAuthMode: x509&#x27; dans le fichier de configuration et redémarrer. Ou utiliser &#x27;keyFile&#x27; pour le développement.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">3 Authorization</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/0 vérifiés).</p>
+            <p class="text-gray-700">5 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer du moindre privilège pour les comptes de base de données</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.system.users.find({\&quot;roles.role\&quot;: {\&quot;$in\&quot;: [\&quot;dbOwner\&quot;, \&quot;userAdmin\&quot;, \&quot;userAdminAnyDatabase\&quot;]},\&quot;roles.db\&quot;: \&quot;admin\&quot; }).toArray())&quot;&#x27; et analyser manuellement la sortie.</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.system.users.find({\&quot;roles.role\&quot;: {\&quot;$in\&quot;: [\&quot;dbOwner\&quot;, \&quot;userAdmin\&quot;, \&quot;userAdminAnyDatabase\&quot;]},\&quot;roles.db\&quot;: \&quot;admin\&quot; }).toArray())&quot;&#x27; et analyser manuellement la sortie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Supprimer les comptes listés avec des rôles à privilèges élevés dans la base de données &#x27;admin&#x27;.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que le contrôle d&#x27;accès basé sur les rôles est activé et configuré correctement</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.getUser())&quot;&#x27; et &#x27;mongosh --quiet --eval &quot;printjson(db.getRole())&quot;&#x27;. Vérifier manuellement les rôles et privilèges.</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.getUser())&quot;&#x27; et &#x27;mongosh --quiet --eval &quot;printjson(db.getRole())&quot;&#x27;. Vérifier manuellement les rôles et privilèges.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Établir des rôles, assigner des privilèges appropriés aux rôles, assigner des utilisateurs aux rôles, supprimer les privilèges individuels superflus.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.3</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que MongoDB est exécuté en utilisant un compte de service dédié et non privilégié</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;ps -ef | grep -E &quot;mongos | mongod&quot;&#x27; et vérifier l&#x27;utilisateur sous lequel les processus s&#x27;exécutent (doit être un utilisateur non-root dédié comme &#x27;mongodb&#x27;).</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+Exécuter &#x27;ps -ef | grep -E &quot;mongos | mongod&quot;&#x27; et vérifier l&#x27;utilisateur sous lequel les processus s&#x27;exécutent (doit être un utilisateur non-root dédié comme &#x27;mongodb&#x27;).</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Créer un utilisateur dédié (ex: &#x27;mongodb&#x27;), définir les permissions des fichiers de données, des fichiers de clés et des fichiers de log pour n&#x27;être lisibles/écrivables que par cet utilisateur.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.4</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que chaque rôle pour chaque base de données MongoDB est nécessaire et n&#x27;accorde que les privilèges nécessaires</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo: 1, showPrivileges: true, showBuiltinRoles: true} ))&quot;&#x27; et analyser manuellement les rôles et privilèges.</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo: 1, showPrivileges: true, showBuiltinRoles: true} ))&quot;&#x27; et analyser manuellement les rôles et privilèges.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Révoquer les privilèges spécifiés des rôles définis par l&#x27;utilisateur s&#x27;ils ne sont plus nécessaires.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.5</td>
+                        <td class="py-3 px-4 text-left align-top">Réviser les rôles de superutilisateur/administrateur</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo: \&quot;dbowner\&quot;} ))&quot;&#x27; et des commandes similaires pour &#x27;userAdmin&#x27;, &#x27;userAdminAnyDatabase&#x27;, &#x27;root&#x27;, &#x27;readWriteAnyDatabase&#x27;, &#x27;dbAdminAnyDatabase&#x27;, &#x27;clusterAdmin&#x27;, &#x27;hostManager&#x27;. Analyser manuellement les sorties.</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo: \&quot;dbowner\&quot;} ))&quot;&#x27; et des commandes similaires pour &#x27;userAdmin&#x27;, &#x27;userAdminAnyDatabase&#x27;, &#x27;root&#x27;, &#x27;readWriteAnyDatabase&#x27;, &#x27;dbAdminAnyDatabase&#x27;, &#x27;clusterAdmin&#x27;, &#x27;hostManager&#x27;. Analyser manuellement les sorties.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Retirer les utilisateurs des rôles de superutilisateur/administrateur s&#x27;ils n&#x27;en ont pas besoin.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">4 Data Encryption</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/4 vérifiés).</p>
+            <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">4.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les protocoles TLS hérités sont désactivés</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;disabledProtocols&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir &#x27;net.tls.disabledProtocols: [TLS1_0, TLS1_1]&#x27; (ou équivalent) dans le fichier de configuration et redémarrer.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">4.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les protocoles faibles sont désactivés</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;disabledProtocols&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir &#x27;net.ssl.disabledProtocols: TLS1_0, TLS1_1&#x27; dans le fichier de configuration et redémarrer.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">4.3</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer du chiffrement des données en transit TLS ou SSL (chiffrement de transport)</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep -A20 &#x27;net&#x27; | grep -A10 &#x27;tls&#x27; | grep &#x27;mode&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir &#x27;net.tls.mode: requireTLS&#x27;, &#x27;net.tls.certificateKeyFile&#x27;, &#x27;net.tls.CAFile&#x27; dans le fichier de configuration et redémarrer.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">4.4</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la norme FIPS (Federal Information Processing Standard) est activée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;FIPSMode&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir &#x27;net.tls.FIPSMode: true&#x27; dans le fichier de configuration et redémarrer.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">4.5</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer du chiffrement des données au repos</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryptionKeyFile&quot;. (Fonctionnalité MongoDB Enterprise uniquement)</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryptionKeyFile&quot;. (Fonctionnalité MongoDB Enterprise uniquement)</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Activer le chiffrement des données au repos (MongoDB Enterprise uniquement) en configurant &#x27;storage.engine: wiredTiger&#x27; et les options &#x27;encryption&#x27;.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">5 Audit Logging</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/3 vérifiés).</p>
+            <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">5.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que l&#x27;activité du système est auditée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep -A4 &quot;auditLog&quot; | grep &quot;destination&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir &#x27;auditLog.destination&#x27; sur &#x27;syslog&#x27;, &#x27;console&#x27; ou &#x27;file&#x27; dans le fichier de configuration.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">5.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les filtres d&#x27;audit sont configurés correctement</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep -A10 &quot;auditLog&quot; | grep &quot;filter&quot;. (Fonctionnalité MongoDB Enterprise uniquement)</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+cat /etc/mongod.conf | grep -A10 &quot;auditLog&quot; | grep &quot;filter&quot;. (Fonctionnalité MongoDB Enterprise uniquement)</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir les filtres d&#x27;audit en fonction des exigences de l&#x27;organisation (MongoDB Enterprise uniquement).</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">5.3</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la journalisation capture autant d&#x27;informations que possible</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;quiet&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir &#x27;systemLog.quiet: false&#x27; dans le fichier de configuration.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">5.4</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;logAppend&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir &#x27;systemLog.logAppend: true&#x27; dans le fichier de configuration.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">6 Operating System Hardening</h2>
+            <p class="text-lg font-bold text-green-600">100.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/1 vérifiés).</p>
+            <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">6.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que MongoDB utilise un port non-standard</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;port&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Changer le port &#x27;net.port&#x27; dans le fichier de configuration pour un numéro autre que 27017.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">6.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les limites de ressources du système d&#x27;exploitation sont définies pour MongoDB</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;ps -ef | grep mongod&#x27; pour obtenir le PID, puis &#x27;cat /proc/&lt;PID&gt;/limits&#x27; (remplacer &lt;PID&gt; par le PID réel). Vérifier les limites &#x27;f&#x27; (file size), &#x27;t&#x27; (cpu time), &#x27;v&#x27; (virtual memory), &#x27;n&#x27; (open files), &#x27;m&#x27; (memory size), &#x27;u&#x27; (processes/threads).</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+Exécuter &#x27;ps -ef | grep mongod&#x27; pour obtenir le PID, puis &#x27;cat /proc/&lt;PID&gt;/limits&#x27; (remplacer &lt;PID&gt; par le PID réel). Vérifier les limites &#x27;f&#x27; (file size), &#x27;t&#x27; (cpu time), &#x27;v&#x27; (virtual memory), &#x27;n&#x27; (open files), &#x27;m&#x27; (memory size), &#x27;u&#x27; (processes/threads).</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Ajuster les ulimits du système d&#x27;exploitation (f, t, v, n, m, u) et redémarrer les instances mongod/mongos.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">6.3</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que le script côté serveur est désactivé si non nécessaire</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep -A10 &quot;security&quot; | grep &quot;javascriptEnabled&quot;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+cat /etc/mongod.conf | grep -A10 &quot;security&quot; | grep &quot;javascriptEnabled&quot;</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir &#x27;security.javascriptEnabled: false&#x27; dans le fichier de configuration si le script côté serveur n&#x27;est pas nécessaire.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">7 File Permissions</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/0 vérifiés).</p>
+            <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 contrôles ont rencontré une erreur d'exécution.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Sortie / Erreur / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remédiation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">7.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les permissions appropriées du fichier de clés sont définies</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;cat /etc/mongod.conf | grep &quot;keyFile:&quot; || cat /etc/mongod.conf | grep &quot;PEMKeyFile:&quot; || cat /etc/mongod.conf | grep &quot;CAFile:&quot;&#x27; pour trouver les chemins. Puis &#x27;ls -l &lt;chemin_fichier_clé/certificat&gt;&#x27; et vérifier les permissions (doit être 600 et propriétaire &#x27;mongodb:mongodb&#x27;).</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+Exécuter &#x27;cat /etc/mongod.conf | grep &quot;keyFile:&quot; || cat /etc/mongod.conf | grep &quot;PEMKeyFile:&quot; || cat /etc/mongod.conf | grep &quot;CAFile:&quot;&#x27; pour trouver les chemins. Puis &#x27;ls -l &lt;chemin_fichier_clé/certificat&gt;&#x27; et vérifier les permissions (doit être 600 et propriétaire &#x27;mongodb:mongodb&#x27;).</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir les permissions du fichier de clés/certificats à 600 et le propriétaire à &#x27;mongodb:mongodb&#x27;.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">7.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les permissions appropriées du fichier de base de données sont définies</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>Exécuter &#x27;cat /etc/mongod.conf | grep &quot;dbpath&quot; || cat /etc/mongod.conf | grep &quot;dbPath&quot;&#x27; pour trouver le chemin. Puis &#x27;stat -c &#x27;%a&#x27; &lt;chemin_base_de_données&gt;&#x27; et vérifier les permissions (doit être 770 ou plus restrictif pour &#x27;mongodb:mongodb&#x27;).</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Ce contrôle nécessite une vérification manuelle.
+
+Procédure suggérée:
+Exécuter &#x27;cat /etc/mongod.conf | grep &quot;dbpath&quot; || cat /etc/mongod.conf | grep &quot;dbPath&quot;&#x27; pour trouver le chemin. Puis &#x27;stat -c &#x27;%a&#x27; &lt;chemin_base_de_données&gt;&#x27; et vérifier les permissions (doit être 770 ou plus restrictif pour &#x27;mongodb:mongodb&#x27;).</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Définir les permissions du répertoire de base de données à 770 et le propriétaire à &#x27;mongodb:mongodb&#x27;.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category-chart-container" style="height: 400px;"> {/* Hauteur augmentée */}
+            <canvas id="categoryChart"></canvas>
+        </div>
+
+
+    </div>
+
+    <script>
+        // Données pour le graphique global en camembert
+        const overallChartData = {
+            labels: ['Réussi', 'Échoué', 'Erreur', 'N/A'],
+            datasets: [{
+                label: 'Résultats des contrôles automatisés',
+                data: [1, 10, 0, 0],
+                backgroundColor: [
+                    '#10B981', // green-500
+                    '#EF4444', // red-500
+                    '#6B7280', // gray-500
+                    '#9CA3AF'  // gray-400
+                ],
+                hoverOffset: 4
+            }]
+        };
+
+        // Options de configuration pour le graphique global en camembert
+        const overallChartConfig = {
+            type: 'pie',
+            data: overallChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Répartition des contrôles automatisés (Global)'
+                    }
+                }
+            }
+        };
+
+        // Rendu du graphique global
+        const overallScoreChartCtx = document.getElementById('overallScoreChart');
+        if (overallScoreChartCtx) {
+            new Chart(overallScoreChartCtx, overallChartConfig);
+        }
+
+
+        // Données et configuration pour les graphiques à barres par catégorie
+        const categoryChartData = {
+            labels: ["1 Installation et Patching", "2 Authentification", "3 Authorization", "4 Data Encryption", "5 Audit Logging", "6 Operating System Hardening", "7 File Permissions"], // Liste des noms de catégories
+            datasets: [
+                {
+                    label: 'Réussi',
+                    data: [0, 0, 0, 0, 0, 1, 0],
+                    backgroundColor: '#10B981', // green-500
+                },
+                {
+                    label: 'Échoué',
+                    data: [0, 3, 0, 4, 3, 0, 0],
+                    backgroundColor: '#EF4444', // red-500
+                },
+                {
+                    label: 'Erreur',
+                    data: [0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: '#6B7280', // gray-500
+                },
+                {
+                    label: 'N/A',
+                    data: [0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: '#9CA3AF', // gray-400
+                }
+            ]
+        };
+
+        const categoryChartConfig = {
+            type: 'bar',
+            data: categoryChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Permettre au graphique de se redimensionner verticalement
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Répartition des contrôles automatisés par catégorie'
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Nombre de contrôles'
+                        }
+                    }
+                }
+            }
+        };
+
+        // Rendu du graphique à barres par catégorie
+        const categoryScoreChartCtx = document.getElementById('categoryChart');
+        if (categoryScoreChartCtx) {
+            new Chart(categoryScoreChartCtx, categoryChartConfig);
+        }
+
+    </script>
+</body>
+</html>
