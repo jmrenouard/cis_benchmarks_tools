@@ -1,6 +1,6 @@
 # Makefile for CIS Benchmark Tools
 
-# Variables
+# Variables for MySQL Enterprise 8.0
 MYSQL80_DOCKERFILE = Dockerfile_mysql80
 MYSQL80_IMAGE = mysql80-audit
 MYSQL80_CONTAINER = mysql80-test
@@ -10,8 +10,8 @@ MYSQL80_REPORT = rapport_cis_mysql_8.html
 .PHONY: help build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80 test-mysql80
 
 help:
-	@echo "Available commands:"
-	@echo "  make test-mysql80    - Complete cycle: build, run, audit, get report, and clean for MySQL 8.0"
+	@echo "Available commands for MySQL Enterprise 8.0:"
+	@echo "  make test-mysql80    - Complete cycle: build, run, audit, get report, and clean"
 	@echo "  make build-mysql80   - Build the Docker image"
 	@echo "  make run-mysql80     - Start the Docker container"
 	@echo "  make audit-mysql80   - Run the audit script inside the container"
@@ -23,7 +23,7 @@ build-mysql80:
 
 run-mysql80:
 	docker run -d --name $(MYSQL80_CONTAINER) $(MYSQL80_IMAGE)
-	@echo "Waiting for MySQL to initialize (15s)..."
+	@echo "Waiting for MySQL Enterprise 8.0 to initialize (15s)..."
 	sleep 15
 
 audit-mysql80:
@@ -37,4 +37,4 @@ clean-mysql80:
 	docker rm -f $(MYSQL80_CONTAINER) || true
 
 test-mysql80: clean-mysql80 build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80
-	@echo "Full test cycle for MySQL 8.0 completed."
+	@echo "Full test cycle for MySQL Enterprise 8.0 completed."
