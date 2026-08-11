@@ -1,6 +1,13 @@
 # ⚠️ Potential Issues & Technical Debt Backlog
 
-Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #37) identifiés sur le projet **CIS Benchmarks Tools**.
+Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #39) identifiés sur le projet **CIS Benchmarks Tools**.
+
+---
+
+## 🔒 Contrainte Globale : Python Standard Library (PSL ONLY)
+
+> [!IMPORTANT]
+> L'ensemble du projet respecte la règle **Python Standard Library (PSL) ONLY**. Aucune bibliothèque externe (telle que `jinja2`, `yaml`, `requests`) ne doit être introduite.
 
 ---
 
@@ -22,18 +29,18 @@ Ce document recense les problèmes potentiels, risques de bugs, remarques de sé
 
 ### Constats & Recommandations :
 - **Opérateurs d'évaluation** : L'évaluateur `evaluate_condition` prend désormais en charge `stdout_equals`, `stdout_contains`, `stdout_not_equals`, `stdout_not_contains`, `file_exists`, `file_contains`, `exit_code_equals`.
-- **Action Backlog** : Ajouter une suite de tests unitaires automatisés pour valider l'évaluateur de condition sur chaque type d'opérateur sans nécessiter de conteneur en cours d'exécution.
+- **Action Backlog** : Ajouter une suite de tests unitaires automatisés basés sur le module `unittest` de la PSL pour valider l'évaluateur de condition sur chaque type d'opérateur sans nécessiter de conteneur en cours d'exécution.
 
 ---
 
-## 3. Échappement des Templates HTML / CSS
+## 3. Échappement des Templates HTML / CSS (PSL Native)
 
 > [!NOTE]
-> Les blocs `<style>` dans les chaînes `HTML_TEMPLATE` doivent obligatoirement utiliser des accolades doubles (`{{` et `}}`).
+> Les blocs `<style>` dans les templates HTML `str.format` doivent obligatoirement utiliser des accolades doubles (`{{` et `}}`) ou le module PSL `string.Template`.
 
 ### Constats & Recommandations :
 - **Risque `KeyError`** : Des déclarations CSS avec accolades simples (`.status-pass { color: ... }`) ont provoqué des `KeyError: ' color'` lors des appels à `.format()`.
-- **Action Backlog** : Migrer vers le moteur de template Jinja2 au lieu de `str.format()` pour isoler totalement la couche de présentation CSS.
+- **Action Backlog** : Utiliser `string.Template` ou isoler les blocs CSS dans le moteur de rendu natif PSL (`html` / `string.Template`) pour éliminer tout risque d'erreur de formatage sans recourir à des dépendances tierces comme Jinja2.
 
 ---
 
