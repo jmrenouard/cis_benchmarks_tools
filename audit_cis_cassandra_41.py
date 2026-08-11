@@ -7,127 +7,114 @@ import re # Pour les expressions régulières
 import html # Pour échapper les caractères spéciaux HTML
 
 # --- Configuration ---
-# Commande pour se connecter à MongoDB shell (assumant une connexion sans authentification par défaut pour les tests).
-# Pour une utilisation en production, il est recommandé de configurer l'authentification
-# via un fichier de configuration sécurisé (ex: ~/.mongoshrc.js ou variables d'environnement)
-# ou en ajustant cette commande avec les options --username et --password.
-# --quiet pour réduire le bruit, --eval pour exécuter du JavaScript.
-MONGODB_SHELL_CMD = "mongosh --quiet --eval" 
-# Chemin par défaut pour le fichier de configuration mongod sur Linux.
-# Adaptez si votre fichier de configuration est ailleurs ou si vous êtes sur Windows.
-MONGOD_CONFIG_PATH = "/etc/mongod.conf" 
+# Commande pour se connecter au CQL Shell Cassandra
+# Pour une utilisation en production, ajustez avec -u <user> -p <password>
+CQLSH_CMD = "cqlsh -e"
+# Chemin par défaut pour le fichier de configuration Cassandra sur Linux.
+CASSANDRA_CONFIG_PATH = "/etc/cassandra/cassandra.yaml"
+CASSANDRA_ENV_PATH = "/etc/cassandra/cassandra-env.sh"
 
-# --- Structure des Recommandations (Adaptée pour MongoDB 7.0) ---
-# Basée sur le document "CIS MongoDB 7.0 Benchmark v1.0.0"
+# --- Structure des Recommandations (Adaptée pour Apache Cassandra 4.1) ---
+# Basée sur le document "CIS Apache Cassandra 4.1 Benchmark v1.0.0"
 RECOMMENDATIONS_DATA = [
-    # Catégorie 1: Installation et Patching
-    {"category": "1 Installation et Patching", "number": "1.1", "name": "S'assurer que la version/les correctifs appropriés de MongoDB sont installés", "type": "Manual",
-     "test_procedure": f"Exécuter '{MONGODB_SHELL_CMD} \"print(db.version())\"' OU 'mongod --version'. Vérifier manuellement les dernières versions/correctifs sur le site de MongoDB.",
-     "expected_output": None, 
-     "remediation": "Sauvegarder les données, télécharger les binaires de la dernière version de MongoDB, arrêter l'instance, remplacer les binaires, redémarrer l'instance."},
+    # Catégorie 1: Installation et Mises à jour
+    {"category": "1 Installation et Mises à jour", "number": "1.1", "name": "S'assurer qu'un utilisateur et un groupe dédiés existent pour Cassandra", "type": "Manual",
+     "test_procedure": "getent group cassandra && getent passwd cassandra",
+     "expected_output": None,
+     "remediation": "Créer un groupe et un utilisateur dédiés : groupadd cassandra && useradd -g cassandra -s /sbin/nologin cassandra.",
+     "manual_steps": ["Vérifier que le groupe 'cassandra' existe.", "Vérifier que l'utilisateur 'cassandra' existe.", "Vérifier que l'utilisateur appartient au bon groupe."]},
+    {"category": "1 Installation et Mises à jour", "number": "1.2", "name": "S'assurer que la dernière version de Java est installée", "type": "Automated",
+     "test_procedure": "java -version 2>&1 | head -1",
+     "expected_output": {"type": "stdout_regex_match", "pattern": r"(11|17|21)\.\d+"},
+     "remediation": "Mettre à jour Java vers la dernière version LTS supportée (Java 11, 17 ou 21)."},
+    {"category": "1 Installation et Mises à jour", "number": "1.3", "name": "S'assurer que la dernière version de Python est installée", "type": "Automated",
+     "test_procedure": "python3 --version 2>&1",
+     "expected_output": {"type": "stdout_regex_match", "pattern": r"Python 3\.\d+"},
+     "remediation": "Mettre à jour Python vers la dernière version 3.x."},
+    {"category": "1 Installation et Mises à jour", "number": "1.4", "name": "S'assurer que la dernière version de Cassandra est installée", "type": "Automated",
+     "test_procedure": "cassandra -v 2>/dev/null || nodetool version 2>/dev/null",
+     "expected_output": {"type": "stdout_regex_match", "pattern": r"4\.0\.\d+"},
+     "remediation": "Mettre à jour Cassandra vers la dernière version 4.1.x."},
+    {"category": "1 Installation et Mises à jour", "number": "1.5", "name": "S'assurer que le service Cassandra est exécuté en tant qu'utilisateur non-root", "type": "Automated",
+     "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
+     "expected_output": {"type": "stdout_not_equals", "value": "root"},
+     "remediation": "Configurer le service Cassandra pour qu'il s'exécute sous un utilisateur dédié (ex: 'cassandra')."},
+    {"category": "1 Installation et Mises à jour", "number": "1.6", "name": "S'assurer que les horloges sont synchronisées sur tous les nœuds", "type": "Manual",
+     "test_procedure": "timedatectl status 2>/dev/null | grep 'synchronized' || ntpstat 2>/dev/null || chronyc tracking 2>/dev/null",
+     "expected_output": None,
+     "remediation": "Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.",
+     "manual_steps": ["Vérifier que NTP/chrony est installé.", "Vérifier que la synchronisation est active.", "S'assurer que tous les nœuds utilisent la même source."]},
 
-    # Catégorie 2: Authentification
-    {"category": "2 Authentification", "number": "2.1", "name": "S'assurer que l'authentification est configurée", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"authorization\"",
-     "expected_output": {"type": "stdout_regex_match", "pattern": r"authorization:\s*\"?enabled\"?"},
-     "remediation": "Démarrer l'instance sans authentification, créer un utilisateur administrateur, configurer 'security.authorization: enabled' dans le fichier de configuration et redémarrer."},
-    {"category": "2 Authentification", "number": "2.2", "name": "S'assurer que MongoDB ne contourne pas l'authentification via l'exception localhost", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"enableLocalhostAuthBypass\"",
-     "expected_output": {"type": "stdout_regex_match", "pattern": r"enableLocalhostAuthBypass:\s*false"},
-     "remediation": "Définir 'setParameter.enableLocalhostAuthBypass: false' dans le fichier de configuration ou exécuter 'mongod --setParameter enableLocalhostAuthBypass=0'."},
-    {"category": "2 Authentification", "number": "2.3", "name": "S'assurer que l'authentification est activée dans le cluster sharded", "type": "Automated",
-     # Ce test vérifie la présence de plusieurs paramètres dans le fichier de configuration pour un cluster sharded sécurisé.
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"PEMKeyFile\" && cat {MONGOD_CONFIG_PATH} | grep \"CAFile\" && cat {MONGOD_CONFIG_PATH} | grep \"clusterFile\" && cat {MONGOD_CONFIG_PATH} | grep \"clusterAuthMode\" && cat {MONGOD_CONFIG_PATH} | grep \"authenticationMechanisms:\"",
-     "expected_output": {"type": "all_lines_match_regex", "patterns": [r"PEMKeyFile:", r"CAFile:", r"clusterFile:", r"clusterAuthMode:\s*x509", r"authenticationMechanisms:\s*MONGODB-X509"]},
-     "remediation": "Configurer 'net.tls.mode: requireSSL', 'net.tls.PEMKeyFile', 'net.tls.CAFile', 'net.tls.clusterFile', 'security.authorization: enabled', et 'security.clusterAuthMode: x509' dans le fichier de configuration et redémarrer. Ou utiliser 'keyFile' pour le développement."},
+    # Catégorie 2: Authentification et Autorisation
+    {"category": "2 Authentification et Autorisation", "number": "2.1", "name": "S'assurer que l'authentification est activée pour les bases de données Cassandra", "type": "Automated",
+     "test_procedure": f"grep -E '^authenticator:' {CASSANDRA_CONFIG_PATH}",
+     "expected_output": {"type": "stdout_contains", "value": "PasswordAuthenticator"},
+     "remediation": "Modifier cassandra.yaml pour définir 'authenticator: PasswordAuthenticator' et redémarrer Cassandra."},
+    {"category": "2 Authentification et Autorisation", "number": "2.2", "name": "S'assurer que l'autorisation est activée pour les bases de données Cassandra", "type": "Automated",
+     "test_procedure": f"grep -E '^authorizer:' {CASSANDRA_CONFIG_PATH}",
+     "expected_output": {"type": "stdout_contains", "value": "CassandraAuthorizer"},
+     "remediation": "Modifier cassandra.yaml pour définir 'authorizer: CassandraAuthorizer' et redémarrer Cassandra."},
 
-    # Catégorie 3: Authorization
-    {"category": "3 Authorization", "number": "3.1", "name": "S'assurer du moindre privilège pour les comptes de base de données", "type": "Manual",
-     "test_procedure": "Exécuter '" + MONGODB_SHELL_CMD + " \"printjson(db.system.users.find({\"roles.role\": {\"$in\": [\"dbOwner\", \"userAdmin\", \"userAdminAnyDatabase\"]},\"roles.db\": \"admin\" }).toArray())\"' et analyser manuellement la sortie.",
-     "expected_output": None, 
-     "remediation": "Supprimer les comptes listés avec des rôles à privilèges élevés dans la base de données 'admin'."},
-    {"category": "3 Authorization", "number": "3.2", "name": "S'assurer que le contrôle d'accès basé sur les rôles est activé et configuré correctement", "type": "Manual",
-     "test_procedure": "Exécuter '" + MONGODB_SHELL_CMD + " \"printjson(db.getUser())\"' et '" + MONGODB_SHELL_CMD + " \"printjson(db.getRole())\"'. Vérifier manuellement les rôles et privilèges.",
-     "expected_output": None, 
-     "remediation": "Établir des rôles, assigner des privilèges appropriés aux rôles, assigner des utilisateurs aux rôles, supprimer les privilèges individuels superflus."},
-    {"category": "3 Authorization", "number": "3.3", "name": "S'assurer que MongoDB est exécuté en utilisant un compte de service dédié et non privilégié", "type": "Manual",
-     "test_procedure": "Exécuter 'ps -ef | grep -E \"mongos | mongod\"' et vérifier l'utilisateur sous lequel les processus s'exécutent (doit être un utilisateur non-root dédié comme 'mongodb').",
-     "expected_output": None, 
-     "remediation": "Créer un utilisateur dédié (ex: 'mongodb'), définir les permissions des fichiers de données, des fichiers de clés et des fichiers de log pour n'être lisibles/écrivables que par cet utilisateur."},
-    {"category": "3 Authorization", "number": "3.4", "name": "S'assurer que chaque rôle pour chaque base de données MongoDB est nécessaire et n'accorde que les privilèges nécessaires", "type": "Manual",
-     "test_procedure": f"Exécuter '{MONGODB_SHELL_CMD} \"printjson(db.runCommand( {{rolesInfo: 1, showPrivileges: true, showBuiltinRoles: true}} ))\"' et analyser manuellement les rôles et privilèges.",
-     "expected_output": None, 
-     "remediation": "Révoquer les privilèges spécifiés des rôles définis par l'utilisateur s'ils ne sont plus nécessaires."},
-    {"category": "3 Authorization", "number": "3.5", "name": "Réviser les rôles de superutilisateur/administrateur", "type": "Manual",
-     "test_procedure": f"Exécuter '{MONGODB_SHELL_CMD} \"printjson(db.runCommand( {{rolesInfo: \\\"dbowner\\\"}} ))\"' et des commandes similaires pour 'userAdmin', 'userAdminAnyDatabase', 'root', 'readWriteAnyDatabase', 'dbAdminAnyDatabase', 'clusterAdmin', 'hostManager'. Analyser manuellement les sorties.",
-     "expected_output": None, 
-     "remediation": "Retirer les utilisateurs des rôles de superutilisateur/administrateur s'ils n'en ont pas besoin."},
+    # Catégorie 3: Contrôle d'accès / Politiques de mots de passe
+    {"category": "3 Contrôle d'accès", "number": "3.1", "name": "S'assurer que les rôles cassandra et superuser sont séparés", "type": "Automated",
+     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" 2>/dev/null | grep -v 'cassandra' | grep -c 'True'",
+     "expected_output": {"type": "stdout_regex_match", "pattern": r"[1-9]\d*"},
+     "remediation": "Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH SUPERUSER = false;"},
+    {"category": "3 Contrôle d'accès", "number": "3.2", "name": "S'assurer que le mot de passe par défaut du rôle cassandra est changé", "type": "Automated",
+     "test_procedure": f"{CQLSH_CMD} \"SELECT * FROM system_auth.roles WHERE role='cassandra';\" -u cassandra -p cassandra 2>&1 | grep -c 'AuthenticationFailed\\|Unauthorized\\|Bad credentials'",
+     "expected_output": {"type": "stdout_regex_match", "pattern": r"[1-9]"},
+     "remediation": "Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = '<nouveau_mot_de_passe>';"},
+    {"category": "3 Contrôle d'accès", "number": "3.3", "name": "S'assurer qu'il n'y a pas de rôles ou privilèges excessifs", "type": "Manual",
+     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" 2>/dev/null",
+     "expected_output": None,
+     "remediation": "Révoquer les rôles et privilèges inutiles. Utiliser REVOKE et DROP ROLE.",
+     "manual_steps": ["Lister tous les rôles (LIST ROLES;).", "Identifier les rôles avec des privilèges excessifs.", "Révoquer les privilèges non nécessaires."]},
+    {"category": "3 Contrôle d'accès", "number": "3.4", "name": "S'assurer que Cassandra est exécuté sous un compte de service dédié", "type": "Automated",
+     "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
+     "expected_output": {"type": "stdout_equals", "value": "cassandra"},
+     "remediation": "Configurer le service Cassandra pour qu'il s'exécute sous l'utilisateur 'cassandra'."},
+    {"category": "3 Contrôle d'accès", "number": "3.5", "name": "S'assurer que Cassandra n'écoute que sur les interfaces autorisées", "type": "Manual",
+     "test_procedure": f"grep -E '^listen_address:|^rpc_address:' {CASSANDRA_CONFIG_PATH}",
+     "expected_output": None,
+     "remediation": "Modifier cassandra.yaml pour définir 'listen_address' et 'rpc_address' sur des interfaces spécifiques.",
+     "manual_steps": ["Vérifier listen_address dans cassandra.yaml.", "Vérifier rpc_address dans cassandra.yaml.", "S'assurer que les adresses ne sont pas 0.0.0.0 sauf si justifié."]},
+    {"category": "3 Contrôle d'accès", "number": "3.6", "name": "S'assurer que les autorisations Data Center sont activées", "type": "Manual",
+     "test_procedure": f"grep -E '^authorizer:' {CASSANDRA_CONFIG_PATH}",
+     "expected_output": None,
+     "remediation": "Configurer l'autorisation par Data Center si nécessaire.",
+     "manual_steps": ["Vérifier la configuration de l'authorizer.", "Vérifier les permissions par DC."]},
+    {"category": "3 Contrôle d'accès", "number": "3.7", "name": "Réviser les rôles définis par l'utilisateur", "type": "Manual",
+     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" 2>/dev/null",
+     "expected_output": None,
+     "remediation": "Supprimer les rôles inutiles et révoquer les privilèges excessifs.",
+     "manual_steps": ["Lister les rôles avec LIST ROLES;.", "Identifier les rôles personnalisés.", "Vérifier les privilèges de chaque rôle."]},
+    {"category": "3 Contrôle d'accès", "number": "3.8", "name": "Réviser les rôles superuser/administrateur", "type": "Manual",
+     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" 2>/dev/null | grep 'True'",
+     "expected_output": None,
+     "remediation": "Limiter le nombre de rôles superuser au strict nécessaire.",
+     "manual_steps": ["Lister les rôles superuser.", "Vérifier que chaque rôle superuser est justifié.", "Révoquer le privilège superuser si non nécessaire."]},
 
-    # Catégorie 4: Data Encryption
-    {"category": "4 Data Encryption", "number": "4.1", "name": "S'assurer que les protocoles TLS hérités sont désactivés", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"disabledProtocols\"",
-     "expected_output": {"type": "stdout_regex_match", "pattern": r"disabledProtocols:\s*\[?[\"']?TLS1_0[\"']?.*[\"']?TLS1_1[\"']?\]?"}, # Gère les formats de liste et de chaîne
-     "remediation": "Définir 'net.tls.disabledProtocols: [TLS1_0, TLS1_1]' (ou équivalent) dans le fichier de configuration et redémarrer."},
-    {"category": "4 Data Encryption", "number": "4.2", "name": "S'assurer que les protocoles faibles sont désactivés", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"disabledProtocols\"",
-     "expected_output": {"type": "stdout_regex_match", "pattern": r"disabledProtocols:\s*\[?[\"']?TLS1_0[\"']?.*[\"']?TLS1_1[\"']?\]?"}, # Similaire à 4.1 selon le PDF
-     "remediation": "Définir 'net.ssl.disabledProtocols: TLS1_0, TLS1_1' dans le fichier de configuration et redémarrer."},
-    {"category": "4 Data Encryption", "number": "4.3", "name": "S'assurer du chiffrement des données en transit TLS ou SSL (chiffrement de transport)", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep -A20 'net' | grep -A10 'tls' | grep 'mode'",
-     "expected_output": {"type": "stdout_regex_match", "pattern": r"mode:\s*requireTLS"},
-     "remediation": "Définir 'net.tls.mode: requireTLS', 'net.tls.certificateKeyFile', 'net.tls.CAFile' dans le fichier de configuration et redémarrer."},
-    {"category": "4 Data Encryption", "number": "4.4", "name": "S'assurer que la norme FIPS (Federal Information Processing Standard) est activée", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"FIPSMode\"",
-     "expected_output": {"type": "stdout_regex_match", "pattern": r"FIPSMode:\s*true"},
-     "remediation": "Définir 'net.tls.FIPSMode: true' dans le fichier de configuration et redémarrer."},
-    {"category": "4 Data Encryption", "number": "4.5", "name": "S'assurer du chiffrement des données au repos", "type": "Manual",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"enableEncryption\" | grep \"encryptionKeyFile\". (Fonctionnalité MongoDB Enterprise uniquement)",
-     "expected_output": None, 
-     "remediation": "Activer le chiffrement des données au repos (MongoDB Enterprise uniquement) en configurant 'storage.engine: wiredTiger' et les options 'encryption'."},
+    # Catégorie 4: Audit et Journalisation
+    {"category": "4 Audit et Journalisation", "number": "4.1", "name": "S'assurer que la journalisation est activée", "type": "Automated",
+     "test_procedure": "ls -la /var/log/cassandra/system.log 2>/dev/null || ls -la /opt/cassandra/logs/system.log 2>/dev/null",
+     "expected_output": {"type": "stdout_not_empty"},
+     "remediation": "Vérifier que la journalisation est configurée dans logback.xml et que les fichiers de log existent."},
+    {"category": "4 Audit et Journalisation", "number": "4.2", "name": "S'assurer que l'audit est activé", "type": "Manual",
+     "test_procedure": f"grep -E '^audit_logging_options:' {CASSANDRA_CONFIG_PATH} || grep -A5 'audit_logging_options' {CASSANDRA_CONFIG_PATH}",
+     "expected_output": None,
+     "remediation": "Activer l'audit en configurant 'audit_logging_options' dans cassandra.yaml (Cassandra 4.1+).",
+     "manual_steps": ["Vérifier la configuration audit_logging_options dans cassandra.yaml.", "S'assurer que enabled: true est défini.", "Configurer les filtres d'audit appropriés."]},
 
-    # Catégorie 5: Audit Logging
-    {"category": "5 Audit Logging", "number": "5.1", "name": "S'assurer que l'activité du système est auditée", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep -A4 \"auditLog\" | grep \"destination\"",
-     "expected_output": {"type": "stdout_regex_match", "pattern": r"destination:\s*\"?(syslog|console|file)\"?"}, # Toute destination valide est un succès
-     "remediation": "Définir 'auditLog.destination' sur 'syslog', 'console' ou 'file' dans le fichier de configuration."},
-    {"category": "5 Audit Logging", "number": "5.2", "name": "S'assurer que les filtres d'audit sont configurés correctement", "type": "Manual",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep -A10 \"auditLog\" | grep \"filter\". (Fonctionnalité MongoDB Enterprise uniquement)",
-     "expected_output": None, 
-     "remediation": "Définir les filtres d'audit en fonction des exigences de l'organisation (MongoDB Enterprise uniquement)."},
-    {"category": "5 Audit Logging", "number": "5.3", "name": "S'assurer que la journalisation capture autant d'informations que possible", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"quiet\"",
-     "expected_output": {"type": "stdout_regex_match", "pattern": r"quiet:\s*false"},
-     "remediation": "Définir 'systemLog.quiet: false' dans le fichier de configuration."},
-    {"category": "5 Audit Logging", "number": "5.4", "name": "S'assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"logAppend\"",
-     "expected_output": {"type": "stdout_regex_match", "pattern": r"logAppend:\s*true"},
-     "remediation": "Définir 'systemLog.logAppend: true' dans le fichier de configuration."},
-
-    # Catégorie 6: Operating System Hardening
-    {"category": "6 Operating System Hardening", "number": "6.1", "name": "S'assurer que MongoDB utilise un port non-standard", "type": "Automated",
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep \"port\"",
-     "expected_output": {"type": "stdout_not_contains", "value": "27017"}, # S'assurer que ce n'est pas le port par défaut 27017
-     "remediation": "Changer le port 'net.port' dans le fichier de configuration pour un numéro autre que 27017."},
-    {"category": "6 Operating System Hardening", "number": "6.2", "name": "S'assurer que les limites de ressources du système d'exploitation sont définies pour MongoDB", "type": "Manual",
-     "test_procedure": "Exécuter 'ps -ef | grep mongod' pour obtenir le PID, puis 'cat /proc/<PID>/limits' (remplacer <PID> par le PID réel). Vérifier les limites 'f' (file size), 't' (cpu time), 'v' (virtual memory), 'n' (open files), 'm' (memory size), 'u' (processes/threads).",
-     "expected_output": None, 
-     "remediation": "Ajuster les ulimits du système d'exploitation (f, t, v, n, m, u) et redémarrer les instances mongod/mongos."},
-    {"category": "6 Operating System Hardening", "number": "6.3", "name": "S'assurer que le script côté serveur est désactivé si non nécessaire", "type": "Manual", # Le PDF indique Manuel, malgré la vérification grep
-     "test_procedure": f"cat {MONGOD_CONFIG_PATH} | grep -A10 \"security\" | grep \"javascriptEnabled\"",
-     "expected_output": None, 
-     "remediation": "Définir 'security.javascriptEnabled: false' dans le fichier de configuration si le script côté serveur n'est pas nécessaire."},
-
-    # Catégorie 7: File Permissions
-    {"category": "7 File Permissions", "number": "7.1", "name": "S'assurer que les permissions appropriées du fichier de clés sont définies", "type": "Manual",
-     "test_procedure": f"Exécuter 'cat {MONGOD_CONFIG_PATH} | grep \"keyFile:\" || cat {MONGOD_CONFIG_PATH} | grep \"PEMKeyFile:\" || cat {MONGOD_CONFIG_PATH} | grep \"CAFile:\"' pour trouver les chemins. Puis 'ls -l <chemin_fichier_clé/certificat>' et vérifier les permissions (doit être 600 et propriétaire 'mongodb:mongodb').",
-     "expected_output": None, 
-     "remediation": "Définir les permissions du fichier de clés/certificats à 600 et le propriétaire à 'mongodb:mongodb'."},
-    {"category": "7 File Permissions", "number": "7.2", "name": "S'assurer que les permissions appropriées du fichier de base de données sont définies", "type": "Manual",
-     "test_procedure": f"Exécuter 'cat {MONGOD_CONFIG_PATH} | grep \"dbpath\" || cat {MONGOD_CONFIG_PATH} | grep \"dbPath\"' pour trouver le chemin. Puis 'stat -c '%a' <chemin_base_de_données>' et vérifier les permissions (doit être 770 ou plus restrictif pour 'mongodb:mongodb').",
-     "expected_output": None, 
-     "remediation": "Définir les permissions du répertoire de base de données à 770 et le propriétaire à 'mongodb:mongodb'."},
+    # Catégorie 5: Chiffrement
+    {"category": "5 Chiffrement", "number": "5.1", "name": "Chiffrement inter-nœuds", "type": "Automated",
+     "test_procedure": f"grep -A20 'server_encryption_options:' {CASSANDRA_CONFIG_PATH} | grep 'internode_encryption'",
+     "expected_output": {"type": "stdout_regex_match", "pattern": r"internode_encryption:\s*(all|dc|rack)"},
+     "remediation": "Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les certificats SSL/TLS."},
+    {"category": "5 Chiffrement", "number": "5.2", "name": "Chiffrement client", "type": "Automated",
+     "test_procedure": f"grep -A20 'client_encryption_options:' {CASSANDRA_CONFIG_PATH} | grep 'enabled'",
+     "expected_output": {"type": "stdout_contains", "value": "true"},
+     "remediation": "Configurer client_encryption_options dans cassandra.yaml : enabled: true, et fournir les certificats SSL/TLS."},
 ]
-
 # --- Modèle HTML pour le rapport ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -135,7 +122,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapport CIS MongoDB 7.0 Benchmark</title>
+    <title>Rapport CIS Apache Cassandra 4.1.0 Benchmark</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <style>
@@ -155,9 +142,9 @@ HTML_TEMPLATE = """
 </head>
 <body class="font-sans bg-gray-100 text-gray-800 p-6">
     <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS MongoDB 7.0 Benchmark</h1>
+        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS Apache Cassandra 4.1.0 Benchmark</h1>
         <p class="text-gray-600 mb-4">Date du rapport : {report_date}</p>
-        <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS MongoDB 7.0 Benchmark (Version 1.0 du 11 Novembre 2023 par CIS).</p>
+        <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS Apache Cassandra 4.1.0 Benchmark (Version 1.3.0).</p>
 
         <div class="mb-8 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">Score Global</h2>
@@ -477,7 +464,7 @@ def perform_checks(recommendations):
             stdout, stderr, returncode = "", "", -1 # Initialise les résultats d'exécution
 
             try:
-                # Gérer les contrôles qui nécessitent d'obtenir d'abord un chemin dynamique (non utilisé pour MongoDB ici, mais conservé)
+                # Gérer les contrôles qui nécessitent d'obtenir d'abord un chemin dynamique (non utilisé pour Apache Cassandra ici, mais conservé)
                 if "path_command" in rec:
                     path_cmd = rec["path_command"]
                     path_stdout, path_stderr, path_returncode = run_command(path_cmd)
@@ -529,9 +516,9 @@ def perform_checks(recommendations):
                 elif "command not found" in stderr.lower(): # Une autre façon de détecter une commande introuvable
                     check_result["status"] = "Error"
                     check_result["output"] = f"Erreur : Commande introuvable (détecté dans stderr).\n{check_result['output']}"
-                elif "Error: command failed" in stderr or "Failed to connect to" in stderr: # Erreurs MongoDB (connexion/commande)
+                elif "Error: command failed" in stderr or "Failed to connect to" in stderr: # Erreurs Apache Cassandra (connexion/commande)
                      check_result["status"] = "Error"
-                     check_result["output"] = f"Erreur d'exécution de la commande MongoDB. Vérifiez la disponibilité/configuration du serveur/client.\n{check_result['output']}"
+                     check_result["output"] = f"Erreur d'exécution de la commande Apache Cassandra. Vérifiez la disponibilité/configuration du serveur/client.\n{check_result['output']}"
                 elif returncode != 0 and stderr and not condition:
                     # Si la commande a échoué avec stderr, et aucune condition spécifique à vérifier, marquer comme Erreur
                     check_result["status"] = "Error"
@@ -661,7 +648,7 @@ def get_status_info(status):
     else:
         return "❓", status, "status-error" # Fallback
 
-def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="rapport_cis_mongodb_7.html"):
+def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="rapport_cis_cassandra_41.html"):
     """
     Génère le rapport HTML.
     """
@@ -765,9 +752,9 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
 
 # --- Exécution principale ---
 if __name__ == "__main__":
-    print("🚀 Démarrage de l'audit CIS MongoDB 7.0 Benchmark ...")
-    print(f"ℹ️ Vérification des configurations dans: '{MONGOD_CONFIG_PATH}'")
-    print(f"ℹ️ Utilisation du client MongoDB: '{MONGODB_SHELL_CMD}' (Assurez-vous que la connexion est configurée)")
+    print("🚀 Démarrage de l'audit CIS Apache Cassandra 4.1.0 Benchmark ...")
+    print(f"ℹ️ Vérification des configurations dans: '{CASSANDRA_CONFIG_PATH}'")
+    print(f"ℹ️ Utilisation du client Apache Cassandra: '{CQLSH_CMD}' (Assurez-vous que la connexion est configurée)")
 
     # Exécuter les contrôles
     check_results = perform_checks(RECOMMENDATIONS_DATA)
@@ -784,14 +771,14 @@ if __name__ == "__main__":
                              total_manual, total_errors, total_na,
                              passed_auto_count, failed_auto_count, error_auto_count, na_auto_count,
                              category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts,
-                             "rapport_cis_mongodb_7.html")
+                             "rapport_cis_cassandra_41.html")
 
         print("✅ Audit terminé.")
         print(f"Score Global (contrôles automatisés tentés) : {overall_score:.2f}%.")
         print(f"Contrôles manuels : {total_manual}.")
         print(f"Contrôles en erreur : {total_errors}.")
         print(f"Contrôles non applicables : {total_na}.")
-        print("Consultez le fichier rapport_cis_mongodb_7.html pour les détails.")
+        print("Consultez le fichier rapport_cis_cassandra_41.html pour les détails.")
 
     except Exception as e:
         print(f"\n❌ Une erreur s'est produite lors du calcul des scores ou de la génération du rapport :")

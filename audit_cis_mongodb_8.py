@@ -17,8 +17,8 @@ MONGODB_SHELL_CMD = "mongosh --quiet --eval"
 # Adaptez si votre fichier de configuration est ailleurs ou si vous êtes sur Windows.
 MONGOD_CONFIG_PATH = "/etc/mongod.conf" 
 
-# --- Structure des Recommandations (Adaptée pour MongoDB 7.0) ---
-# Basée sur le document "CIS MongoDB 7.0 Benchmark v1.0.0"
+# --- Structure des Recommandations (Adaptée pour MongoDB 8.0) ---
+# Basée sur le document "CIS MongoDB 8.0 Benchmark v1.0.0"
 RECOMMENDATIONS_DATA = [
     # Catégorie 1: Installation et Patching
     {"category": "1 Installation et Patching", "number": "1.1", "name": "S'assurer que la version/les correctifs appropriés de MongoDB sont installés", "type": "Manual",
@@ -43,7 +43,7 @@ RECOMMENDATIONS_DATA = [
 
     # Catégorie 3: Authorization
     {"category": "3 Authorization", "number": "3.1", "name": "S'assurer du moindre privilège pour les comptes de base de données", "type": "Manual",
-     "test_procedure": "Exécuter '" + MONGODB_SHELL_CMD + " \"printjson(db.system.users.find({\"roles.role\": {\"$in\": [\"dbOwner\", \"userAdmin\", \"userAdminAnyDatabase\"]},\"roles.db\": \"admin\" }).toArray())\"' et analyser manuellement la sortie.",
+     "test_procedure": "Exécuter '" + MONGODB_SHELL_CMD + " \"printjson(db.system.users.find({\\\"roles.role\\\": {\\\"$in\\\": [\\\"dbOwner\\\", \\\"userAdmin\\\", \\\"userAdminAnyDatabase\\\"]},\\\"roles.db\\\": \\\"admin\\\" }).toArray())\"' et analyser manuellement la sortie.",
      "expected_output": None, 
      "remediation": "Supprimer les comptes listés avec des rôles à privilèges élevés dans la base de données 'admin'."},
     {"category": "3 Authorization", "number": "3.2", "name": "S'assurer que le contrôle d'accès basé sur les rôles est activé et configuré correctement", "type": "Manual",
@@ -135,7 +135,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapport CIS MongoDB 7.0 Benchmark</title>
+    <title>Rapport CIS MongoDB 8.0 Benchmark</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <style>
@@ -155,9 +155,9 @@ HTML_TEMPLATE = """
 </head>
 <body class="font-sans bg-gray-100 text-gray-800 p-6">
     <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS MongoDB 7.0 Benchmark</h1>
+        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS MongoDB 8.0 Benchmark</h1>
         <p class="text-gray-600 mb-4">Date du rapport : {report_date}</p>
-        <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS MongoDB 7.0 Benchmark (Version 1.0 du 11 Novembre 2023 par CIS).</p>
+        <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS MongoDB 8.0 Benchmark (Version 1.0 du 11 Novembre 2023 par CIS).</p>
 
         <div class="mb-8 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">Score Global</h2>
@@ -661,7 +661,7 @@ def get_status_info(status):
     else:
         return "❓", status, "status-error" # Fallback
 
-def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="rapport_cis_mongodb_7.html"):
+def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="rapport_cis_mongodb_8.html"):
     """
     Génère le rapport HTML.
     """
@@ -765,7 +765,7 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
 
 # --- Exécution principale ---
 if __name__ == "__main__":
-    print("🚀 Démarrage de l'audit CIS MongoDB 7.0 Benchmark ...")
+    print("🚀 Démarrage de l'audit CIS MongoDB 8.0 Benchmark ...")
     print(f"ℹ️ Vérification des configurations dans: '{MONGOD_CONFIG_PATH}'")
     print(f"ℹ️ Utilisation du client MongoDB: '{MONGODB_SHELL_CMD}' (Assurez-vous que la connexion est configurée)")
 
@@ -784,14 +784,14 @@ if __name__ == "__main__":
                              total_manual, total_errors, total_na,
                              passed_auto_count, failed_auto_count, error_auto_count, na_auto_count,
                              category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts,
-                             "rapport_cis_mongodb_7.html")
+                             "rapport_cis_mongodb_8.html")
 
         print("✅ Audit terminé.")
         print(f"Score Global (contrôles automatisés tentés) : {overall_score:.2f}%.")
         print(f"Contrôles manuels : {total_manual}.")
         print(f"Contrôles en erreur : {total_errors}.")
         print(f"Contrôles non applicables : {total_na}.")
-        print("Consultez le fichier rapport_cis_mongodb_7.html pour les détails.")
+        print("Consultez le fichier rapport_cis_mongodb_8.html pour les détails.")
 
     except Exception as e:
         print(f"\n❌ Une erreur s'est produite lors du calcul des scores ou de la génération du rapport :")
