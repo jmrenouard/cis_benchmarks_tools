@@ -1,14 +1,14 @@
-# 🗺️ CIS Benchmarks Tools - Roadmap & Backlog (v1.2.0)
+# 🗺️ CIS Benchmarks Tools - Roadmap & Backlog (v1.2.1)
 
 Ce document présente la feuille de route stratégique, la vision d'architecture et les évolutions prévues pour la suite d'outils d'audit CIS.
 
 ---
 
-## 🔒 Contrainte Globale d'Architecture : Python Standard Library (PSL ONLY)
+## 🔒 Contrainte Globale d'Architecture & Processus de Release
 
 > [!IMPORTANT]
-> L'ensemble du code de la suite d'audit CIS (moteur d'exécution, scripts d'audit `audit_cis_*.py`, script unifié `audit_cis.py`, génération de rapports HTML/JSON, routine pre-commit) utilise **EXCLUSIVEMENT les modules de la bibliothèque standard Python (Python Standard Library - PSL)**.
-> **Aucune dépendance externe tierce** (ex. `jinja2`, `yaml`, `requests`) n'est autorisée, garantissant une exécution 100% nomade et sans installation de paquets `pip`, dans n'importe quel environnement Linux ou conteneur Docker.
+> 1. **Python Standard Library (PSL ONLY)** : L'ensemble du code Python (moteur d'exécution, scripts d'audit `audit_cis_*.py`, script unifié `audit_cis.py`, génération de rapports, routine pre-commit) utilise **EXCLUSIVEMENT la bibliothèque standard Python**. Aucune dépendance externe (`jinja2`, `yaml`, `requests`) n'est autorisée.
+> 2. **Mise à Jour Systématique** : À chaque modification de code Python, le numéro de version (`VERSION`), la `ROADMAP.md` et `POTENTIAL_ISSUES.md` sont **automatiquement mis à jour et validés**.
 
 ---
 
@@ -23,7 +23,7 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 
 ---
 
-### Phase 2 : Moteur Unifié, Modularisation PSL & Arborescence (Réalisé ✅ - v1.2.0)
+### Phase 2 : Moteur Unifié, Modularisation PSL & Arborescence (Réalisé ✅ - v1.2.1)
 
 #### 1. Moteur d'Audit Unifié (`audit_cis.py`)
 - CLI centralisée d'exécution autonome avec gestion des versions (`python3 audit_cis.py --version`, `--target <target>`, `--all`, `--auto-detect`, `--list-targets`).
@@ -37,6 +37,7 @@ Ce document présente la feuille de route stratégique, la vision d'architecture
 - Validation automatique de la syntaxe Python (`py_compile`).
 - Contrôle de conformité de l'AST pour bloquer tout import non-PSL.
 - Validation de la syntaxe des scripts shell (`bash -n`).
+- Contrôle d'intégrité de la structure du projet (`reports/`, `docker/`, `scripts/`, `CIS_DATA/`) et de la validité des fichiers rapports (> 1 KB).
 
 #### 3. Réorganisation Structurée des Répertoires
 - `reports/` : Sous-dossier dédié regroupant l'ensemble des rapports HTML d'audit.
