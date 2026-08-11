@@ -2,8 +2,7 @@
 set -e
 
 # Start SSHD in the background
-/usr/sbin/sshd
+/usr/sbin/sshd 2>/dev/null || true
 
-# Use the official PostgreSQL entrypoint
-# The official image handles initialization automatically
+# Start PostgreSQL using official entrypoint
 exec docker-entrypoint.sh postgres
