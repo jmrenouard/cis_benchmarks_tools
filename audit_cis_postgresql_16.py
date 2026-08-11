@@ -717,7 +717,7 @@ def get_status_info(status):
         return "❓", status, "status-error" # Fallback for unexpected status
 
 
-def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="rapport_cis_postgresql_16.html"):
+def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_postgresql_16.html"):
     """Génère le rapport HTML."""
     report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
@@ -803,6 +803,8 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
         category_na_counts=category_na_counts
     )
 
+    if os.path.dirname(filename):
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_output)
 
@@ -820,11 +822,11 @@ if __name__ == "__main__":
     overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts = calculate_scores(check_results)
 
     # Générer le rapport HTML
-    generate_html_report(check_results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, "rapport_cis_postgresql_16.html")
+    generate_html_report(check_results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, "reports/rapport_cis_postgresql_16.html")
 
     print("✅ Audit terminé.")
     print(f"Score Global (contrôles automatisés tentés) : {overall_score:.2f}%.")
     print(f"Contrôles manuels : {total_manual}.")
     print(f"Contrôles en erreur : {total_errors}.")
     print(f"Contrôles non applicables : {total_na}.")
-    print("Consulte le fichier rapport_cis_postgresql_16.html pour les détails.")
+    print("Consulte le fichier reports/rapport_cis_postgresql_16.html pour les détails.")

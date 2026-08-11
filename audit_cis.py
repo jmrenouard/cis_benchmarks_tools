@@ -80,7 +80,7 @@ def run_single_audit(target_key, output_html=None, output_json=None):
         elapsed = (datetime.datetime.now() - start_time).total_seconds()
         print(f"✅ {label} CIS Audit completed successfully in {elapsed:.2f}s")
 
-        default_report = f"rapport_cis_{target_key.replace('-', '_')}.html"
+        default_report = f"reports/rapport_cis_{target_key.replace('-', '_')}.html"
         if output_html and os.path.exists(default_report):
             os.rename(default_report, output_html)
             print(f"📄 HTML report saved to: {output_html}")

@@ -672,7 +672,7 @@ def get_status_info(status):
     else:
         return "❓", status, "status-error" # Fallback
 
-def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="rapport_cis_mysql_8.html"):
+def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="reports/rapport_cis_mysql_8.html"):
     """Génère le rapport HTML."""
     report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     overall_score_class = get_score_class(overall_score)
@@ -774,6 +774,8 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
     )
 
     try:
+        if os.path.dirname(filename):
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             f.write(html_output)
         print(f"Rapport généré avec succès : {filename}")
@@ -801,14 +803,14 @@ if __name__ == "__main__":
                              total_manual, total_errors, total_na,
                              passed_auto_count, failed_auto_count, error_auto_count, na_auto_count,
                              category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts,
-                             "rapport_cis_mysql_8.html")
+                             "reports/rapport_cis_mysql_8.html")
 
         print("✅ Audit terminé.")
         print(f"Score Global (contrôles automatisés tentés) : {overall_score:.2f}%.")
         print(f"Contrôles manuels : {total_manual}.")
         print(f"Contrôles en erreur : {total_errors}.")
         print(f"Contrôles non applicables : {total_na}.")
-        print("Consulte le fichier rapport_cis_mysql_8.html pour les détails.")
+        print("Consulte le fichier reports/rapport_cis_mysql_8.html pour les détails.")
 
     except Exception as e:
         print(f"\n❌ Une erreur s'est produite lors du calcul des scores ou de la génération du rapport:")

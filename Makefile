@@ -128,7 +128,7 @@ audit-mariadb106:
 	docker exec $(MARIADB106_CONTAINER) python3 /datas/$(MARIADB106_SCRIPT)
 
 report-mariadb106:
-	docker cp $(MARIADB106_CONTAINER):/datas/$(MARIADB106_REPORT) .
+	docker cp $(MARIADB106_CONTAINER):/datas/$(MARIADB106_REPORT) reports/
 	@echo "Report copied to $(MARIADB106_REPORT)"
 
 clean-mariadb106:
@@ -150,7 +150,7 @@ audit-mariadb1011:
 	docker exec $(MARIADB1011_CONTAINER) python3 /datas/$(MARIADB1011_SCRIPT)
 
 report-mariadb1011:
-	docker cp $(MARIADB1011_CONTAINER):/datas/$(MARIADB1011_REPORT) .
+	docker cp $(MARIADB1011_CONTAINER):/datas/$(MARIADB1011_REPORT) reports/
 	@echo "Report copied to $(MARIADB1011_REPORT)"
 
 clean-mariadb1011:
@@ -172,7 +172,7 @@ audit-mysql80:
 	docker exec $(MYSQL80_CONTAINER) python3 /datas/$(MYSQL80_SCRIPT)
 
 report-mysql80:
-	docker cp $(MYSQL80_CONTAINER):/datas/$(MYSQL80_REPORT) .
+	docker cp $(MYSQL80_CONTAINER):/datas/$(MYSQL80_REPORT) reports/
 	@echo "Report copied to $(MYSQL80_REPORT)"
 
 clean-mysql80:
@@ -194,7 +194,7 @@ audit-mysql-community84:
 	docker exec $(MYSQL_COMMUNITY84_CONTAINER) python3 /datas/$(MYSQL_COMMUNITY84_SCRIPT)
 
 report-mysql-community84:
-	docker cp $(MYSQL_COMMUNITY84_CONTAINER):/datas/$(MYSQL_COMMUNITY84_REPORT) .
+	docker cp $(MYSQL_COMMUNITY84_CONTAINER):/datas/$(MYSQL_COMMUNITY84_REPORT) reports/
 	@echo "Report copied to $(MYSQL_COMMUNITY84_REPORT)"
 
 clean-mysql-community84:
@@ -216,7 +216,7 @@ audit-mysql-enterprise84:
 	docker exec $(MYSQL_ENTERPRISE84_CONTAINER) python3 /datas/$(MYSQL_ENTERPRISE84_SCRIPT)
 
 report-mysql-enterprise84:
-	docker cp $(MYSQL_ENTERPRISE84_CONTAINER):/datas/$(MYSQL_ENTERPRISE84_REPORT) .
+	docker cp $(MYSQL_ENTERPRISE84_CONTAINER):/datas/$(MYSQL_ENTERPRISE84_REPORT) reports/
 	@echo "Report copied to $(MYSQL_ENTERPRISE84_REPORT)"
 
 clean-mysql-enterprise84:
@@ -238,7 +238,7 @@ audit-mysql-community97:
 	docker exec $(MYSQL_COMMUNITY97_CONTAINER) python3 /datas/$(MYSQL_COMMUNITY97_SCRIPT)
 
 report-mysql-community97:
-	docker cp $(MYSQL_COMMUNITY97_CONTAINER):/datas/$(MYSQL_COMMUNITY97_REPORT) .
+	docker cp $(MYSQL_COMMUNITY97_CONTAINER):/datas/$(MYSQL_COMMUNITY97_REPORT) reports/
 	@echo "Report copied to $(MYSQL_COMMUNITY97_REPORT)"
 
 clean-mysql-community97:
@@ -260,7 +260,7 @@ audit-mysql-enterprise97:
 	docker exec $(MYSQL_ENTERPRISE97_CONTAINER) python3 /datas/$(MYSQL_ENTERPRISE97_SCRIPT)
 
 report-mysql-enterprise97:
-	docker cp $(MYSQL_ENTERPRISE97_CONTAINER):/datas/$(MYSQL_ENTERPRISE97_REPORT) .
+	docker cp $(MYSQL_ENTERPRISE97_CONTAINER):/datas/$(MYSQL_ENTERPRISE97_REPORT) reports/
 	@echo "Report copied to $(MYSQL_ENTERPRISE97_REPORT)"
 
 clean-mysql-enterprise97:
@@ -282,7 +282,7 @@ audit-postgresql16:
 	docker exec $(POSTGRESQL16_CONTAINER) python3 /datas/$(POSTGRESQL16_SCRIPT)
 
 report-postgresql16:
-	docker cp $(POSTGRESQL16_CONTAINER):/datas/$(POSTGRESQL16_REPORT) .
+	docker cp $(POSTGRESQL16_CONTAINER):/datas/$(POSTGRESQL16_REPORT) reports/
 	@echo "Report copied to $(POSTGRESQL16_REPORT)"
 
 clean-postgresql16:
@@ -304,7 +304,7 @@ audit-postgresql17:
 	docker exec $(POSTGRESQL17_CONTAINER) python3 /datas/$(POSTGRESQL17_SCRIPT)
 
 report-postgresql17:
-	docker cp $(POSTGRESQL17_CONTAINER):/datas/$(POSTGRESQL17_REPORT) .
+	docker cp $(POSTGRESQL17_CONTAINER):/datas/$(POSTGRESQL17_REPORT) reports/
 	@echo "Report copied to $(POSTGRESQL17_REPORT)"
 
 clean-postgresql17:
@@ -326,7 +326,7 @@ audit-postgresql18:
 	docker exec $(POSTGRESQL18_CONTAINER) python3 /datas/$(POSTGRESQL18_SCRIPT)
 
 report-postgresql18:
-	docker cp $(POSTGRESQL18_CONTAINER):/datas/$(POSTGRESQL18_REPORT) .
+	docker cp $(POSTGRESQL18_CONTAINER):/datas/$(POSTGRESQL18_REPORT) reports/
 	@echo "Report copied to $(POSTGRESQL18_REPORT)"
 
 clean-postgresql18:
@@ -348,7 +348,7 @@ audit-mongodb7:
 	docker exec $(MONGODB7_CONTAINER) python3 /datas/$(MONGODB7_SCRIPT)
 
 report-mongodb7:
-	docker cp $(MONGODB7_CONTAINER):/datas/$(MONGODB7_REPORT) .
+	docker cp $(MONGODB7_CONTAINER):/datas/$(MONGODB7_REPORT) reports/
 	@echo "Report copied to $(MONGODB7_REPORT)"
 
 clean-mongodb7:
@@ -370,7 +370,7 @@ audit-mongodb8:
 	docker exec $(MONGODB8_CONTAINER) python3 /datas/$(MONGODB8_SCRIPT)
 
 report-mongodb8:
-	docker cp $(MONGODB8_CONTAINER):/datas/$(MONGODB8_REPORT) .
+	docker cp $(MONGODB8_CONTAINER):/datas/$(MONGODB8_REPORT) reports/
 	@echo "Report copied to $(MONGODB8_REPORT)"
 
 clean-mongodb8:
@@ -392,7 +392,7 @@ audit-cassandra40:
 	docker exec $(CASSANDRA40_CONTAINER) python3 /datas/$(CASSANDRA40_SCRIPT)
 
 report-cassandra40:
-	docker cp $(CASSANDRA40_CONTAINER):/datas/$(CASSANDRA40_REPORT) .
+	docker cp $(CASSANDRA40_CONTAINER):/datas/$(CASSANDRA40_REPORT) reports/
 	@echo "Report copied to $(CASSANDRA40_REPORT)"
 
 clean-cassandra40:
@@ -414,7 +414,7 @@ audit-cassandra41:
 	docker exec $(CASSANDRA41_CONTAINER) python3 /datas/$(CASSANDRA41_SCRIPT)
 
 report-cassandra41:
-	docker cp $(CASSANDRA41_CONTAINER):/datas/$(CASSANDRA41_REPORT) .
+	docker cp $(CASSANDRA41_CONTAINER):/datas/$(CASSANDRA41_REPORT) reports/
 	@echo "Report copied to $(CASSANDRA41_REPORT)"
 
 clean-cassandra41:
@@ -436,7 +436,7 @@ audit-cassandra50:
 	docker exec $(CASSANDRA50_CONTAINER) python3 /datas/$(CASSANDRA50_SCRIPT)
 
 report-cassandra50:
-	docker cp $(CASSANDRA50_CONTAINER):/datas/$(CASSANDRA50_REPORT) .
+	docker cp $(CASSANDRA50_CONTAINER):/datas/$(CASSANDRA50_REPORT) reports/
 	@echo "Report copied to $(CASSANDRA50_REPORT)"
 
 clean-cassandra50:
