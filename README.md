@@ -1,198 +1,149 @@
-# CIS Benchmarks Tools
+# 🛡️ CIS Benchmarks Tools Suite (v1.4.1)
 
-> Suite d'outils d'audit automatisés pour les benchmarks CIS (Center for Internet Security) appliqués aux bases de données.
+> **Automated Security Compliance Audit Engine for Databases and Linux Operating Systems (100% Python Standard Library - PSL ONLY).**
 
-## 📋 Vue d'ensemble
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
+[![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
 
-Ce projet fournit des scripts Python d'audit automatisé conformes aux recommandations CIS Benchmarks pour les principales bases de données. Chaque script génère un rapport HTML détaillé avec :
+---
 
-- ✅ Score global de conformité
-- 📊 Graphiques par catégorie (Chart.js)
-- 🔍 Détails de chaque recommandation (test, résultat, remédiation)
-- 📝 Distinction entre contrôles automatisés et manuels
+## 📋 Overview
 
-## 🗄️ Bases de données supportées
+**CIS Benchmarks Tools** is a lightweight, zero-dependency, automated security audit suite designed to evaluate system and database configurations against official **CIS (Center for Internet Security) Benchmarks** and **DISA STIG** guidelines.
 
-### MariaDB
+### Key Highlights
+- 🔒 **100% Python Standard Library (PSL ONLY)**: Zero `pip` dependencies. Runs natively out-of-the-box on any standard Python 3 installation.
+- 🗄️ **18 Target Benchmarks & 887 Audit Controls**: Covers MariaDB, MySQL, PostgreSQL, MongoDB, Apache Cassandra, and Red Hat Enterprise Linux (RHEL 8 / 9 / 10).
+- ⚡ **Unified Execution CLI (`audit_cis.py`)**: Execute individual audits, run all benchmarks, or auto-detect environment targets from a single command-line interface.
+- 🌐 **Remote SSH Auditing**: Built-in support for remote server auditing via SSH (`--remote user@hostname`) without requiring Paramiko or Ansible.
+- 📊 **Responsive HTML Reports**: Generates standalone, self-contained HTML audit reports in `reports/` with compliance scores, category breakdowns, and explicit remediation procedures.
 
-| Version | Script d'audit | Dockerfile | CIS Benchmark | Nb Contrôles |
-|---------|---------------|------------|----------------|-------------|
-| 10.6 | [`audit_cis_mariadb_106.py`](audit_cis_mariadb_106.py) | [`Dockerfile_mariadb106`](Dockerfile_mariadb106) | v1.3.0 | 74 |
-| 10.11 | [`audit_cis_mariadb_1011.py`](audit_cis_mariadb_1011.py) | [`Dockerfile_mariadb1011`](Dockerfile_mariadb1011) | v1.0.0 | 75 |
+---
 
-### MySQL
+## 🗄️ Supported Audit Targets (18 Benchmarks / 887 Controls)
 
-| Version | Script d'audit | Dockerfile | CIS Benchmark | Nb Contrôles |
-|---------|---------------|------------|----------------|-------------|
-| 8.0 Enterprise | [`audit_cis_mysql_80.py`](audit_cis_mysql_80.py) | [`Dockerfile_mysql80`](Dockerfile_mysql80) | v1.5.0 | ~70 |
-| 8.4 Community | [`audit_cis_mysql_community_84.py`](audit_cis_mysql_community_84.py) | [`Dockerfile_mysql_community_84`](Dockerfile_mysql_community_84) | v1.1.0 | ~80 |
-| 8.4 Enterprise | [`audit_cis_mysql_enterprise_84.py`](audit_cis_mysql_enterprise_84.py) | [`Dockerfile_mysql_enterprise_84`](Dockerfile_mysql_enterprise_84) | v1.1.0 | ~80 |
-| 9.7 Community | [`audit_cis_mysql_community_97.py`](audit_cis_mysql_community_97.py) | [`Dockerfile_mysql_community_97`](Dockerfile_mysql_community_97) | v1.0.0 | ~80 |
-| 9.7 Enterprise | [`audit_cis_mysql_enterprise_97.py`](audit_cis_mysql_enterprise_97.py) | [`Dockerfile_mysql_enterprise_97`](Dockerfile_mysql_enterprise_97) | v1.0.0 | ~80 |
+### Database Engines (15 Benchmarks)
 
-### PostgreSQL
+| Target ID | Database Engine | Version / Profile | CIS Benchmark | Audit Controls | Script |
+|---|---|---|---|:---:|---|
+| `mariadb106` | MariaDB | 10.6 | v1.3.0 | 74 | [`audit_cis_mariadb_106.py`](audit_cis_mariadb_106.py) |
+| `mariadb1011` | MariaDB | 10.11 | v1.0.0 | 75 | [`audit_cis_mariadb_1011.py`](audit_cis_mariadb_1011.py) |
+| `mysql80` | MySQL Enterprise | 8.0 | v1.5.0 | 70 | [`audit_cis_mysql_80.py`](audit_cis_mysql_80.py) |
+| `mysql-community84` | MySQL Community | 8.4 LTS | v1.1.0 | 79 | [`audit_cis_mysql_community_84.py`](audit_cis_mysql_community_84.py) |
+| `mysql-enterprise84` | MySQL Enterprise | 8.4 LTS | v1.1.0 | 70 | [`audit_cis_mysql_enterprise_84.py`](audit_cis_mysql_enterprise_84.py) |
+| `mysql-community97` | MySQL Community | 9.7 Innovation | v1.0.0 | 70 | [`audit_cis_mysql_community_97.py`](audit_cis_mysql_community_97.py) |
+| `mysql-enterprise97` | MySQL Enterprise | 9.7 Innovation | v1.0.0 | 70 | [`audit_cis_mysql_enterprise_97.py`](audit_cis_mysql_enterprise_97.py) |
+| `postgresql16` | PostgreSQL | 16 | v1.1.0 | 71 | [`audit_cis_postgresql_16.py`](audit_cis_postgresql_16.py) |
+| `postgresql17` | PostgreSQL | 17 | v1.1.0 | 71 | [`audit_cis_postgresql_17.py`](audit_cis_postgresql_17.py) |
+| `postgresql18` | PostgreSQL | 18 | v1.0.0 | 71 | [`audit_cis_postgresql_18.py`](audit_cis_postgresql_18.py) |
+| `mongodb7` | MongoDB | 7.0 | v1.2.0 | 23 | [`audit_cis_mongodb_7.py`](audit_cis_mongodb_7.py) |
+| `mongodb8` | MongoDB | 8.0 | v1.0.0 | 23 | [`audit_cis_mongodb_8.py`](audit_cis_mongodb_8.py) |
+| `cassandra40` | Apache Cassandra | 4.0 | v1.3.0 | 20 | [`audit_cis_cassandra_40.py`](audit_cis_cassandra_40.py) |
+| `cassandra41` | Apache Cassandra | 4.1 | v1.0.0 | 20 | [`audit_cis_cassandra_41.py`](audit_cis_cassandra_41.py) |
+| `cassandra50` | Apache Cassandra | 5.0 | v1.1.0 | 20 | [`audit_cis_cassandra_50.py`](audit_cis_cassandra_50.py) |
 
-| Version | Script d'audit | Dockerfile | CIS Benchmark | Nb Contrôles |
-|---------|---------------|------------|----------------|-------------|
-| 16 | [`audit_cis_postgresql_16.py`](audit_cis_postgresql_16.py) | [`Dockerfile_postgresql16`](Dockerfile_postgresql16) | v1.1.0 | ~80 |
-| 17 | [`audit_cis_postgresql_17.py`](audit_cis_postgresql_17.py) | [`Dockerfile_postgresql17`](Dockerfile_postgresql17) | v1.1.0 | ~80 |
-| 18 | [`audit_cis_postgresql_18.py`](audit_cis_postgresql_18.py) | [`Dockerfile_postgresql18`](Dockerfile_postgresql18) | v1.0.0 | ~80 |
+### Linux Operating Systems & STIG (3 Benchmarks)
 
-### MongoDB
+| Target ID | Operating System | Profile / STIG | CIS Benchmark | Audit Controls | Script |
+|---|---|---|---|:---:|---|
+| `rhel8` | Red Hat Enterprise Linux | RHEL 8 CIS & STIG | v4.0.0 / v2.0.0 | 20 | [`audit_cis_rhel_8.py`](audit_cis_rhel_8.py) |
+| `rhel9` | Red Hat Enterprise Linux | RHEL 9 CIS & STIG | v2.0.0 / v1.0.0 | 20 | [`audit_cis_rhel_9.py`](audit_cis_rhel_9.py) |
+| `rhel10` | Red Hat Enterprise Linux | RHEL 10 CIS | v1.0.1 | 20 | [`audit_cis_rhel_10.py`](audit_cis_rhel_10.py) |
 
-| Version | Script d'audit | Dockerfile | CIS Benchmark | Nb Contrôles |
-|---------|---------------|------------|----------------|-------------|
-| 7 | [`audit_cis_mongodb_7.py`](audit_cis_mongodb_7.py) | [`Dockerfile_mongodb7`](Dockerfile_mongodb7) | v1.0.0 | ~22 |
-| 8 | [`audit_cis_mongodb_8.py`](audit_cis_mongodb_8.py) | [`Dockerfile_mongodb8`](Dockerfile_mongodb8) | v1.0.0 | ~22 |
+---
 
-### Apache Cassandra
+## 🚀 Quick Start
 
-| Version | Script d'audit | Dockerfile | CIS Benchmark | Nb Contrôles |
-|---------|---------------|------------|----------------|-------------|
-| 4.0 | [`audit_cis_cassandra_40.py`](audit_cis_cassandra_40.py) | [`Dockerfile_cassandra40`](Dockerfile_cassandra40) | v1.3.0 | 18 |
-| 4.1 | [`audit_cis_cassandra_41.py`](audit_cis_cassandra_41.py) | [`Dockerfile_cassandra41`](Dockerfile_cassandra41) | v1.0.0 | 18 |
-| 5.0 | [`audit_cis_cassandra_50.py`](audit_cis_cassandra_50.py) | [`Dockerfile_cassandra50`](Dockerfile_cassandra50) | v1.1.0 | 18 |
+### Requirements
+- **Python 3.8+** (Standard Installation)
+- **Docker** (Optional, for containerized test environments)
 
-## 🚀 Utilisation rapide
-
-### Prérequis
-
-- Python 3.8+
-- Docker (pour les environnements de test)
-- Accès réseau pour télécharger les images Docker
-
-### Exécution avec Docker (recommandé)
-
+### 1. List All Available Audit Targets
 ```bash
-# 1. Construire l'image Docker
-docker build -f Dockerfile_mariadb106 -t cis_mariadb106:audit .
-
-# 2. Lancer le conteneur
-docker run -d --name cis_mariadb106_audit cis_mariadb106:audit
-
-# 3. Attendre l'initialisation du service (~30s)
-sleep 30
-
-# 4. Exécuter l'audit
-docker exec cis_mariadb106_audit python3 /datas/audit_cis_mariadb_106.py
-
-# 5. Récupérer le rapport
-docker cp cis_mariadb106_audit:/datas/rapport_cis_mariadb_106.html .
-
-# 6. Nettoyer
-docker rm -f cis_mariadb106_audit
+python3 audit_cis.py --list-targets
 ```
 
-### Exécution directe
-
+### 2. Run Single Target Audit
 ```bash
-# Sur un serveur MariaDB 10.6 existant
-python3 audit_cis_mariadb_106.py
+# Local PostgreSQL 16 Audit
+python3 audit_cis.py --target postgresql16
 
-# Le rapport HTML est généré dans le répertoire courant
-# Ouvrir rapport_cis_mariadb_106.html dans un navigateur
+# Local RHEL 9 System Audit
+python3 audit_cis.py --target rhel9
 ```
 
-## 📁 Structure du projet
+### 3. Remote Server Audit over SSH
+```bash
+# Execute RHEL 8 CIS/STIG Audit on a remote host via SSH
+python3 audit_cis_rhel_8.py --remote root@192.168.1.50 -o reports/rapport_remote_rhel8.html
+```
+
+### 4. Run All Audits / Auto-Detect
+```bash
+# Auto-detect running database services and execute corresponding audits
+python3 audit_cis.py --auto-detect
+
+# Execute all 18 benchmark audits sequentially
+python3 audit_cis.py --all
+```
+
+---
+
+## 📁 Repository Structure
 
 ```
 cis_benchmarks_tools/
-├── README.md                          # Ce fichier
-├── audit_cis_mariadb_106.py           # Audit MariaDB 10.6
-├── audit_cis_mariadb_1011.py          # Audit MariaDB 10.11
-├── audit_cis_mysql_80.py              # Audit MySQL 8.0
-├── audit_cis_mysql_community_84.py    # Audit MySQL Community 8.4
-├── audit_cis_mysql_enterprise_84.py   # Audit MySQL Enterprise 8.4
-├── audit_cis_mysql_community_97.py    # Audit MySQL Community 9.7
-├── audit_cis_mysql_enterprise_97.py   # Audit MySQL Enterprise 9.7
-├── audit_cis_postgresql_16.py         # Audit PostgreSQL 16
-├── audit_cis_postgresql_17.py         # Audit PostgreSQL 17
-├── audit_cis_postgresql_18.py         # Audit PostgreSQL 18
-├── audit_cis_mongodb_7.py             # Audit MongoDB 7
-├── audit_cis_mongodb_8.py             # Audit MongoDB 8
-├── audit_cis_cassandra_40.py          # Audit Cassandra 4.0
-├── audit_cis_cassandra_41.py          # Audit Cassandra 4.1
-├── audit_cis_cassandra_50.py          # Audit Cassandra 5.0
-├── Dockerfile_mariadb106              # Env test MariaDB 10.6
-├── Dockerfile_mariadb1011             # Env test MariaDB 10.11
-├── Dockerfile_mysql80                 # Env test MySQL 8.0
-├── Dockerfile_mysql_community_84      # Env test MySQL Community 8.4
-├── Dockerfile_mysql_enterprise_84     # Env test MySQL Enterprise 8.4
-├── Dockerfile_mysql_community_97      # Env test MySQL Community 9.7
-├── Dockerfile_mysql_enterprise_97     # Env test MySQL Enterprise 9.7
-├── Dockerfile_postgresql16            # Env test PostgreSQL 16
-├── Dockerfile_postgresql17            # Env test PostgreSQL 17
-├── Dockerfile_postgresql18            # Env test PostgreSQL 18
-├── Dockerfile_mongodb7                # Env test MongoDB 7
-├── Dockerfile_mongodb8                # Env test MongoDB 8
-├── Dockerfile_cassandra40             # Env test Cassandra 4.0
-├── Dockerfile_cassandra41             # Env test Cassandra 4.1
-├── Dockerfile_cassandra50             # Env test Cassandra 5.0
+├── audit_cis.py                       # Unified CLI Audit Engine (v1.4.1)
+├── audit_cis_mariadb_106.py           # MariaDB 10.6 Audit Script
+├── audit_cis_mariadb_1011.py          # MariaDB 10.11 Audit Script
+├── audit_cis_mysql_80.py              # MySQL Enterprise 8.0 Audit Script
+├── audit_cis_mysql_community_84.py    # MySQL Community 8.4 Audit Script
+├── audit_cis_mysql_enterprise_84.py   # MySQL Enterprise 8.4 Audit Script
+├── audit_cis_mysql_community_97.py    # MySQL Community 9.7 Audit Script
+├── audit_cis_mysql_enterprise_97.py   # MySQL Enterprise 9.7 Audit Script
+├── audit_cis_postgresql_16.py         # PostgreSQL 16 Audit Script
+├── audit_cis_postgresql_17.py         # PostgreSQL 17 Audit Script
+├── audit_cis_postgresql_18.py         # PostgreSQL 18 Audit Script
+├── audit_cis_mongodb_7.py             # MongoDB 7 Audit Script
+├── audit_cis_mongodb_8.py             # MongoDB 8 Audit Script
+├── audit_cis_cassandra_40.py          # Cassandra 4.0 Audit Script
+├── audit_cis_cassandra_41.py          # Cassandra 4.1 Audit Script
+├── audit_cis_cassandra_50.py          # Cassandra 5.0 Audit Script
+├── audit_cis_rhel_8.py                # RHEL 8 CIS/STIG Audit Script
+├── audit_cis_rhel_9.py                # RHEL 9 CIS/STIG Audit Script
+├── audit_cis_rhel_10.py               # RHEL 10 CIS Audit Script
+├── reports/                           # Generated HTML Audit Reports
+├── docker/                            # Test Container Dockerfiles (16 targets)
 ├── scripts/
-│   ├── start_mariadb.sh               # Script de démarrage MariaDB
-│   ├── start_mysql.sh                 # Script de démarrage MySQL
-│   └── start_postgresql.sh            # Script de démarrage PostgreSQL
-└── CIS_DATA/                          # Spécifications CIS (PDF/MD)
+│   ├── bundle_audit_cis.py            # Automatic Script Bundler
+│   ├── pre_commit_checks.py           # 7-Step Quality & Security Pre-Commit Checker
+│   └── start_*.sh                     # Database Container Startup Scripts
+├── CIS_DATA/                          # 22 Reference Markdown Specifications
+├── VERSION                            # Current Release Version (v1.4.1)
+├── ROADMAP.md                         # Strategic Roadmap & Completed Milestones
+└── POTENTIAL_ISSUES.md                # Resolved Debt & Technical Backlog
 ```
 
-## 🔧 Architecture des scripts
+---
 
-Chaque script d'audit suit la même architecture :
+## 🔒 Security & Architecture Standards
 
-1. **Configuration** : Commande CLI de la base de données, chemin du fichier de configuration
-2. **RECOMMENDATIONS_DATA** : Liste structurée de toutes les recommandations CIS
-   - `category` : Catégorie CIS (ex: "1 Installation et Patching")
-   - `number` : Numéro de la recommandation (ex: "1.1")
-   - `name` : Description en français
-   - `type` : `Automated` ou `Manual`
-   - `test_procedure` : Commande shell à exécuter
-   - `expected_output` : Résultat attendu (regex, valeur exacte, etc.)
-   - `remediation` : Correction à appliquer
-3. **HTML_TEMPLATE** : Modèle HTML avec graphiques Chart.js
-4. **Fonctions d'exécution** : Exécution des tests, évaluation, génération du rapport
+- **PSL Compliance**: Strictly enforces Python 3 Standard Library modules ONLY (`subprocess`, `os`, `sys`, `json`, `ast`, `re`, `html`). External packages (`pip`, `jinja2`, `yaml`, `requests`) are prohibited and blocked by pre-commit AST checks.
+- **Command Injection Prevention**: All system command executions rely on strict parameter list arguments (`shell=False`) to eliminate command injection vulnerabilities (`python.lang.security.audit.subprocess-shell-true`).
+- **Quality Assurance**: Automated 7-step pre-commit validation routine:
+  ```bash
+  make pre-commit
+  ```
 
-### Types de validation
+---
 
-| Type | Description |
-|------|------------|
-| `stdout_equals` | La sortie doit correspondre exactement |
-| `stdout_not_equals` | La sortie ne doit pas correspondre |
-| `stdout_contains` | La sortie doit contenir la valeur |
-| `stdout_not_contains` | La sortie ne doit pas contenir la valeur |
-| `stdout_regex_match` | La sortie doit correspondre au pattern regex |
-| `stdout_not_empty` | La sortie ne doit pas être vide |
-| `returncode_zero` | Le code de retour doit être 0 |
-| `all_lines_match_regex` | Toutes les lignes doivent correspondre |
+## 📄 License
 
-## 📊 Rapports
+This project is licensed under the **MIT License**. See the `LICENSE` file for details.
 
-Les rapports HTML générés incluent :
+## 📚 References
 
-- **Score global** avec graphique camembert
-- **Score par catégorie** avec graphiques en barres
-- **Tableau détaillé** pour chaque recommandation :
-  - Statut : ✅ Pass / ❌ Fail / ⚠️ Manual / 🔘 N/A
-  - Commande exécutée
-  - Sortie obtenue
-  - Remédiation proposée
-
-## 🤝 Contribution
-
-1. Fork le projet
-2. Créer une branche (`git checkout -b feat/new-benchmark`)
-3. Commit les changements (`git commit -am 'feat: Add new benchmark'`)
-4. Push la branche (`git push origin feat/new-benchmark`)
-5. Créer une Pull Request
-
-## 📄 Licence
-
-Ce projet est distribué sous licence MIT.
-
-## 📚 Références
-
-- [CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks)
-- [MariaDB Security](https://mariadb.com/kb/en/securing-mariadb/)
-- [MySQL Security](https://dev.mysql.com/doc/refman/8.4/en/security.html)
-- [PostgreSQL Security](https://www.postgresql.org/docs/current/security.html)
-- [MongoDB Security](https://www.mongodb.com/docs/manual/security/)
-- [Cassandra Security](https://cassandra.apache.org/doc/latest/cassandra/operating/security.html)
+- [CIS Benchmarks Official Site](https://www.cisecurity.org/cis-benchmarks)
+- [Red Hat Enterprise Linux Security Guides](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/)
+- [DISA STIG Guidelines](https://public.cyber.mil/stigs/)
