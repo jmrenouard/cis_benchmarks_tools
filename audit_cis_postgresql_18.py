@@ -15,14 +15,14 @@ RECOMMENDATIONS_DATA = [
     # 1. Installation et correctifs
     {"category": "1. Installation et correctifs", "number": "1.1", "name": "Obtenir les paquets depuis des dépôts autorisés", "type": "Manual", "test_procedure": "Vérifier dnf repolist all ou équivalent (apt-file search /usr/pgsql-*/lib/libpq.so.5) pour s’assurer que seuls les dépôts officiels sont activés.", "expected_output": None, "remediation": "Supprimer/ajouter des dépôts pour n’inclure que les sources valides (p. ex. dnf install -y https://download.postgresql.org/.../pgdg-redhat-repo-latest.noarch.rpm), puis réinstaller."},
     {"category": "1. Installation et correctifs", "number": "1.2", "name": "Installer uniquement les paquets requis", "type": "Manual", "test_procedure": "apt search postgresql ou dnf search postgresql, lister les paquets installés et comparer à la liste d’exigences.", "expected_output": None, "remediation": "Purger/effacer les paquets non désirés : apt purge <pkg> ou dnf erase <pkg>."},
-    {"category": "1. Installation et correctifs", "number": "1.3", "name": "Activer le service systemd", "type": "Automated", "test_procedure": "systemctl is-enabled postgresql@17-main.service || systemctl is-enabled postgresql-17.service", "expected_output": {"type": "stdout_equals", "value": "enabled"}, "remediation": "systemctl enable postgresql@17-main || systemctl enable postgresql-17"}, # Added common Ubuntu service name
+    {"category": "1. Installation et correctifs", "number": "1.3", "name": "Activer le service systemd", "type": "Automated", "test_procedure": "systemctl is-enabled postgresql@18-main.service || systemctl is-enabled postgresql-18.service", "expected_output": {"type": "stdout_equals", "value": "enabled"}, "remediation": "systemctl enable postgresql@18-main || systemctl enable postgresql-18"}, # Added common Ubuntu service name
     # Corrected 1.4: Check service status and data directory permissions/ownership
     {"category": "1. Installation et correctifs", "number": "1.4", "name": "Initialiser correctement le cluster de données", "type": "Automated", "sub_checks": [
-        {"test_procedure": "systemctl is-active postgresql@17-main.service || systemctl is-active postgresql-17.service", "expected_output": {"type": "stdout_equals", "value": "active"}}, # Check if service is running
+        {"test_procedure": "systemctl is-active postgresql@18-main.service || systemctl is-active postgresql-18.service", "expected_output": {"type": "stdout_equals", "value": "active"}}, # Check if service is running
         {"test_procedure": "sudo -u postgres psql -t -c 'SHOW data_directory;'", "expected_output": {"type": "stdout_not_empty"}, "store_output_as": "datadir"}, # Get data directory path and store it
         {"test_procedure_template": "ls -ld {datadir}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^drwx------\s+\d+\s+postgres\s+postgres"}}, # Check ownership and permissions (drwx------ postgres postgres)
     ], "remediation": "Supprimer le répertoire de données et relancer initdb (avec checksums si souhaité), puis démarrer le service. Assurer les bonnes permissions sur le répertoire de données."},
-    {"category": "1. Installation et correctifs", "number": "1.5", "name": "Appliquer les derniers correctifs de sécurité", "type": "Manual", "test_procedure": "psql -c 'SHOW server_version' et comparer à la liste des versions disponibles sur la page de news PostgreSQL.", "expected_output": None, "remediation": "sudo apt update && sudo apt upgrade postgresql-17*"}, # Adapted remediation for Ubuntu/apt
+    {"category": "1. Installation et correctifs", "number": "1.5", "name": "Appliquer les derniers correctifs de sécurité", "type": "Manual", "test_procedure": "psql -c 'SHOW server_version' et comparer à la liste des versions disponibles sur la page de news PostgreSQL.", "expected_output": None, "remediation": "sudo apt update && sudo apt upgrade postgresql-18*"}, # Adapted remediation for Ubuntu/apt
     {"category": "1. Installation et correctifs", "number": "1.6", "name": "Vérifier que PGPASSWORD n'est pas défini dans les profils", "type": "Automated", "test_procedure": "! grep -q PGPASSWORD /home/*/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Empêcher le stockage en clair du mot de passe via la variable d’environnement PGPASSWORD.\nSupprimer toute définition de PGPASSWORD dans les scripts de connexion, utiliser ~/.pgpass ou une méthode sécurisée. "}, # Use bash features for grep -q and negation, added description
     {"category": "1. Installation et correctifs", "number": "1.7", "name": "Vérifier que PGPASSWORD n'est pas utilisé par un processus", "type": "Automated", "test_procedure": "! pgrep -a PGPASSWORD 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "S’assurer qu’aucun processus n’utilise la variable PGPASSWORD.\nIdentifier et modifier les scripts/processus pour ne plus utiliser PGPASSWORD."}, # Use pgrep for active processes, added description
 
@@ -34,7 +34,7 @@ RECOMMENDATIONS_DATA = [
 
     # 3. Journalisation et audit
     {"category": "3. Journalisation et audit", "number": "3.1.2", "name": "Configurer log_destination", "type": "Automated", "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_destination;'", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Définir la ou les destinations de logs (stderr, csvlog, syslog, jsonlog).\nALTER SYSTEM SET log_destination = 'csvlog'; SELECT pg_reload_conf();"}, # Added description
-    {"category": "3. Journalisation et audit", "number": "3.1.3", "name": "Activer logging_collector", "type": "Automated", "test_procedure": "sudo -u postgres psql -t -c 'SHOW logging_collector;'", "expected_output": {"type": "stdout_equals", "value": "on"}, "remediation": "Capturer stderr dans des fichiers via le démon collector.\nALTER SYSTEM SET logging_collector = 'on'; puis systemctl restart postgresql@17-main || systemctl restart postgresql-17."}, # Adapted restart command, added description
+    {"category": "3. Journalisation et audit", "number": "3.1.3", "name": "Activer logging_collector", "type": "Automated", "test_procedure": "sudo -u postgres psql -t -c 'SHOW logging_collector;'", "expected_output": {"type": "stdout_equals", "value": "on"}, "remediation": "Capturer stderr dans des fichiers via le démon collector.\nALTER SYSTEM SET logging_collector = 'on'; puis systemctl restart postgresql@18-main || systemctl restart postgresql-18."}, # Adapted restart command, added description
     {"category": "3.1. Journalisation des erreurs serveur", "number": "3.1.4", "name": "Définir log_directory", "type": "Automated", "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_directory;'", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Spécifier le répertoire de sortie des fichiers de logs (ex. /var/log/postgres).\nALTER SYSTEM SET log_directory = '/var/log/postgres'; SELECT pg_reload_conf();"}, # Added description
     {"category": "3.1. Journalisation des erreurs serveur", "number": "3.1.5", "name": "Définir log_filename", "type": "Automated", "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_filename;'", "expected_output": {"type": "stdout_contains", "value": "%Y"}, "remediation": "Choisir un motif de nom de fichier strftime (e.g. postgresql-%Y%m%d.log).\nALTER SYSTEM SET log_filename = 'postgresql-%Y%m%d.log'; SELECT pg_reload_conf();"}, # Checking for %Y as recommended format, added description
     {"category": "3.1. Journalisation des erreurs serveur", "number": "3.1.6", "name": "Configurer log_file_mode", "type": "Automated", "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_file_mode;'", "expected_output": {"type": "stdout_contains_any", "values": ["0600", "0640"]}, "remediation": "Fixer les permissions des fichiers de log à 0600 (ou 0640 selon le groupe).\nALTER SYSTEM SET log_file_mode = '0600'; SELECT pg_reload_conf();"}, # Added description
@@ -65,7 +65,7 @@ RECOMMENDATIONS_DATA = [
 
     # 4. Accès et autorisations utilisateur
     {"category": "4. Accès et autorisations utilisateur", "number": "4.1", "name": "Désactiver la connexion interactive", "type": "Manual", "test_procedure": "Empêcher les rôles superutilisateurs sans console SSH d’interagir localement.\nVérifier dans pg_hba.conf qu’aucune ligne local .. trust pour les superutilisateurs", "expected_output": None, "remediation": "Empêcher les rôles superutilisateurs sans console SSH d’interagir localement.\nModifier pg_hba.conf, passer à md5 ou peer, puis SELECT pg_reload_conf();."}, # Added description
-    {"category": "4. Accès et autorisations utilisateur", "number": "4.2", "name": "Configurer sudo correctement", "type": "Manual", "test_procedure": "Restreindre l’usage de sudo pour l’utilisateur système postgres.\nExaminer /etc/sudoers et fichiers dans /etc/sudoers.d/ pour la section postgres.", "expected_output": None, "remediation": "Restreindre l’usage de sudo pour l’utilisateur système postgres.\nExaminer /etc/sudoers et fichiers dans /etc/sudoers.d/ pour la section postgres.\nAjuster les droits sudo (ex. postgres ALL=(ALL) NOPASSWD: /usr/pgsql-17/bin/pg_*)."}, # Added description
+    {"category": "4. Accès et autorisations utilisateur", "number": "4.2", "name": "Configurer sudo correctement", "type": "Manual", "test_procedure": "Restreindre l’usage de sudo pour l’utilisateur système postgres.\nExaminer /etc/sudoers et fichiers dans /etc/sudoers.d/ pour la section postgres.", "expected_output": None, "remediation": "Restreindre l’usage de sudo pour l’utilisateur système postgres.\nExaminer /etc/sudoers et fichiers dans /etc/sudoers.d/ pour la section postgres.\nAjuster les droits sudo (ex. postgres ALL=(ALL) NOPASSWD: /usr/pgsql-18/bin/pg_*)."}, # Added description
     {"category": "4. Accès et autorisations utilisateur", "number": "4.3", "name": "Révoquer les privilèges administratifs excessifs", "type": "Manual", "test_procedure": "Retirer aux rôles non justifiés les attributs SUPERUSER, CREATEDB, CREATEROLE, REPLICATION.\n\\du+ doit lister uniquement les rôles autorisés avec ces attributs.", "expected_output": None, "remediation": "Retirer aux rôles non justifiés les attributs SUPERUSER, CREATEDB, CREATEROLE, REPLICATION.\n\\du+ doit lister uniquement les rôles autorisés avec ces attributs.\nALTER ROLE <user> NOSUPERUSER NOCREATEDB NOCREATEROLE;."}, # Added description
     {"category": "4. Accès et autorisations utilisateur", "number": "4.4", "name": "Verrouiller les comptes inactifs", "type": "Manual", "test_procedure": "Désactiver les rôles non utilisés depuis un certain temps.\nSELECT rolname, rolvaliduntil FROM pg_authid; vérifier dates d’expiration.", "expected_output": None, "remediation": "Désactiver les rôles non utilisés depuis un certain temps.\nSELECT rolname, rolvaliduntil FROM pg_authid; vérifier dates d’expiration.\nALTER ROLE <user> NOLOGIN; ou définir VALID UNTIL à une date passée."}, # Added description
     {"category": "4. Accès et autorisations utilisateur", "number": "4.5", "name": "Révoquer les privilèges de fonction excessifs", "type": "Manual", "test_procedure": "Restreindre l’EXECUTE sur les fonctions définies aux seuls rôles nécessaires.\nRequête sur pg_proc et has_function_privilege().", "expected_output": None, "remediation": "Restreindre l’EXECUTE sur les fonctions définies aux seuls rôles nécessaires.\nRequête sur pg_proc et has_function_privilege().\nREVOKE EXECUTE ON FUNCTION <schema>.<func>() FROM <role>;."}, # Marked Manual as the test procedure is complex/policy-dependent, added description
@@ -128,7 +128,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapport CIS PostgreSQL 17 Benchmark</title>
+    <title>Rapport CIS PostgreSQL 18 Benchmark</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <style>
@@ -147,7 +147,7 @@ HTML_TEMPLATE = """
 </head>
 <body class="font-sans bg-gray-100 text-gray-800 p-6">
     <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS PostgreSQL 17 Benchmark</h1>
+        <h1 class="text-3xl font-bold mb-6 text-gray-900">Rapport CIS PostgreSQL 18 Benchmark</h1>
         <p class="text-gray-600 mb-4">Date du rapport : {report_date}</p>
         <p class="text-gray-600 mb-8">Généré par un script basé sur les recommandations fournies par Jean-Marie Renouard (Version 1.0 du 13 Avril 2025).</p>
 
@@ -717,7 +717,7 @@ def get_status_info(status):
         return "❓", status, "status-error" # Fallback for unexpected status
 
 
-def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="rapport_cis_postgresql_17.html"):
+def generate_html_report(results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, filename="rapport_cis_postgresql_18.html"):
     """Génère le rapport HTML."""
     report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
@@ -811,7 +811,7 @@ def generate_html_report(results, overall_score, categories_scores, total_manual
 
 # --- Exécution principale ---
 if __name__ == "__main__":
-    print("🚀 Démarrage de l'audit CIS PostgreSQL 17 Benchmark ...")
+    print("🚀 Démarrage de l'audit CIS PostgreSQL 18 Benchmark ...")
 
     # Exécuter les contrôles
     check_results = perform_checks(RECOMMENDATIONS_DATA)
@@ -820,11 +820,11 @@ if __name__ == "__main__":
     overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts = calculate_scores(check_results)
 
     # Générer le rapport HTML
-    generate_html_report(check_results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, "rapport_cis_postgresql_17.html")
+    generate_html_report(check_results, overall_score, categories_scores, total_manual, total_errors, total_na, passed_auto_count, failed_auto_count, error_auto_count, na_auto_count, category_labels, category_pass_counts, category_fail_counts, category_error_counts, category_na_counts, "rapport_cis_postgresql_18.html")
 
     print("✅ Audit terminé.")
     print(f"Score Global (contrôles automatisés tentés) : {overall_score:.2f}%.")
     print(f"Contrôles manuels : {total_manual}.")
     print(f"Contrôles en erreur : {total_errors}.")
     print(f"Contrôles non applicables : {total_na}.")
-    print("Consulte le fichier rapport_cis_postgresql_17.html pour les détails.")
+    print("Consulte le fichier rapport_cis_postgresql_18.html pour les détails.")

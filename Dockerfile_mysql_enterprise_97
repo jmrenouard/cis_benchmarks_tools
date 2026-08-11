@@ -1,0 +1,59 @@
+FROM mysql:9.2
+
+# Define environment variables
+ENV DEBIAN_FRONTEND=noninteractive \
+  TERM=xterm \
+  MYSQL_ROOT_PASSWORD=rootpass
+
+# 🛠️ Installation of system utilities and SSH
+RUN microdnf install -y \
+  openssh-server \
+  openssl \
+  rsync \
+  vim-minimal \
+  nano \
+  net-tools \
+  procps-ng \
+  wget \
+  curl \
+  git \
+  unzip \
+  python3 \
+  python3-pip \
+  ca-certificates && \
+  mkdir -p /var/run/sshd /exemples /datas && \
+  microdnf clean all && \
+  rm -rf /tmp/* /var/tmp/*
+
+# 🔐 SSH Configuration (root password - Use for DEV only)
+RUN echo 'root:rootpass' | chpasswd && \
+  sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+  sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+  ssh-keygen -A
+
+# ⚙️ Configuration
+COPY scripts/start_mysql.sh /usr/local/bin/start_mysql.sh
+RUN chmod +x /usr/local/bin/start_mysql.sh
+
+# Exposed ports
+EXPOSE 22 3306
+
+# Volumes and Working Directory
+VOLUME ["/datas"]
+WORKDIR /datas
+
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+
+COPY id_rsa.pub /root/.ssh/authorized_keys
+COPY id_rsa.pub /root/.ssh/id_rsa.pub
+COPY id_rsa /root/.ssh/id_rsa
+
+RUN chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa \
+  && chown -R root:root /root/.ssh
+
+# Copy the audit script for testing
+# Note: Uses Community image as Enterprise images require Oracle login
+COPY audit_cis_mysql_enterprise_97.py /datas/audit_cis_mysql_enterprise_97.py
+
+# Startup via the custom script
+CMD ["/usr/local/bin/start_mysql.sh"]
