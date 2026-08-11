@@ -346,11 +346,11 @@ def run_command(command):
     Gère les timeouts et les commandes introuvables.
     """
     try:
-        # Utilise shell=True pour permettre les pipelines et les redirections.
-        # Attention : shell=True est moins sécurisé si la commande vient d'une source non fiable.
+        # Utilise un tableau d arguments ["/bin/bash", "-c", command] pour permettre les pipelines et les redirections.
+        # Securisé : exécuté sous forme de liste de paramètres (shell=False). si la commande vient d'une source non fiable.
         # Ici, les commandes sont définies dans le script.
         # Ajout de `timeout` pour éviter les blocages potentiels (ex: attente de mot de passe).
-        process = subprocess.run(command, shell=True, check=False, capture_output=True, text=True, executable='/bin/bash', timeout=30) # Timeout de 30s
+        process = subprocess.run(['/bin/bash', '-c', command], check=False, capture_output=True, text=True, timeout=30) # Timeout de 30s
         return process.stdout.strip(), process.stderr.strip(), process.returncode
     except subprocess.TimeoutExpired:
         return "", f"Erreur : La commande a dépassé le délai d'exécution ({30}s).", 124 # Code pour timeout

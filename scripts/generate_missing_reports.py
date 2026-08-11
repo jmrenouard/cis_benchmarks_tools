@@ -1,14 +1,15 @@
-import subprocess
 import os
+import shlex
+import subprocess
 import time
 
 targets = [
-    ('postgresql18', 'docker/Dockerfile_postgresql18', 'audit_cis_postgresql_18.py', 'rapport_cis_postgresql_18.html', 'test_pg18', 15, '-e POSTGRES_PASSWORD=rootpass'),
-    ('mongodb7', 'docker/Dockerfile_mongodb7', 'audit_cis_mongodb_7.py', 'rapport_cis_mongodb_7.html', 'test_mongo7', 20, ''),
-    ('mongodb8', 'docker/Dockerfile_mongodb8', 'audit_cis_mongodb_8.py', 'rapport_cis_mongodb_8.html', 'test_mongo8', 20, ''),
-    ('cassandra40', 'docker/Dockerfile_cassandra40', 'audit_cis_cassandra_40.py', 'rapport_cis_cassandra_40.html', 'test_cassandra40', 45, ''),
-    ('cassandra41', 'docker/Dockerfile_cassandra41', 'audit_cis_cassandra_41.py', 'rapport_cis_cassandra_41.html', 'test_cassandra41', 45, ''),
-    ('cassandra50', 'docker/Dockerfile_cassandra50', 'audit_cis_cassandra_50.py', 'rapport_cis_cassandra_50.html', 'test_cassandra50', 45, ''),
+    ('postgresql18', 'docker/Dockerfile_postgresql18', 'audit_cis_postgresql_18.py', 'rapport_cis_postgresql_18.html', 'test_pg18', 15, ['-e', 'POSTGRES_PASSWORD=rootpass']),
+    ('mongodb7', 'docker/Dockerfile_mongodb7', 'audit_cis_mongodb_7.py', 'rapport_cis_mongodb_7.html', 'test_mongo7', 20, []),
+    ('mongodb8', 'docker/Dockerfile_mongodb8', 'audit_cis_mongodb_8.py', 'rapport_cis_mongodb_8.html', 'test_mongo8', 20, []),
+    ('cassandra40', 'docker/Dockerfile_cassandra40', 'audit_cis_cassandra_40.py', 'rapport_cis_cassandra_40.html', 'test_cassandra40', 45, []),
+    ('cassandra41', 'docker/Dockerfile_cassandra41', 'audit_cis_cassandra_41.py', 'rapport_cis_cassandra_41.html', 'test_cassandra41', 45, []),
+    ('cassandra50', 'docker/Dockerfile_cassandra50', 'audit_cis_cassandra_50.py', 'rapport_cis_cassandra_50.html', 'test_cassandra50', 45, []),
 ]
 
 for name, df, script, report, tag, wait, extra_args in targets:
@@ -17,36 +18,39 @@ for name, df, script, report, tag, wait, extra_args in targets:
 
     # Build image
     print(f"  Building {df}...")
-    subprocess.run(f"docker build -f {df} -t {tag}:report .", shell=True, check=True)
+    subprocess.run(["docker", "build", "-f", df, "-t", f"{tag}:report", "."], check=True)
 
     # Clean previous container
-    subprocess.run(f"docker rm -f {tag}_run 2>/dev/null", shell=True)
+    subprocess.run(["docker", "rm", "-f", f"{tag}_run"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     # Run container
     print(f"  Starting container {tag}_run...")
-    subprocess.run(f"docker run -d {extra_args} --name {tag}_run {tag}:report", shell=True, check=True)
+    run_cmd = ["docker", "run", "-d"] + extra_args + ["--name", f"{tag}_run", f"{tag}:report"]
+    subprocess.run(run_cmd, check=True)
 
     print(f"  Waiting {wait}s for database initialization...")
     time.sleep(wait)
 
     # Execute audit script
     print(f"  Running audit script {script}...")
-    subprocess.run(f"docker exec {tag}_run python3 /datas/{script}", shell=True)
+    subprocess.run(["docker", "exec", f"{tag}_run", "python3", f"/datas/{script}"])
 
     # Copy report
-    print(f"  Copying report {report}...")
-    cp_res = subprocess.run(f"docker cp {tag}_run:/datas/{report} .", shell=True)
+    report_dest = os.path.join("reports", report)
+    print(f"  Copying report {report} to {report_dest}...")
+    cp_res = subprocess.run(["docker", "cp", f"{tag}_run:/datas/{report}", report_dest])
     if cp_res.returncode != 0:
-        # Fallback if report name differs
-        subprocess.run(f"docker exec {tag}_run cat /datas/{report} > {report}", shell=True)
+        # Fallback using stdout
+        with open(report_dest, "w", encoding="utf-8") as rf:
+            subprocess.run(["docker", "exec", f"{tag}_run", "cat", f"/datas/{report}"], stdout=rf)
 
     # Cleanup container
-    subprocess.run(f"docker rm -f {tag}_run 2>/dev/null", shell=True)
+    subprocess.run(["docker", "rm", "-f", f"{tag}_run"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    if os.path.exists(report):
-        size = os.path.getsize(report)
-        print(f"  ✅ Report {report} generated successfully ({size} bytes)")
+    if os.path.exists(report_dest):
+        size = os.path.getsize(report_dest)
+        print(f"  ✅ Report {report_dest} generated successfully ({size} bytes)")
     else:
-        print(f"  ❌ Report {report} generation failed")
+        print(f"  ❌ Report {report_dest} generation failed")
 
 print("\n🎉 All missing reports processing completed!")

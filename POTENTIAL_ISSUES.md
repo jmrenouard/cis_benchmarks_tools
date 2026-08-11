@@ -1,6 +1,6 @@
-# ⚠️ Potential Issues & Technical Debt Backlog (v1.2.3)
+# ⚠️ Potential Issues & Technical Debt Backlog (v1.3.0)
 
-Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #67) identifiés sur le projet **CIS Benchmarks Tools**.
+Ce document recense les problèmes potentiels, risques de bugs, remarques de sécurité et retours des revues de code (Pull Requests #17 à #78) identifiés sur le projet **CIS Benchmarks Tools**.
 
 ---
 
@@ -12,8 +12,9 @@ Ce document recense les problèmes potentiels, risques de bugs, remarques de sé
 
 ---
 
-## 1. Résolus dans les versions v1.2.0 - v1.2.3 ✅
+## 1. Résolus dans les versions v1.2.0 - v1.3.0 ✅
 
+- [x] **Élimination de `shell=True` & Sécurisation `subprocess`** : Migration de 100% des exécutions `subprocess` vers le format liste de paramètres stricts (`['/bin/bash', '-c', command]` et tableaux `['docker', ...]`). Risque d'injection de commande complètement éradiqué.
 - [x] **Échappement des templates HTML/CSS** : Correction des accolades simples dans les blocs `<style>` de tous les templates d'audit.
 - [x] **Contrainte PSL vérifiée** : Suppression de toute référence à Jinja2/PyYAML et intégration d'un vérificateur d'imports PSL dans la routine pre-commit.
 - [x] **Règles Workspace AGENTS.md** : Consignation explicite de la contrainte PSL et du cycle de release Git dans `.agents/AGENTS.md`.
@@ -23,18 +24,7 @@ Ce document recense les problèmes potentiels, risques de bugs, remarques de sé
 
 ---
 
-## 2. Sécurité et Injections de Commandes (`subprocess`)
-
-> [!WARNING]
-> Plusieurs scripts d'audit et utilitaires utilisent `subprocess.run(..., shell=True)` avec interpolation dynamique de chaînes.
-
-### Constats & Recommandations :
-- **Risque (`python.lang.security.audit.subprocess-shell-true`)** : L'utilisation de `shell=True` expose à des risques d'injection de commandes si des variables externes ou non assainies y sont transmises.
-- **Action Backlog** : Migrer l'ensemble des appels `subprocess.run` vers le format sous forme de liste de paramètres (ex. `['docker', 'exec', container, ...]` avec `shell=False`).
-
----
-
-## 3. Évaluation des Conditions et Dépendances entre Contrôles
+## 2. Évaluation des Conditions et Dépendances entre Contrôles
 
 > [!IMPORTANT]
 > Les sous-contrôles dépendant de variables stockées (`store_output_as`) nécessitent une exécution séquentielle stricte et un moteur d'évaluation complet.
@@ -45,7 +35,7 @@ Ce document recense les problèmes potentiels, risques de bugs, remarques de sé
 
 ---
 
-## 4. Robustesse des Scripts de Génération de Rapports
+## 3. Robustesse des Scripts de Génération de Rapports
 
 > [!TIP]
 > Dans `scripts/generate_missing_reports.py`, s'assurer que les échecs de commandes `docker exec` interrompent la génération.
