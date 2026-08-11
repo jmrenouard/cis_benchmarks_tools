@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Unified CIS Benchmark Audit Suite Engine (Python Standard Library ONLY).
-Version: 1.2.3
+Version: 1.2.4
 
 Provides both a CLI runner and Programmatic Python API for 15 database targets:
   - MariaDB (10.6, 10.11)
@@ -23,7 +23,7 @@ import re
 import subprocess
 import sys
 
-__version__ = "1.2.3"
+__version__ = "1.2.4"
 
 TARGET_MAP = {
     "mariadb106": ("audit_cis_mariadb_106.py", "MariaDB 10.6", 74),
