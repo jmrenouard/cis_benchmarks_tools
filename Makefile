@@ -1,40 +1,40 @@
 # Makefile for CIS Benchmark Tools
 
-# Variables
-MYSQL80_DOCKERFILE = Dockerfile_mysql80
-MYSQL80_IMAGE = mysql80-audit
-MYSQL80_CONTAINER = mysql80-test
-MYSQL80_SCRIPT = audit_cis_mysql_80.py
-MYSQL80_REPORT = rapport_cis_mysql_8.html
+# Variables for MongoDB 7
+MONGODB7_DOCKERFILE = Dockerfile_mongodb7
+MONGODB7_IMAGE = mongodb7-audit
+MONGODB7_CONTAINER = mongodb7-test
+MONGODB7_SCRIPT = audit_cis_mongodb_7.py
+MONGODB7_REPORT = rapport_cis_mongodb_7.html
 
-.PHONY: help build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80 test-mysql80
+.PHONY: help build-mongodb7 run-mongodb7 audit-mongodb7 report-mongodb7 clean-mongodb7 test-mongodb7
 
 help:
-	@echo "Available commands:"
-	@echo "  make test-mysql80    - Complete cycle: build, run, audit, get report, and clean for MySQL 8.0"
-	@echo "  make build-mysql80   - Build the Docker image"
-	@echo "  make run-mysql80     - Start the Docker container"
-	@echo "  make audit-mysql80   - Run the audit script inside the container"
-	@echo "  make report-mysql80  - Copy the report from the container to the host"
-	@echo "  make clean-mysql80   - Remove the Docker container"
+	@echo "Available commands for MongoDB 7:"
+	@echo "  make test-mongodb7    - Complete cycle: build, run, audit, get report, and clean"
+	@echo "  make build-mongodb7   - Build the Docker image"
+	@echo "  make run-mongodb7     - Start the Docker container"
+	@echo "  make audit-mongodb7   - Run the audit script inside the container"
+	@echo "  make report-mongodb7  - Copy the report from the container to the host"
+	@echo "  make clean-mongodb7   - Remove the Docker container"
 
-build-mysql80:
-	docker build -f $(MYSQL80_DOCKERFILE) -t $(MYSQL80_IMAGE) .
+build-mongodb7:
+	docker build -f $(MONGODB7_DOCKERFILE) -t $(MONGODB7_IMAGE) .
 
-run-mysql80:
-	docker run -d --name $(MYSQL80_CONTAINER) $(MYSQL80_IMAGE)
-	@echo "Waiting for MySQL to initialize (15s)..."
-	sleep 15
+run-mongodb7:
+	docker run -d --name $(MONGODB7_CONTAINER) $(MONGODB7_IMAGE)
+	@echo "Waiting for MongoDB 7 to initialize (30s)..."
+	sleep 30
 
-audit-mysql80:
-	docker exec $(MYSQL80_CONTAINER) python3 /datas/$(MYSQL80_SCRIPT)
+audit-mongodb7:
+	docker exec $(MONGODB7_CONTAINER) python3 /datas/$(MONGODB7_SCRIPT)
 
-report-mysql80:
-	docker cp $(MYSQL80_CONTAINER):/datas/$(MYSQL80_REPORT) .
-	@echo "Report copied to $(MYSQL80_REPORT)"
+report-mongodb7:
+	docker cp $(MONGODB7_CONTAINER):/datas/$(MONGODB7_REPORT) .
+	@echo "Report copied to $(MONGODB7_REPORT)"
 
-clean-mysql80:
-	docker rm -f $(MYSQL80_CONTAINER) || true
+clean-mongodb7:
+	docker rm -f $(MONGODB7_CONTAINER) || true
 
-test-mysql80: clean-mysql80 build-mysql80 run-mysql80 audit-mysql80 report-mysql80 clean-mysql80
-	@echo "Full test cycle for MySQL 8.0 completed."
+test-mongodb7: clean-mongodb7 build-mongodb7 run-mongodb7 audit-mongodb7 report-mongodb7 clean-mongodb7
+	@echo "Full test cycle for MongoDB 7 completed."
