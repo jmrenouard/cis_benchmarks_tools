@@ -1,91 +1,91 @@
 # Makefile for CIS Benchmark Tools
 
 # Variables for all targets
-MARIADB106_DOCKERFILE = Dockerfile_mariadb106
+MARIADB106_DOCKERFILE = docker/Dockerfile_mariadb106
 MARIADB106_IMAGE = mariadb106-audit
 MARIADB106_CONTAINER = mariadb106-test
 MARIADB106_SCRIPT = audit_cis_mariadb_106.py
 MARIADB106_REPORT = rapport_cis_mariadb_106.html
 
-MARIADB1011_DOCKERFILE = Dockerfile_mariadb1011
+MARIADB1011_DOCKERFILE = docker/Dockerfile_mariadb1011
 MARIADB1011_IMAGE = mariadb1011-audit
 MARIADB1011_CONTAINER = mariadb1011-test
 MARIADB1011_SCRIPT = audit_cis_mariadb_1011.py
 MARIADB1011_REPORT = rapport_cis_mariadb_1011.html
 
-MYSQL80_DOCKERFILE = Dockerfile_mysql80
+MYSQL80_DOCKERFILE = docker/Dockerfile_mysql80
 MYSQL80_IMAGE = mysql80-audit
 MYSQL80_CONTAINER = mysql80-test
 MYSQL80_SCRIPT = audit_cis_mysql_80.py
 MYSQL80_REPORT = rapport_cis_mysql_8.html
 
-MYSQL_COMMUNITY84_DOCKERFILE = Dockerfile_mysql_community_84
+MYSQL_COMMUNITY84_DOCKERFILE = docker/Dockerfile_mysql_community_84
 MYSQL_COMMUNITY84_IMAGE = mysql-community84-audit
 MYSQL_COMMUNITY84_CONTAINER = mysql-community84-test
 MYSQL_COMMUNITY84_SCRIPT = audit_cis_mysql_community_84.py
 MYSQL_COMMUNITY84_REPORT = rapport_cis_mysql_community_84.html
 
-MYSQL_ENTERPRISE84_DOCKERFILE = Dockerfile_mysql_enterprise_84
+MYSQL_ENTERPRISE84_DOCKERFILE = docker/Dockerfile_mysql_enterprise_84
 MYSQL_ENTERPRISE84_IMAGE = mysql-enterprise84-audit
 MYSQL_ENTERPRISE84_CONTAINER = mysql-enterprise84-test
 MYSQL_ENTERPRISE84_SCRIPT = audit_cis_mysql_enterprise_84.py
 MYSQL_ENTERPRISE84_REPORT = rapport_cis_mysql_enterprise_84.html
 
-MYSQL_COMMUNITY97_DOCKERFILE = Dockerfile_mysql_community_97
+MYSQL_COMMUNITY97_DOCKERFILE = docker/Dockerfile_mysql_community_97
 MYSQL_COMMUNITY97_IMAGE = mysql-community97-audit
 MYSQL_COMMUNITY97_CONTAINER = mysql-community97-test
 MYSQL_COMMUNITY97_SCRIPT = audit_cis_mysql_community_97.py
 MYSQL_COMMUNITY97_REPORT = rapport_cis_mysql_community_97.html
 
-MYSQL_ENTERPRISE97_DOCKERFILE = Dockerfile_mysql_enterprise_97
+MYSQL_ENTERPRISE97_DOCKERFILE = docker/Dockerfile_mysql_enterprise_97
 MYSQL_ENTERPRISE97_IMAGE = mysql-enterprise97-audit
 MYSQL_ENTERPRISE97_CONTAINER = mysql-enterprise97-test
 MYSQL_ENTERPRISE97_SCRIPT = audit_cis_mysql_enterprise_97.py
 MYSQL_ENTERPRISE97_REPORT = rapport_cis_mysql_enterprise_97.html
 
-POSTGRESQL16_DOCKERFILE = Dockerfile_postgresql16
+POSTGRESQL16_DOCKERFILE = docker/Dockerfile_postgresql16
 POSTGRESQL16_IMAGE = postgresql16-audit
 POSTGRESQL16_CONTAINER = postgresql16-test
 POSTGRESQL16_SCRIPT = audit_cis_postgresql_16.py
 POSTGRESQL16_REPORT = rapport_cis_postgresql_16.html
 
-POSTGRESQL17_DOCKERFILE = Dockerfile_postgresql17
+POSTGRESQL17_DOCKERFILE = docker/Dockerfile_postgresql17
 POSTGRESQL17_IMAGE = postgresql17-audit
 POSTGRESQL17_CONTAINER = postgresql17-test
 POSTGRESQL17_SCRIPT = audit_cis_postgresql_17.py
 POSTGRESQL17_REPORT = rapport_cis_postgresql_17.html
 
-POSTGRESQL18_DOCKERFILE = Dockerfile_postgresql18
+POSTGRESQL18_DOCKERFILE = docker/Dockerfile_postgresql18
 POSTGRESQL18_IMAGE = postgresql18-audit
 POSTGRESQL18_CONTAINER = postgresql18-test
 POSTGRESQL18_SCRIPT = audit_cis_postgresql_18.py
 POSTGRESQL18_REPORT = rapport_cis_postgresql_18.html
 
-MONGODB7_DOCKERFILE = Dockerfile_mongodb7
+MONGODB7_DOCKERFILE = docker/Dockerfile_mongodb7
 MONGODB7_IMAGE = mongodb7-audit
 MONGODB7_CONTAINER = mongodb7-test
 MONGODB7_SCRIPT = audit_cis_mongodb_7.py
 MONGODB7_REPORT = rapport_cis_mongodb_7.html
 
-MONGODB8_DOCKERFILE = Dockerfile_mongodb8
+MONGODB8_DOCKERFILE = docker/Dockerfile_mongodb8
 MONGODB8_IMAGE = mongodb8-audit
 MONGODB8_CONTAINER = mongodb8-test
 MONGODB8_SCRIPT = audit_cis_mongodb_8.py
 MONGODB8_REPORT = rapport_cis_mongodb_8.html
 
-CASSANDRA40_DOCKERFILE = Dockerfile_cassandra40
+CASSANDRA40_DOCKERFILE = docker/Dockerfile_cassandra40
 CASSANDRA40_IMAGE = cassandra40-audit
 CASSANDRA40_CONTAINER = cassandra40-test
 CASSANDRA40_SCRIPT = audit_cis_cassandra_40.py
 CASSANDRA40_REPORT = rapport_cis_cassandra_40.html
 
-CASSANDRA41_DOCKERFILE = Dockerfile_cassandra41
+CASSANDRA41_DOCKERFILE = docker/Dockerfile_cassandra41
 CASSANDRA41_IMAGE = cassandra41-audit
 CASSANDRA41_CONTAINER = cassandra41-test
 CASSANDRA41_SCRIPT = audit_cis_cassandra_41.py
 CASSANDRA41_REPORT = rapport_cis_cassandra_41.html
 
-CASSANDRA50_DOCKERFILE = Dockerfile_cassandra50
+CASSANDRA50_DOCKERFILE = docker/Dockerfile_cassandra50
 CASSANDRA50_IMAGE = cassandra50-audit
 CASSANDRA50_CONTAINER = cassandra50-test
 CASSANDRA50_SCRIPT = audit_cis_cassandra_50.py
