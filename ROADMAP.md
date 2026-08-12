@@ -1,6 +1,6 @@
 # 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.8.0)
 
-This document outlines the strategic roadmap, architecture principles, and key milestones for the CIS Benchmarks Tools suite.
+This document outlines the strategic roadmap, architecture principles, phase-level milestones, and task-level execution status for the CIS Benchmarks Tools suite.
 
 ---
 
@@ -14,100 +14,121 @@ This document outlines the strategic roadmap, architecture principles, and key m
 
 ---
 
-## 📅 Milestones & Feature Phases
+## 📊 Executive Progress Dashboard (Phase Level)
 
-### Phase 1: Consolidation & Standardization (Completed ✅)
-- [x] Support for 15 database benchmarks (MariaDB 10.6/10.11, MySQL 8.0/8.4/9.7, PostgreSQL 16/17/18, MongoDB 7/8, Cassandra 4.0/4.1/5.0).
-- [x] Standardized Dockerfiles and startup scripts (`scripts/start_*.sh`).
-- [x] Unified `Makefile` target (`make test-all`).
-- [x] 15 HTML audit reports generated and checked into `reports/`.
-- [x] Integration of 22 reference Markdown specifications into `CIS_DATA/`.
-
----
-
-### Phase 2: Unified Audit Engine, PSL Modularization & Directory Structure (Completed ✅ - v1.2.5)
-
-#### 1. Unified Audit Engine (`audit_cis.py`)
-- [x] Centralized standalone execution CLI with version management (`python3 audit_cis.py --version`, `--target <target>`, `--all`, `--auto-detect`, `--list-targets`).
-- [x] Native Python programmatic API (`from audit_cis import run_single_audit, list_targets, get_target_info, TARGET_MAP`).
-- [x] Synthetic summary statistics display (887 audit controls across 18 targets).
-- [x] Dynamic report directory creation for output HTML/JSON reports.
-- [x] 100% PSL execution engine.
-
-#### 2. Python Pre-Commit Validation Routine (`scripts/pre_commit_checks.py` & `make pre-commit`)
-- [x] Automated Python script bundler (`scripts/bundle_audit_cis.py`) concatenating and synchronizing `audit_cis.py` on every commit.
-- [x] Automated Python syntax validation (`py_compile`).
-- [x] AST compliance verification to block non-PSL imports.
-- [x] Shell script syntax validation (`bash -n`).
-- [x] Project structure integrity checks (`reports/`, `docker/`, `scripts/`, `CIS_DATA/`) and HTML report size validation (> 1 KB).
-- [x] Specification integrity checks for 22 Markdown files in `CIS_DATA/` and execution permission verification (`chmod +x`).
-
-#### 3. Structured Directory Layout
-- [x] `reports/`: Dedicated directory grouping all HTML audit reports.
-- [x] `docker/`: Dedicated directory grouping all 16 Dockerfiles.
-- [x] `scripts/`: Shell startup scripts (`start_*.sh`) and pre-commit validation routines.
-- [x] `CIS_DATA/`: Contains all 22 reference Markdown benchmark specifications.
+| Phase | Milestone Title | Target Version | Status | Tasks | Progress |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **Phase 1** | Consolidation & Baseline Standardization | `v1.0.0` | `Completed ✅` | 5/5 | 100% |
+| **Phase 2** | Unified Audit Engine & PSL Modularization | `v1.2.5` | `Completed ✅` | 13/13 | 100% |
+| **Phase 3** | Linux System Extensions, Multi-Language & Security | `v1.5.0` | `Completed ✅` | 5/5 | 100% |
+| **Phase 4** | Multi-Format Exporters, E2E Testing & CI/CD Pipeline | `v1.6.0` | `Completed ✅` | 7/7 | 100% |
+| **Phase 5** | Rule Spec Externalization & Offline SVG Charts Engine | `v1.7.0` | `Completed ✅` | 5/5 | 100% |
+| **Phase 6** | PR Diff Size Limits & Centralized HTML Templates | `v1.8.0` | `Completed ✅` | 4/4 | 100% |
 
 ---
 
-### Phase 3: Linux System Extensions, Multi-Language & Security (Completed ✅ - v1.5.0)
+## 📅 Detailed Milestones & Task Execution Status
 
-#### 1. System & OS Extensions (RHEL 8 / 9 / 10 & STIG)
-- [x] Python PSL audit modules for Red Hat Enterprise Linux 8 (`audit_cis_rhel_8.py`), RHEL 9 (`audit_cis_rhel_9.py`), and RHEL 10 (`audit_cis_rhel_10.py`).
-- [x] Native local execution and SSH remote server auditing via `--remote user@hostname` (zero external dependencies).
+### Phase 1: Consolidation & Baseline Standardization (`Completed ✅ - v1.0.0`)
+**Summary**: Establish initial database audit coverage across 15 database benchmarks with standardized Docker testing environments and HTML reports.
 
-#### 2. Multi-Language Support (i18n) & Synchronized Documentation
-- [x] Added `--lang {en,fr}` flag to CLI and HTML audit reports.
-- [x] French translation of `README.md` (`README_fr.md`) 100% synchronized.
-
-#### 3. Subprocess Command Injection Prevention (`shell=False`)
-- [x] Migrated all system command calls to strict parameter lists (`shell=False`).
-
----
-
-### Phase 4: Multi-Format Exporters, E2E Testing & CI/CD Pipeline (Completed ✅ - v1.6.0)
-
-#### 1. Multi-Format Exporters (`--format html|json|xml|txt`)
-- [x] Structured JSON compliance reports (`json` module).
-- [x] STIG / JUnit XML formatted output (`xml.etree.ElementTree` module).
-- [x] Plain-text TXT CLI summary logging.
-- [x] Self-contained responsive HTML reports in `reports/`.
-
-#### 2. Automated E2E Testing & CI/CD
-- [x] GitHub Actions CI/CD pipeline (`.github/workflows/ci.yml`).
-- [x] Automated PSL unit test suite (`tests/test_evaluate_condition.py`).
-- [x] E2E test runner (`scripts/run_e2e_tests.py` / `make test-e2e`).
+#### 1.1 Multi-Database Audit Scripts & Docker Environments
+- [x] **15 Database Benchmarks Coverage**: Implement standalone audit scripts for MariaDB (10.6/10.11), MySQL (8.0/8.4/9.7), PostgreSQL (16/17/18), MongoDB (7/8), and Cassandra (4.0/4.1/5.0).
+- [x] **Standardized Testing Containers**: Create Dockerfiles and startup scripts (`docker/Dockerfile_*`, `scripts/start_*.sh`) for isolated local container verification.
+- [x] **Unified Testing Interface**: Build Makefile orchestration targets (`make test-all`, `make test-<target>`) for single-command E2E execution.
+- [x] **Initial Audit Reports Suite**: Generate and commit baseline HTML audit reports in `reports/`.
+- [x] **Reference Specification Storage**: Integrate 22 reference Markdown benchmark specifications into `CIS_DATA/`.
 
 ---
 
-### Phase 5: Rule Spec Externalization & Offline SVG Charts Engine (Completed ✅ - v1.7.0)
+### Phase 2: Unified Audit Engine, PSL Modularization & Directory Structure (`Completed ✅ - v1.2.5`)
+**Summary**: Consolidate individual audit scripts into a single unified CLI engine (`audit_cis.py`), automated pre-commit quality checks, and clean repository layout.
 
-#### 1. External Rule Specs Directory (`rules/*.json`)
-- [x] Decoupled audit control specification rules from Python scripts into `rules/` directory (`rules/mariadb_106.json`, `rules/cassandra_40.json`, etc.).
-- [x] Dynamic rule loader (`load_recommendations()`) in `audit_cis_*.py` and `audit_cis.py` with inline fallback.
+#### 2.1 Unified Audit CLI & Programmatic API
+- [x] **Centralized CLI Execution**: Build `audit_cis.py` with CLI flags (`--target`, `--all`, `--auto-detect`, `--list-targets`, `--version`).
+- [x] **Native Python API Interface**: Expose `run_single_audit()`, `list_targets()`, `get_target_info()`, and `TARGET_MAP` for external Python imports.
+- [x] **Synthetic Statistics Engine**: Compute global compliance scores across 887 audit controls across 18 targets.
+- [x] **Dynamic Directory Manager**: Automatically create output directories for HTML and JSON reports.
+- [x] **100% PSL Compliance**: Guarantee zero external pip package dependencies (`pip free`).
 
-#### 2. 100% Offline Pure Inline SVG Charts Engine
-- [x] Self-contained Inline SVG Donut Chart showing global pass/fail ratios and center score percentage (zero JS library dependencies).
-- [x] Responsive Category Stacked Bar Charts for visual compliance breakdown.
-- [x] 100% Python Standard Library (PSL ONLY) compliance.
+#### 2.2 Pre-Commit Quality & Validation Routine
+- [x] **Automated Script Bundler**: Build `scripts/bundle_audit_cis.py` to auto-concatenate `audit_cis.py` on version changes.
+- [x] **Python Syntax Checker**: Validate compilation (`py_compile`) for all project scripts.
+- [x] **AST PSL Import Sentinel**: Verify AST nodes to block non-standard library imports.
+- [x] **Shell Syntax Checker**: Validate syntax (`bash -n`) for all shell scripts.
+- [x] **Directory & File Integrity Verifier**: Validate presence and non-empty size (>1 KB) of `reports/`, `docker/`, `scripts/`, `CIS_DATA/`, and `rules/`.
+- [x] **Executable Permissions Sentinel**: Verify executable bit (`chmod +x`) on CLI scripts.
+
+#### 2.3 Structured Directory Layout
+- [x] **Dedicated Reports Directory**: Group all HTML/JSON audit output files in `reports/`.
+- [x] **Dedicated Docker Directory**: Group all 16 container build files in `docker/`.
 
 ---
 
-### Phase 6: PR Diff Size Limit & Centralized HTML Templates (Completed ✅ - v1.8.0)
+### Phase 3: Linux System Extensions, Multi-Language & Security (`Completed ✅ - v1.5.0`)
+**Summary**: Extend audit capabilities to RHEL Linux operating systems, implement bilingual (i18n) report generation, and fix command injection vulnerabilities.
 
-#### 1. PR Diff Character Size Limits (< 15,000 chars)
-- [x] Enforced strict 15,000 diff character limit per PR and mandatory atomic PR splitting in `.agents/AGENTS.md` & `03_execution_rules.md`.
-- [x] Automated pre-PR character count verification (`git diff main...HEAD | wc -c` < 15000).
+#### 3.1 Linux Operating System Audit Modules
+- [x] **RHEL 8 / 9 / 10 Benchmark Engines**: Implement `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, and `audit_cis_rhel_10.py`.
+- [x] **SSH Remote Server Auditing**: Support native `--mode {local,ssh}` and `--remote user@hostname` execution over SSH.
 
-#### 2. Centralized HTML Report Templates (`templates/`)
-- [x] Centralized HTML report templates into common template files `templates/report_template.html` and `templates/category_report_template.html`.
-- [x] Dynamic template loader `load_html_template()` with inline PSL fallbacks across all 18 audit scripts and `audit_cis.py`.
+#### 3.2 Multi-Language (i18n) Support
+- [x] **Bilingual Report Generator**: Support `--lang {en,fr}` for CLI output and HTML audit reports.
+- [x] **Synchronized Documentation**: Maintain 1:1 parity between `README.md` (English) and `README_fr.md` (French).
+
+#### 3.3 Subprocess Security Hardening
+- [x] **Command Injection Mitigation**: Migrate all `subprocess` execution calls to strict parameter lists (`shell=False`).
 
 ---
 
-### 💬 GitHub PR Reviews & Feedback Summary
+### Phase 4: Multi-Format Exporters, E2E Testing & CI/CD Pipeline (`Completed ✅ - v1.6.0`)
+**Summary**: Add structured export formats (JSON, STIG JUnit XML, TXT), automated unit tests, and GitHub Actions CI/CD.
 
-- **PR #1 (v1.5.1)**: Implemented initial CIS benchmarks automation tool and extensible audit check framework.
-- **PR #17 – PR #26**: Added automated CIS audit implementations for MariaDB 10.6/10.11, MySQL 8.0/8.4/9.7, PostgreSQL 16/17/18, MongoDB 7/8, and Cassandra 4.0/4.1/5.0. Review bots (Sourcery AI) reported PR diff size warnings (> 150,000 characters).
-- **PR #106 (v1.7.1)**: Enforced mandatory PR diff size limit (< 15,000 characters) and atomic PR splitting strategy in agent workspace rules (`.agents/AGENTS.md` & `03_execution_rules.md`).
-- **PR #107 (v1.8.0)**: Centralized HTML report templates into `templates/report_template.html` and `templates/category_report_template.html` with dynamic PSL loaders (`load_html_template()`) and inline fallbacks across all 18 audit scripts.
+#### 4.1 Multi-Format Exporters
+- [x] **Structured JSON Exporters**: Export full audit metadata and control results to machine-readable JSON.
+- [x] **STIG / JUnit XML Exporters**: Export STIG/JUnit XML format for enterprise SIEM/CI integration.
+- [x] **Plain-Text Summary Exporters**: Generate CLI text audit summaries.
+- [x] **Responsive HTML Reports**: Generate self-contained HTML reports.
+
+#### 4.2 Automated Testing & CI Pipeline
+- [x] **GitHub Actions Workflow**: Implement `.github/workflows/ci.yml` for automated PR checking.
+- [x] **PSL Unit Test Suite**: Build `tests/test_evaluate_condition.py` (14 unit tests).
+- [x] **E2E Test Runner**: Build `scripts/run_e2e_tests.py` (`make test-e2e`).
+
+---
+
+### Phase 5: Rule Spec Externalization & Offline SVG Charts Engine (`Completed ✅ - v1.7.0`)
+**Summary**: Externalize audit recommendations into JSON files in `rules/` and replace external JS chart libraries with 100% pure inline SVG PSL charts.
+
+#### 5.1 External Rule Specs Directory
+- [x] **JSON Specification Externalization**: Extract `RECOMMENDATIONS_DATA` into 18 JSON files (`rules/mariadb_106.json`, etc.).
+- [x] **Dynamic Spec Loader**: Implement `load_recommendations()` with embedded inline fallback.
+
+#### 5.2 Pure Inline SVG Chart Engine
+- [x] **Pure SVG Donut Chart**: Build `build_inline_svg_donut_chart()` in Python PSL (zero JS).
+- [x] **Pure SVG Category Bar Chart**: Build `build_inline_svg_category_chart()` in Python PSL.
+- [x] **100% Offline Compatibility**: Work 100% offline without CDN dependencies (Chart.js removed).
+
+---
+
+### Phase 6: PR Diff Size Limit & Centralized HTML Templates (`Completed ✅ - v1.8.0`)
+**Summary**: Enforce PR diff character limits (<15K chars) to avoid review bot blocking and centralize HTML report templates into common files.
+
+#### 6.1 PR Diff Character Size Limits (< 15,000 chars)
+- [x] **PR Size Limit Enforcement**: Mandate strict 15,000 diff character limit per PR and atomic PR splitting in `.agents/AGENTS.md` & `03_execution_rules.md`.
+- [x] **Pre-PR Character Verification**: Automate diff size verification via `git diff main...HEAD | wc -c` < 15000.
+
+#### 6.2 Centralized HTML Report Templates
+- [x] **Common Template Files**: Centralize HTML templates in `templates/report_template.html` and `templates/category_report_template.html`.
+- [x] **Dynamic Template Loaders**: Implement `load_html_template()` with PSL inline fallbacks across all 18 audit scripts and `audit_cis.py`.
+
+---
+
+## 💬 GitHub PR Reviews & Feedback Summary
+
+| PR ID | Target Version | Feature / Component | Status | Reviewer Feedback Summary |
+| :---: | :---: | :--- | :---: | :--- |
+| **PR #1** | `v1.5.1` | Baseline Automation Framework | `Merged ✅` | Implemented initial CIS benchmarks automation tool and check framework. |
+| **PR #17 – #26** | `v1.6.0` | Initial Database Audit Implementations | `Merged ✅` | Added 15 database benchmark scripts. Review bots flagged large diff size (> 150K chars). |
+| **PR #106** | `v1.7.1` | PR Diff Size Limit & Workspace Rules | `Merged ✅` | Enforced strict < 15K diff character limit and atomic PR splitting rules in `AGENTS.md`. |
+| **PR #107** | `v1.8.0` | Centralized HTML Report Templates | `Merged ✅` | Extracted report templates into `templates/report_template.html` with PSL loader. |

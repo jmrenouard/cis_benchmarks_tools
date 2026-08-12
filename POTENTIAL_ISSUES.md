@@ -1,14 +1,14 @@
 # 🛠️ CIS Benchmarks Tools - Resolved Debt & Technical Backlog (v1.8.0)
 
-This document tracks technical debt, security considerations, and resolved architectural backlog items.
+This document tracks technical debt, security considerations, active quality controls, and resolved architectural backlog items.
 
 ---
 
 ## 🔒 Resolved Architectural Backlog
 
 ### 1. Centralization of HTML Report Templates into `templates/` (Resolved in v1.8.0 ✅)
-- **Problem**: HTML report template strings were duplicated across all 18 Python audit scripts, making UI maintenance tedious.
-- **Resolution**: Centralized HTML report templates into common template files `templates/report_template.html` and `templates/category_report_template.html`. Implemented dynamic loader `load_html_template()` with inline PSL fallbacks across all audit scripts and `audit_cis.py`.
+- **Problem**: HTML report template strings were duplicated across all 18 Python audit scripts, making UI maintenance tedious and prone to formatting drift.
+- **Resolution**: Centralized HTML report templates into common template files `templates/report_template.html` and `templates/category_report_template.html`. Implemented dynamic template loaders (`load_html_template()`, `load_category_template()`) with inline PSL fallbacks across all audit scripts and `audit_cis.py`.
 
 ### 2. PR Diff Size Limit & Atomic Splitting Rules (Resolved in v1.7.1 ✅)
 - **Problem**: Large Pull Requests (> 150,000 diff characters, e.g. PR #17, #18, #19) exceeded review limits of automated review bots (Sourcery AI) and hampered code review.
@@ -26,25 +26,33 @@ This document tracks technical debt, security considerations, and resolved archi
 - **Problem**: Inability to select Local vs SSH execution mode explicitly across all benchmarks.
 - **Resolution**: Standardized `-m / --mode {local,ssh}`, `-r / --remote / --ssh user@host`, and `--local` CLI options across all 18 audit scripts and `audit_cis.py`.
 
+### 6. Subprocess Command Injection Prevention (Resolved in v1.5.0 ✅)
+- **Problem**: Use of raw shell strings (`shell=True`) in `subprocess` calls posed command injection security risks.
+- **Resolution**: Migrated all system command execution calls across all audit modules to strict parameter lists (`shell=False`).
+
 ---
 
 ## 📝 Active Quality Controls
-- **PSL Compliance**: AST pre-commit checks block non-PSL imports.
-- **Unit Tests**: 100% passing PSL `unittest` suite (`tests/test_evaluate_condition.py`).
-- **Pre-Commit Checks**: 8-step quality checker (`make pre-commit`).
 
+- **PSL Compliance**: AST pre-commit checks (`scripts/pre_commit_checks.py`) verify zero external non-standard library imports.
+- **Unit Tests**: 100% passing PSL `unittest` suite (`tests/test_evaluate_condition.py`).
+- **Pre-Commit Routine**: 8-step automated checker (`make pre-commit`) enforcing syntax, permissions, structure, and test integrity.
+- **PR Diff Size Limit**: Mandatory `< 15,000` diff character check (`git diff main...HEAD | wc -c`).
+
+---
 
 ## 🔄 Resolved Pull Requests & Technical Improvements
-- [x] **PR #1: Implement CIS benchmarks automation tool with extensible check framework**
-- [x] **PR #17: CIS audit MariaDB 10.6**
-- [x] **PR #18: CIS audit MariaDB 10.11**
-- [x] **PR #19: CIS audit MySQL Enterprise 8.0**
-- [x] **PR #20: CIS audit MySQL Community 8.4**
-- [x] **PR #21: CIS audit MySQL Enterprise 8.4**
-- [x] **PR #22: CIS audit MySQL Community 9.7**
-- [x] **PR #23: CIS audit MySQL Enterprise 9.7**
-- [x] **PR #24: CIS audit PostgreSQL 16**
-- [x] **PR #25: CIS audit PostgreSQL 17**
-- [x] **PR #26: CIS audit PostgreSQL 18**
-- [x] **PR #106: Enforce PR diff size limit (< 15K chars) and atomic PR splitting in workspace rules**
-- [x] **PR #107: Centralize HTML report templates in templates/report_template.html with PSL loader**
+
+- [x] **PR #1 (v1.5.1)**: Implement CIS benchmarks automation tool with extensible check framework.
+- [x] **PR #17 (v1.6.0)**: CIS audit MariaDB 10.6 initial module.
+- [x] **PR #18 (v1.6.0)**: CIS audit MariaDB 10.11 initial module.
+- [x] **PR #19 (v1.6.0)**: CIS audit MySQL Enterprise 8.0 initial module.
+- [x] **PR #20 (v1.6.0)**: CIS audit MySQL Community 8.4 initial module.
+- [x] **PR #21 (v1.6.0)**: CIS audit MySQL Enterprise 8.4 initial module.
+- [x] **PR #22 (v1.6.0)**: CIS audit MySQL Community 9.7 initial module.
+- [x] **PR #23 (v1.6.0)**: CIS audit MySQL Enterprise 9.7 initial module.
+- [x] **PR #24 (v1.6.0)**: CIS audit PostgreSQL 16 initial module.
+- [x] **PR #25 (v1.6.0)**: CIS audit PostgreSQL 17 initial module.
+- [x] **PR #26 (v1.6.0)**: CIS audit PostgreSQL 18 initial module.
+- [x] **PR #106 (v1.7.1)**: Enforce PR diff size limit (< 15K chars) and atomic PR splitting in workspace rules.
+- [x] **PR #107 (v1.8.0)**: Centralize HTML report templates in `templates/report_template.html` with PSL loader.
