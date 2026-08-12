@@ -2,7 +2,8 @@ FROM mysql:8.0
 
 # Define environment variables to avoid interactions during installation
 ENV DEBIAN_FRONTEND=noninteractive \
-  TERM=xterm 
+  TERM=xterm \
+  MYSQL_ROOT_PASSWORD=rootpass
 
 # 🛠️ Installation of system utilities and SSH
 RUN microdnf install -y \

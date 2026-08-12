@@ -106,6 +106,10 @@ def run_e2e_for_target(target):
     print(f"⏳ Waiting {wait_sec}s for service initialization...")
     time.sleep(wait_sec)
 
+    # Copy templates/ and rules/ directories into container /datas/
+    subprocess.run(["docker", "cp", "templates", f"{container_name}:/datas/"], capture_output=True)
+    subprocess.run(["docker", "cp", "rules", f"{container_name}:/datas/"], capture_output=True)
+
     fmt_results = {}
     all_formats_valid = True
 
