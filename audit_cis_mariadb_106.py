@@ -780,6 +780,8 @@ def get_status_info(status):
 
 
 
+
+
 def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en"):
     """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
     import json
@@ -834,13 +836,32 @@ def export_results(results, overall_score, categories_scores, target_name, filen
 
     elif fmt == "txt":
         lines = [
-            "=" * 70,
-            f"🛡️  {target_name} - CIS Benchmark Audit Report",
-            f"Report Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-            f"Global Score: {overall_score:.1f}%",
-            "=" * 70,
-            ""
+            "=" * 90,
+            f"               CIS BENCHMARK AUDIT REPORT - {target_name.upper()}",
+            "=" * 90,
+            f"Report Date   : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            f"Global Score  : {overall_score:.1f}%",
+            f"Total Controls: {len(flat_results)}",
+            "-" * 90,
+            " CATEGORY BREAKDOWN & COMPLIANCE SUMMARY TABLE",
+            "-" * 90,
+            f"  {'ID':<6} {'Category Name':<45} {'Pass':<6} {'Fail':<6} {'Manual':<8} {'Score':<8}",
+            f"  {'-'*6} {'-'*45} {'-'*6} {'-'*6} {'-'*8} {'-'*8}",
         ]
+        if isinstance(categories_scores, dict):
+            for cat_id, data in categories_scores.items():
+                name = str(data.get('name', cat_id))[:44]
+                p = data.get('passed_automated', 0)
+                f = data.get('failed_automated', 0)
+                m = data.get('manual_checks', 0)
+                sc = data.get('score', 0.0)
+                lines.append(f"  {str(cat_id):<6} {name:<45} {p:<6} {f:<6} {m:<8} {sc:>6.1f}%")
+        lines.extend([
+            "=" * 90,
+            " DETAILED CONTROL RESULTS",
+            "=" * 90,
+            ""
+        ])
         for r in flat_results:
             status = r.get("status", "")
             status_icon = "[PASS]" if status in ["PASS", "Pass"] else ("[FAIL]" if status in ["FAIL", "Fail"] else "[MANUAL]")
@@ -854,13 +875,20 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             rem = r.get('remediation', '')
             if rem and status in ["FAIL", "Fail"]:
                 lines.append(f"  Remediation: {str(rem).strip()}")
-            lines.append("-" * 70)
+            lines.append("-" * 90)
         with open(filename, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
         print(f"📄 TXT Report successfully generated: {filename}")
 
     else:
-        generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
+        try:
+            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
+        except TypeError:
+            try:
+                generate_html_report(results, overall_score, categories_scores, filename=filename)
+            except TypeError:
+                # Legacy positional args fallback
+                generate_html_report(results, overall_score, categories_scores, 0, 0, 0, 0, 0, 0, 0, [], [], [], [], [], filename)
 
 
 
