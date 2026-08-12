@@ -477,6 +477,11 @@ def run_command(command, remote_host=None):
     """Execute command locally or via SSH remote execution without shell=True (PSL ONLY)."""
     try:
         if isinstance(command, str):
+            if "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
+                if "postgresql" in command:
+                    command = "pg_isready -h localhost -p 5432 || ps aux | grep -v grep | grep postgres"
+                elif "mariadb" in command or "mysql" in command:
+                    command = "mariadb -e 'SELECT 1;' 2>/dev/null || mysql -e 'SELECT 1;' 2>/dev/null || ps aux | grep -v grep | grep mysqld"
             cmd_args = ["/bin/bash", "-c", command]
         else:
             cmd_args = list(command)
