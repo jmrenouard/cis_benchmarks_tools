@@ -623,7 +623,7 @@ def perform_checks(recommendations, remote_host=None):
                     path_cmd = rec["path_command"]
                     path_cmd_to_run = path_cmd
                     if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
-                        path_cmd_to_run = f"{path_cmd} 2>/dev/null || mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo mysql -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null"
+                        path_cmd_to_run = f"{path_cmd} 2>/dev/null || mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo -n mysql -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo -n mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null"
                     
                     path_stdout, path_stderr, path_returncode = run_command(path_cmd_to_run, remote_host=remote_host)
 
