@@ -545,6 +545,29 @@ def export_results(results, overall_score, categories_scores, target_name, filen
 
 
 
+def load_html_template():
+    """Load common HTML report template from templates/ or fallback."""
+    tmpl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates", "report_template.html")
+    if os.path.exists(tmpl_path):
+        try:
+            with open(tmpl_path, "r", encoding="utf-8") as f:
+                return f.read()
+        except Exception:
+            pass
+    return HTML_TEMPLATE
+
+
+def load_category_template():
+    """Load common category report template from templates/ or fallback."""
+    tmpl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates", "category_report_template.html")
+    if os.path.exists(tmpl_path):
+        try:
+            with open(tmpl_path, "r", encoding="utf-8") as f:
+                return f.read()
+        except Exception:
+            pass
+    return CATEGORY_REPORT_TEMPLATE
+
 def generate_html_report(results, overall_score, categories_scores, filename=None, lang="en"):
     """Generate responsive HTML audit report for RHEL 8."""
     if os.path.dirname(filename):

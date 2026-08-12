@@ -278,6 +278,29 @@ HTML_TEMPLATE = """
 </html>
 """
 
+def load_html_template():
+    """Load common HTML report template from templates/ or fallback."""
+    tmpl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates", "report_template.html")
+    if os.path.exists(tmpl_path):
+        try:
+            with open(tmpl_path, "r", encoding="utf-8") as f:
+                return f.read()
+        except Exception:
+            pass
+    return HTML_TEMPLATE
+
+
+def load_category_template():
+    """Load common category report template from templates/ or fallback."""
+    tmpl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates", "category_report_template.html")
+    if os.path.exists(tmpl_path):
+        try:
+            with open(tmpl_path, "r", encoding="utf-8") as f:
+                return f.read()
+        except Exception:
+            pass
+    return CATEGORY_REPORT_TEMPLATE
+
 CATEGORY_REPORT_TEMPLATE = """
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">{category_name}</h2>
@@ -996,7 +1019,7 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
         )
     # Add the category chart canvas after all category reports
     categories_html += CATEGORY_CHART_CANVAS_TEMPLATE
-    html_output = HTML_TEMPLATE.format(
+    html_output = load_html_template().format(
         report_date=report_date,
         overall_score=overall_score,
         overall_score_class=overall_score_class,

@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.7.1)
+# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.8.0)
 
 This document outlines the strategic roadmap, architecture principles, and key milestones for the CIS Benchmarks Tools suite.
 

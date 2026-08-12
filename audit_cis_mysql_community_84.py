@@ -277,6 +277,29 @@ HTML_TEMPLATE = """
 </html>
 """
 
+def load_html_template():
+    """Load common HTML report template from templates/ or fallback."""
+    tmpl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates", "report_template.html")
+    if os.path.exists(tmpl_path):
+        try:
+            with open(tmpl_path, "r", encoding="utf-8") as f:
+                return f.read()
+        except Exception:
+            pass
+    return HTML_TEMPLATE
+
+
+def load_category_template():
+    """Load common category report template from templates/ or fallback."""
+    tmpl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates", "category_report_template.html")
+    if os.path.exists(tmpl_path):
+        try:
+            with open(tmpl_path, "r", encoding="utf-8") as f:
+                return f.read()
+        except Exception:
+            pass
+    return CATEGORY_REPORT_TEMPLATE
+
 CATEGORY_REPORT_TEMPLATE = """
             <section id="cat-{category_id}" class="scroll-mt-24">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
@@ -966,7 +989,7 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
     # Manual counts for category chart (needed for the bar chart)
     category_manual_counts = json.dumps([categories_scores[cat]["manual_checks"] for cat in category_order])
     total_other = error_auto_count + na_auto_count
-    html_output = HTML_TEMPLATE.format(
+    html_output = load_html_template().format(
         report_date=report_date,
         overall_score=overall_score,
         overall_score_class=overall_score_class,
