@@ -134,8 +134,8 @@ def run_e2e_for_target(target):
         else:
             print(f"  ✓ Format '{fmt}' (Local Mode) validated: {dest_path}")
 
-    # Test SSH Remote Mode execution handling
-    for fmt in ["json", "html"]:
+    # Test SSH Remote Mode execution handling for ALL 4 formats (html, json, xml, txt)
+    for fmt in FORMATS:
         ssh_report = f"{report_prefix}_ssh.{fmt}"
         cmd_ssh = ["docker", "exec", container_name, "python3", f"/datas/{script}", "-m", "ssh", "-r", "127.0.0.1", "-f", fmt, "-o", f"/datas/{ssh_report}"]
         exec_ssh = subprocess.run(cmd_ssh, capture_output=True, text=True)

@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """
 E2E Audit Reports Analysis Engine (Python PSL ONLY).
-Parses all .txt report files in reports/, computes global compliance statistics,
-extracts FAIL, ERROR, and MANUAL controls, and generates reports/analyse_tests_e2e.md.
+Parses all .txt report files in reports/ (both Local & SSH Remote Mode),
+computes global compliance statistics, extracts FAIL, ERROR, and MANUAL controls,
+and generates separate analysis reports for Local Mode and SSH Remote Mode:
+  - reports/analyse_tests_e2e_local.md
+  - reports/analyse_tests_e2e_ssh.md
+  - reports/analyse_tests_e2e.md (Unified Comparison Dashboard)
 """
 
 import glob
@@ -12,7 +16,6 @@ from datetime import datetime
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORTS_DIR = os.path.join(REPO_ROOT, "reports")
-OUTPUT_MD = os.path.join(REPORTS_DIR, "analyse_tests_e2e.md")
 
 
 def parse_txt_report(filepath):
@@ -20,9 +23,9 @@ def parse_txt_report(filepath):
         content = f.read()
 
     filename = os.path.basename(filepath)
-    target_name = filename.replace("rapport_cis_", "").replace(".txt", "").upper()
+    is_ssh = "_SSH" in filename.upper()
+    target_name = filename.replace("rapport_cis_", "").replace("_ssh", "").replace(".txt", "").upper()
 
-    # Match header info
     target_match = re.search(r"AUDIT REPORT -\s*(.+)", content)
     if target_match:
         target_name = target_match.group(1).strip()
@@ -33,8 +36,6 @@ def parse_txt_report(filepath):
     date_match = re.search(r"Report Date\s*:\s*(.+)", content)
     report_date = date_match.group(1).strip() if date_match else "N/A"
 
-    # Parse individual controls
-    # Pattern matches lines starting with [PASS], [FAIL], [MANUAL], [ERROR], [N/A]
     controls = []
     blocks = re.split(r"-{50,}", content)
 
@@ -74,6 +75,7 @@ def parse_txt_report(filepath):
 
     return {
         "filename": filename,
+        "is_ssh": is_ssh,
         "target": target_name,
         "date": report_date,
         "score": score,
@@ -87,7 +89,7 @@ def parse_txt_report(filepath):
     }
 
 
-def generate_analysis_markdown(targets_data):
+def generate_single_mode_markdown(mode_title, mode_badge_str, targets_data):
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     total_targets = len(targets_data)
@@ -99,16 +101,17 @@ def generate_analysis_markdown(targets_data):
     avg_score = (sum(t["score"] for t in targets_data) / total_targets) if total_targets > 0 else 0.0
 
     lines = []
-    lines.append("# 📊 CIS Benchmarks Suite - E2E Execution Audit & Compliance Analysis")
+    lines.append(f"# 📊 CIS Benchmarks Suite - Analyse Spécifique {mode_title}")
     lines.append("")
-    lines.append(f"> **Rapport d'Analyse des Tests E2E généré le** : `{now_str}`  ")
+    lines.append(f"> **Rapport d'Analyse E2E ({mode_title}) généré le** : `{now_str}`  ")
     lines.append(f"> **Moteur d'Audit** : `CIS Benchmarks Tools Suite v2.0.0` (100% Python Standard Library - PSL ONLY)  ")
-    lines.append(f"> **Périmètre** : {total_targets} cibles d'audit évaluées (Bases de données & Systèmes Linux RHEL)")
+    lines.append(f"> **Mode d'Exécution** : {mode_badge_str}  ")
+    lines.append(f"> **Périmètre** : {total_targets} cibles d'audit évaluées dans ce mode")
     lines.append("")
     lines.append("---")
     lines.append("")
 
-    lines.append("## 📈 Executive Dashboard (Synthèse Globale par Cible)")
+    lines.append(f"## 📈 Executive Dashboard ({mode_title})")
     lines.append("")
     lines.append("| Cible / Benchmark | Mode | Date d'Exécution | Score Global | Total | Succès (PASS) | Échecs (FAIL) | Erreurs (ERROR) | Manuels (MANUAL) |")
     lines.append("| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |")
@@ -122,26 +125,23 @@ def generate_analysis_markdown(targets_data):
         else:
             score_status = f"🔴 {score_badge}"
 
-        mode_badge = "`SSH`" if "_SSH" in t["filename"].upper() else "`Local`"
-        lines.append(f"| **{t['target']}** | {mode_badge} | {t['date']} | {score_status} | {t['total']} | {t['pass']} | {t['fail']} | {t['error']} | {t['manual']} |")
+        lines.append(f"| **{t['target']}** | {mode_badge_str} | {t['date']} | {score_status} | {t['total']} | {t['pass']} | {t['fail']} | {t['error']} | {t['manual']} |")
 
     lines.append("")
-    lines.append("### 📊 Statistiques Consolidées sur l'Ensemble de la Suite")
+    lines.append("### 📊 Statistiques Consolidées pour ce Mode")
     lines.append("")
     lines.append(f"- **Nombre total de benchmarks évalués** : `{total_targets}`")
     lines.append(f"- **Nombre total de règles/contrôles vérifiés** : `{total_checks}`")
     lines.append(f"- **Score de conformité moyen** : `{avg_score:.1f}%`")
     lines.append(f"- **Contrôles en succès (`PASS`)** : `{total_pass}` ({ (total_pass/total_checks*100) if total_checks else 0:.1f}%)")
     lines.append(f"- **Contrôles en échec (`FAIL`)** : `{total_fail}` ({ (total_fail/total_checks*100) if total_checks else 0:.1f}%)")
-    lines.append(f"- **Contrôles en erreur d'exécution (`ERROR`)** : `{total_error}` ({ (total_error/total_checks*100) if total_checks else 0:.1f}%)")
-    lines.append(f"- **Contrôles à vérification manuelle (`MANUAL`)** : `{total_manual}` ({ (total_manual/total_checks*100) if total_checks else 0:.1f}%)")
+    lines.append(f"- **Contrôles en erreur (`ERROR`)** : `{total_error}` ({ (total_error/total_checks*100) if total_checks else 0:.1f}%)")
+    lines.append(f"- **Contrôles manuels (`MANUAL`)** : `{total_manual}` ({ (total_manual/total_checks*100) if total_checks else 0:.1f}%)")
     lines.append("")
     lines.append("---")
     lines.append("")
 
-    lines.append("## ❌ Registre Détaillé des Contrôles en Échec (`FAIL`) & Erreurs (`ERROR`)")
-    lines.append("")
-    lines.append("Ce registre liste l'ensemble des règles ayant échoué lors de l'exécution automatique, classées par cible d'audit avec leurs explications et procédures de remédiation.")
+    lines.append(f"## ❌ Registre Détaillé des Contrôles en Échec (`FAIL`) & Erreurs (`ERROR`) - {mode_title}")
     lines.append("")
 
     for t in sorted(targets_data, key=lambda x: x["target"]):
@@ -151,7 +151,7 @@ def generate_analysis_markdown(targets_data):
 
         lines.append(f"### 🛑 {t['target']} (`{len(failing)}` échecs / erreurs)")
         lines.append("")
-        lines.append("| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation Suggérée |")
+        lines.append("| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |")
         lines.append("| :---: | :---: | :--- | :--- | :--- | :--- |")
 
         for c in failing:
@@ -167,9 +167,7 @@ def generate_analysis_markdown(targets_data):
     lines.append("---")
     lines.append("")
 
-    lines.append("## ⚠️ Registre Détaillé des Contrôles Manuels (`MANUAL`)")
-    lines.append("")
-    lines.append("Ce registre recense les contrôles nécessitant une vérification manuelle par un auditeur de sécurité ou un administrateur système.")
+    lines.append(f"## ⚠️ Registre Détaillé des Contrôles Manuels (`MANUAL`) - {mode_title}")
     lines.append("")
 
     for t in sorted(targets_data, key=lambda x: x["target"]):
@@ -189,17 +187,58 @@ def generate_analysis_markdown(targets_data):
 
         lines.append("")
 
+    return "\n".join(lines)
+
+
+def generate_unified_comparison_markdown(local_targets, ssh_targets):
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    lines = []
+    lines.append("# 📊 CIS Benchmarks Suite - Tableau Comparatif (Mode Local vs SSH Remote)")
+    lines.append("")
+    lines.append(f"> **Dernière mise à jour** : `{now_str}`  ")
+    lines.append(f"> **Moteur d'Audit** : `CIS Benchmarks Tools Suite v2.0.0` (100% Python Standard Library - PSL ONLY)  ")
+    lines.append("")
     lines.append("---")
     lines.append("")
 
-    lines.append("## 💡 Recommandations et Plan d'Action pour la Conformité")
+    lines.append("## 🔄 Matrice de Comparaison des Scores (Mode Local vs Mode SSH Remote)")
     lines.append("")
-    lines.append("1. **Remédiation Prioritaire des Échecs (`FAIL`)** :")
-    lines.append("   - Appliquer en priorité les scripts de remédiation fournis dans les tables d'échecs ci-dessus pour corriger les paramètres système et de base de données non conformes.")
-    lines.append("2. **Traiter les Erreurs d'Exécution (`ERROR`)** :")
-    lines.append("   - S'assurer que les utilitaires système nécessaires (ex: `systemctl`, sockets de connexion BDD) sont disponibles et accessibles.")
-    lines.append("3. **Automatisation Continue (Phase 8)** :")
-    lines.append("   - Poursuivre la conversion des règles `MANUAL` vers des règles `Automated` en étendant les procédures de vérification SQL et commandes système.")
+    lines.append("| Cible / Benchmark | Score Mode Local | Score Mode SSH | Écart de Score | Statut Parité | Rapport Local | Rapport SSH |")
+    lines.append("| :--- | :---: | :---: | :---: | :---: | :---: | :---: |")
+
+    ssh_map = {t["target"]: t for t in ssh_targets}
+    local_map = {t["target"]: t for t in local_targets}
+
+    all_target_names = sorted(list(set(local_map.keys()).union(set(ssh_map.keys()))))
+
+    for name in all_target_names:
+        loc = local_map.get(name)
+        ssh = ssh_map.get(name)
+
+        loc_score_str = f"`{loc['score']:.1f}%`" if loc else "N/A"
+        ssh_score_str = f"`{ssh['score']:.1f}%`" if ssh else "N/A"
+
+        if loc and ssh:
+            diff = abs(loc["score"] - ssh["score"])
+            diff_str = f"`{diff:.1f}%`"
+            parity_str = "🟢 `Parité Parfaite`" if diff < 0.01 else "⚠️ `Écart Détecté`"
+        else:
+            diff_str = "N/A"
+            parity_str = "⚪ `Mode Incomplet`"
+
+        loc_link = f"[rapport_cis_{name.lower()}.txt](file://{loc['filename']})" if loc else "N/A"
+        ssh_link = f"[rapport_cis_{name.lower()}_ssh.txt](file://{ssh['filename']})" if ssh else "N/A"
+
+        lines.append(f"| **{name}** | {loc_score_str} | {ssh_score_str} | {diff_str} | {parity_str} | [Local MD](file:///home/jmren/GIT_REPOS/cis_benchmarks_tools/reports/analyse_tests_e2e_local.md) | [SSH MD](file:///home/jmren/GIT_REPOS/cis_benchmarks_tools/reports/analyse_tests_e2e_ssh.md) |")
+
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+    lines.append("## 📂 Rapports d'Analyse Séparés")
+    lines.append("")
+    lines.append("- 💻 **Analyse Complète Mode Local** : [reports/analyse_tests_e2e_local.md](file:///home/jmren/GIT_REPOS/cis_benchmarks_tools/reports/analyse_tests_e2e_local.md)")
+    lines.append("- 🌐 **Analyse Complète Mode SSH Remote** : [reports/analyse_tests_e2e_ssh.md](file:///home/jmren/GIT_REPOS/cis_benchmarks_tools/reports/analyse_tests_e2e_ssh.md)")
     lines.append("")
 
     return "\n".join(lines)
@@ -215,15 +254,34 @@ def main():
             data = parse_txt_report(fpath)
             if data["total"] > 0:
                 targets_data.append(data)
-                print(f"  ✓ Parsed {data['filename']}: {data['target']} (Score: {data['score']}%, Controls: {data['total']})")
         except Exception as e:
             print(f"  ❌ Error parsing {fpath}: {e}")
 
-    md_content = generate_analysis_markdown(targets_data)
-    with open(OUTPUT_MD, "w", encoding="utf-8") as f:
-        f.write(md_content)
+    local_targets = [t for t in targets_data if not t["is_ssh"]]
+    ssh_targets = [t for t in targets_data if t["is_ssh"]]
 
-    print(f"\n🎉 E2E Analysis Report successfully generated at: {OUTPUT_MD}")
+    # 1. Generate Local Analysis Report
+    local_md = generate_single_mode_markdown("Mode Local (-m local)", "💻 `Local`", local_targets)
+    local_path = os.path.join(REPORTS_DIR, "analyse_tests_e2e_local.md")
+    with open(local_path, "w", encoding="utf-8") as f:
+        f.write(local_md)
+    print(f"  ✓ Local Mode Analysis Report generated: {local_path}")
+
+    # 2. Generate SSH Remote Analysis Report
+    ssh_md = generate_single_mode_markdown("Mode SSH Remote (-m ssh)", "🌐 `SSH Remote`", ssh_targets)
+    ssh_path = os.path.join(REPORTS_DIR, "analyse_tests_e2e_ssh.md")
+    with open(ssh_path, "w", encoding="utf-8") as f:
+        f.write(ssh_md)
+    print(f"  ✓ SSH Remote Mode Analysis Report generated: {ssh_path}")
+
+    # 3. Generate Unified Comparison Dashboard
+    unified_md = generate_unified_comparison_markdown(local_targets, ssh_targets)
+    unified_path = os.path.join(REPORTS_DIR, "analyse_tests_e2e.md")
+    with open(unified_path, "w", encoding="utf-8") as f:
+        f.write(unified_md)
+    print(f"  ✓ Unified Comparison Dashboard generated: {unified_path}")
+
+    print("\n🎉 All 3 E2E Analysis Reports successfully generated!")
 
 
 if __name__ == "__main__":
