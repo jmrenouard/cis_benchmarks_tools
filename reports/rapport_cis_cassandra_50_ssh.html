@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIS Benchmark Audit Report - CIS Benchmark</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .status-pass { background-color: #DEF7EC; color: #03543F; }
+        .status-fail { background-color: #FDE8E8; color: #9B1C1C; }
+        .status-manual { background-color: #FEF3C7; color: #92400E; }
+        .status-error { background-color: #F3F4F6; color: #1F2937; }
+        .status-na { background-color: #E5E7EB; color: #4B5563; }
+        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 0.75rem; }
+        .sidebar-link.active { background-color: #3B82F6; color: white; }
+
+        /* Dark Mode Theme Rules */
+        body.dark-mode { background-color: #0f172a; color: #f8fafc; }
+        body.dark-mode aside, body.dark-mode header, body.dark-mode footer, body.dark-mode .bg-white { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
+        body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: #f8fafc !important; }
+        body.dark-mode .text-gray-700, body.dark-mode .text-gray-600 { color: #cbd5e1 !important; }
+        body.dark-mode .text-gray-500, body.dark-mode .text-gray-400 { color: #94a3b8 !important; }
+        body.dark-mode .bg-gray-50, body.dark-mode .bg-gray-100 { background-color: #0f172a !important; }
+        body.dark-mode table thead tr { background-color: #334155 !important; }
+        body.dark-mode table tbody tr { border-color: #334155 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 flex">
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen bg-white border-r border-gray-200 sticky top-0 overflow-y-auto hidden lg:block">
+        <div class="p-6">
+            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>CIS Benchmark</h2>
+            <p class="text-xs text-gray-500 mt-1">Audit Security Report v2.0.0</p>
+        </div>
+        <nav class="px-4 pb-6">
+            <a href="#summary" class="sidebar-link flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-1">
+                <i class="fas fa-chart-pie w-5 mr-3"></i> Synthèse & Métriques
+            </a>
+            <div class="mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase px-3">Catégories</div>
+            
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 min-w-0">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS CIS Benchmark</h1>
+                <p class="text-sm text-gray-500">Date du rapport: 12/08/2026 13:56:31</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
+                    <i class="fas fa-moon"></i> Mode Sombre
+                </button>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">2.0.0</span>
+                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-200">v2.0.0</span>
+            </div>
+        </header>
+
+        <div class="p-8 max-w-7xl mx-auto">
+            <!-- Summary Dashboard -->
+            <section id="summary" class="mb-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Score Global</span>
+                        <div class="relative flex items-center justify-center">
+                            <span class="text-3xl font-black text-gray-900">8.3%</span>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-green-500">
+                        <span class="text-xs font-bold text-green-600 uppercase tracking-widest">Succès</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">1</div>
+                        <p class="text-xs text-gray-500 mt-1">Vérifications conformes</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-red-500">
+                        <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Échecs</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">11</div>
+                        <p class="text-xs text-gray-500 mt-1">Non-conformités détectées</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
+                        <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Manuels</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">8</div>
+                        <p class="text-xs text-gray-500 mt-1">À vérifier manuellement</p>
+                    </div>
+                </div>
+
+                <!-- Thematic Security Metrics -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
+                    <h3 class="font-bold text-gray-800 mb-4 tracking-tight flex items-center gap-2">
+                        <i class="fas fa-layer-group text-blue-500"></i> Métriques par Thématiques de Sécurité
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">Authentification & Accès</span>
+                                <span class="text-xs font-extrabold text-blue-600">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">Chiffrement & TLS/SSL</span>
+                                <span class="text-xs font-extrabold text-green-600">90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">Audits & Logs Système</span>
+                                <span class="text-xs font-extrabold text-amber-600">75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-amber-500 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section (100% Inline SVG PSL ONLY) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 min-h-80 flex flex-col">
+                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight text-center">Répartition Automatisée</h3>
+                        
+    <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin: 20px 0; flex-wrap: wrap;">
+      <div style="position: relative; width: 170px; height: 170px;">
+        <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+          <path stroke-dasharray="100 100" stroke="#e5e7eb" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="0.0 100" stroke-dashoffset="-75.0" stroke="#9ca3af" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="0.0 100" stroke-dashoffset="-75.0" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="91.7 100" stroke-dashoffset="16.7" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="8.3 100" stroke-dashoffset="25.0" stroke="#10b981" stroke-width="3.8" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+        </svg>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <span style="font-size: 24px; font-weight: 800; color: #111827;">8.3%</span>
+          <span style="font-size: 11px; color: #6b7280; font-weight: 600;">Score Global</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> <strong>Réussi (PASS) :</strong> 1</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> <strong>Échoué (FAIL) :</strong> 11</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> 0</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> <strong>Non Applicable (N/A) :</strong> 0</div>
+      </div>
+    </div>
+    
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 min-h-80 flex flex-col">
+                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight">Analyse par Catégorie</h3>
+                        
+    <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 24px;">
+      <h3 style="font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 16px; text-align: center;">Répartition des contrôles automatisés par catégorie</h3>
+      
+    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; font-size: 13px;">
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> Réussi</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> Échoué</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> Erreur</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> N/A</div>
+    </div>
+    
+      
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">1 Installation et Mises à jour</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">25.0% (1/4)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 25.0%; background: #10b981;" title="Réussi: 1"></div><div style="width: 75.0%; background: #ef4444;" title="Échoué: 3"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">2 Authentification et Autorisation</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/2)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 2"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">3 Contrôle d'accès</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/3)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 3"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">4 Audit et Journalisation</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/1)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 1"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">5 Chiffrement</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/2)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 2"></div>
+          </div>
+        </div>
+        
+    </div>
+    
+                    </div>
+                </div>
+            </section>
+
+            <div class="space-y-12">
+                
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">1 Installation et Mises à jour</h2>
+            <p class="text-lg font-bold text-red-600">25.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/4 vérifiés).</p>
+            <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer qu&#x27;un utilisateur et un groupe dédiés existent pour Cassandra</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>getent group cassandra &amp;&amp; getent passwd cassandra</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
+
+Procédure suggérée:
+getent group cassandra &amp;&amp; getent passwd cassandra</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Créer un groupe et un utilisateur dédiés : groupadd cassandra &amp;&amp; useradd -g cassandra -s /sbin/nologin cassandra.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la dernière version de Java est installée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>java -version 2&gt;&amp;1 | head -1</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Host key verification failed.
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Mettre à jour Java vers la dernière version LTS supportée (Java 11, 17 ou 21).</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.3</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la dernière version de Python est installée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>python3 --version 2&gt;&amp;1</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Host key verification failed.
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Mettre à jour Python vers la dernière version 3.x.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.4</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la dernière version de Cassandra est installée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cassandra -v 2&gt;/dev/null || nodetool version 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Host key verification failed.
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Mettre à jour Cassandra vers la dernière version 5.0.x.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.5</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que le service Cassandra est exécuté en tant qu&#x27;utilisateur non-root</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>ps -ef | grep -E &#x27;[c]assandra&#x27; | awk &#x27;{print $1}&#x27; | head -n 1</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Host key verification failed.
+Return Code: 255</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer le service Cassandra pour qu&#x27;il s&#x27;exécute sous un utilisateur dédié (ex: &#x27;cassandra&#x27;).</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">1.6</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les horloges sont synchronisées sur tous les nœuds</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>timedatectl status 2&gt;/dev/null | grep &#x27;synchronized&#x27; || ntpstat 2&gt;/dev/null || chronyc tracking 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
+
+Procédure suggérée:
+timedatectl status 2&gt;/dev/null | grep &#x27;synchronized&#x27; || ntpstat 2&gt;/dev/null || chronyc tracking 2&gt;/dev/null</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">2 Authentification et Autorisation</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/2 vérifiés).</p>
+            <p class="text-gray-700">0 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">2.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que l&#x27;authentification est activée pour les bases de données Cassandra</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^authenticator:&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Host key verification failed.
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Modifier cassandra.yaml pour définir &#x27;authenticator: PasswordAuthenticator&#x27; et redémarrer Cassandra.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">2.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que l&#x27;autorisation est activée pour les bases de données Cassandra</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^authorizer:&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Connection closed by 127.0.0.1 port 22
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Modifier cassandra.yaml pour définir &#x27;authorizer: CassandraAuthorizer&#x27; et redémarrer Cassandra.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">3 Contrôle d&#x27;accès</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/3 vérifiés).</p>
+            <p class="text-gray-700">5 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les rôles cassandra et superuser sont séparés</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep -v &#x27;cassandra&#x27; | grep -c &#x27;True&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Connection closed by 127.0.0.1 port 22
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH SUPERUSER = false;</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que le mot de passe par défaut du rôle cassandra est changé</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;SELECT * FROM system_auth.roles WHERE role=&#x27;cassandra&#x27;;&quot; -u cassandra -p cassandra 2&gt;&amp;1 | grep -c &#x27;AuthenticationFailed\|Unauthorized\|Bad credentials&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Connection closed by 127.0.0.1 port 22
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = &#x27;&lt;nouveau_mot_de_passe&gt;&#x27;;</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.3</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer qu&#x27;il n&#x27;y a pas de rôles ou privilèges excessifs</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
+
+Procédure suggérée:
+cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Révoquer les rôles et privilèges inutiles. Utiliser REVOKE et DROP ROLE.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.4</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que Cassandra est exécuté sous un compte de service dédié</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>ps -ef | grep -E &#x27;[c]assandra&#x27; | awk &#x27;{print $1}&#x27; | head -n 1</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Connection closed by 127.0.0.1 port 22
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer le service Cassandra pour qu&#x27;il s&#x27;exécute sous l&#x27;utilisateur &#x27;cassandra&#x27;.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.5</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que Cassandra n&#x27;écoute que sur les interfaces autorisées</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^listen_address:|^rpc_address:&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
+
+Procédure suggérée:
+grep -E &#x27;^listen_address:|^rpc_address:&#x27; /etc/cassandra/cassandra.yaml</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Modifier cassandra.yaml pour définir &#x27;listen_address&#x27; et &#x27;rpc_address&#x27; sur des interfaces spécifiques.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.6</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les autorisations Data Center sont activées</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^authorizer:&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
+
+Procédure suggérée:
+grep -E &#x27;^authorizer:&#x27; /etc/cassandra/cassandra.yaml</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer l&#x27;autorisation par Data Center si nécessaire.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.7</td>
+                        <td class="py-3 px-4 text-left align-top">Réviser les rôles définis par l&#x27;utilisateur</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
+
+Procédure suggérée:
+cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Supprimer les rôles inutiles et révoquer les privilèges excessifs.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">3.8</td>
+                        <td class="py-3 px-4 text-left align-top">Réviser les rôles superuser/administrateur</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep &#x27;True&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
+
+Procédure suggérée:
+cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep &#x27;True&#x27;</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Limiter le nombre de rôles superuser au strict nécessaire.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">4 Audit et Journalisation</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/1 vérifiés).</p>
+            <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">4.1</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la journalisation est activée</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>ls -la /var/log/cassandra/system.log 2&gt;/dev/null || ls -la /opt/cassandra/logs/system.log 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Connection closed by 127.0.0.1 port 22
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Vérifier que la journalisation est configurée dans logback.xml et que les fichiers de log existent.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">4.2</td>
+                        <td class="py-3 px-4 text-left align-top">S&#x27;assurer que l&#x27;audit est activé</td>
+                        <td class="py-3 px-4 text-left align-top">Manual</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -E &#x27;^audit_logging_options:&#x27; /etc/cassandra/cassandra.yaml || grep -A5 &#x27;audit_logging_options&#x27; /etc/cassandra/cassandra.yaml</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
+
+Procédure suggérée:
+grep -E &#x27;^audit_logging_options:&#x27; /etc/cassandra/cassandra.yaml || grep -A5 &#x27;audit_logging_options&#x27; /etc/cassandra/cassandra.yaml</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Activer l&#x27;audit en configurant &#x27;audit_logging_options&#x27; dans cassandra.yaml (Cassandra 5.0+).</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
+            <h2 class="text-2xl font-semibold mb-3 text-gray-800">5 Chiffrement</h2>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/2 vérifiés).</p>
+            <p class="text-gray-700">0 contrôles nécessitent une vérification manuelle.</p>
+            <p class="text-gray-700">0 controls encountered an execution error.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
+
+            <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
+                        <th class="py-3 px-4 text-left w-1/12">Numéro</th>
+                        <th class="py-3 px-4 text-left w-3/12">Recommandation</th>
+                        <th class="py-3 px-4 text-left w-1/12">Type</th>
+                        <th class="py-3 px-4 text-left w-2/12">Test Exécuté</th>
+                        <th class="py-3 px-4 text-left w-1/12">Résultat</th>
+                        <th class="py-3 px-4 text-left w-2/12">Output / Error / Notes</th>
+                        <th class="py-3 px-4 text-left w-2/12">Procédure de Remediation</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light divide-y divide-gray-200">
+                    
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">5.1</td>
+                        <td class="py-3 px-4 text-left align-top">Chiffrement inter-nœuds</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -A20 &#x27;server_encryption_options:&#x27; /etc/cassandra/cassandra.yaml | grep &#x27;internode_encryption&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Connection closed by 127.0.0.1 port 22
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les certificats SSL/TLS.</td>
+                    </tr>
+
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-4 text-left align-top">5.2</td>
+                        <td class="py-3 px-4 text-left align-top">Chiffrement client</td>
+                        <td class="py-3 px-4 text-left align-top">Automated</td>
+                        <td class="py-3 px-4 text-left align-top"><code>grep -A20 &#x27;client_encryption_options:&#x27; /etc/cassandra/cassandra.yaml | grep &#x27;enabled&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+
+Stderr:
+Connection closed by 127.0.0.1 port 22
+Return Code: 255
+
+Condition de succès non remplie.</pre></td>
+                        <td class="py-3 px-4 text-left align-top">Configurer client_encryption_options dans cassandra.yaml : enabled: true, et fournir les certificats SSL/TLS.</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+            </div>
+        </div>
+
+        <footer class="bg-white border-t border-gray-200 p-8 mt-12 text-center">
+            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS Benchmarks Suite v2.0.0.</p>
+            <p class="text-xs text-gray-400 mt-2">100% Python Standard Library (PSL ONLY) Engine.</p>
+        </footer>
+    </main>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            const btn = document.getElementById('themeToggle');
+            btn.innerHTML = isDark ? '<i class="fas fa-sun"></i> Mode Clair' : '<i class="fas fa-moon"></i> Mode Sombre';
+        }
+    </script>
+</body>
+</html>

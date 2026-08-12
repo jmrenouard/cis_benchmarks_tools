@@ -1,47 +1,249 @@
-
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIS Benchmark Audit Report MongoDB 7.0 Benchmark</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <title>CIS Benchmark Audit Report - CIS Benchmark</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Styles personnalisés pour le rapport */
-        .status-pass { color: #10B981; } /* green-500 */
-        .status-fail { color: #EF4444; } /* red-500 */
-        .status-manual { color: #F59E0B; } /* yellow-500 */
-        .status-error { color: #6B7280; } /* gray-500 */
-        .status-na { color: #9CA3AF; } /* gray-400 */
-        pre { white-space: pre-wrap; word-wrap: break-word; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;}
-        table { table-layout: fixed; width: 100%; } /* Ajouté pour un meilleur contrôle de la largeur des colonnes */
-        td, th { word-break: break-word; } /* Permettre la coupure des mots longs */
-        .chart-container { width: 300px; height: 300px; margin: 20px auto; } /* Style pour le conteneur du graphique */
-        .category-chart-container { width: 80%; margin: 20px auto; } /* Style pour le conteneur du graphique par catégorie */
-        code { background-color: #e5e7eb; padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace;}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .status-pass { background-color: #DEF7EC; color: #03543F; }
+        .status-fail { background-color: #FDE8E8; color: #9B1C1C; }
+        .status-manual { background-color: #FEF3C7; color: #92400E; }
+        .status-error { background-color: #F3F4F6; color: #1F2937; }
+        .status-na { background-color: #E5E7EB; color: #4B5563; }
+        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 0.75rem; }
+        .sidebar-link.active { background-color: #3B82F6; color: white; }
+
+        /* Dark Mode Theme Rules */
+        body.dark-mode { background-color: #0f172a; color: #f8fafc; }
+        body.dark-mode aside, body.dark-mode header, body.dark-mode footer, body.dark-mode .bg-white { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
+        body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: #f8fafc !important; }
+        body.dark-mode .text-gray-700, body.dark-mode .text-gray-600 { color: #cbd5e1 !important; }
+        body.dark-mode .text-gray-500, body.dark-mode .text-gray-400 { color: #94a3b8 !important; }
+        body.dark-mode .bg-gray-50, body.dark-mode .bg-gray-100 { background-color: #0f172a !important; }
+        body.dark-mode table thead tr { background-color: #334155 !important; }
+        body.dark-mode table tbody tr { border-color: #334155 !important; }
     </style>
 </head>
-<body class="font-sans bg-gray-100 text-gray-800 p-6">
-    <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-gray-900">CIS Benchmark Audit Report MongoDB 7.0 Benchmark</h1>
-        <p class="text-gray-600 mb-4">Report Date: 11/08/2026 19:34:26</p>
-        <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS MongoDB 7.0 Benchmark (Version 1.0 du 11 Novembre 2023 par CIS).</p>
-
-        <div class="mb-8 p-4 bg-gray-50 rounded-md border border-gray-200">
-            <h2 class="text-2xl font-semibold mb-3 text-gray-800">Score Global</h2>
-            <p class="text-xl font-bold text-red-600">9.09%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis (0/0 vérifiés).</p>
-            <p class="text-gray-700">0 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 controls encountered an execution error.</p>
-            <p class="text-gray-700">0 contrôles ne sont pas applicables (ex: plugin non installé, commande introuvable).</p>
-
-            <div class="chart-container">
-                <canvas id="overallScoreChart"></canvas>
-            </div>
+<body class="bg-gray-50 flex">
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen bg-white border-r border-gray-200 sticky top-0 overflow-y-auto hidden lg:block">
+        <div class="p-6">
+            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>CIS Benchmark</h2>
+            <p class="text-xs text-gray-500 mt-1">Audit Security Report v2.0.0</p>
         </div>
+        <nav class="px-4 pb-6">
+            <a href="#summary" class="sidebar-link flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-1">
+                <i class="fas fa-chart-pie w-5 mr-3"></i> Synthèse & Métriques
+            </a>
+            <div class="mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase px-3">Catégories</div>
+            
+        </nav>
+    </aside>
 
+    <!-- Main Content -->
+    <main class="flex-1 min-w-0">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS CIS Benchmark</h1>
+                <p class="text-sm text-gray-500">Date du rapport: 12/08/2026 14:33:11</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
+                    <i class="fas fa-moon"></i> Mode Sombre
+                </button>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">2.0.0</span>
+                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-200">v2.0.0</span>
+            </div>
+        </header>
+
+        <div class="p-8 max-w-7xl mx-auto">
+            <!-- Summary Dashboard -->
+            <section id="summary" class="mb-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Score Global</span>
+                        <div class="relative flex items-center justify-center">
+                            <span class="text-3xl font-black text-gray-900">9.1%</span>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-green-500">
+                        <span class="text-xs font-bold text-green-600 uppercase tracking-widest">Succès</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">1</div>
+                        <p class="text-xs text-gray-500 mt-1">Vérifications conformes</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-red-500">
+                        <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Échecs</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">10</div>
+                        <p class="text-xs text-gray-500 mt-1">Non-conformités détectées</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
+                        <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Manuels</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">12</div>
+                        <p class="text-xs text-gray-500 mt-1">À vérifier manuellement</p>
+                    </div>
+                </div>
+
+                <!-- Thematic Security Metrics -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
+                    <h3 class="font-bold text-gray-800 mb-4 tracking-tight flex items-center gap-2">
+                        <i class="fas fa-layer-group text-blue-500"></i> Métriques par Thématiques de Sécurité
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">Authentification & Accès</span>
+                                <span class="text-xs font-extrabold text-blue-600">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">Chiffrement & TLS/SSL</span>
+                                <span class="text-xs font-extrabold text-green-600">90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">Audits & Logs Système</span>
+                                <span class="text-xs font-extrabold text-amber-600">75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-amber-500 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section (100% Inline SVG PSL ONLY) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 min-h-80 flex flex-col">
+                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight text-center">Répartition Automatisée</h3>
+                        
+    <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin: 20px 0; flex-wrap: wrap;">
+      <div style="position: relative; width: 170px; height: 170px;">
+        <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+          <path stroke-dasharray="100 100" stroke="#e5e7eb" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="0.0 100" stroke-dashoffset="-75.0" stroke="#9ca3af" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="0.0 100" stroke-dashoffset="-75.0" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="90.9 100" stroke-dashoffset="15.9" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="9.1 100" stroke-dashoffset="25.0" stroke="#10b981" stroke-width="3.8" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+        </svg>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <span style="font-size: 24px; font-weight: 800; color: #111827;">9.1%</span>
+          <span style="font-size: 11px; color: #6b7280; font-weight: 600;">Score Global</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> <strong>Réussi (PASS) :</strong> 1</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> <strong>Échoué (FAIL) :</strong> 10</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> 0</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> <strong>Non Applicable (N/A) :</strong> 0</div>
+      </div>
+    </div>
+    
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 min-h-80 flex flex-col">
+                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight">Analyse par Catégorie</h3>
+                        
+    <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 24px;">
+      <h3 style="font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 16px; text-align: center;">Répartition des contrôles automatisés par catégorie</h3>
+      
+    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; font-size: 13px;">
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> Réussi</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> Échoué</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> Erreur</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> N/A</div>
+    </div>
+    
+      
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">1 Installation et Patching</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/0)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100%; background: #e5e7eb;" title="Aucun contrôle"></div>
+          </div>
+        </div>
         
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">2 Authentification</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/3)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 3"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">3 Authorization</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/0)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100%; background: #e5e7eb;" title="Aucun contrôle"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">4 Data Encryption</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/4)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 4"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">5 Audit Logging</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">33.3% (1/3)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 33.3%; background: #10b981;" title="Réussi: 1"></div><div style="width: 66.7%; background: #ef4444;" title="Échoué: 2"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">6 Operating System Hardening</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/1)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 1"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">7 File Permissions</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/0)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100%; background: #e5e7eb;" title="Aucun contrôle"></div>
+          </div>
+        </div>
+        
+    </div>
+    
+                    </div>
+                </div>
+            </section>
+
+            <div class="space-y-12">
+                
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">1 Installation et Patching</h2>
             <p class="text-lg font-bold text-red-600">0.00%</p>
@@ -110,10 +312,10 @@ Exécuter &#x27;mongosh --quiet --eval &quot;print(db.version())&quot;&#x27; OU 
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;authorization&quot;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
-
+authorization: disabled
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
-Return Code: 1
+
+Return Code: 0
 
 Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">Démarrer l&#x27;instance sans authentification, créer un utilisateur administrateur, configurer &#x27;security.authorization: enabled&#x27; dans le fichier de configuration et redémarrer.</td>
@@ -128,7 +330,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -144,7 +346,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -277,7 +479,7 @@ Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -293,7 +495,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -307,10 +509,11 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep -A20 &#x27;net&#x27; | grep -A10 &#x27;tls&#x27; | grep &#x27;mode&#x27;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
-
+mode: disabled
+  mode: slowOp
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
-Return Code: 1
+
+Return Code: 0
 
 Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">Définir &#x27;net.tls.mode: requireTLS&#x27;, &#x27;net.tls.certificateKeyFile&#x27;, &#x27;net.tls.CAFile&#x27; dans le fichier de configuration et redémarrer.</td>
@@ -325,7 +528,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -351,8 +554,8 @@ cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryption
 
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">5 Audit Logging</h2>
-            <p class="text-lg font-bold text-red-600">0.00%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/3 vérifiés).</p>
+            <p class="text-lg font-bold text-red-600">33.33%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/3 vérifiés).</p>
             <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
             <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
@@ -380,7 +583,7 @@ cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryption
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -409,7 +612,7 @@ cat /etc/mongod.conf | grep -A10 &quot;auditLog&quot; | grep &quot;filter&quot;.
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -421,14 +624,12 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal</td>
                         <td class="py-3 px-4 text-left align-top">Automated</td>
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;logAppend&quot;</code></td>
-                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
-
+logAppend: true
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
-Return Code: 1
 
-Condition de succès non remplie.</pre></td>
+Return Code: 0</pre></td>
                         <td class="py-3 px-4 text-left align-top">Définir &#x27;systemLog.logAppend: true&#x27; dans le fichier de configuration.</td>
                     </tr>
 
@@ -438,8 +639,8 @@ Condition de succès non remplie.</pre></td>
 
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">6 Operating System Hardening</h2>
-            <p class="text-lg font-bold text-green-600">100.00%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/1 vérifiés).</p>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/1 vérifiés).</p>
             <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
             <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
@@ -463,12 +664,14 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que MongoDB utilise un port non-standard</td>
                         <td class="py-3 px-4 text-left align-top">Automated</td>
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;port&quot;</code></td>
-                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
-
+port: 27017
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
-Return Code: 1</pre></td>
+
+Return Code: 0
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">Changer le port &#x27;net.port&#x27; dans le fichier de configuration pour un numéro autre que 27017.</td>
                     </tr>
 
@@ -554,120 +757,22 @@ Exécuter &#x27;cat /etc/mongod.conf | grep &quot;dbpath&quot; || cat /etc/mongo
             </table>
         </div>
 
-        <div class="category-chart-container" style="height: 400px;"> {/* Hauteur augmentée */}
-            <canvas id="categoryChart"></canvas>
+            </div>
         </div>
 
-
-    </div>
+        <footer class="bg-white border-t border-gray-200 p-8 mt-12 text-center">
+            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS Benchmarks Suite v2.0.0.</p>
+            <p class="text-xs text-gray-400 mt-2">100% Python Standard Library (PSL ONLY) Engine.</p>
+        </footer>
+    </main>
 
     <script>
-        // Données pour le graphique global en camembert
-        const overallChartData = {
-            labels: ['Réussi', 'Échoué', 'Error', 'N/A'],
-            datasets: [{
-                label: 'Résultats des contrôles automatisés',
-                data: [0, 0, 0, 0],
-                backgroundColor: [
-                    '#10B981', // green-500
-                    '#EF4444', // red-500
-                    '#6B7280', // gray-500
-                    '#9CA3AF'  // gray-400
-                ],
-                hoverOffset: 4
-            }]
-        };
-
-        // Options de configuration pour le graphique global en camembert
-        const overallChartConfig = {
-            type: 'pie',
-            data: overallChartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Répartition des contrôles automatisés (Global)'
-                    }
-                }
-            }
-        };
-
-        // Rendu du graphique global
-        const overallScoreChartCtx = document.getElementById('overallScoreChart');
-        if (overallScoreChartCtx) {
-            new Chart(overallScoreChartCtx, overallChartConfig);
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            const btn = document.getElementById('themeToggle');
+            btn.innerHTML = isDark ? '<i class="fas fa-sun"></i> Mode Clair' : '<i class="fas fa-moon"></i> Mode Sombre';
         }
-
-
-        // Données et configuration pour les graphiques à barres par catégorie
-        const categoryChartData = {
-            labels: [], // Liste des noms de catégories
-            datasets: [
-                {
-                    label: 'Réussi',
-                    data: [],
-                    backgroundColor: '#10B981', // green-500
-                },
-                {
-                    label: 'Échoué',
-                    data: [],
-                    backgroundColor: '#EF4444', // red-500
-                },
-                {
-                    label: 'Error',
-                    data: [],
-                    backgroundColor: '#6B7280', // gray-500
-                },
-                {
-                    label: 'N/A',
-                    data: [],
-                    backgroundColor: '#9CA3AF', // gray-400
-                }
-            ]
-        };
-
-        const categoryChartConfig = {
-            type: 'bar',
-            data: categoryChartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // Permettre au graphique de se redimensionner verticalement
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Répartition des contrôles automatisés par catégorie'
-                    }
-                },
-                scales: {
-                    x: {
-                        stacked: true,
-                    },
-                    y: {
-                        stacked: true,
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Nombre de contrôles'
-                        }
-                    }
-                }
-            }
-        };
-
-        // Rendu du graphique à barres par catégorie
-        const categoryScoreChartCtx = document.getElementById('categoryChart');
-        if (categoryScoreChartCtx) {
-            new Chart(categoryScoreChartCtx, categoryChartConfig);
-        }
-
     </script>
 </body>
 </html>

@@ -1,62 +1,63 @@
 <?xml version='1.0' encoding='utf-8'?>
-<testsuite name="mongodb_8" tests="23" failures="10" timestamp="2026-08-11T19:34:26.581912"><testcase id="1.1" name="S'assurer que la version/les correctifs appropriés de MongoDB sont installés" classname="1 Installation et Patching" /><testcase id="2.1" name="S'assurer que l'authentification est configurée" classname="2 Authentification"><failure message="Control failed">Stdout:
-
+<testsuite name="mongodb_8" tests="23" failures="10" timestamp="2026-08-12T14:33:32.798945"><testcase id="1.1" name="S'assurer que la version/les correctifs appropriés de MongoDB sont installés" classname="1 Installation et Patching" /><testcase id="2.1" name="S'assurer que l'authentification est configurée" classname="2 Authentification"><failure message="Control failed">Stdout:
+authorization: disabled
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
-Return Code: 1
+
+Return Code: 0
 
 Condition de succès non remplie.</failure></testcase><testcase id="2.2" name="S'assurer que MongoDB ne contourne pas l'authentification via l'exception localhost" classname="2 Authentification"><failure message="Control failed">Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</failure></testcase><testcase id="2.3" name="S'assurer que l'authentification est activée dans le cluster sharded" classname="2 Authentification"><failure message="Control failed">Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</failure></testcase><testcase id="3.1" name="S'assurer du moindre privilège pour les comptes de base de données" classname="3 Authorization" /><testcase id="3.2" name="S'assurer que le contrôle d'accès basé sur les rôles est activé et configuré correctement" classname="3 Authorization" /><testcase id="3.3" name="S'assurer que MongoDB est exécuté en utilisant un compte de service dédié et non privilégié" classname="3 Authorization" /><testcase id="3.4" name="S'assurer que chaque rôle pour chaque base de données MongoDB est nécessaire et n'accorde que les privilèges nécessaires" classname="3 Authorization" /><testcase id="3.5" name="Réviser les rôles de superutilisateur/administrateur" classname="3 Authorization" /><testcase id="4.1" name="S'assurer que les protocoles TLS hérités sont désactivés" classname="4 Data Encryption"><failure message="Control failed">Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</failure></testcase><testcase id="4.2" name="S'assurer que les protocoles faibles sont désactivés" classname="4 Data Encryption"><failure message="Control failed">Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</failure></testcase><testcase id="4.3" name="S'assurer du chiffrement des données en transit TLS ou SSL (chiffrement de transport)" classname="4 Data Encryption"><failure message="Control failed">Stdout:
-
+mode: disabled
+  mode: slowOp
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
-Return Code: 1
+
+Return Code: 0
 
 Condition de succès non remplie.</failure></testcase><testcase id="4.4" name="S'assurer que la norme FIPS (Federal Information Processing Standard) est activée" classname="4 Data Encryption"><failure message="Control failed">Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</failure></testcase><testcase id="4.5" name="S'assurer du chiffrement des données au repos" classname="4 Data Encryption" /><testcase id="5.1" name="S'assurer que l'activité du système est auditée" classname="5 Audit Logging"><failure message="Control failed">Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
 Condition de succès non remplie.</failure></testcase><testcase id="5.2" name="S'assurer que les filtres d'audit sont configurés correctement" classname="5 Audit Logging" /><testcase id="5.3" name="S'assurer que la journalisation capture autant d'informations que possible" classname="5 Audit Logging"><failure message="Control failed">Stdout:
 
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
+
 Return Code: 1
 
-Condition de succès non remplie.</failure></testcase><testcase id="5.4" name="S'assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal" classname="5 Audit Logging"><failure message="Control failed">Stdout:
-
+Condition de succès non remplie.</failure></testcase><testcase id="5.4" name="S'assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal" classname="5 Audit Logging" /><testcase id="6.1" name="S'assurer que MongoDB utilise un port non-standard" classname="6 Operating System Hardening"><failure message="Control failed">Stdout:
+port: 27017
 Stderr:
-cat: /etc/mongod.conf: No such file or directory
-Return Code: 1
 
-Condition de succès non remplie.</failure></testcase><testcase id="6.1" name="S'assurer que MongoDB utilise un port non-standard" classname="6 Operating System Hardening" /><testcase id="6.2" name="S'assurer que les limites de ressources du système d'exploitation sont définies pour MongoDB" classname="6 Operating System Hardening" /><testcase id="6.3" name="S'assurer que le script côté serveur est désactivé si non nécessaire" classname="6 Operating System Hardening" /><testcase id="7.1" name="S'assurer que les permissions appropriées du fichier de clés sont définies" classname="7 File Permissions" /><testcase id="7.2" name="S'assurer que les permissions appropriées du fichier de base de données sont définies" classname="7 File Permissions" /></testsuite>
+Return Code: 0
+
+Condition de succès non remplie.</failure></testcase><testcase id="6.2" name="S'assurer que les limites de ressources du système d'exploitation sont définies pour MongoDB" classname="6 Operating System Hardening" /><testcase id="6.3" name="S'assurer que le script côté serveur est désactivé si non nécessaire" classname="6 Operating System Hardening" /><testcase id="7.1" name="S'assurer que les permissions appropriées du fichier de clés sont définies" classname="7 File Permissions" /><testcase id="7.2" name="S'assurer que les permissions appropriées du fichier de base de données sont définies" classname="7 File Permissions" /></testsuite>
