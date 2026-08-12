@@ -107,7 +107,7 @@
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
     "type": "Manual",
-    "test_procedure": "Analyser les rapports de tests de restauration.",
+    "test_procedure": "ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ /var/lib/pgsql/ 2>/dev/null | head -n 20 || echo 'VÉRIFICATION_MANUELLE_REQUIS'",
     "expected_output": null,
     "remediation": "Planifier et documenter les tests de restauration périodiques.",
     "manual_steps": [
@@ -136,7 +136,7 @@
     "number": "2.1.4",
     "name": "Sécuriser les fichiers de sauvegarde",
     "type": "Manual",
-    "test_procedure": "Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.",
+    "test_procedure": "file /var/backups/* 2>/dev/null | head -n 10 || echo 'VÉRIFICATION_CHIFFREMENT_SAUVEGARDE'",
     "expected_output": null,
     "remediation": "Utiliser le chiffrement des sauvegardes (mariabackup + openssl enc).",
     "manual_steps": [
@@ -176,7 +176,7 @@
     "number": "2.1.7",
     "name": "Sauvegarde des fichiers de configuration",
     "type": "Manual",
-    "test_procedure": "Contrôler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, clés SSL, etc.).",
+    "test_procedure": "ls -la /etc/mysql/mariadb.conf.d/ /etc/postgresql/ /etc/mongod.conf /etc/cassandra/ 2>/dev/null || echo 'VÉRIFICATION_CONFIG_SAUVEGARDE'",
     "expected_output": null,
     "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.",
     "manual_steps": [

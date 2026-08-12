@@ -628,7 +628,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None):
                     results[category].append(check_result)
                     continue
             should_run = True
-        elif rec["type"] == "Manual" and "test_procedure" in rec and ("mysql" in rec["test_procedure"].lower() or "mariadb" in rec["test_procedure"].lower() or "crontab" in rec["test_procedure"].lower() or "ps" in rec["test_procedure"].lower()):
+        elif rec["type"] == "Manual" and "test_procedure" in rec and rec["test_procedure"].strip():
             should_run = True
 
         if should_run:
