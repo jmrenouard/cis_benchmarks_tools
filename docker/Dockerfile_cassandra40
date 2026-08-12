@@ -46,6 +46,10 @@ COPY id_rsa /root/.ssh/id_rsa
 RUN chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa \
   && chown -R root:root /root/.ssh
 
+RUN sed -i 's/authenticator: AllowAllAuthenticator/authenticator: PasswordAuthenticator/' /etc/cassandra/cassandra.yaml 2>/dev/null || true && \
+  sed -i 's/authorizer: AllowAllAuthorizer/authorizer: CassandraAuthorizer/' /etc/cassandra/cassandra.yaml 2>/dev/null || true && \
+  sed -i 's/internode_encryption: none/internode_encryption: all/' /etc/cassandra/cassandra.yaml 2>/dev/null || true
+
 # Copy the audit script for testing
 COPY audit_cis_cassandra_40.py /datas/audit_cis_cassandra_40.py
 

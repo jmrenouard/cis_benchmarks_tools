@@ -60,6 +60,18 @@ COPY id_rsa /root/.ssh/id_rsa
 RUN chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa \
   && chown -R root:root /root/.ssh
 
+RUN mkdir -p /docker-entrypoint-initdb.d && \
+  ln -sf /dev/null /root/.psql_history && \
+  echo "ALTER SYSTEM SET logging_collector = 'on';" > /docker-entrypoint-initdb.d/001_hardening.sql && \
+  echo "ALTER SYSTEM SET log_truncate_on_rotation = 'on';" >> /docker-entrypoint-initdb.d/001_hardening.sql && \
+  echo "ALTER SYSTEM SET log_connections = 'on';" >> /docker-entrypoint-initdb.d/001_hardening.sql && \
+  echo "ALTER SYSTEM SET log_disconnections = 'on';" >> /docker-entrypoint-initdb.d/001_hardening.sql && \
+  echo "ALTER SYSTEM SET log_error_verbosity = 'default';" >> /docker-entrypoint-initdb.d/001_hardening.sql && \
+  echo "ALTER SYSTEM SET log_line_prefix = '%m [%p] %q%u@%d ';" >> /docker-entrypoint-initdb.d/001_hardening.sql && \
+  echo "ALTER SYSTEM SET log_statement = 'ddl';" >> /docker-entrypoint-initdb.d/001_hardening.sql && \
+  echo "ALTER SYSTEM SET log_timezone = 'UTC';" >> /docker-entrypoint-initdb.d/001_hardening.sql && \
+  echo "SELECT pg_reload_conf();" >> /docker-entrypoint-initdb.d/001_hardening.sql
+
 # Copy the audit script for testing
 COPY audit_cis_postgresql_17.py /datas/audit_cis_postgresql_17.py
 
