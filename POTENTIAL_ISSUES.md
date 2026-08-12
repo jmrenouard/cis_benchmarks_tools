@@ -1,4 +1,4 @@
-# 🛠️ CIS Benchmarks Tools - Resolved Debt & Technical Backlog (v1.8.0)
+# 🛠️ CIS Benchmarks Tools - Resolved Debt & Technical Backlog (v1.9.0)
 
 This document tracks technical debt, security considerations, active quality controls, and resolved architectural backlog items.
 
@@ -6,27 +6,31 @@ This document tracks technical debt, security considerations, active quality con
 
 ## 🔒 Resolved Architectural Backlog
 
-### 1. Centralization of HTML Report Templates into `templates/` (Resolved in v1.8.0 ✅)
+### 1. Dual Local & SSH Remote Execution Modes & DB Options (Resolved in v1.9.0 ✅)
+- **Problem**: Audit scripts lacked uniform database connection parameters (`--db-host`, `--db-port`, `--db-user`, `--db-password`) and SSH connection options (`--ssh-port`, `--ssh-key`, `--sudo`), and E2E tests only validated local execution.
+- **Resolution**: Standardized Local & SSH execution CLI options across all 18 audit scripts and `audit_cis.py`. Updated `scripts/run_e2e_tests.py` to validate report generation for BOTH Local Mode (`--mode local`) and SSH Remote Mode (`--mode ssh`).
+
+### 2. Centralization of HTML Report Templates into `templates/` (Resolved in v1.8.0 ✅)
 - **Problem**: HTML report template strings were duplicated across all 18 Python audit scripts, making UI maintenance tedious and prone to formatting drift.
 - **Resolution**: Centralized HTML report templates into common template files `templates/report_template.html` and `templates/category_report_template.html`. Implemented dynamic template loaders (`load_html_template()`, `load_category_template()`) with inline PSL fallbacks across all audit scripts and `audit_cis.py`.
 
-### 2. PR Diff Size Limit & Atomic Splitting Rules (Resolved in v1.7.1 ✅)
+### 3. PR Diff Size Limit & Atomic Splitting Rules (Resolved in v1.7.1 ✅)
 - **Problem**: Large Pull Requests (> 150,000 diff characters, e.g. PR #17, #18, #19) exceeded review limits of automated review bots (Sourcery AI) and hampered code review.
 - **Resolution**: Updated `.agents/AGENTS.md` and `03_execution_rules.md` to enforce a strict **15,000 diff character limit per PR** (`git diff main...HEAD | wc -c` < 15000) and require atomic PR splitting for large benchmark script additions.
 
-### 3. Externalization of Audit Rules into `rules/` Directory (Resolved in v1.7.0 ✅)
+### 4. Externalization of Audit Rules into `rules/` Directory (Resolved in v1.7.0 ✅)
 - **Problem**: Audit rule control specifications (`RECOMMENDATIONS_DATA`) were hardcoded inside Python script source files, mixing code logic with data specs.
 - **Resolution**: Created top-level `rules/` directory containing 18 clean JSON specification files (`rules/mariadb_106.json`, `rules/cassandra_40.json`, `rules/rhel_8.json`, etc.). Created dynamic rule loader `load_recommendations()` in `audit_cis_*.py` and `audit_cis.py` with inline fallback.
 
-### 4. Chart.js CDN Dependency & Missing Offline Charts (Resolved in v1.7.0 ✅)
+### 5. Chart.js CDN Dependency & Missing Offline Charts (Resolved in v1.7.0 ✅)
 - **Problem**: HTML audit reports depended on CDN-hosted Chart.js (`https://cdn.jsdelivr.net/npm/chart.js`), causing blank chart canvases when opened offline or behind firewalls.
 - **Resolution**: Designed a 100% self-contained Inline SVG & HTML5 Donut and Stacked Bar Chart engine built in Python PSL (`build_inline_svg_donut_chart()` and `build_inline_svg_category_chart()`). Zero external JavaScript required. Works 100% offline.
 
-### 5. Local & SSH Remote Execution Modes (Resolved in v1.6.0 ✅)
+### 6. Local & SSH Remote Execution Modes (Resolved in v1.6.0 ✅)
 - **Problem**: Inability to select Local vs SSH execution mode explicitly across all benchmarks.
 - **Resolution**: Standardized `-m / --mode {local,ssh}`, `-r / --remote / --ssh user@host`, and `--local` CLI options across all 18 audit scripts and `audit_cis.py`.
 
-### 6. Subprocess Command Injection Prevention (Resolved in v1.5.0 ✅)
+### 7. Subprocess Command Injection Prevention (Resolved in v1.5.0 ✅)
 - **Problem**: Use of raw shell strings (`shell=True`) in `subprocess` calls posed command injection security risks.
 - **Resolution**: Migrated all system command execution calls across all audit modules to strict parameter lists (`shell=False`).
 
@@ -56,3 +60,4 @@ This document tracks technical debt, security considerations, active quality con
 - [x] **PR #26 (v1.6.0)**: CIS audit PostgreSQL 18 initial module.
 - [x] **PR #106 (v1.7.1)**: Enforce PR diff size limit (< 15K chars) and atomic PR splitting in workspace rules.
 - [x] **PR #107 (v1.8.0)**: Centralize HTML report templates in `templates/report_template.html` with PSL loader.
+- [x] **PR #108 (v1.9.0)**: Standardize Local & SSH execution CLI parameters and dual-mode E2E test runner.

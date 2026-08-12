@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.8.0)
+# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.9.0)
 
 This document outlines the strategic roadmap, architecture principles, phase-level milestones, and task-level execution status for the CIS Benchmarks Tools suite.
 
@@ -21,6 +21,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 4** | Multi-Format Exporters, E2E Testing & CI/CD Pipeline | `v1.6.0` | `Completed ✅` | 7/7 | 100% |
 | **Phase 5** | Rule Spec Externalization & Offline SVG Charts Engine | `v1.7.0` | `Completed ✅` | 5/5 | 100% |
 | **Phase 6** | PR Diff Size Limits & Centralized HTML Templates | `v1.8.0` | `Completed ✅` | 4/4 | 100% |
+| **Phase 7** | Dual Local/SSH Modes & Database Connection Parameters | `v1.9.0` | `Completed ✅` | 5/5 | 100% |
 
 ---
 
@@ -121,6 +122,20 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 
 ---
 
+### Phase 7: Dual Local/SSH Modes & Database Connection Parameters (`Completed ✅ - v1.9.0`)
+**Summary**: Standardize Local & SSH Remote execution parameters (`--mode`, `--remote`, `--ssh-port`, `--ssh-key`, `--sudo`) and database connection options (`--db-host`, `--db-port`, `--db-user`, `--db-password`) across all audit scripts, and validate both modes in the E2E test runner.
+
+#### 7.1 Local & SSH Mode CLI Standardisation
+- [x] **SSH Connection Parameters**: Standardize `--mode {local,ssh}`, `--remote / --ssh`, `--ssh-port`, `--ssh-key`, and `--sudo` across all 18 audit scripts.
+- [x] **Database Connection Options**: Add `--db-host / --host`, `--db-port / --port`, `--db-user / --user`, and `--db-password / --password` CLI arguments to all audit scripts.
+- [x] **CLI Option Propagation**: Update `audit_cis.py` to forward database and SSH options to targeted audit modules.
+
+#### 7.2 E2E Dual-Mode Testing Suite
+- [x] **Dual Mode E2E Test Runner**: Update `scripts/run_e2e_tests.py` to execute and validate report generation for BOTH Local Mode and SSH Remote Mode.
+- [x] **100% PSL Compliance**: Guarantee OpenSSH command execution (`ssh -o BatchMode=yes`) using standard Python `subprocess` (zero pip packages).
+
+---
+
 ## 💬 GitHub PR Reviews & Feedback Summary
 
 | PR ID | Target Version | Feature / Component | Status | Reviewer Feedback Summary |
@@ -129,3 +144,4 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **PR #17 – #26** | `v1.6.0` | Initial Database Audit Implementations | `Merged ✅` | Added 15 database benchmark scripts. Review bots flagged large diff size (> 150K chars). |
 | **PR #106** | `v1.7.1` | PR Diff Size Limit & Workspace Rules | `Merged ✅` | Enforced strict < 15K diff character limit and atomic PR splitting rules in `AGENTS.md`. |
 | **PR #107** | `v1.8.0` | Centralized HTML Report Templates | `Merged ✅` | Extracted report templates into `templates/report_template.html` with PSL loader. |
+| **PR #108** | `v1.9.0` | Dual Local/SSH Modes & E2E Validation | `Merged ✅` | Standardized SSH & DB options across all scripts and updated E2E runner for dual-mode tests. |
