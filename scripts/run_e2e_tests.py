@@ -40,7 +40,7 @@ FORMATS = ["html", "json", "xml", "txt"]
 
 
 def analyze_report_integrity(filepath):
-    """Analyze generated report file for size, structural integrity, and syntax."""
+    """Analyze generated report file for size, structural integrity, visual UI components, and syntax (PSL ONLY)."""
     if not os.path.exists(filepath):
         return False, "File missing"
 
@@ -54,6 +54,12 @@ def analyze_report_integrity(filepath):
     if filepath.endswith(".html"):
         if "<html" not in content or "</html>" not in content:
             return False, "Malformed HTML structure"
+        if "<svg" not in content:
+            return False, "Missing Inline SVG charts"
+        if "toggleDarkMode" not in content:
+            return False, "Missing Dark Mode UI control"
+        if "fa-" not in content:
+            return False, "Missing FontAwesome visual icons"
     elif filepath.endswith(".json"):
         try:
             json.loads(content)
@@ -65,8 +71,10 @@ def analyze_report_integrity(filepath):
         except Exception as e:
             return False, f"Invalid XML syntax: {e}"
     elif filepath.endswith(".txt"):
-        if "CIS Benchmark Audit Report" not in content and "Report Date" not in content:
+        if "CIS BENCHMARK AUDIT REPORT" not in content and "Report Date" not in content:
             return False, "Malformed TXT report structure"
+        if "CATEGORY BREAKDOWN & COMPLIANCE SUMMARY TABLE" not in content:
+            return False, "Missing TXT ASCII Summary Table"
 
     return True, f"Valid ({size} bytes)"
 
