@@ -12,7 +12,7 @@ import html # Pour échapper les caractères spéciaux HTML
 # Par exemple, ajoute -u <user> -p<password> ou utilise mysql_config_editor
 # Pour l'instant, on suppose que la connexion fonctionne sans mot de passe
 # ou via un fichier de configuration (ex: /root/.my.cnf)
-MYSQL_CMD = "mysql -N -B" # -N: skip headers, -B: batch mode (tab separated)
+MYSQL_CMD = "mysql -N -B 2>/dev/null || mariadb -N -B" # -N: skip headers, -B: batch mode (tab separated)
 
 # --- Structure des Recommandations (Adaptée pour MySQL 8.0) ---
 # Basée sur le PDF "CIS MySQL 8.0 Benchmark – Tableau récapitulatif complet.pdf"
@@ -472,7 +472,7 @@ def load_recommendations(target_key):
 
 
 def run_command(command, remote_host=None):
-    """Execute command locally or via SSH remote execution without shell=True (PSL ONLY)."""
+    """Execute command safely with timeout=10, stdin=DEVNULL, and clean SSH noise (PSL ONLY)."""
     try:
         if isinstance(command, str):
             if "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
@@ -488,7 +488,18 @@ def run_command(command, remote_host=None):
             cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
 
         process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10)
-        return process.stdout.strip(), process.stderr.strip(), process.returncode
+        stdout_text = process.stdout.strip()
+        stderr_text = process.stderr.strip()
+
+        if stderr_text:
+            filtered_lines = [
+                line for line in stderr_text.splitlines()
+                if not line.startswith("Warning: Permanently added")
+                and "pseudo-terminal" not in line
+            ]
+            stderr_text = chr(10).join(filtered_lines).strip()
+
+        return stdout_text, stderr_text, process.returncode
     except subprocess.TimeoutExpired:
         return "", "Command execution timed out after 10 seconds", -1
     except Exception as e:
