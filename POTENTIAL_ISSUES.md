@@ -46,3 +46,5 @@ This document tracks technical debt, security considerations, and resolved archi
 - [x] **PR #24: CIS audit PostgreSQL 16**
 - [x] **PR #25: CIS audit PostgreSQL 17**
 - [x] **PR #26: CIS audit PostgreSQL 18**
+- [x] **PR #106: Enforce PR diff size limit (< 15K chars) and atomic PR splitting in workspace rules**
+- [x] **PR #107: Centralize HTML report templates in templates/report_template.html with PSL loader**

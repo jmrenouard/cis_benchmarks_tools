@@ -91,10 +91,23 @@ This document outlines the strategic roadmap, architecture principles, and key m
 - [x] Responsive Category Stacked Bar Charts for visual compliance breakdown.
 - [x] 100% Python Standard Library (PSL ONLY) compliance.
 
+---
+
+### Phase 6: PR Diff Size Limit & Centralized HTML Templates (Completed ✅ - v1.8.0)
+
+#### 1. PR Diff Character Size Limits (< 15,000 chars)
+- [x] Enforced strict 15,000 diff character limit per PR and mandatory atomic PR splitting in `.agents/AGENTS.md` & `03_execution_rules.md`.
+- [x] Automated pre-PR character count verification (`git diff main...HEAD | wc -c` < 15000).
+
+#### 2. Centralized HTML Report Templates (`templates/`)
+- [x] Centralized HTML report templates into common template files `templates/report_template.html` and `templates/category_report_template.html`.
+- [x] Dynamic template loader `load_html_template()` with inline PSL fallbacks across all 18 audit scripts and `audit_cis.py`.
+
+---
 
 ### 💬 GitHub PR Reviews & Feedback Summary
 
 - **PR #1 (v1.5.1)**: Implemented initial CIS benchmarks automation tool and extensible audit check framework.
 - **PR #17 – PR #26**: Added automated CIS audit implementations for MariaDB 10.6/10.11, MySQL 8.0/8.4/9.7, PostgreSQL 16/17/18, MongoDB 7/8, and Cassandra 4.0/4.1/5.0. Review bots (Sourcery AI) reported PR diff size warnings (> 150,000 characters).
-- **PR (v1.7.1)**: Enforced mandatory PR diff size limit (< 15,000 characters) and atomic PR splitting strategy in agent workspace rules (`.agents/AGENTS.md` & `03_execution_rules.md`).
-
+- **PR #106 (v1.7.1)**: Enforced mandatory PR diff size limit (< 15,000 characters) and atomic PR splitting strategy in agent workspace rules (`.agents/AGENTS.md` & `03_execution_rules.md`).
+- **PR #107 (v1.8.0)**: Centralized HTML report templates into `templates/report_template.html` and `templates/category_report_template.html` with dynamic PSL loaders (`load_html_template()`) and inline fallbacks across all 18 audit scripts.
