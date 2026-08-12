@@ -23,6 +23,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 6** | PR Diff Size Limits & Centralized HTML Templates | `v1.8.0` | `Completed ✅` | 4/4 | 100% |
 | **Phase 7** | Dual Local/SSH Modes & Database Connection Parameters | `v1.9.0` | `Completed ✅` | 5/5 | 100% |
 | **Phase 8** | Advanced Formatting, Rule Exclusions & Visual UI Validation | `v2.0.0` | `Completed ✅` | 7/7 | 100% |
+| **Phase 9** | Verification Commands & Remediation Procedures in Reports | `v2.1.0` | `Completed ✅` | 4/4 | 100% |
 
 ---
 
@@ -160,6 +161,17 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 
 ---
 
+### Phase 9: Verification Commands & Remediation Procedures in Reports (`Completed ✅ - v2.1.0`)
+**Summary**: Systematically include audit verification commands (`test_procedure` / `audit`) and remediation procedures (`remediation`) across all output formats (HTML, TXT, JSON, XML) and CLI reports for all 18 benchmark products.
+
+#### 9.1 Multi-Format Exporters & Report Enhancements
+- [x] **Multi-Format Test Command Output**: Render audit verification commands (`test_procedure` / `audit`) across TXT, XML, JSON, and HTML reports.
+- [x] **Unrestricted Remediation Procedures**: Render remediation instructions (`remediation`) for all controls across TXT, XML, JSON, and HTML report formats regardless of compliance status.
+- [x] **RHEL Report Parity**: Update RHEL 8, 9, and 10 HTML report templates and check result dictionaries with `Commande de test` and `Procédure de remédiation` columns.
+- [x] **Automated Engine & Reports Regeneration**: Update `audit_cis.py` engine bundler and regenerate report outputs across all 18 targets.
+
+---
+
 ## 💬 GitHub PR Reviews & Feedback Summary
 
 | PR ID | Target Version | Feature / Component | Status | Reviewer Feedback Summary |
@@ -170,3 +182,4 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **PR #107** | `v1.8.0` | Centralized HTML Report Templates | `Merged ✅` | Extracted report templates into `templates/report_template.html` with PSL loader. |
 | **PR #108** | `v1.9.0` | Dual Local/SSH Modes & E2E Validation | `Merged ✅` | Standardized SSH & DB options across all scripts and updated E2E runner for dual-mode tests. |
 | **PR #109** | `v2.0.0` | Phase 8 Advanced Formatting & Exclusions | `Merged ✅` | Enhanced TXT ASCII tables, thematic metrics, HTML dark mode, rule exclusions, and E2E visual QA. |
+| **PR #110** | `v2.1.0` | Phase 9 Verification Commands & Remediations | `Merged ✅` | Added verification commands and remediation procedures across all test results & export formats. |

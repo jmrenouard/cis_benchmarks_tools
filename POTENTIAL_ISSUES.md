@@ -1,4 +1,4 @@
-# 🛠️ CIS Benchmarks Tools - Technical Backlog & Resolved Debt (v2.0.0)
+# 🛠️ CIS Benchmarks Tools - Technical Backlog & Resolved Debt (v2.1.0)
 
 This document tracks technical debt, security considerations, active quality controls, and resolved architectural backlog items.
 
@@ -6,7 +6,11 @@ This document tracks technical debt, security considerations, active quality con
 
 ## 🔒 Resolved Architectural Backlog
 
-### 1. Phase 8 Advanced Formatting, Exclusions & Visual UI Validation (Resolved in v2.0.0 ✅)
+### 1. Phase 9 Verification Commands & Remediation Procedures in Reports (Resolved in v2.1.0 ✅)
+- **Problem**: Audit test verification commands (`test_procedure` / `audit`) were omitted from TXT, XML, and RHEL HTML reports, and remediation procedures (`remediation`) were hidden for non-FAIL controls or missing in RHEL HTML report layouts.
+- **Resolution**: Updated `scripts/add_multiformat_exporters.py` to systematically include test verification commands and remediation procedures across all export formats (TXT, JSON, XML, HTML). Updated RHEL audit scripts (`audit_cis_rhel_8.py`, `9.py`, `10.py`) to save test procedures and display `Commande de test` and `Procédure de remédiation` in HTML table reports.
+
+### 2. Phase 8 Advanced Formatting, Exclusions & Visual UI Validation (Resolved in v2.0.0 ✅)
 - **Problem**: Plain-text summary lacked ASCII tables, reports lacked thematic security metrics, HTML templates lacked dark mode, rules lacked pre-execution command safety validation, and E2E tests lacked visual UI checks.
 - **Resolution**: Implemented formatted ASCII summary tables for `--format txt`, added thematic security metrics, upgraded `templates/report_template.html` with Dark Mode toggle and visual status icons, added rule command safety validator, added `--exclude-rules` / `--skip-rule` CLI flags, and enhanced E2E test runner for visual DOM validation.
 

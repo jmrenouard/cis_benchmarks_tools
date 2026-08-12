@@ -52,6 +52,14 @@ exporter_func = r'''def export_results(results, overall_score, categories_scores
         root = ET.Element("testsuite", name=target_name, tests=str(len(flat_results)), failures=str(sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])), timestamp=datetime.now().isoformat())
         for r in flat_results:
             tc = ET.SubElement(root, "testcase", id=str(r.get("number", r.get("id", ""))), name=str(r.get("name", r.get("title", ""))), classname=str(r.get("category", "")))
+            test_proc = r.get("test_procedure", r.get("audit", ""))
+            if test_proc:
+                cmd_elem = ET.SubElement(tc, "system-out")
+                cmd_elem.text = f"Test Command: {str(test_proc).strip()}"
+            rem = r.get("remediation", "")
+            if rem:
+                rem_elem = ET.SubElement(tc, "remediation")
+                rem_elem.text = str(rem).strip()
             if r.get("status") in ["FAIL", "Fail"]:
                 failure = ET.SubElement(tc, "failure", message="Control failed")
                 failure.text = str(r.get("output", r.get("stdout", "")))
@@ -97,12 +105,15 @@ exporter_func = r'''def export_results(results, overall_score, categories_scores
             rec_name = r.get("name", r.get("title", ""))
             lines.append(f"{status_icon} {rec_id} - {rec_name}")
             lines.append(f"  Category: {r.get('category')}")
+            test_proc = r.get("test_procedure", r.get("audit", ""))
+            if test_proc:
+                lines.append(f"  Commande de test: {str(test_proc).strip()}")
             out = r.get('output', r.get('stdout', ''))
             if out:
                 lines.append(f"  Output: {str(out).strip()}")
             rem = r.get('remediation', '')
-            if rem and status in ["FAIL", "Fail"]:
-                lines.append(f"  Remediation: {str(rem).strip()}")
+            if rem:
+                lines.append(f"  Procédure de remédiation: {str(rem).strip()}")
             lines.append("-" * 90)
         with open(filename, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
