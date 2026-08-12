@@ -926,6 +926,7 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
     report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     overall_score_class = get_score_class(overall_score)
     categories_html = ""
+    sidebar_links_html = ""
 
     flat_results = []
     if isinstance(results, dict):
@@ -1015,20 +1016,33 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
         )
 
     # Manual counts for category chart (needed for the bar chart)
-    category_manual_counts = json.dumps([categories_scores[cat]["manual_checks"] for cat in category_order])
+    category_manual_counts = json.dumps([categories_scores.get(cat, {}).get("manual_checks", 0) for cat in category_order])
     total_other = error_auto_count + na_auto_count
-    html_output = load_html_template().format(
+    class SafeDict(dict):
+        def __missing__(self, key):
+            return f"{{{key}}}"
+
+    html_output = load_html_template().format_map(SafeDict(
+        benchmark_title=target_name if 'target_name' in locals() else "CIS Benchmark",
+        lang=lang if 'lang' in locals() else "en",
         report_date=report_date,
+        suite_version="2.0.0",
+        target_version="2.0.0",
         overall_score=overall_score,
         overall_score_class=overall_score_class,
-        passed_automated=passed_auto_count,
-        total_automated=passed_auto_count + failed_auto_count,
-        manual_checks=total_manual,
-        error_checks=total_errors,
-        na_checks=total_na,
+        passed_automated_count=passed_auto_count if 'passed_auto_count' in locals() else 0,
+        failed_automated_count=failed_auto_count if 'failed_auto_count' in locals() else 0,
+        passed_automated=passed_auto_count if 'passed_auto_count' in locals() else 0,
+        total_automated=(passed_auto_count + failed_auto_count) if 'passed_auto_count' in locals() else 0,
+        manual_checks=total_manual if 'total_manual' in locals() else 0,
+        error_checks=total_errors if 'total_errors' in locals() else 0,
+        na_checks=total_na if 'total_na' in locals() else 0,
+        sidebar_links=sidebar_links_html if 'sidebar_links_html' in locals() else "",
         categories_reports=categories_html,
-        svg_global_chart_html=svg_global_chart_html
-    )
+        donut_svg=svg_global_chart_html if 'svg_global_chart_html' in locals() else "",
+        bar_svg=build_inline_svg_category_chart(categories_scores) if 'categories_scores' in locals() else "",
+        svg_global_chart_html=svg_global_chart_html if 'svg_global_chart_html' in locals() else ""
+    ))
 
     try:
         if os.path.dirname(filename):
