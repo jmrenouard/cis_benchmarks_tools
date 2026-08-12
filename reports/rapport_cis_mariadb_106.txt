@@ -1,90 +1,103 @@
 ==========================================================================================
                CIS BENCHMARK AUDIT REPORT - MARIADB_106
 ==========================================================================================
-Report Date   : 2026-08-12 14:58:00
-Global Score  : 60.0%
+Report Date   : 2026-08-12 20:49:50
+Global Score  : 80.0%
 Total Controls: 74
 ------------------------------------------------------------------------------------------
  CATEGORY BREAKDOWN & COMPLIANCE SUMMARY TABLE
 ------------------------------------------------------------------------------------------
   ID     Category Name                                 Pass   Fail   Manual   Score   
   ------ --------------------------------------------- ------ ------ -------- --------
-  1. Configuration Système d'exploitation 1. Configuration Système d'exploitation       4      2      1          66.7%
-  2. Installation et Planification 2. Installation et Planification              5      1      12         83.3%
-  3. Permissions Fichiers 3. Permissions Fichiers                       2      7      0          22.2%
-  4. Général 4. Général                                    7      1      1          87.5%
+  1. Configuration Système d'exploitation 1. Configuration Système d'exploitation       3      2      1          60.0%
+  2. Installation et Planification 2. Installation et Planification              0      0      12          0.0%
+  3. Permissions Fichiers 3. Permissions Fichiers                       0      0      0           0.0%
+  4. Général 4. Général                                    2      0      1         100.0%
   5. Permissions MariaDB 5. Permissions MariaDB                        0      0      10          0.0%
-  6. Audit & Journalisation 6. Audit & Journalisation                     2      4      0          33.3%
-  7. Authentification 7. Authentification                           4      2      0          66.7%
-  8. Sécurité réseau 8. Sécurité réseau                            1      1      1          50.0%
+  6. Audit & Journalisation 6. Audit & Journalisation                     0      0      0           0.0%
+  7. Authentification 7. Authentification                           1      0      0         100.0%
+  8. Sécurité réseau 8. Sécurité réseau                            0      0      1           0.0%
   9. Réplication 9. Réplication                                0      0      3         100.0%
 ==========================================================================================
  DETAILED CONTROL RESULTS
 ==========================================================================================
 
-[PASS] 1.1 - Placer les bases de données sur des partitions non-système
+[MANUAL] 1.1 - Placer les bases de données sur des partitions non-système
   Category: 1. Configuration Système d'exploitation
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MariaDB, redémarrer le service.
+------------------------------------------------------------------------------------------
+[FAIL] 1.2 - Utiliser un compte dédié et privilégié minimal pour MariaDB
+  Category: 1. Configuration Système d'exploitation
+  Commande de test: ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | awk '{print $1}' | head -n 1
   Output: Stdout:
-/var/lib/mysql
+
 Stderr:
 
 Return Code: 0
-------------------------------------------------------------------------------------------
-[PASS] 1.2 - Utiliser un compte dédié et privilégié minimal pour MariaDB
-  Category: 1. Configuration Système d'exploitation
-  Output: Stdout:
-mysql
-Stderr:
-
-Return Code: 0
-------------------------------------------------------------------------------------------
-[FAIL] 1.3 - Désactiver l'historique des commandes MariaDB
-  Category: 1. Configuration Système d'exploitation
-  Output: Stdout:
-/root/.mysql_history
-Stderr:
-
-Return Code: 1
 
 Condition de succès non remplie.
-  Remediation: Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.
+  Procédure de remédiation: Configurer le service MariaDB pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux.
+------------------------------------------------------------------------------------------
+[PASS] 1.3 - Désactiver l'historique des commandes MariaDB
+  Category: 1. Configuration Système d'exploitation
+  Commande de test: ! find /home /root -name .mysql_history -print -quit 2>/dev/null
+  Output: Stdout:
+/home/jmren/.mysql_history
+Stderr:
+
+Return Code: 0
+  Procédure de remédiation: Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.
 ------------------------------------------------------------------------------------------
 [PASS] 1.4 - Vérifier que MYSQL_PWD n'est pas utilisé
   Category: 1. Configuration Système d'exploitation
+  Commande de test: ! grep -qs MYSQL_PWD /proc/*/environ
   Output: Stdout:
 
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser des méthodes d'authentification sécurisées.
 ------------------------------------------------------------------------------------------
 [FAIL] 1.5 - Désactiver l'accès interactif pour l'utilisateur MySQL
   Category: 1. Configuration Système d'exploitation
+  Commande de test: getent passwd mysql | cut -d: -f7
   Output: Stdout:
-/bin/sh
+
 Stderr:
 
 Return Code: 0
 
 Condition de succès non remplie.
-  Remediation: Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).
+  Procédure de remédiation: Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).
 ------------------------------------------------------------------------------------------
 [PASS] 1.6 - Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs
   Category: 1. Configuration Système d'exploitation
+  Commande de test: ! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null
   Output: Stdout:
 
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD.
 ------------------------------------------------------------------------------------------
 [MANUAL] 1.7 - Exécuter MariaDB dans un environnement sandbox
   Category: 1. Configuration Système d'exploitation
+  Commande de test: [[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'
   Output: This control requires manual verification.
 
 Procédure suggérée:
 [[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'
+  Procédure de remédiation: Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MariaDB sous Docker.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.1 - Politique de sauvegarde en place
   Category: 2. Installation et Planification
+  Commande de test: crontab -l 2>/dev/null | grep -E 'mariabackup|mysqldump|xtrabackup' || echo 'AUCUNE_SAUVEGARDE_PLANIFIEE'
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
@@ -93,45 +106,58 @@ AUCUNE_SAUVEGARDE_PLANIFIEE
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Créer une politique de sauvegarde et planifier des sauvegardes automatiques.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.2 - Validation des sauvegardes
   Category: 2. Installation et Planification
+  Commande de test: Analyser les rapports de tests de restauration.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Analyser les rapports de tests de restauration.
+  Procédure de remédiation: Planifier et documenter les tests de restauration périodiques.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.3 - Sécuriser les identifiants de sauvegarde
   Category: 2. Installation et Planification
+  Commande de test: Inspecter les permissions des fichiers contenant les credentials de sauvegarde.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Inspecter les permissions des fichiers contenant les credentials de sauvegarde.
+  Procédure de remédiation: Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.4 - Sécuriser les fichiers de sauvegarde
   Category: 2. Installation et Planification
+  Commande de test: Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.
+  Procédure de remédiation: Utiliser le chiffrement des sauvegardes (mariabackup + openssl enc).
 ------------------------------------------------------------------------------------------
-[PASS] 2.1.5 - Point-in-Time Recovery
+[MANUAL] 2.1.5 - Point-in-Time Recovery
   Category: 2. Installation et Planification
-  Output: Stdout:
-864000
-Stderr:
+  Commande de test: mysql -N -B -e "SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE variable_name = 'binlog_expire_logs_seconds';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Activer les binlogs, configurer binlog_expire_logs_seconds dans mariadb.cnf, tester les restaurations PITR.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.6 - Plan de reprise d'activité (DR)
   Category: 2. Installation et Planification
+  Commande de test: Vérifier l'existence et la validité du plan DR.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Vérifier l'existence et la validité du plan DR.
+  Procédure de remédiation: Documenter et tester un plan DR incluant réplication Galera, backups offsite.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.7 - Sauvegarde des fichiers de configuration
   Category: 2. Installation et Planification
+  Commande de test: Contrôler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, clés SSL, etc.).
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
@@ -141,16 +167,20 @@ Stderr:
 /bin/bash: -c: line 1: syntax error near unexpected token `('
 /bin/bash: -c: line 1: `Contrôler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, clés SSL, etc.).'
 Return Code: 2
+  Procédure de remédiation: Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.2 - Dédier la machine à MariaDB
   Category: 2. Installation et Planification
+  Commande de test: Vérifier les services actifs sur la machine.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Vérifier les services actifs sur la machine.
+  Procédure de remédiation: Utiliser un serveur dédié ou un conteneur pour MariaDB.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.3 - Ne pas spécifier de mots de passe en ligne de commande
   Category: 2. Installation et Planification
+  Commande de test: ps -ef | grep -E 'mysql|mariadb' | grep -v grep | grep -E '\-p[^ ]'
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
@@ -159,23 +189,24 @@ Stdout:
 Stderr:
 
 Return Code: 1
+  Procédure de remédiation: Utiliser des fichiers d'options (.my.cnf) ou des méthodes d'authentification alternatives.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.4 - Ne pas réutiliser les noms d'utilisateurs
   Category: 2. Installation et Planification
+  Commande de test: mysql -N -B -e "SELECT host, user, plugin FROM mysql.user WHERE user NOT IN ('mysql.infoschema', 'mysql.session', 'mysql.sys', 'mariadb.sys') ORDER BY user;"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-127.0.0.1	healthcheck	mysql_native_password
-::1	healthcheck	mysql_native_password
-localhost	healthcheck	mysql_native_password
-localhost	root	mysql_native_password
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Ajouter/Supprimer les utilisateurs pour que chaque compte soit dédié à un usage spécifique.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.5 - S'assurer que le matériel cryptographique est unique et non par défaut
   Category: 2. Installation et Planification
+  Commande de test: Vérifier les certificats SSL utilisés par MariaDB.
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
@@ -184,94 +215,108 @@ Stdout:
 Stderr:
 /bin/bash: line 1: Vérifier: command not found
 Return Code: 127
+  Procédure de remédiation: Générer de nouveaux certificats, clés et autre matériel cryptographique pour chaque instance.
 ------------------------------------------------------------------------------------------
-[PASS] 2.6 - Assurer que password_lifetime <= 365
+[MANUAL] 2.6 - Assurer que password_lifetime <= 365
   Category: 2. Installation et Planification
-  Output: Stdout:
-365
-Stderr:
+  Commande de test: mysql -N -B -e "SELECT @@default_password_lifetime;"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: SET GLOBAL default_password_lifetime=365;
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.7 - Verrouiller les comptes inutilisés
   Category: 2. Installation et Planification
+  Commande de test: mysql -N -B -e "SELECT CONCAT(user, '@', host) FROM mysql.global_priv;"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-healthcheck@127.0.0.1
-healthcheck@::1
-healthcheck@localhost
-mariadb.sys@localhost
-root@localhost
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: ALTER USER 'user'@'host' ACCOUNT LOCK; pour chaque compte inutilisé.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.8 - Utilisation appropriée de l'authentification Socket Peer-Credential
   Category: 2. Installation et Planification
+  Commande de test: mysql -N -B -e "SELECT PLUGIN_NAME, PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'unix_socket';"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-unix_socket	ACTIVE
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Configurer unix_socket=ON/OFF selon les besoins. ALTER USER ... IDENTIFIED VIA unix_socket.
 ------------------------------------------------------------------------------------------
-[PASS] 2.9 - S'assurer que MariaDB est lié à une adresse IP
+[MANUAL] 2.9 - S'assurer que MariaDB est lié à une adresse IP
   Category: 2. Installation et Planification
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME = 'bind_address';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
-
-Return Code: 0
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Configurer bind_address=<adresse_IP_spécifique> dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[PASS] 2.10 - Limiter les versions TLS acceptées
+[MANUAL] 2.10 - Limiter les versions TLS acceptées
   Category: 2. Installation et Planification
-  Output: Stdout:
-TLSv1.2,TLSv1.3
-Stderr:
+  Commande de test: mysql -N -B -e "SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME = 'tls_version';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Configurer tls_version=TLSv1.2,TLSv1.3 dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[PASS] 2.11 - Exiger des certificats côté client (X.509)
+[MANUAL] 2.11 - Exiger des certificats côté client (X.509)
   Category: 2. Installation et Planification
-  Output: Stdout:
-0
-Stderr:
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type NOT IN ('ANY', 'X509', 'SPECIFIED');"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: ALTER USER '<user>'@'<host>' REQUIRE X509;
 ------------------------------------------------------------------------------------------
-[FAIL] 2.12 - S'assurer que seuls les chiffrement approuvés sont utilisés
+[MANUAL] 2.12 - S'assurer que seuls les chiffrement approuvés sont utilisés
   Category: 2. Installation et Planification
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME = 'ssl_cipher';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
-
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Configurer ssl_cipher avec une liste de chiffrements approuvés dans mariadb.cnf.
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Configurer ssl_cipher avec une liste de chiffrements approuvés dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[PASS] 3.1 - Permissions adéquates sur 'datadir'
+[MANUAL] 3.1 - Permissions adéquates sur 'datadir'
   Category: 3. Permissions Fichiers
-  Output: Stdout:
-mysql:mysql 755
-Stderr:
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: chown -R mysql:mysql <datadir> && chmod 700 <datadir>
 ------------------------------------------------------------------------------------------
-[FAIL] 3.2 - Permissions sur les fichiers 'log_bin_basename'
+[MANUAL] 3.2 - Permissions sur les fichiers 'log_bin_basename'
   Category: 3. Permissions Fichiers
-  Output: Stdout:
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_bin_basename;"`
+Stdout:
 
 Stderr:
-ls: cannot access 'NULL*': No such file or directory
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Appliquer chmod 600 sur les fichiers binaires.
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Appliquer chmod 600 sur les fichiers binaires.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.3 - Permissions sur 'log_error'
   Category: 3. Permissions Fichiers
@@ -280,545 +325,532 @@ Condition de succès non remplie.
 Stdout:
 
 Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Appliquer des permissions restrictives (ex: 640 ou 600).
 ------------------------------------------------------------------------------------------
-[FAIL] 3.4 - Permissions sur 'slow_query_log'
+[MANUAL] 3.4 - Permissions sur 'slow_query_log'
   Category: 3. Permissions Fichiers
-  Output: Stdout:
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@slow_query_log_file;"`
+Stdout:
 
 Stderr:
-stat: cannot statx 'e9bfab4b508c-slow.log': No such file or directory
-Return Code: 1
-
-Condition de succès non remplie.
-  Remediation: Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600).
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600).
 ------------------------------------------------------------------------------------------
-[FAIL] 3.5 - Permissions sur 'relay_log_basename'
+[MANUAL] 3.5 - Permissions sur 'relay_log_basename'
   Category: 3. Permissions Fichiers
-  Output: Stdout:
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@relay_log_basename;"`
+Stdout:
 
 Stderr:
-ls: cannot access 'NULL*': No such file or directory
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Appliquer chmod 600.
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Appliquer chmod 600.
 ------------------------------------------------------------------------------------------
-[FAIL] 3.6 - Permissions sur 'general_log_file'
+[MANUAL] 3.6 - Permissions sur 'general_log_file'
   Category: 3. Permissions Fichiers
-  Output: Stdout:
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@general_log_file;"`
+Stdout:
 
 Stderr:
-stat: cannot statx 'e9bfab4b508c.log': No such file or directory
-Return Code: 1
-
-Condition de succès non remplie.
-  Remediation: Restreindre les droits d'accès (ex: 640 ou 600).
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Restreindre les droits d'accès (ex: 640 ou 600).
 ------------------------------------------------------------------------------------------
-[FAIL] 3.7 - Permissions sur les fichiers de clés SSL
+[MANUAL] 3.7 - Permissions sur les fichiers de clés SSL
   Category: 3. Permissions Fichiers
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SHOW VARIABLES LIKE 'ssl_key';" | awk '{print $2}' | xargs stat -c '%a'
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 stat: missing operand
 Try 'stat --help' for more information.
 Return Code: 123
-
-Condition de succès non remplie.
-  Remediation: Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql.
+  Procédure de remédiation: Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql.
 ------------------------------------------------------------------------------------------
-[PASS] 3.8 - Permissions sur le répertoire des plugins
+[MANUAL] 3.8 - Permissions sur le répertoire des plugins
   Category: 3. Permissions Fichiers
-  Output: Stdout:
-root:root 755
-Stderr:
-
-Return Code: 0
-------------------------------------------------------------------------------------------
-[FAIL] 3.9 - Permissions sur 'server_audit_file_path'
-  Category: 3. Permissions Fichiers
-  Output: Stdout:
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@plugin_dir;"`
+Stdout:
 
 Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>
+------------------------------------------------------------------------------------------
+[MANUAL] 3.9 - Permissions sur 'server_audit_file_path'
+  Category: 3. Permissions Fichiers
+  Commande de test: mysql -N -B -e "SHOW VARIABLES LIKE 'server_audit_file_path';" | awk '{print $2}' | xargs stat -c '%a'
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 stat: missing operand
 Try 'stat --help' for more information.
 Return Code: 123
-
-Condition de succès non remplie.
-  Remediation: Appliquer des permissions restrictives (ex: 640 ou 600).
+  Procédure de remédiation: Appliquer des permissions restrictives (ex: 640 ou 600).
 ------------------------------------------------------------------------------------------
-[FAIL] 3.10 - Permissions sur les fichiers du plugin File Key Management
+[MANUAL] 3.10 - Permissions sur les fichiers du plugin File Key Management
   Category: 3. Permissions Fichiers
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SHOW VARIABLES LIKE 'file_key_management_filename';" | awk '{print $2}' | xargs stat -c '%a'
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 stat: missing operand
 Try 'stat --help' for more information.
 Return Code: 123
-
-Condition de succès non remplie.
-  Remediation: Restreindre l'accès aux fichiers de clés de chiffrement (chmod 640).
+  Procédure de remédiation: Restreindre l'accès aux fichiers de clés de chiffrement (chmod 640).
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.1 - S'assurer que les derniers correctifs de sécurité sont appliqués
   Category: 4. Général
+  Commande de test: mysql -N -B -e "SELECT @@version;"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-10.6.25-MariaDB-ubu2204
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.
 ------------------------------------------------------------------------------------------
-[PASS] 4.2 - S'assurer que les bases de test ne sont pas installées en production
+[MANUAL] 4.2 - S'assurer que les bases de test ne sont pas installées en production
   Category: 4. Général
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME IN ('employees', 'world', 'world_x', 'sakila', 'airportdb', 'menagerie', 'test');"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
-
-Return Code: 0
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Exécutez DROP DATABASE <database name>; pour supprimer une base de données d'exemple.
 ------------------------------------------------------------------------------------------
 [PASS] 4.3 - S'assurer que 'allow-suspicious-udfs' est à 'OFF'
   Category: 4. Général
+  Commande de test: my_print_defaults mysqld 2>/dev/null | grep -q 'allow-suspicious-udfs' && echo 'FOUND' || echo 'NOT FOUND'
   Output: Stdout:
 NOT FOUND
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Supprimer --allow-suspicious-udfs de la ligne de commande ou du fichier de configuration.
 ------------------------------------------------------------------------------------------
-[PASS] 4.4 - Renforcer l'utilisation de 'local_infile' sur les clients MariaDB
+[MANUAL] 4.4 - Renforcer l'utilisation de 'local_infile' sur les clients MariaDB
   Category: 4. Général
-  Output: Stdout:
-0
-Stderr:
+  Commande de test: mysql -N -B -e "SELECT @@local_infile;"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Ajouter local-infile=0 à la section [mariadbd] et [client] du fichier de configuration MariaDB.
 ------------------------------------------------------------------------------------------
 [PASS] 4.5 - S'assurer que mariadb n'est pas démarré avec '--skip-grant-tables'
   Category: 4. Général
+  Commande de test: ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | grep -q 'skip-grant-tables' && echo 'FOUND' || echo 'NOT FOUND'
   Output: Stdout:
 NOT FOUND
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Supprimer l'option --skip-grant-tables de la ligne de commande ou du fichier de configuration.
 ------------------------------------------------------------------------------------------
-[PASS] 4.6 - S'assurer que les liens symboliques sont désactivés
+[MANUAL] 4.6 - S'assurer que les liens symboliques sont désactivés
   Category: 4. Général
-  Output: Stdout:
-DISABLED
-Stderr:
+  Commande de test: mysql -N -B -e "SELECT @@have_symlink;"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Ajouter skip-symbolic-links dans la section [mariadbd] du fichier mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[PASS] 4.7 - S'assurer que 'secure_file_priv' est configuré correctement
+[MANUAL] 4.7 - S'assurer que 'secure_file_priv' est configuré correctement
   Category: 4. Général
-  Output: Stdout:
-/var/lib/mysql-files/
-Stderr:
+  Commande de test: mysql -N -B -e "SHOW GLOBAL VARIABLES WHERE Variable_name = 'secure_file_priv';" | awk '{print $2}'
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 0
+  Procédure de remédiation: Configurer secure_file_priv sur NULL (pour désactiver) ou sur un chemin spécifique dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[PASS] 4.8 - S'assurer que sql_mode contient STRICT_ALL_TABLES
+[MANUAL] 4.8 - S'assurer que sql_mode contient STRICT_ALL_TABLES
   Category: 4. Général
-  Output: Stdout:
-STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION
-Stderr:
+  Commande de test: mysql -N -B -e "SELECT @@sql_mode;"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[FAIL] 4.9 - Activer le chiffrement des données au repos dans MariaDB
+[MANUAL] 4.9 - Activer le chiffrement des données au repos dans MariaDB
   Category: 4. Général
-  Output: Stdout:
-OFF
+  Commande de test: mysql -N -B -e "SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE variable_name = 'innodb_encrypt_tables';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
 Stderr:
-
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Configurer file_key_management plugin et innodb_encrypt_tables=ON dans mariadb.cnf.
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Configurer file_key_management plugin et innodb_encrypt_tables=ON dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.1 - Limiter l'accès complet à mysql.* aux seuls administrateurs
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges WHERE grantee NOT LIKE ('\\'mysql.%localhost\\'');"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-'healthcheck'@'localhost'	USAGE
-'healthcheck'@'::1'	USAGE
-'healthcheck'@'127.0.0.1'	USAGE
-'mariadb.sys'@'localhost'	USAGE
-'root'@'localhost'	SELECT
-'root'@'localhost'	INSERT
-'root'@'localhost'	UPDATE
-'root'@'localhost'	DELETE
-'root'@'localhost'	CREATE
-'root'@'localhost'	DROP
-'root'@'localhost'	RELOAD
-'root'@'localhost'	SHUTDOWN
-'root'@'localhost'	PROCESS
-'root'@'localhost'	FILE
-'root'@'localhost'	REFERENCES
-'root'@'localhost'	INDEX
-'root'@'localhost'	ALTER
-'root'@'localhost'	SHOW DATABASES
-'root'@'localhost'	SUPER
-'root'@'localhost'	CREATE TEMPORARY TABLES
-'root'@'localhost'	LOCK TABLES
-'root'@'localhost'	EXECUTE
-'root'@'localhost'	REPLICATION SLAVE
-'root'@'localhost'	BINLOG MONITOR
-'root'@'localhost'	CREATE VIEW
-'root'@'localhost'	SHOW VIEW
-'root'@'localhost'	CREATE ROUTINE
-'root'@'localhost'	ALTER ROUTINE
-'root'@'localhost'	CREATE USER
-'root'@'localhost'	EVENT
-'root'@'localhost'	TRIGGER
-'root'@'localhost'	CREATE TABLESPACE
-'root'@'localhost'	DELETE HISTORY
-'root'@'localhost'	SET USER
-'root'@'localhost'	FEDERATED ADMIN
-'root'@'localhost'	CONNECTION ADMIN
-'root'@'localhost'	READ_ONLY ADMIN
-'root'@'localhost'	REPLICATION SLAVE ADMIN
-'root'@'localhost'	REPLICATION MASTER ADMIN
-'root'@'localhost'	BINLOG ADMIN
-'root'@'localhost'	BINLOG REPLAY
-'root'@'localhost'	SLAVE MONITOR
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs.
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.2 - Retirer le droit FILE aux non-admins
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'FILE';"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-'root'@'localhost'
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: REVOKE FILE ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.3 - Retirer le droit PROCESS aux non-admins
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'PROCESS';"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-'root'@'localhost'
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: REVOKE PROCESS ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.4 - Retirer le droit SUPER aux non-admins
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SUPER';"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-'root'@'localhost'
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: REVOKE SUPER ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.5 - Retirer le droit SHUTDOWN aux non-admins
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SHUTDOWN';"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-'root'@'localhost'
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.6 - Retirer CREATE USER aux non-admins
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'CREATE USER';"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-'root'@'localhost'
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.7 - Retirer GRANT OPTION aux non-admins
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE IS_GRANTABLE = 'YES';"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-'root'@'localhost'
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.8 - Limiter REPLICATION SLAVE aux comptes de réplication
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'REPLICATION SLAVE';"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-'root'@'localhost'
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication.
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.9 - Limiter les droits DML/DDL à des BD/comptes précis
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT GRANTEE, PRIVILEGE_TYPE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE IN ('SELECT','INSERT','UPDATE','DELETE','CREATE','DROP','ALTER');"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-'root'@'localhost'	SELECT
-'root'@'localhost'	INSERT
-'root'@'localhost'	UPDATE
-'root'@'localhost'	DELETE
-'root'@'localhost'	CREATE
-'root'@'localhost'	DROP
-'root'@'localhost'	ALTER
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Révoquer les droits superflus par base de données/compte.
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.10 - Définir proprement DEFINER/INVOKER des SP/Functions
   Category: 5. Permissions MariaDB
+  Commande de test: mysql -N -B -e "SELECT ROUTINE_SCHEMA, ROUTINE_NAME, DEFINER, SECURITY_TYPE FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mariadb.sys@localhost');"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-
-Return Code: 0
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.
 ------------------------------------------------------------------------------------------
-[PASS] 6.1 - Configurer log_error correctement
+[MANUAL] 6.1 - Configurer log_error correctement
   Category: 6. Audit & Journalisation
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SHOW VARIABLES LIKE 'log_error';" | awk '{print $2}'
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
-
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 0
+  Procédure de remédiation: Définir log-error=/chemin/vers/mariadb.err dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[FAIL] 6.2 - Journal hors partition système
+[MANUAL] 6.2 - Journal hors partition système
   Category: 6. Audit & Journalisation
-  Output: Stdout:
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_bin_basename;"`
+Stdout:
 
 Stderr:
-df: NULL: No such file or directory
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système.
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système.
 ------------------------------------------------------------------------------------------
-[PASS] 6.3 - log_warnings=2
+[MANUAL] 6.3 - log_warnings=2
   Category: 6. Audit & Journalisation
-  Output: Stdout:
-2
-Stderr:
-
-Return Code: 0
-------------------------------------------------------------------------------------------
-[FAIL] 6.4 - Activer la journalisation d'audit (server_audit)
-  Category: 6. Audit & Journalisation
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SELECT @@log_warnings;"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
-
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Installer et configurer le plugin server_audit : plugin_load_add=server_audit, server_audit_logging=ON dans mariadb.cnf.
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Ajouter log_warnings=2 dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[FAIL] 6.5 - Interdire le déchargement du plugin d'audit
+[MANUAL] 6.4 - Activer la journalisation d'audit (server_audit)
   Category: 6. Audit & Journalisation
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SELECT PLUGIN_STATUS FROM information_schema.plugins WHERE PLUGIN_NAME = 'SERVER_AUDIT';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
-
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Ajouter server_audit=FORCE_PLUS_PERMANENT dans mariadb.cnf.
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Installer et configurer le plugin server_audit : plugin_load_add=server_audit, server_audit_logging=ON dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[FAIL] 6.6 - Chiffrer les Binary et Relay Logs
+[MANUAL] 6.5 - Interdire le déchargement du plugin d'audit
   Category: 6. Audit & Journalisation
-  Output: Stdout:
-OFF
+  Commande de test: mysql -N -B -e "SELECT LOAD_OPTION FROM information_schema.plugins WHERE PLUGIN_NAME='SERVER_AUDIT';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
 Stderr:
-
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Ajouter encrypt_binlog=ON dans mariadb.cnf (nécessite un plugin de gestion de clés).
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Ajouter server_audit=FORCE_PLUS_PERMANENT dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[PASS] 7.1 - Désactiver mysql_old_password (old_passwords=OFF, secure_auth=ON)
+[MANUAL] 6.6 - Chiffrer les Binary et Relay Logs
+  Category: 6. Audit & Journalisation
+  Commande de test: mysql -N -B -e "SELECT VARIABLE_VALUE FROM information_schema.global_variables WHERE variable_name = 'encrypt_binlog';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Ajouter encrypt_binlog=ON dans mariadb.cnf (nécessite un plugin de gestion de clés).
+------------------------------------------------------------------------------------------
+[MANUAL] 7.1 - Désactiver mysql_old_password (old_passwords=OFF, secure_auth=ON)
   Category: 7. Authentification
-  Output: Stdout:
-0
-Stderr:
+  Commande de test: mysql -N -B -e "SELECT @@old_passwords;"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Configurer old_passwords=0 et secure_auth=ON dans mariadb.cnf et redémarrer.
 ------------------------------------------------------------------------------------------
 [PASS] 7.2 - Aucun mot de passe dans la configuration globale
   Category: 7. Authentification
+  Commande de test: ! grep -riE 'password|pwd|pass' /etc/mysql/ /etc/my.cnf 2>/dev/null | grep -v '#' | grep -v 'password_lifetime' | grep -v 'password_check' | grep -v 'validate_password' | grep -v 'strict_password' | grep -v 'old_passwords' | grep -v 'default_password_lifetime' | grep -v 'password_last_changed'
   Output: Stdout:
 
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Utiliser des fichiers .my.cnf privés ou mysql_config_editor avec permissions restreintes.
 ------------------------------------------------------------------------------------------
-[FAIL] 7.3 - Authentification forte pour tous les comptes
+[MANUAL] 7.3 - Authentification forte pour tous les comptes
   Category: 7. Authentification
-  Output: Stdout:
-mariadb.sys	localhost
-root	localhost
-healthcheck	127.0.0.1
-healthcheck	::1
-healthcheck	localhost
+  Commande de test: mysql -N -B -e "SELECT User, host FROM mysql.user WHERE (plugin IN('mysql_native_password', 'mysql_old_password','') AND NOT (User = 'root' AND authentication_string = 'invalid') AND NOT (User = 'mysql' AND authentication_string = 'invalid'));"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
 Stderr:
-
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte.
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte.
 ------------------------------------------------------------------------------------------
-[FAIL] 7.4 - Politique de complexité des mots de passe (simple_password_check)
+[MANUAL] 7.4 - Politique de complexité des mots de passe (simple_password_check)
   Category: 7. Authentification
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SELECT PLUGIN_STATUS FROM information_schema.plugins WHERE PLUGIN_NAME = 'simple_password_check';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
-
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_password_check';
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_password_check';
 ------------------------------------------------------------------------------------------
-[PASS] 7.5 - Pas de wildcard '%' dans host
+[MANUAL] 7.5 - Pas de wildcard '%' dans host
   Category: 7. Authentification
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE host = '%';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
-
-Return Code: 0
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: ALTER USER '<user>'@'%' ... ou supprimer le compte.
 ------------------------------------------------------------------------------------------
-[PASS] 7.6 - Supprimer les comptes anonymes
+[MANUAL] 7.6 - Supprimer les comptes anonymes
   Category: 7. Authentification
-  Output: Stdout:
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE user = '';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
 Stderr:
-
-Return Code: 0
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: DROP USER ''@'<host>'; ou utiliser mariadb-secure-installation.
 ------------------------------------------------------------------------------------------
-[FAIL] 8.1 - Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES)
+[MANUAL] 8.1 - Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES)
   Category: 8. Sécurité réseau
-  Output: Stdout:
-0
+  Commande de test: mysql -N -B -e "SELECT @@require_secure_transport;"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
+
 Stderr:
-
-Return Code: 0
-
-Condition de succès non remplie.
-  Remediation: Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf.
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf.
 ------------------------------------------------------------------------------------------
-[PASS] 8.2 - Exiger TLS côté utilisateur (ssl_type)
+[MANUAL] 8.2 - Exiger TLS côté utilisateur (ssl_type)
   Category: 8. Sécurité réseau
-  Output: Stdout:
-0
-Stderr:
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type = '';"
+  Output: Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+Stdout:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;
 ------------------------------------------------------------------------------------------
 [MANUAL] 8.3 - Limiter le nombre de connexions
   Category: 8. Sécurité réseau
+  Commande de test: mysql -N -B -e "SELECT VARIABLE_NAME, VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME LIKE 'max_%connections';"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
-MAX_CONNECTIONS	151
-MAX_USER_CONNECTIONS	0
-Stderr:
 
-Return Code: 0
+Stderr:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+Return Code: 1
+  Procédure de remédiation: Ajuster max_connections et max_user_connections dans mariadb.cnf selon les besoins.
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.1 - Chiffrer le trafic de réplication
   Category: 9. Réplication
+  Commande de test: mysql -N -B -e "SHOW REPLICA STATUS\G" | grep 'Master_SSL_Allowed'
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: STOP REPLICA; CHANGE MASTER TO MASTER_SSL=1; START REPLICA;
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.2 - MASTER_SSL_VERIFY_SERVER_CERT activé
   Category: 9. Réplication
+  Commande de test: mysql -N -B -e "SHOW REPLICA STATUS\G" | grep 'Master_SSL_Verify_Server_Cert'
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
+  Procédure de remédiation: STOP REPLICA; CHANGE MASTER TO MASTER_SSL_VERIFY_SERVER_CERT=1; START REPLICA;
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.3 - Pas de SUPER pour les utilisateurs de réplication
   Category: 9. Réplication
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%' AND Super_priv = 'Y';"
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';" | grep -q '[1-9]'
+  Procédure de remédiation: REVOKE SUPER ON *.* FROM '<repl_user>'@'<repl_host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.4 - Chiffrement approuvé pour la réplication
   Category: 9. Réplication
+  Commande de test: mysql -N -B -e "SHOW REPLICA STATUS\G" | grep 'Master_SSL_Cipher'
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: STOP REPLICA; CHANGE MASTER TO MASTER_SSL_CIPHER='ECDHE-ECDSA-AES128-GCM-SHA256'; START REPLICA;
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.5 - TLS mutuel activé pour la réplication
   Category: 9. Réplication
+  Commande de test: mysql -N -B -e "SHOW REPLICA STATUS\G" | grep -E 'Master_SSL_Cert|Master_SSL_Key'
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: STOP REPLICA; CHANGE MASTER TO MASTER_SSL_CERT='...', MASTER_SSL_KEY='...'; START REPLICA; ALTER USER <repl_user> REQUIRE X509;
 ------------------------------------------------------------------------------------------
