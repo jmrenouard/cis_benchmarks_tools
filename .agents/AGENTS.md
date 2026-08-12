@@ -21,6 +21,21 @@
 
 ---
 
+## Mandatory Standardized ROADMAP & POTENTIAL_ISSUES Format Rule
+
+> [!IMPORTANT]
+> **Standardization for ROADMAP.md and POTENTIAL_ISSUES.md on EVERY Modification:**
+> 1. **ROADMAP.md**:
+>    - **Executive Progress Dashboard**: Must include a summary table at the top detailing Phase, Target Version, Status (`Completed ✅`, `In Progress 🔄`, `Planned ⏳`), Total Tasks, and Progress percentage.
+>    - **Phase Structure**: Every phase must clearly display Status & Target Version in its header, followed by sub-components and checkbox task items (`- [x]` / `- [ ]`) with bold task titles and precise descriptions.
+>    - **PR Summary Table**: Must maintain a structured summary mapping PR ID, Version, Status, and Review Feedback.
+> 2. **POTENTIAL_ISSUES.md**:
+>    - **Resolved Backlog Items**: Each entry must explicitly specify `Problem` and `Resolution` fields with version badges.
+>    - **Active Quality Controls**: Must detail continuous quality enforcement mechanisms.
+>    - **PR Resolution List**: Must maintain an itemized list of all resolved PRs with version tags.
+
+---
+
 ## Mandatory Git & Release Lifecycle for ALL Modifications
 
 For EVERY modification (code change, script edit, refactoring, documentation update):
@@ -33,8 +48,8 @@ For EVERY modification (code change, script edit, refactoring, documentation upd
    - Write clean, maintainable code following **Python 3 Standard Library (PSL ONLY)** rule. No external packages allowed.
    - **Whenever Python code is modified**:
      - Increment version in `VERSION`.
-     - Update `ROADMAP.md` with new features/fixes.
-     - Update `POTENTIAL_ISSUES.md` with resolved debt/issues.
+     - Update `ROADMAP.md` following the standardized Phase & Task format.
+     - Update `POTENTIAL_ISSUES.md` following the standardized Backlog format.
    - Run `make pre-commit` to bundle `audit_cis.py` and run syntax, AST PSL, shell, and report integrity checks.
 4. **Push Branch**:
    - `git push origin feat/<descriptive-name>`
