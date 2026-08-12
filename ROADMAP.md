@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v1.9.0)
+# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.0.0)
 
 This document outlines the strategic roadmap, architecture principles, phase-level milestones, and task-level execution status for the CIS Benchmarks Tools suite.
 
@@ -22,7 +22,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 5** | Rule Spec Externalization & Offline SVG Charts Engine | `v1.7.0` | `Completed ✅` | 5/5 | 100% |
 | **Phase 6** | PR Diff Size Limits & Centralized HTML Templates | `v1.8.0` | `Completed ✅` | 4/4 | 100% |
 | **Phase 7** | Dual Local/SSH Modes & Database Connection Parameters | `v1.9.0` | `Completed ✅` | 5/5 | 100% |
-| **Phase 8** | Advanced Formatting, Rule Exclusions & Visual UI Validation | `v2.0.0` | `Planned ⏳` | 0/7 | 0% |
+| **Phase 8** | Advanced Formatting, Rule Exclusions & Visual UI Validation | `v2.0.0` | `Completed ✅` | 7/7 | 100% |
 
 ---
 
@@ -137,21 +137,21 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 
 ---
 
-### Phase 8: Advanced Formatting, Rule Exclusions & Visual UI Validation (`Planned ⏳ - v2.0.0 Target`)
+### Phase 8: Advanced Formatting, Rule Exclusions & Visual UI Validation (`Completed ✅ - v2.0.0`)
 **Summary**: Enhance text report outputs, add thematic security metrics, upgrade HTML templates, sanitize rule commands, expand check automation, support rule exclusions, and automate visual UI browser testing.
 
 #### 8.1 Plain-Text Reporting & Thematic Metrics
-- [ ] **1° Enhanced Plain-Text ASCII Summary Tables**: Upgrade `--format txt` output to generate formatted ASCII summary tables with category scores, PASS/FAIL ratios, and clear alignment.
-- [ ] **2° Thematic Security Domain Metrics**: Group compliance metrics by security domain (Authentication, Access Control, Network Isolation, TLS/Encryption, Logging & Auditing).
+- [x] **1° Enhanced Plain-Text ASCII Summary Tables**: Upgrade `--format txt` output to generate formatted ASCII summary tables with category scores, PASS/FAIL ratios, and clear alignment.
+- [x] **2° Thematic Security Domain Metrics**: Group compliance metrics by security domain (Authentication, Access Control, Network Isolation, TLS/Encryption, Logging & Auditing).
 
 #### 8.2 HTML Template Polish & Rule Exclusion Engine
-- [ ] **3° Aesthetic & Functional HTML Template Upgrade**: Enhance `templates/report_template.html` with modern UI, responsive alignment, dark mode toggle, visual icons, and zero layout overflow.
-- [ ] **6° Rule Exclusion Engine (`--exclude-rules` / `--skip-rule`)**: Implement CLI flags and JSON config support to skip or exclude specific control IDs or categories during audits.
+- [x] **3° Aesthetic & Functional HTML Template Upgrade**: Enhance `templates/report_template.html` with modern UI, responsive alignment, dark mode toggle, visual icons, and zero layout overflow.
+- [x] **6° Rule Exclusion Engine (`--exclude-rules` / `--skip-rule`)**: Implement CLI flags and JSON config support to skip or exclude specific control IDs or categories during audits.
 
 #### 8.3 Command Verification, Automation Expansion & Visual Browser Testing
-- [ ] **4° Rule Command Validation & Execution Safety**: Enhance `rules/*.json` specifications to validate test procedure shell syntax and enforce command execution safety.
-- [ ] **5° Check Automation Expansion (Minimize Manual Checks)**: Convert legacy `Manual` inspection items into automated database queries and system command verifications.
-- [ ] **7° Automated Headless Browser Visual UI Validation**: Integrate automated browser testing (headless Chromium visual QA) in E2E tests to detect layout regressions (no text overflow, no misaligned tables, no missing icons).
+- [x] **4° Rule Command Validation & Execution Safety**: Enhance `rules/*.json` specifications to validate test procedure shell syntax and enforce command execution safety.
+- [x] **5° Check Automation Expansion (Minimize Manual Checks)**: Convert legacy `Manual` inspection items into automated database queries and system command verifications.
+- [x] **7° Automated Headless Browser Visual UI Validation**: Integrate automated browser testing (headless Chromium visual QA) in E2E tests to detect layout regressions (no text overflow, no misaligned tables, no missing icons).
 
 ---
 
@@ -164,3 +164,4 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **PR #106** | `v1.7.1` | PR Diff Size Limit & Workspace Rules | `Merged ✅` | Enforced strict < 15K diff character limit and atomic PR splitting rules in `AGENTS.md`. |
 | **PR #107** | `v1.8.0` | Centralized HTML Report Templates | `Merged ✅` | Extracted report templates into `templates/report_template.html` with PSL loader. |
 | **PR #108** | `v1.9.0` | Dual Local/SSH Modes & E2E Validation | `Merged ✅` | Standardized SSH & DB options across all scripts and updated E2E runner for dual-mode tests. |
+| **PR #109** | `v2.0.0` | Phase 8 Advanced Formatting & Exclusions | `Merged ✅` | Enhanced TXT ASCII tables, thematic metrics, HTML dark mode, rule exclusions, and E2E visual QA. |
