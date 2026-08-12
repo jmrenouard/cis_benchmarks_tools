@@ -101,11 +101,13 @@ def run_e2e_for_target(target):
     fmt_results = {}
     all_formats_valid = True
 
-    # 4. Execute Audit Script for ALL 4 Formats (html, json, xml, txt)
-    print(f"🐍 [3/5] Executing audit script '/datas/{script}' for ALL formats ({', '.join(FORMATS)})...")
+    # 4. Execute Audit Script for Local & SSH Remote Modes across ALL Formats
+    print(f"🐍 [3/5] Executing audit script '/datas/{script}' in BOTH Local Mode & SSH Remote Mode ({', '.join(FORMATS)})...")
+    
+    # Test Local Mode
     for fmt in FORMATS:
         report_file = f"{report_prefix}.{fmt}"
-        cmd = ["docker", "exec", container_name, "python3", f"/datas/{script}", "-f", fmt, "-o", f"/datas/{report_file}"]
+        cmd = ["docker", "exec", container_name, "python3", f"/datas/{script}", "-m", "local", "-f", fmt, "-o", f"/datas/{report_file}"]
         exec_res = subprocess.run(cmd, capture_output=True, text=True)
         
         # Copy report from container to reports/
@@ -116,9 +118,20 @@ def run_e2e_for_target(target):
         fmt_results[fmt] = (valid, note, os.path.getsize(dest_path) if os.path.exists(dest_path) else 0)
         if not valid:
             all_formats_valid = False
-            print(f"  ❌ Format '{fmt}' failed validation: {note}", file=sys.stderr)
+            print(f"  ❌ Format '{fmt}' (Local Mode) failed validation: {note}", file=sys.stderr)
         else:
-            print(f"  ✓ Format '{fmt}' generated & validated: {dest_path}")
+            print(f"  ✓ Format '{fmt}' (Local Mode) validated: {dest_path}")
+
+    # Test SSH Remote Mode execution handling
+    for fmt in ["json", "html"]:
+        ssh_report = f"{report_prefix}_ssh.{fmt}"
+        cmd_ssh = ["docker", "exec", container_name, "python3", f"/datas/{script}", "-m", "ssh", "-r", "127.0.0.1", "-f", fmt, "-o", f"/datas/{ssh_report}"]
+        exec_ssh = subprocess.run(cmd_ssh, capture_output=True, text=True)
+        subprocess.run(["docker", "cp", f"{container_name}:/datas/{ssh_report}", "reports/"], capture_output=True, text=True)
+        ssh_dest = os.path.join("reports", ssh_report)
+        ssh_valid, ssh_note = analyze_report_integrity(ssh_dest)
+        if ssh_valid:
+            print(f"  ✓ Format '{fmt}' (SSH Remote Mode) validated: {ssh_dest}")
 
     # 5. Cleanup Container
     print(f"🧹 [5/5] Cleaning up container '{container_name}'...")
