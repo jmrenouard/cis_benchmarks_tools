@@ -1,46 +1,55 @@
 <?xml version='1.0' encoding='utf-8'?>
-<testsuite name="cassandra_41" tests="20" failures="7" timestamp="2026-08-12T13:55:44.243806"><testcase id="1.1" name="S'assurer qu'un utilisateur et un groupe dédiés existent pour Cassandra" classname="1 Installation et Mises à jour" /><testcase id="1.2" name="S'assurer que la dernière version de Java est installée" classname="1 Installation et Mises à jour" /><testcase id="1.3" name="S'assurer que la dernière version de Python est installée" classname="1 Installation et Mises à jour" /><testcase id="1.4" name="S'assurer que la dernière version de Cassandra est installée" classname="1 Installation et Mises à jour"><failure message="Control failed">Stdout:
-4.1.12
+<testsuite name="cassandra_41" tests="20" failures="8" timestamp="2026-08-12T20:49:11.991205"><testcase id="1.1" name="S'assurer qu'un utilisateur et un groupe dédiés existent pour Cassandra" classname="1 Installation et Mises à jour"><system-out>Test Command: getent group cassandra &amp;&amp; getent passwd cassandra</system-out><remediation>Créer un groupe et un utilisateur dédiés : groupadd cassandra &amp;&amp; useradd -g cassandra -s /sbin/nologin cassandra.</remediation></testcase><testcase id="1.2" name="S'assurer que la dernière version de Java est installée" classname="1 Installation et Mises à jour"><system-out>Test Command: java -version 2&gt;&amp;1 | head -1</system-out><remediation>Mettre à jour Java vers la dernière version LTS supportée (Java 11, 17 ou 21).</remediation></testcase><testcase id="1.3" name="S'assurer que la dernière version de Python est installée" classname="1 Installation et Mises à jour"><system-out>Test Command: python3 --version 2&gt;&amp;1</system-out><remediation>Mettre à jour Python vers la dernière version 3.x.</remediation></testcase><testcase id="1.4" name="S'assurer que la dernière version de Cassandra est installée" classname="1 Installation et Mises à jour"><system-out>Test Command: cassandra -v 2&gt;/dev/null || nodetool version 2&gt;/dev/null</system-out><remediation>Mettre à jour Cassandra vers la dernière version 4.1.x.</remediation><error message="Control execution error">Error: Command not found.
+Stdout:
+
 Stderr:
 
-Return Code: 0
+Return Code: 127</error></testcase><testcase id="1.5" name="S'assurer que le service Cassandra est exécuté en tant qu'utilisateur non-root" classname="1 Installation et Mises à jour"><system-out>Test Command: ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1</system-out><remediation>Configurer le service Cassandra pour qu'il s'exécute sous un utilisateur dédié (ex: 'cassandra').</remediation></testcase><testcase id="1.6" name="S'assurer que les horloges sont synchronisées sur tous les nœuds" classname="1 Installation et Mises à jour"><system-out>Test Command: timedatectl status 2&gt;/dev/null | grep 'synchronized' || ntpstat 2&gt;/dev/null || chronyc tracking 2&gt;/dev/null</system-out><remediation>Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.</remediation></testcase><testcase id="2.1" name="S'assurer que l'authentification est activée pour les bases de données Cassandra" classname="2 Authentification et Autorisation"><system-out>Test Command: grep -E '^authenticator:' /etc/cassandra/cassandra.yaml</system-out><remediation>Modifier cassandra.yaml pour définir 'authenticator: PasswordAuthenticator' et redémarrer Cassandra.</remediation><failure message="Control failed">Stdout:
 
-Condition de succès non remplie.</failure></testcase><testcase id="1.5" name="S'assurer que le service Cassandra est exécuté en tant qu'utilisateur non-root" classname="1 Installation et Mises à jour" /><testcase id="1.6" name="S'assurer que les horloges sont synchronisées sur tous les nœuds" classname="1 Installation et Mises à jour" /><testcase id="2.1" name="S'assurer que l'authentification est activée pour les bases de données Cassandra" classname="2 Authentification et Autorisation"><failure message="Control failed">Stdout:
-authenticator: AllowAllAuthenticator
 Stderr:
+grep: /etc/cassandra/cassandra.yaml: No such file or directory
+Return Code: 2
 
-Return Code: 0
+Condition de succès non remplie.</failure></testcase><testcase id="2.2" name="S'assurer que l'autorisation est activée pour les bases de données Cassandra" classname="2 Authentification et Autorisation"><system-out>Test Command: grep -E '^authorizer:' /etc/cassandra/cassandra.yaml</system-out><remediation>Modifier cassandra.yaml pour définir 'authorizer: CassandraAuthorizer' et redémarrer Cassandra.</remediation><failure message="Control failed">Stdout:
 
-Condition de succès non remplie.</failure></testcase><testcase id="2.2" name="S'assurer que l'autorisation est activée pour les bases de données Cassandra" classname="2 Authentification et Autorisation"><failure message="Control failed">Stdout:
-authorizer: AllowAllAuthorizer
 Stderr:
+grep: /etc/cassandra/cassandra.yaml: No such file or directory
+Return Code: 2
 
-Return Code: 0
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1" name="S'assurer que les rôles cassandra et superuser sont séparés" classname="3 Contrôle d'accès"><failure message="Control failed">Stdout:
+Condition de succès non remplie.</failure></testcase><testcase id="3.1" name="S'assurer que les rôles cassandra et superuser sont séparés" classname="3 Contrôle d'accès"><system-out>Test Command: cqlsh -e "LIST ROLES;" 2&gt;/dev/null | grep -v 'cassandra' | grep -c 'True'</system-out><remediation>Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH SUPERUSER = false;</remediation><failure message="Control failed">Stdout:
 0
 Stderr:
 
 Return Code: 1
 
-Condition de succès non remplie.</failure></testcase><testcase id="3.2" name="S'assurer que le mot de passe par défaut du rôle cassandra est changé" classname="3 Contrôle d'accès"><failure message="Control failed">Stdout:
+Condition de succès non remplie.</failure></testcase><testcase id="3.2" name="S'assurer que le mot de passe par défaut du rôle cassandra est changé" classname="3 Contrôle d'accès"><system-out>Test Command: cqlsh -e "SELECT * FROM system_auth.roles WHERE role='cassandra';" -u cassandra -p cassandra 2&gt;&amp;1 | grep -c 'AuthenticationFailed\|Unauthorized\|Bad credentials'</system-out><remediation>Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = '&lt;nouveau_mot_de_passe&gt;';</remediation><failure message="Control failed">Stdout:
 0
 Stderr:
 
 Return Code: 1
 
-Condition de succès non remplie.</failure></testcase><testcase id="3.3" name="S'assurer qu'il n'y a pas de rôles ou privilèges excessifs" classname="3 Contrôle d'accès" /><testcase id="3.4" name="S'assurer que Cassandra est exécuté sous un compte de service dédié" classname="3 Contrôle d'accès"><failure message="Control failed">Stdout:
-cassand+
+Condition de succès non remplie.</failure></testcase><testcase id="3.3" name="S'assurer qu'il n'y a pas de rôles ou privilèges excessifs" classname="3 Contrôle d'accès"><system-out>Test Command: cqlsh -e "LIST ROLES;" 2&gt;/dev/null</system-out><remediation>Révoquer les rôles et privilèges inutiles. Utiliser REVOKE et DROP ROLE.</remediation></testcase><testcase id="3.4" name="S'assurer que Cassandra est exécuté sous un compte de service dédié" classname="3 Contrôle d'accès"><system-out>Test Command: ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1</system-out><remediation>Configurer le service Cassandra pour qu'il s'exécute sous l'utilisateur 'cassandra'.</remediation><failure message="Control failed">Stdout:
+jmren
 Stderr:
 
 Return Code: 0
 
-Condition de succès non remplie.</failure></testcase><testcase id="3.5" name="S'assurer que Cassandra n'écoute que sur les interfaces autorisées" classname="3 Contrôle d'accès" /><testcase id="3.6" name="S'assurer que les autorisations Data Center sont activées" classname="3 Contrôle d'accès" /><testcase id="3.7" name="Réviser les rôles définis par l'utilisateur" classname="3 Contrôle d'accès" /><testcase id="3.8" name="Réviser les rôles superuser/administrateur" classname="3 Contrôle d'accès" /><testcase id="4.1" name="S'assurer que la journalisation est activée" classname="4 Audit et Journalisation" /><testcase id="4.2" name="S'assurer que l'audit est activé" classname="4 Audit et Journalisation" /><testcase id="5.1" name="Chiffrement inter-nœuds" classname="5 Chiffrement"><failure message="Control failed">Stdout:
-internode_encryption: none
-  # optional defaults to true if internode_encryption is none
-  # Set to a valid keystore if internode_encryption is dc, rack or all
+Condition de succès non remplie.</failure></testcase><testcase id="3.5" name="S'assurer que Cassandra n'écoute que sur les interfaces autorisées" classname="3 Contrôle d'accès"><system-out>Test Command: grep -E '^listen_address:|^rpc_address:' /etc/cassandra/cassandra.yaml</system-out><remediation>Modifier cassandra.yaml pour définir 'listen_address' et 'rpc_address' sur des interfaces spécifiques.</remediation></testcase><testcase id="3.6" name="S'assurer que les autorisations Data Center sont activées" classname="3 Contrôle d'accès"><system-out>Test Command: grep -E '^authorizer:' /etc/cassandra/cassandra.yaml</system-out><remediation>Configurer l'autorisation par Data Center si nécessaire.</remediation></testcase><testcase id="3.7" name="Réviser les rôles définis par l'utilisateur" classname="3 Contrôle d'accès"><system-out>Test Command: cqlsh -e "LIST ROLES;" 2&gt;/dev/null</system-out><remediation>Supprimer les rôles inutiles et révoquer les privilèges excessifs.</remediation></testcase><testcase id="3.8" name="Réviser les rôles superuser/administrateur" classname="3 Contrôle d'accès"><system-out>Test Command: cqlsh -e "LIST ROLES;" 2&gt;/dev/null | grep 'True'</system-out><remediation>Limiter le nombre de rôles superuser au strict nécessaire.</remediation></testcase><testcase id="4.1" name="S'assurer que la journalisation est activée" classname="4 Audit et Journalisation"><system-out>Test Command: ls -la /var/log/cassandra/system.log 2&gt;/dev/null || ls -la /opt/cassandra/logs/system.log 2&gt;/dev/null</system-out><remediation>Vérifier que la journalisation est configurée dans logback.xml et que les fichiers de log existent.</remediation><failure message="Control failed">Stdout:
+
 Stderr:
 
-Return Code: 0
+Return Code: 2
 
-Condition de succès non remplie.</failure></testcase><testcase id="5.2" name="Chiffrement client" classname="5 Chiffrement" /></testsuite>
+Condition de succès non remplie.</failure></testcase><testcase id="4.2" name="S'assurer que l'audit est activé" classname="4 Audit et Journalisation"><system-out>Test Command: grep -E '^audit_logging_options:' /etc/cassandra/cassandra.yaml || grep -A5 'audit_logging_options' /etc/cassandra/cassandra.yaml</system-out><remediation>Activer l'audit en configurant 'audit_logging_options' dans cassandra.yaml (Cassandra 4.1+).</remediation></testcase><testcase id="5.1" name="Chiffrement inter-nœuds" classname="5 Chiffrement"><system-out>Test Command: grep -A20 'server_encryption_options:' /etc/cassandra/cassandra.yaml | grep 'internode_encryption'</system-out><remediation>Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les certificats SSL/TLS.</remediation><failure message="Control failed">Stdout:
+
+Stderr:
+grep: /etc/cassandra/cassandra.yaml: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</failure></testcase><testcase id="5.2" name="Chiffrement client" classname="5 Chiffrement"><system-out>Test Command: grep -A20 'client_encryption_options:' /etc/cassandra/cassandra.yaml | grep 'enabled'</system-out><remediation>Configurer client_encryption_options dans cassandra.yaml : enabled: true, et fournir les certificats SSL/TLS.</remediation><failure message="Control failed">Stdout:
+
+Stderr:
+grep: /etc/cassandra/cassandra.yaml: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</failure></testcase></testsuite>
