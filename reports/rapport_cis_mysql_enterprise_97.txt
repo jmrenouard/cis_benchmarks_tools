@@ -1,15 +1,15 @@
 ==========================================================================================
                CIS BENCHMARK AUDIT REPORT - MYSQL_ENTERPRISE_97
 ==========================================================================================
-Report Date   : 2026-08-12 15:05:46
-Global Score  : 76.5%
+Report Date   : 2026-08-12 20:50:23
+Global Score  : 70.6%
 Total Controls: 70
 ------------------------------------------------------------------------------------------
  CATEGORY BREAKDOWN & COMPLIANCE SUMMARY TABLE
 ------------------------------------------------------------------------------------------
   ID     Category Name                                 Pass   Fail   Manual   Score   
   ------ --------------------------------------------- ------ ------ -------- --------
-  1. Configuration Système d'exploitation 1. Configuration Système d'exploitation       4      2      0          66.7%
+  1. Configuration Système d'exploitation 1. Configuration Système d'exploitation       3      3      0          50.0%
   2. Installation et Planification 2. Installation et Planification              0      1      5           0.0%
   3. Permissions Fichiers 3. Permissions Fichiers                       0      0      0           0.0%
   4. Général 4. Général                                    2      0      1         100.0%
@@ -30,64 +30,78 @@ Total Controls: 70
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service.
 ------------------------------------------------------------------------------------------
-[PASS] 1.2 - Utiliser un compte dédié et privilégié minimal pour MySQL
+[FAIL] 1.2 - Utiliser un compte dédié et privilégié minimal pour MySQL
   Category: 1. Configuration Système d'exploitation
+  Commande de test: ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | awk '{print $1}' | head -n 1
   Output: Stdout:
-mysql
+
 Stderr:
 
 Return Code: 0
-------------------------------------------------------------------------------------------
-[FAIL] 1.3 - Désactiver l'historique des commandes MySQL
-  Category: 1. Configuration Système d'exploitation
-  Output: Stdout:
-/root/.mysql_history
-Stderr:
-
-Return Code: 1
 
 Condition de succès non remplie.
-  Remediation: Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.
+  Procédure de remédiation: Configurer le service MySQL pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux.
+------------------------------------------------------------------------------------------
+[PASS] 1.3 - Désactiver l'historique des commandes MySQL
+  Category: 1. Configuration Système d'exploitation
+  Commande de test: ! find /home /root -name .mysql_history -print -quit 2>/dev/null
+  Output: Stdout:
+/home/jmren/.mysql_history
+Stderr:
+
+Return Code: 0
+  Procédure de remédiation: Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.
 ------------------------------------------------------------------------------------------
 [PASS] 1.4 - Vérifier que MYSQL_PWD n'est pas utilisé
   Category: 1. Configuration Système d'exploitation
+  Commande de test: ! grep -qs MYSQL_PWD /proc/*/environ
   Output: Stdout:
 
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifiée.
 ------------------------------------------------------------------------------------------
 [FAIL] 1.5 - Désactiver l'accès interactif pour l'utilisateur MySQL
   Category: 1. Configuration Système d'exploitation
+  Commande de test: getent passwd mysql | cut -d: -f7
   Output: Stdout:
-/bin/bash
+
 Stderr:
 
 Return Code: 0
 
 Condition de succès non remplie.
-  Remediation: Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).
+  Procédure de remédiation: Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).
 ------------------------------------------------------------------------------------------
 [PASS] 1.6 - Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs
   Category: 1. Configuration Système d'exploitation
+  Commande de test: ! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null
   Output: Stdout:
 
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD.
 ------------------------------------------------------------------------------------------
-[PASS] 1.7 - Exécuter MySQL dans un environnement sandbox
+[FAIL] 1.7 - Exécuter MySQL dans un environnement sandbox
   Category: 1. Configuration Système d'exploitation
+  Commande de test: [[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'
   Output: Stdout:
-DOCKER
+NOT_SANDBOX
 Stderr:
 
 Return Code: 0
+
+Condition de succès non remplie.
+  Procédure de remédiation: Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker.
 ------------------------------------------------------------------------------------------
 [FAIL] 2.1.1 - Politique de sauvegarde en place
   Category: 2. Installation et Planification
+  Commande de test: crontab -l 2>/dev/null | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep
   Output: Stdout:
 
 Stderr:
@@ -95,51 +109,63 @@ Stderr:
 Return Code: 1
 
 Condition de succès non remplie.
-  Remediation: Créer une politique de sauvegarde et planifier des sauvegardes automatiques.
+  Procédure de remédiation: Créer une politique de sauvegarde et planifier des sauvegardes automatiques.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.2 - Validation des sauvegardes
   Category: 2. Installation et Planification
+  Commande de test: Analyser les rapports de tests de restauration.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Analyser les rapports de tests de restauration.
+  Procédure de remédiation: Planifier et documenter les tests de restauration périodiques.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.3 - Sécuriser les identifiants de sauvegarde
   Category: 2. Installation et Planification
+  Commande de test: Inspecter les permissions des fichiers contenant les credentials de sauvegarde.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Inspecter les permissions des fichiers contenant les credentials de sauvegarde.
+  Procédure de remédiation: Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.4 - Sécuriser les fichiers de sauvegarde
   Category: 2. Installation et Planification
+  Commande de test: Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.
+  Procédure de remédiation: Utiliser l'option --encrypt-password de MySQL Enterprise Backup ou une méthode de chiffrement équivalente.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.5 - Point-in-Time Recovery
   Category: 2. Installation et Planification
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@log_bin;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Activer log_bin (log-bin=mysql-bin dans my.cnf), configurer l'expiration (expire_logs_days ou binlog_expire_logs_seconds), tester les restaurations PITR.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.6 - Plan de reprise d'activité (DR)
   Category: 2. Installation et Planification
+  Commande de test: Vérifier l'existence et la validité du plan DR.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Vérifier l'existence et la validité du plan DR.
+  Procédure de remédiation: Documenter et tester un plan DR incluant réplication, backups offsite.
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.7 - Sauvegarde des fichiers de configuration
   Category: 2. Installation et Planification
+  Commande de test: Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).
+  Procédure de remédiation: Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.1 - Permissions adéquates sur 'datadir'
   Category: 3. Permissions Fichiers
@@ -148,7 +174,8 @@ Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, e
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: chown -R mysql:mysql <datadir> && chmod 700 <datadir>
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.2 - Permissions sur les fichiers 'log_bin_basename'
   Category: 3. Permissions Fichiers
@@ -157,7 +184,8 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Appliquer chmod 600 sur les fichiers binaires.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.3 - Permissions sur 'log_error'
   Category: 3. Permissions Fichiers
@@ -166,7 +194,8 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Appliquer des permissions restrictives (ex: 640 ou 600).
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.4 - Permissions sur 'slow_query_log'
   Category: 3. Permissions Fichiers
@@ -175,7 +204,8 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600).
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.5 - Permissions sur 'relay_log_basename'
   Category: 3. Permissions Fichiers
@@ -184,7 +214,8 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Appliquer chmod 600.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.6 - Permissions sur 'general_log_file'
   Category: 3. Permissions Fichiers
@@ -193,18 +224,21 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Restreindre les droits d'accès (ex: 640 ou 600).
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.7 - Permissions sur les fichiers de clés SSL
   Category: 3. Permissions Fichiers
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SHOW VARIABLES LIKE 'ssl_key';" | awk '{print $2}' | xargs stat -c '%a'
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 stat: missing operand
 Try 'stat --help' for more information.
 Return Code: 123
+  Procédure de remédiation: Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.8 - Permissions sur le répertoire des plugins
   Category: 3. Permissions Fichiers
@@ -213,7 +247,8 @@ Return Code: 123
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.9 - Permissions sur 'audit_log_file'
   Category: 3. Permissions Fichiers
@@ -222,225 +257,274 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Appliquer des permissions restrictives (ex: 640 ou 600).
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.10 - Sécuriser le Keyring MySQL
   Category: 3. Permissions Fichiers
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SHOW VARIABLES LIKE 'keyring_file_data';" | awk '{print $2}' | xargs stat -c '%a'
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 stat: missing operand
 Try 'stat --help' for more information.
 Return Code: 123
+  Procédure de remédiation: Chiffrer et restreindre l'accès au fichier keyring.
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.1 - Ensure the Latest Security Patches are Applied
   Category: 4. Général
+  Commande de test: mysql -N -B -e "SELECT @@version;"
   Output: This control requires manual verification.
 
 Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.2 - Ensure Example or Test Databases are Not Installed on Production Servers
   Category: 4. Général
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME IN ('employees', 'world', 'world_x', 'sakila', 'airportdb', 'menagerie');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Exécutez DROP DATABASE <database name>; pour supprimer une base de données d'exemple.
 ------------------------------------------------------------------------------------------
 [PASS] 4.3 - Ensure 'allow-suspicious-udfs' is Set to 'OFF'
   Category: 4. Général
+  Commande de test: my_print_defaults mysqld | grep -q 'allow-suspicious-udfs' && echo 'FOUND' || echo 'NOT FOUND'
   Output: Stdout:
 NOT FOUND
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Supprimer --allow-suspicious-udfs de la ligne de commande ou du fichier de configuration.
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.4 - Harden Usage for 'local_infile' on MySQL Clients
   Category: 4. Général
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@local_infile;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Ajouter local-infile=0 à la section [mysqld] et [mysql] du fichier de configuration MySQL et redémarrer le service. Si nécessaire, utiliser --load-data-local-dir et TLS.
 ------------------------------------------------------------------------------------------
 [PASS] 4.5 - Ensure 'mysqld' is Not Started With '--skip-grant-tables'
   Category: 4. Général
+  Commande de test: ps -ef | grep mysqld | grep -v grep | grep -q 'skip-grant-tables' && echo 'FOUND' || echo 'NOT FOUND'
   Output: Stdout:
 NOT FOUND
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Supprimer l'option --skip-grant-tables de la ligne de commande ou du fichier de configuration.
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.6 - Ensure Symbolic Links are Disabled
   Category: 4. Général
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@have_symlink;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Ajouter skip-symbolic-links dans la section [mysqld] du fichier my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.7 - Ensure the 'daemon_memcached' Plugin is Disabled
   Category: 4. Général
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT PLUGIN_STATUS FROM information_schema.plugins WHERE PLUGIN_NAME = 'daemon_memcached';"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Exécutez UNINSTALL PLUGIN daemon_memcached;
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.8 - Ensure the 'secure_file_priv' is Configured Correctly
   Category: 4. Général
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@secure_file_priv;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Définir secure_file_priv sur NULL (pour désactiver) ou sur un chemin spécifique dans my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.9 - Ensure 'sql_mode' Contains 'STRICT_ALL_TABLES'
   Category: 4. Général
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@sql_mode;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.10 - Use MySQL TDE for At-Rest Data Encryption
   Category: 4. Général
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM information_schema.TABLES WHERE CREATE_OPTIONS NOT LIKE '%ENCRYPTION="Y"%' AND TABLE_SCHEMA NOT IN ('mysql', 'information_schema', 'performance_schema', 'sys');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Activer le chiffrement pour les tables/tablespaces nécessaires via ALTER TABLE ... ENCRYPTION='Y';. Configurer le chiffrement pour les logs (binlog, redo, undo) et l'audit log si nécessaire.
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.1 - Limiter l'accès complet à mysql.* aux seuls administrateurs
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM mysql.db WHERE db='mysql' AND user NOT IN ('mysql.sys', 'mysql.session', 'root') AND (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs.
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.2 - Retirer le droit FILE aux non-admins
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE File_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: REVOKE FILE ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.3 - Retirer le droit PROCESS aux non-admins
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Process_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: REVOKE PROCESS ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.4 - Retirer le droit SUPER (prérogative obsolète)
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Super_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Migrer vers les droits dynamiques (ex: BACKUP_ADMIN, REPLICATION_SLAVE_ADMIN) puis REVOKE SUPER ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.5 - Retirer le droit SHUTDOWN
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Shutdown_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.6 - Retirer CREATE USER aux non-admins
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Create_user_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.7 - Retirer GRANT OPTION aux non-admins
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Grant_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.8 - Limiter REPLICATION SLAVE aux comptes de réplication
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE Repl_slave_priv = 'Y' AND user NOT LIKE '%repl%';"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication.
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.9 - Limiter les droits DML/DDL à des BD/comptes précis
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y') AND user NOT IN ('root', 'mysql.sys', 'mysql.session');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Révoquer les droits superflus par base de données/compte.
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.10 - Définir proprement DEFINER/INVOKER des SP/Functions
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mysql.sys@localhost');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.11 - Restreindre le droit SET_ANY_DEFINER
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='SET_ANY_DEFINER');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.12 - Restreindre ALLOW_NONEXISTENT_DEFINER
   Category: 5. Gestion des privilèges
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='ALLOW_NONEXISTENT_DEFINER');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';
 ------------------------------------------------------------------------------------------
 [MANUAL] 6.1 - Configurer log_error
   Category: 6. Audit & Journalisation
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@log_error;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Définir log-error=/chemin/vers/mysql.err dans my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 6.2 - Journal hors partition système
   Category: 6. Audit & Journalisation
@@ -449,53 +533,65 @@ Return Code: 1
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
+  Procédure de remédiation: Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système.
 ------------------------------------------------------------------------------------------
 [MANUAL] 6.3 - log_error_verbosity=2
   Category: 6. Audit & Journalisation
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@log_error_verbosity;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Ajouter log_error_verbosity=2 dans my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 6.4 - log-raw OFF
   Category: 6. Audit & Journalisation
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SHOW VARIABLES LIKE 'log_raw';"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: S'assurer que 'log-raw' n'est pas activé ou est explicitement OFF dans my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 6.5 - Filtrer et journaliser les connexions
   Category: 6. Audit & Journalisation
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM information_schema.plugins WHERE PLUGIN_NAME = 'audit_log' AND PLUGIN_STATUS='ACTIVE';"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Configurer le plugin d'audit pour journaliser les succès et échecs de connexion.
 ------------------------------------------------------------------------------------------
 [MANUAL] 6.6 - Filtre << tout journaliser >>
   Category: 6. Audit & Journalisation
+  Commande de test: Vérifier la configuration du plugin d'audit pour s'assurer qu'un filtre 'log_all' ou équivalent est appliqué.
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Vérifier la configuration du plugin d'audit pour s'assurer qu'un filtre 'log_all' ou équivalent est appliqué.
+  Procédure de remédiation: Créer et appliquer un filtre d'audit pour journaliser toutes les actions.
 ------------------------------------------------------------------------------------------
 [MANUAL] 6.7 - audit_log_strategy = (S)SYNC
   Category: 6. Audit & Journalisation
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SHOW VARIABLES LIKE 'audit_log_strategy';"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Configurer audit_log_strategy='SEMISYNCHRONOUS' ou 'SYNCHRONOUS' via le plugin d'audit.
 ------------------------------------------------------------------------------------------
 [FAIL] 6.8 - Interdire le déchargement du plugin audit
   Category: 6. Audit & Journalisation
+  Commande de test: my_print_defaults mysqld | grep -q 'audit_log=FORCE_PLUS_PERMANENT' && echo 'FOUND' || echo 'NOT FOUND'
   Output: Stdout:
 NOT FOUND
 Stderr:
@@ -503,124 +599,157 @@ Stderr:
 Return Code: 0
 
 Condition de succès non remplie.
-  Remediation: Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf.
+  Procédure de remédiation: Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 7.1 - Plugin d'authentification sûr (caching_sha2_password)
   Category: 7. Authentification
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@default_authentication_plugin;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Définir default_authentication_plugin=caching_sha2_password dans my.cnf et migrer les comptes existants.
 ------------------------------------------------------------------------------------------
 [PASS] 7.2 - Aucun mot de passe dans le my.cnf global
   Category: 7. Authentification
+  Commande de test: ! grep -riE "password|pwd|pass" /etc/my.cnf /etc/mysql/ 2>/dev/null
   Output: Stdout:
-
+/etc/mysql/my.cnf.fallback:# This will be passed to all mysql clients
+/etc/mysql/my.cnf.fallback:# It has been reported that passwords should be enclosed with ticks/quotes
 Stderr:
 
 Return Code: 0
+  Procédure de remédiation: Utiliser mysql_config_editor ou des fichiers .my.cnf privés avec permissions restreintes.
 ------------------------------------------------------------------------------------------
 [MANUAL] 7.3 - Tous les comptes ont un mot de passe
   Category: 7. Authentification
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE authentication_string = '' OR plugin='mysql_no_login';"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: ALTER USER '<user>'@'<host>' IDENTIFIED BY '<password>'; ou utiliser mysql_secure_installation.
 ------------------------------------------------------------------------------------------
 [MANUAL] 7.4 - Expiration annuelle des mots de passe
   Category: 7. Authentification
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@default_password_lifetime;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: SET PERSIST default_password_lifetime=365;
 ------------------------------------------------------------------------------------------
 [MANUAL] 7.5 - Politique de complexité forte
   Category: 7. Authentification
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SHOW VARIABLES LIKE 'validate_password.policy';"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Installer et configurer component_validate_password avec une politique forte (ex: validate_password.policy=STRONG).
 ------------------------------------------------------------------------------------------
 [MANUAL] 7.6 - Pas de wildcard '%' dans host
   Category: 7. Authentification
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE host = '%' AND user NOT IN ('root');"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: ALTER USER '<user>'@'%' IDENTIFIED BY '...' RENAME TO '<user>'@'<specific_host>'; ou supprimer le compte.
 ------------------------------------------------------------------------------------------
 [MANUAL] 7.7 - Supprimer les comptes anonymes
   Category: 7. Authentification
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE user = '';"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: DROP USER ''@'<host>'; ou utiliser mysql_secure_installation.
 ------------------------------------------------------------------------------------------
 [MANUAL] 8.1 - Forcer SSL/TLS (require_secure_transport=ON)
   Category: 8. Sécurité réseau
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@require_secure_transport;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 8.2 - Exiger TLS côté utilisateur (ssl_type)
   Category: 8. Sécurité réseau
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type = '';"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;
 ------------------------------------------------------------------------------------------
 [MANUAL] 8.3 - Limiter le nombre de connexions
   Category: 8. Sécurité réseau
-  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+  Commande de test: mysql -N -B -e "SELECT @@max_connections;"
+  Output: Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
-ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 Return Code: 1
+  Procédure de remédiation: Ajuster max_connections et max_user_connections dans my.cnf selon les besoins.
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.1 - Chiffrer le trafic de réplication
   Category: 9. Réplication
+  Commande de test: mysql -N -B -e "SHOW REPLICA STATUS\G" | grep -E 'SSL_Allowed|Master_SSL_Verify_Server_Cert'
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
+  Procédure de remédiation: Configurer TLS pour la réplication (SOURCE_SSL=1, SOURCE_SSL_CA, etc.) ou utiliser un tunnel sécurisé.
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.2 - SOURCE_SSL_VERIFY_SERVER_CERT = 1
   Category: 9. Réplication
+  Commande de test: mysql -N -B -e "SHOW REPLICA STATUS\G" | grep 'Master_SSL_Verify_Server_Cert'
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
+  Procédure de remédiation: Exécuter CHANGE REPLICATION SOURCE TO SOURCE_SSL_VERIFY_SERVER_CERT = 1;
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.3 - master_info_repository TABLE
   Category: 9. Réplication
+  Commande de test: mysql -N -B -e "SELECT @@master_info_repository;"
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
+  Procédure de remédiation: Configurer master_info_repository=TABLE dans my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.4 - Retirer SUPER aux comptes de réplication
   Category: 9. Réplication
+  Commande de test: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%' AND Super_priv = 'Y';"
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';" | grep -q '[1-9]'
+  Procédure de remédiation: REVOKE SUPER ON *.* FROM '<repl_user>'@'<repl_host>'; et accorder les privilèges dynamiques nécessaires (ex: REPLICATION_SLAVE_ADMIN).
 ------------------------------------------------------------------------------------------
 [MANUAL] 10.1 - Chiffrer le trafic Group Replication
   Category: 10. InnoDB Cluster / Group Replication
+  Commande de test: mysql -N -B -e "SELECT @@group_replication_ssl_mode;"
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SHOW PLUGINS;" | grep -q 'group_replication'
+  Procédure de remédiation: Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf.
 ------------------------------------------------------------------------------------------
 [MANUAL] 10.2 - Définir une allow-list de nœuds
   Category: 10. InnoDB Cluster / Group Replication
+  Commande de test: mysql -N -B -e "SELECT @@group_replication_ip_allowlist;"
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SHOW PLUGINS;" | grep -q 'group_replication'
+  Procédure de remédiation: Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés.
 ------------------------------------------------------------------------------------------
