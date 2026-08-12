@@ -153,9 +153,10 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **5° Check Automation Expansion (Minimize Manual Checks)**: Convert legacy `Manual` inspection items into automated database queries and system command verifications.
 - [x] **7° Automated Headless Browser Visual UI Validation**: Integrate automated browser testing (headless Chromium visual QA) in E2E tests to detect layout regressions (no text overflow, no misaligned tables, no missing icons).
 
-#### 8.4 E2E Test Failures Remediation & Container Hardening (`Planned ⏳ - v2.1.0 Target`)
+#### 8.4 E2E Test Failures Remediation & Container Hardening (`Completed ✅ - v2.0.0`)
 - [x] **E2E Audit Reports Analysis & Failure Registry**: Generated `reports/analyse_tests_e2e.md` detailing all FAIL, ERROR, and MANUAL controls across 19 benchmark targets.
 - [x] **Container Hardening & Startup Script Proposals**: Formulated `remediation_proposal.md` to update Dockerfiles, startup scripts (`scripts/start_*.sh`), and container-aware audit check logic.
+- [x] **Dedicated Local vs SSH Remote Mode E2E Reports**: Created `reports/analyse_tests_e2e_local.md` and `reports/analyse_tests_e2e_ssh.md` for mode-specific compliance analysis.
 
 ---
 
