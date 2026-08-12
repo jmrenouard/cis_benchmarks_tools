@@ -1,6 +1,6 @@
 # 📊 CIS Benchmarks Suite - Analyse Spécifique Mode Local (-m local)
 
-> **Rapport d'Analyse E2E (Mode Local (-m local)) généré le** : `2026-08-12 17:11:40`  
+> **Rapport d'Analyse E2E (Mode Local (-m local)) généré le** : `2026-08-12 22:14:42`  
 > **Moteur d'Audit** : `CIS Benchmarks Tools Suite v2.0.0` (100% Python Standard Library - PSL ONLY)  
 > **Mode d'Exécution** : 💻 `Local`  
 > **Périmètre** : 19 cibles d'audit évaluées dans ce mode
@@ -11,19 +11,19 @@
 
 | Cible / Benchmark | Mode | Date d'Exécution | Score Global | Total | Succès (PASS) | Échecs (FAIL) | Erreurs (ERROR) | Manuels (MANUAL) |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **CASSANDRA_40** | 💻 `Local` | 2026-08-12 13:55:04 | 🟡 `50.0%` | 20 | 6 | 6 | 0 | 8 |
-| **CASSANDRA_41** | 💻 `Local` | 2026-08-12 13:55:46 | 🔴 `41.7%` | 20 | 5 | 7 | 0 | 8 |
-| **CASSANDRA_50** | 💻 `Local` | 2026-08-12 13:56:30 | 🔴 `41.7%` | 20 | 5 | 7 | 0 | 8 |
-| **MARIADB_1011** | 💻 `Local` | 2026-08-12 14:59:18 | 🟡 `60.0%` | 75 | 25 | 18 | 0 | 32 |
-| **MARIADB_106** | 💻 `Local` | 2026-08-12 14:58:00 | 🟡 `60.0%` | 74 | 25 | 18 | 0 | 31 |
-| **MONGODB_7** | 💻 `Local` | 2026-08-12 14:33:12 | 🔴 `9.1%` | 23 | 1 | 10 | 0 | 12 |
-| **MONGODB_8** | 💻 `Local` | 2026-08-12 14:33:33 | 🔴 `9.1%` | 23 | 1 | 10 | 0 | 12 |
+| **CASSANDRA_40** | 💻 `Local` | 2026-08-12 20:49:11 | 🔴 `27.3%` | 20 | 3 | 8 | 0 | 9 |
+| **CASSANDRA_41** | 💻 `Local` | 2026-08-12 20:49:12 | 🔴 `27.3%` | 20 | 3 | 8 | 0 | 9 |
+| **CASSANDRA_50** | 💻 `Local` | 2026-08-12 20:49:13 | 🔴 `27.3%` | 20 | 3 | 8 | 0 | 9 |
+| **MARIADB_1011** | 💻 `Local` | 2026-08-12 20:49:44 | 🟢 `80.0%` | 75 | 6 | 2 | 0 | 67 |
+| **MARIADB_106** | 💻 `Local` | 2026-08-12 20:49:50 | 🟢 `80.0%` | 74 | 6 | 2 | 0 | 66 |
+| **MONGODB_7** | 💻 `Local` | 2026-08-12 20:49:50 | 🔴 `9.1%` | 23 | 1 | 10 | 0 | 12 |
+| **MONGODB_8** | 💻 `Local` | 2026-08-12 20:49:51 | 🔴 `9.1%` | 23 | 1 | 10 | 0 | 12 |
 | **MYSQL_80** | 💻 `Local` | 2026-08-12 15:00:36 | 🟡 `70.6%` | 70 | 6 | 5 | 0 | 59 |
-| **MYSQL_80** | 💻 `Local` | 2026-08-11 19:34:32 | 🟡 `70.6%` | 70 | 6 | 5 | 0 | 59 |
-| **MYSQL_COMMUNITY_84** | 💻 `Local` | 2026-08-12 15:01:51 | 🟡 `78.6%` | 79 | 7 | 3 | 0 | 69 |
-| **MYSQL_COMMUNITY_97** | 💻 `Local` | 2026-08-12 15:04:30 | 🟡 `76.5%` | 70 | 7 | 4 | 0 | 59 |
-| **MYSQL_ENTERPRISE_84** | 💻 `Local` | 2026-08-12 15:03:14 | 🟡 `76.5%` | 70 | 7 | 4 | 0 | 59 |
-| **MYSQL_ENTERPRISE_97** | 💻 `Local` | 2026-08-12 15:05:46 | 🟡 `76.5%` | 70 | 7 | 4 | 0 | 59 |
+| **MYSQL_80** | 💻 `Local` | 2026-08-12 20:49:56 | 🟡 `70.6%` | 70 | 6 | 5 | 0 | 59 |
+| **MYSQL_COMMUNITY_84** | 💻 `Local` | 2026-08-12 20:50:02 | 🟡 `71.4%` | 79 | 6 | 4 | 0 | 69 |
+| **MYSQL_COMMUNITY_97** | 💻 `Local` | 2026-08-12 20:50:08 | 🟡 `70.6%` | 70 | 6 | 5 | 0 | 59 |
+| **MYSQL_ENTERPRISE_84** | 💻 `Local` | 2026-08-12 20:50:17 | 🟡 `70.6%` | 70 | 6 | 5 | 0 | 59 |
+| **MYSQL_ENTERPRISE_97** | 💻 `Local` | 2026-08-12 20:50:23 | 🟡 `70.6%` | 70 | 6 | 5 | 0 | 59 |
 | **POSTGRESQL_16** | 💻 `Local` | 2026-08-12 15:06:58 | 🟡 `78.6%` | 71 | 22 | 6 | 0 | 43 |
 | **POSTGRESQL_17** | 💻 `Local` | 2026-08-12 15:07:48 | 🟡 `78.6%` | 71 | 22 | 6 | 0 | 43 |
 | **POSTGRESQL_18** | 💻 `Local` | 2026-08-12 15:08:40 | 🟡 `78.6%` | 71 | 22 | 6 | 0 | 43 |
@@ -35,126 +35,98 @@
 
 - **Nombre total de benchmarks évalués** : `19`
 - **Nombre total de règles/contrôles vérifiés** : `957`
-- **Score de conformité moyen** : `57.5%`
-- **Contrôles en succès (`PASS`)** : `201` (21.0%)
-- **Contrôles en échec (`FAIL`)** : `152` (15.9%)
+- **Score de conformité moyen** : `55.5%`
+- **Contrôles en succès (`PASS`)** : `152` (15.9%)
+- **Contrôles en échec (`FAIL`)** : `128` (13.4%)
 - **Contrôles en erreur (`ERROR`)** : `0` (0.0%)
-- **Contrôles manuels (`MANUAL`)** : `604` (63.1%)
+- **Contrôles manuels (`MANUAL`)** : `677` (70.7%)
 
 ---
 
 ## ❌ Registre Détaillé des Contrôles en Échec (`FAIL`) & Erreurs (`ERROR`) - Mode Local (-m local)
 
-### 🛑 CASSANDRA_40 (`6` échecs / erreurs)
+### 🛑 CASSANDRA_40 (`8` échecs / erreurs)
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
 | :---: | :---: | :--- | :--- | :--- | :--- |
-| **2.1** | 🔴 FAIL | S'assurer que l'authentification est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | Modifier cassandra.yaml pour définir 'authenticator: PasswordAuthenticator' et redémarrer Cassandra. |
-| **2.2** | 🔴 FAIL | S'assurer que l'autorisation est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | Modifier cassandra.yaml pour définir 'authorizer: CassandraAuthorizer' et redémarrer Cassandra. |
-| **3.1** | 🔴 FAIL | S'assurer que les rôles cassandra et superuser sont séparés | 3 Contrôle d'accès | `Stdout:` | Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH  |
-| **3.2** | 🔴 FAIL | S'assurer que le mot de passe par défaut du rôle cassandra est changé | 3 Contrôle d'accès | `Stdout:` | Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = '<nouveau_mot_de_passe>'; |
-| **3.4** | 🔴 FAIL | S'assurer que Cassandra est exécuté sous un compte de service dédié | 3 Contrôle d'accès | `Stdout:` | Configurer le service Cassandra pour qu'il s'exécute sous l'utilisateur 'cassandra'. |
-| **5.1** | 🔴 FAIL | Chiffrement inter-nœuds | 5 Chiffrement | `Stdout:` | Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les |
+| **2.1** | 🔴 FAIL | S'assurer que l'authentification est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | N/A |
+| **2.2** | 🔴 FAIL | S'assurer que l'autorisation est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | N/A |
+| **3.1** | 🔴 FAIL | S'assurer que les rôles cassandra et superuser sont séparés | 3 Contrôle d'accès | `Stdout:` | N/A |
+| **3.2** | 🔴 FAIL | S'assurer que le mot de passe par défaut du rôle cassandra est changé | 3 Contrôle d'accès | `Stdout:` | N/A |
+| **3.4** | 🔴 FAIL | S'assurer que Cassandra est exécuté sous un compte de service dédié | 3 Contrôle d'accès | `Stdout:` | N/A |
+| **4.1** | 🔴 FAIL | S'assurer que la journalisation est activée | 4 Audit et Journalisation | `Stdout:` | N/A |
+| **5.1** | 🔴 FAIL | Chiffrement inter-nœuds | 5 Chiffrement | `Stdout:` | N/A |
+| **5.2** | 🔴 FAIL | Chiffrement client | 5 Chiffrement | `Stdout:` | N/A |
 
-### 🛑 CASSANDRA_41 (`7` échecs / erreurs)
-
-| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
-| :---: | :---: | :--- | :--- | :--- | :--- |
-| **1.4** | 🔴 FAIL | S'assurer que la dernière version de Cassandra est installée | 1 Installation et Mises à jour | `Stdout:` | Mettre à jour Cassandra vers la dernière version 4.1.x. |
-| **2.1** | 🔴 FAIL | S'assurer que l'authentification est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | Modifier cassandra.yaml pour définir 'authenticator: PasswordAuthenticator' et redémarrer Cassandra. |
-| **2.2** | 🔴 FAIL | S'assurer que l'autorisation est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | Modifier cassandra.yaml pour définir 'authorizer: CassandraAuthorizer' et redémarrer Cassandra. |
-| **3.1** | 🔴 FAIL | S'assurer que les rôles cassandra et superuser sont séparés | 3 Contrôle d'accès | `Stdout:` | Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH  |
-| **3.2** | 🔴 FAIL | S'assurer que le mot de passe par défaut du rôle cassandra est changé | 3 Contrôle d'accès | `Stdout:` | Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = '<nouveau_mot_de_passe>'; |
-| **3.4** | 🔴 FAIL | S'assurer que Cassandra est exécuté sous un compte de service dédié | 3 Contrôle d'accès | `Stdout:` | Configurer le service Cassandra pour qu'il s'exécute sous l'utilisateur 'cassandra'. |
-| **5.1** | 🔴 FAIL | Chiffrement inter-nœuds | 5 Chiffrement | `Stdout:` | Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les |
-
-### 🛑 CASSANDRA_50 (`7` échecs / erreurs)
+### 🛑 CASSANDRA_41 (`8` échecs / erreurs)
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
 | :---: | :---: | :--- | :--- | :--- | :--- |
-| **1.4** | 🔴 FAIL | S'assurer que la dernière version de Cassandra est installée | 1 Installation et Mises à jour | `Stdout:` | Mettre à jour Cassandra vers la dernière version 5.0.x. |
-| **2.1** | 🔴 FAIL | S'assurer que l'authentification est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | Modifier cassandra.yaml pour définir 'authenticator: PasswordAuthenticator' et redémarrer Cassandra. |
-| **2.2** | 🔴 FAIL | S'assurer que l'autorisation est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | Modifier cassandra.yaml pour définir 'authorizer: CassandraAuthorizer' et redémarrer Cassandra. |
-| **3.1** | 🔴 FAIL | S'assurer que les rôles cassandra et superuser sont séparés | 3 Contrôle d'accès | `Stdout:` | Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH  |
-| **3.2** | 🔴 FAIL | S'assurer que le mot de passe par défaut du rôle cassandra est changé | 3 Contrôle d'accès | `Stdout:` | Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = '<nouveau_mot_de_passe>'; |
-| **3.4** | 🔴 FAIL | S'assurer que Cassandra est exécuté sous un compte de service dédié | 3 Contrôle d'accès | `Stdout:` | Configurer le service Cassandra pour qu'il s'exécute sous l'utilisateur 'cassandra'. |
-| **5.1** | 🔴 FAIL | Chiffrement inter-nœuds | 5 Chiffrement | `Stdout:` | Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les |
+| **2.1** | 🔴 FAIL | S'assurer que l'authentification est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | N/A |
+| **2.2** | 🔴 FAIL | S'assurer que l'autorisation est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | N/A |
+| **3.1** | 🔴 FAIL | S'assurer que les rôles cassandra et superuser sont séparés | 3 Contrôle d'accès | `Stdout:` | N/A |
+| **3.2** | 🔴 FAIL | S'assurer que le mot de passe par défaut du rôle cassandra est changé | 3 Contrôle d'accès | `Stdout:` | N/A |
+| **3.4** | 🔴 FAIL | S'assurer que Cassandra est exécuté sous un compte de service dédié | 3 Contrôle d'accès | `Stdout:` | N/A |
+| **4.1** | 🔴 FAIL | S'assurer que la journalisation est activée | 4 Audit et Journalisation | `Stdout:` | N/A |
+| **5.1** | 🔴 FAIL | Chiffrement inter-nœuds | 5 Chiffrement | `Stdout:` | N/A |
+| **5.2** | 🔴 FAIL | Chiffrement client | 5 Chiffrement | `Stdout:` | N/A |
 
-### 🛑 MARIADB_1011 (`18` échecs / erreurs)
-
-| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
-| :---: | :---: | :--- | :--- | :--- | :--- |
-| **1.3** | 🔴 FAIL | Désactiver l'historique des commandes MariaDB | 1. Configuration Système d'exploitation | `Stdout:` | Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HI |
-| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s / |
-| **2.12** | 🔴 FAIL | S'assurer que seuls les chiffrement approuvés sont utilisés | 2. Installation et Planification | `Stdout:` | Configurer ssl_cipher avec une liste de chiffrements approuvés dans mariadb.cnf. |
-| **3.2** | 🔴 FAIL | Permissions sur les fichiers 'log_bin_basename' | 3. Permissions Fichiers | `Stdout:` | Appliquer chmod 600 sur les fichiers binaires. |
-| **3.4** | 🔴 FAIL | Permissions sur 'slow_query_log' | 3. Permissions Fichiers | `Stdout:` | Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600). |
-| **3.5** | 🔴 FAIL | Permissions sur 'relay_log_basename' | 3. Permissions Fichiers | `Stdout:` | Appliquer chmod 600. |
-| **3.6** | 🔴 FAIL | Permissions sur 'general_log_file' | 3. Permissions Fichiers | `Stdout:` | Restreindre les droits d'accès (ex: 640 ou 600). |
-| **3.7** | 🔴 FAIL | Permissions sur les fichiers de clés SSL | 3. Permissions Fichiers | `Stdout:` | Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql. |
-| **3.9** | 🔴 FAIL | Permissions sur 'server_audit_file_path' | 3. Permissions Fichiers | `Stdout:` | Appliquer des permissions restrictives (ex: 640 ou 600). |
-| **3.10** | 🔴 FAIL | Permissions sur les fichiers du plugin File Key Management | 3. Permissions Fichiers | `Stdout:` | Restreindre l'accès aux fichiers de clés de chiffrement (chmod 640). |
-| **4.9** | 🔴 FAIL | Activer le chiffrement des données au repos dans MariaDB | 4. Général | `Stdout:` | Configurer file_key_management plugin et innodb_encrypt_tables=ON dans mariadb.cnf. |
-| **6.2** | 🔴 FAIL | Journal hors partition système | 6. Audit & Journalisation | `Stdout:` | Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système. |
-| **6.4** | 🔴 FAIL | Activer la journalisation d'audit (server_audit) | 6. Audit & Journalisation | `Stdout:` | Installer et configurer le plugin server_audit : plugin_load_add=server_audit, server_audit_logging= |
-| **6.5** | 🔴 FAIL | Interdire le déchargement du plugin d'audit | 6. Audit & Journalisation | `Stdout:` | Ajouter server_audit=FORCE_PLUS_PERMANENT dans mariadb.cnf. |
-| **6.6** | 🔴 FAIL | Chiffrer les Binary et Relay Logs | 6. Audit & Journalisation | `Stdout:` | Ajouter encrypt_binlog=ON dans mariadb.cnf (nécessite un plugin de gestion de clés). |
-| **7.3** | 🔴 FAIL | Authentification forte pour tous les comptes | 7. Authentification | `Stdout:` | Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte. |
-| **7.4** | 🔴 FAIL | Politique de complexité des mots de passe (simple_password_check) | 7. Authentification | `Stdout:` | Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_pas |
-| **8.1** | 🔴 FAIL | Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES) | 8. Sécurité réseau | `Stdout:` | Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf. |
-
-### 🛑 MARIADB_106 (`18` échecs / erreurs)
+### 🛑 CASSANDRA_50 (`8` échecs / erreurs)
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
 | :---: | :---: | :--- | :--- | :--- | :--- |
-| **1.3** | 🔴 FAIL | Désactiver l'historique des commandes MariaDB | 1. Configuration Système d'exploitation | `Stdout:` | Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HI |
-| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s / |
-| **2.12** | 🔴 FAIL | S'assurer que seuls les chiffrement approuvés sont utilisés | 2. Installation et Planification | `Stdout:` | Configurer ssl_cipher avec une liste de chiffrements approuvés dans mariadb.cnf. |
-| **3.2** | 🔴 FAIL | Permissions sur les fichiers 'log_bin_basename' | 3. Permissions Fichiers | `Stdout:` | Appliquer chmod 600 sur les fichiers binaires. |
-| **3.4** | 🔴 FAIL | Permissions sur 'slow_query_log' | 3. Permissions Fichiers | `Stdout:` | Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600). |
-| **3.5** | 🔴 FAIL | Permissions sur 'relay_log_basename' | 3. Permissions Fichiers | `Stdout:` | Appliquer chmod 600. |
-| **3.6** | 🔴 FAIL | Permissions sur 'general_log_file' | 3. Permissions Fichiers | `Stdout:` | Restreindre les droits d'accès (ex: 640 ou 600). |
-| **3.7** | 🔴 FAIL | Permissions sur les fichiers de clés SSL | 3. Permissions Fichiers | `Stdout:` | Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql. |
-| **3.9** | 🔴 FAIL | Permissions sur 'server_audit_file_path' | 3. Permissions Fichiers | `Stdout:` | Appliquer des permissions restrictives (ex: 640 ou 600). |
-| **3.10** | 🔴 FAIL | Permissions sur les fichiers du plugin File Key Management | 3. Permissions Fichiers | `Stdout:` | Restreindre l'accès aux fichiers de clés de chiffrement (chmod 640). |
-| **4.9** | 🔴 FAIL | Activer le chiffrement des données au repos dans MariaDB | 4. Général | `Stdout:` | Configurer file_key_management plugin et innodb_encrypt_tables=ON dans mariadb.cnf. |
-| **6.2** | 🔴 FAIL | Journal hors partition système | 6. Audit & Journalisation | `Stdout:` | Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système. |
-| **6.4** | 🔴 FAIL | Activer la journalisation d'audit (server_audit) | 6. Audit & Journalisation | `Stdout:` | Installer et configurer le plugin server_audit : plugin_load_add=server_audit, server_audit_logging= |
-| **6.5** | 🔴 FAIL | Interdire le déchargement du plugin d'audit | 6. Audit & Journalisation | `Stdout:` | Ajouter server_audit=FORCE_PLUS_PERMANENT dans mariadb.cnf. |
-| **6.6** | 🔴 FAIL | Chiffrer les Binary et Relay Logs | 6. Audit & Journalisation | `Stdout:` | Ajouter encrypt_binlog=ON dans mariadb.cnf (nécessite un plugin de gestion de clés). |
-| **7.3** | 🔴 FAIL | Authentification forte pour tous les comptes | 7. Authentification | `Stdout:` | Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte. |
-| **7.4** | 🔴 FAIL | Politique de complexité des mots de passe (simple_password_check) | 7. Authentification | `Stdout:` | Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_pas |
-| **8.1** | 🔴 FAIL | Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES) | 8. Sécurité réseau | `Stdout:` | Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf. |
+| **2.1** | 🔴 FAIL | S'assurer que l'authentification est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | N/A |
+| **2.2** | 🔴 FAIL | S'assurer que l'autorisation est activée pour les bases de données Cassandra | 2 Authentification et Autorisation | `Stdout:` | N/A |
+| **3.1** | 🔴 FAIL | S'assurer que les rôles cassandra et superuser sont séparés | 3 Contrôle d'accès | `Stdout:` | N/A |
+| **3.2** | 🔴 FAIL | S'assurer que le mot de passe par défaut du rôle cassandra est changé | 3 Contrôle d'accès | `Stdout:` | N/A |
+| **3.4** | 🔴 FAIL | S'assurer que Cassandra est exécuté sous un compte de service dédié | 3 Contrôle d'accès | `Stdout:` | N/A |
+| **4.1** | 🔴 FAIL | S'assurer que la journalisation est activée | 4 Audit et Journalisation | `Stdout:` | N/A |
+| **5.1** | 🔴 FAIL | Chiffrement inter-nœuds | 5 Chiffrement | `Stdout:` | N/A |
+| **5.2** | 🔴 FAIL | Chiffrement client | 5 Chiffrement | `Stdout:` | N/A |
+
+### 🛑 MARIADB_1011 (`2` échecs / erreurs)
+
+| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
+| :---: | :---: | :--- | :--- | :--- | :--- |
+| **1.2** | 🔴 FAIL | Utiliser un compte dédié et privilégié minimal pour MariaDB | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+
+### 🛑 MARIADB_106 (`2` échecs / erreurs)
+
+| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
+| :---: | :---: | :--- | :--- | :--- | :--- |
+| **1.2** | 🔴 FAIL | Utiliser un compte dédié et privilégié minimal pour MariaDB | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
 
 ### 🛑 MONGODB_7 (`10` échecs / erreurs)
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
 | :---: | :---: | :--- | :--- | :--- | :--- |
-| **2.1** | 🔴 FAIL | S'assurer que l'authentification est configurée | 2 Authentification | `Stdout:` | Démarrer l'instance sans authentification, créer un utilisateur administrateur, configurer 'security |
-| **2.2** | 🔴 FAIL | S'assurer que MongoDB ne contourne pas l'authentification via l'exception localhost | 2 Authentification | `Stdout:` | Définir 'setParameter.enableLocalhostAuthBypass: false' dans le fichier de configuration ou exécuter |
-| **2.3** | 🔴 FAIL | S'assurer que l'authentification est activée dans le cluster sharded | 2 Authentification | `Stdout:` | Configurer 'net.tls.mode: requireSSL', 'net.tls.PEMKeyFile', 'net.tls.CAFile', 'net.tls.clusterFile' |
-| **4.1** | 🔴 FAIL | S'assurer que les protocoles TLS hérités sont désactivés | 4 Data Encryption | `Stdout:` | Définir 'net.tls.disabledProtocols: [TLS1_0, TLS1_1]' (ou équivalent) dans le fichier de configurati |
-| **4.2** | 🔴 FAIL | S'assurer que les protocoles faibles sont désactivés | 4 Data Encryption | `Stdout:` | Définir 'net.ssl.disabledProtocols: TLS1_0, TLS1_1' dans le fichier de configuration et redémarrer. |
-| **4.3** | 🔴 FAIL | S'assurer du chiffrement des données en transit TLS ou SSL (chiffrement de transport) | 4 Data Encryption | `Stdout:` | Définir 'net.tls.mode: requireTLS', 'net.tls.certificateKeyFile', 'net.tls.CAFile' dans le fichier d |
-| **4.4** | 🔴 FAIL | S'assurer que la norme FIPS (Federal Information Processing Standard) est activée | 4 Data Encryption | `Stdout:` | Définir 'net.tls.FIPSMode: true' dans le fichier de configuration et redémarrer. |
-| **5.1** | 🔴 FAIL | S'assurer que l'activité du système est auditée | 5 Audit Logging | `Stdout:` | Définir 'auditLog.destination' sur 'syslog', 'console' ou 'file' dans le fichier de configuration. |
-| **5.3** | 🔴 FAIL | S'assurer que la journalisation capture autant d'informations que possible | 5 Audit Logging | `Stdout:` | Définir 'systemLog.quiet: false' dans le fichier de configuration. |
-| **6.1** | 🔴 FAIL | S'assurer que MongoDB utilise un port non-standard | 6 Operating System Hardening | `Stdout:` | Changer le port 'net.port' dans le fichier de configuration pour un numéro autre que 27017. |
+| **2.1** | 🔴 FAIL | S'assurer que l'authentification est configurée | 2 Authentification | `Stdout:` | N/A |
+| **2.2** | 🔴 FAIL | S'assurer que MongoDB ne contourne pas l'authentification via l'exception localhost | 2 Authentification | `Stdout:` | N/A |
+| **2.3** | 🔴 FAIL | S'assurer que l'authentification est activée dans le cluster sharded | 2 Authentification | `Stdout:` | N/A |
+| **4.1** | 🔴 FAIL | S'assurer que les protocoles TLS hérités sont désactivés | 4 Data Encryption | `Stdout:` | N/A |
+| **4.2** | 🔴 FAIL | S'assurer que les protocoles faibles sont désactivés | 4 Data Encryption | `Stdout:` | N/A |
+| **4.3** | 🔴 FAIL | S'assurer du chiffrement des données en transit TLS ou SSL (chiffrement de transport) | 4 Data Encryption | `Stdout:` | N/A |
+| **4.4** | 🔴 FAIL | S'assurer que la norme FIPS (Federal Information Processing Standard) est activée | 4 Data Encryption | `Stdout:` | N/A |
+| **5.1** | 🔴 FAIL | S'assurer que l'activité du système est auditée | 5 Audit Logging | `Stdout:` | N/A |
+| **5.3** | 🔴 FAIL | S'assurer que la journalisation capture autant d'informations que possible | 5 Audit Logging | `Stdout:` | N/A |
+| **5.4** | 🔴 FAIL | S'assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal | 5 Audit Logging | `Stdout:` | N/A |
 
 ### 🛑 MONGODB_8 (`10` échecs / erreurs)
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
 | :---: | :---: | :--- | :--- | :--- | :--- |
-| **2.1** | 🔴 FAIL | S'assurer que l'authentification est configurée | 2 Authentification | `Stdout:` | Démarrer l'instance sans authentification, créer un utilisateur administrateur, configurer 'security |
-| **2.2** | 🔴 FAIL | S'assurer que MongoDB ne contourne pas l'authentification via l'exception localhost | 2 Authentification | `Stdout:` | Définir 'setParameter.enableLocalhostAuthBypass: false' dans le fichier de configuration ou exécuter |
-| **2.3** | 🔴 FAIL | S'assurer que l'authentification est activée dans le cluster sharded | 2 Authentification | `Stdout:` | Configurer 'net.tls.mode: requireSSL', 'net.tls.PEMKeyFile', 'net.tls.CAFile', 'net.tls.clusterFile' |
-| **4.1** | 🔴 FAIL | S'assurer que les protocoles TLS hérités sont désactivés | 4 Data Encryption | `Stdout:` | Définir 'net.tls.disabledProtocols: [TLS1_0, TLS1_1]' (ou équivalent) dans le fichier de configurati |
-| **4.2** | 🔴 FAIL | S'assurer que les protocoles faibles sont désactivés | 4 Data Encryption | `Stdout:` | Définir 'net.ssl.disabledProtocols: TLS1_0, TLS1_1' dans le fichier de configuration et redémarrer. |
-| **4.3** | 🔴 FAIL | S'assurer du chiffrement des données en transit TLS ou SSL (chiffrement de transport) | 4 Data Encryption | `Stdout:` | Définir 'net.tls.mode: requireTLS', 'net.tls.certificateKeyFile', 'net.tls.CAFile' dans le fichier d |
-| **4.4** | 🔴 FAIL | S'assurer que la norme FIPS (Federal Information Processing Standard) est activée | 4 Data Encryption | `Stdout:` | Définir 'net.tls.FIPSMode: true' dans le fichier de configuration et redémarrer. |
-| **5.1** | 🔴 FAIL | S'assurer que l'activité du système est auditée | 5 Audit Logging | `Stdout:` | Définir 'auditLog.destination' sur 'syslog', 'console' ou 'file' dans le fichier de configuration. |
-| **5.3** | 🔴 FAIL | S'assurer que la journalisation capture autant d'informations que possible | 5 Audit Logging | `Stdout:` | Définir 'systemLog.quiet: false' dans le fichier de configuration. |
-| **6.1** | 🔴 FAIL | S'assurer que MongoDB utilise un port non-standard | 6 Operating System Hardening | `Stdout:` | Changer le port 'net.port' dans le fichier de configuration pour un numéro autre que 27017. |
+| **2.1** | 🔴 FAIL | S'assurer que l'authentification est configurée | 2 Authentification | `Stdout:` | N/A |
+| **2.2** | 🔴 FAIL | S'assurer que MongoDB ne contourne pas l'authentification via l'exception localhost | 2 Authentification | `Stdout:` | N/A |
+| **2.3** | 🔴 FAIL | S'assurer que l'authentification est activée dans le cluster sharded | 2 Authentification | `Stdout:` | N/A |
+| **4.1** | 🔴 FAIL | S'assurer que les protocoles TLS hérités sont désactivés | 4 Data Encryption | `Stdout:` | N/A |
+| **4.2** | 🔴 FAIL | S'assurer que les protocoles faibles sont désactivés | 4 Data Encryption | `Stdout:` | N/A |
+| **4.3** | 🔴 FAIL | S'assurer du chiffrement des données en transit TLS ou SSL (chiffrement de transport) | 4 Data Encryption | `Stdout:` | N/A |
+| **4.4** | 🔴 FAIL | S'assurer que la norme FIPS (Federal Information Processing Standard) est activée | 4 Data Encryption | `Stdout:` | N/A |
+| **5.1** | 🔴 FAIL | S'assurer que l'activité du système est auditée | 5 Audit Logging | `Stdout:` | N/A |
+| **5.3** | 🔴 FAIL | S'assurer que la journalisation capture autant d'informations que possible | 5 Audit Logging | `Stdout:` | N/A |
+| **5.4** | 🔴 FAIL | S'assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal | 5 Audit Logging | `Stdout:` | N/A |
 
 ### 🛑 MYSQL_80 (`5` échecs / erreurs)
 
@@ -170,46 +142,50 @@
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
 | :---: | :---: | :--- | :--- | :--- | :--- |
-| **1.2** | 🔴 FAIL | Utiliser un compte dédié et privilégié minimal pour MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Configurer le service MySQL pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les pr |
-| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s / |
-| **1.7** | 🔴 FAIL | Exécuter MySQL dans un environnement sandbox | 1. Configuration Système d'exploitation | `Stdout:` | Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sou |
-| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | Créer une politique de sauvegarde et planifier des sauvegardes automatiques. |
-| **6.8** | 🔴 FAIL | Interdire le déchargement du plugin audit | 6. Audit & Journalisation | `Stdout:` | Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf. |
+| **1.2** | 🔴 FAIL | Utiliser un compte dédié et privilégié minimal pour MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.7** | 🔴 FAIL | Exécuter MySQL dans un environnement sandbox | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | N/A |
+| **6.8** | 🔴 FAIL | Interdire le déchargement du plugin audit | 6. Audit & Journalisation | `Stdout:` | N/A |
 
-### 🛑 MYSQL_COMMUNITY_84 (`3` échecs / erreurs)
-
-| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
-| :---: | :---: | :--- | :--- | :--- | :--- |
-| **1.3** | 🔴 FAIL | Désactiver l'historique des commandes MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HI |
-| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s / |
-| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | Créer une politique de sauvegarde et planifier des sauvegardes automatiques. |
-
-### 🛑 MYSQL_COMMUNITY_97 (`4` échecs / erreurs)
+### 🛑 MYSQL_COMMUNITY_84 (`4` échecs / erreurs)
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
 | :---: | :---: | :--- | :--- | :--- | :--- |
-| **1.3** | 🔴 FAIL | Désactiver l'historique des commandes MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HI |
-| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s / |
-| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | Créer une politique de sauvegarde et planifier des sauvegardes automatiques. |
-| **6.8** | 🔴 FAIL | Interdire le déchargement du plugin audit | 6. Audit & Journalisation | `Stdout:` | Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf. |
+| **1.2** | 🔴 FAIL | Utiliser un compte dédié et privilégié minimal pour MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.7** | 🔴 FAIL | Exécuter MySQL dans un environnement sandbox | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | N/A |
 
-### 🛑 MYSQL_ENTERPRISE_84 (`4` échecs / erreurs)
-
-| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
-| :---: | :---: | :--- | :--- | :--- | :--- |
-| **1.3** | 🔴 FAIL | Désactiver l'historique des commandes MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HI |
-| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s / |
-| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | Créer une politique de sauvegarde et planifier des sauvegardes automatiques. |
-| **6.8** | 🔴 FAIL | Interdire le déchargement du plugin audit | 6. Audit & Journalisation | `Stdout:` | Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf. |
-
-### 🛑 MYSQL_ENTERPRISE_97 (`4` échecs / erreurs)
+### 🛑 MYSQL_COMMUNITY_97 (`5` échecs / erreurs)
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
 | :---: | :---: | :--- | :--- | :--- | :--- |
-| **1.3** | 🔴 FAIL | Désactiver l'historique des commandes MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HI |
-| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s / |
-| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | Créer une politique de sauvegarde et planifier des sauvegardes automatiques. |
-| **6.8** | 🔴 FAIL | Interdire le déchargement du plugin audit | 6. Audit & Journalisation | `Stdout:` | Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf. |
+| **1.2** | 🔴 FAIL | Utiliser un compte dédié et privilégié minimal pour MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.7** | 🔴 FAIL | Exécuter MySQL dans un environnement sandbox | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | N/A |
+| **6.8** | 🔴 FAIL | Interdire le déchargement du plugin audit | 6. Audit & Journalisation | `Stdout:` | N/A |
+
+### 🛑 MYSQL_ENTERPRISE_84 (`5` échecs / erreurs)
+
+| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
+| :---: | :---: | :--- | :--- | :--- | :--- |
+| **1.2** | 🔴 FAIL | Utiliser un compte dédié et privilégié minimal pour MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.7** | 🔴 FAIL | Exécuter MySQL dans un environnement sandbox | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | N/A |
+| **6.8** | 🔴 FAIL | Interdire le déchargement du plugin audit | 6. Audit & Journalisation | `Stdout:` | N/A |
+
+### 🛑 MYSQL_ENTERPRISE_97 (`5` échecs / erreurs)
+
+| ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation |
+| :---: | :---: | :--- | :--- | :--- | :--- |
+| **1.2** | 🔴 FAIL | Utiliser un compte dédié et privilégié minimal pour MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **1.7** | 🔴 FAIL | Exécuter MySQL dans un environnement sandbox | 1. Configuration Système d'exploitation | `Stdout:` | N/A |
+| **2.1.1** | 🔴 FAIL | Politique de sauvegarde en place | 2. Installation et Planification | `Stdout:` | N/A |
+| **6.8** | 🔴 FAIL | Interdire le déchargement du plugin audit | 6. Audit & Journalisation | `Stdout:` | N/A |
 
 ### 🛑 POSTGRESQL_16 (`6` échecs / erreurs)
 
@@ -296,11 +272,12 @@
 
 ## ⚠️ Registre Détaillé des Contrôles Manuels (`MANUAL`) - Mode Local (-m local)
 
-### 📋 CASSANDRA_40 (`8` contrôles manuels)
+### 📋 CASSANDRA_40 (`9` contrôles manuels)
 
 | ID Règle | Nom du Contrôle | Catégorie | Note de Vérification |
 | :---: | :--- | :--- | :--- |
 | **1.1** | S'assurer qu'un utilisateur et un groupe dédiés existent pour Cassandra | 1 Installation et Mises à jour | Vérification visuelle / politique organisationnelle requise |
+| **1.4** | S'assurer que la dernière version de Cassandra est installée | 1 Installation et Mises à jour | Vérification visuelle / politique organisationnelle requise |
 | **1.6** | S'assurer que les horloges sont synchronisées sur tous les nœuds | 1 Installation et Mises à jour | Vérification visuelle / politique organisationnelle requise |
 | **3.3** | S'assurer qu'il n'y a pas de rôles ou privilèges excessifs | 3 Contrôle d'accès | Vérification visuelle / politique organisationnelle requise |
 | **3.5** | S'assurer que Cassandra n'écoute que sur les interfaces autorisées | 3 Contrôle d'accès | Vérification visuelle / politique organisationnelle requise |
@@ -309,11 +286,12 @@
 | **3.8** | Réviser les rôles superuser/administrateur | 3 Contrôle d'accès | Vérification visuelle / politique organisationnelle requise |
 | **4.2** | S'assurer que l'audit est activé | 4 Audit et Journalisation | Vérification visuelle / politique organisationnelle requise |
 
-### 📋 CASSANDRA_41 (`8` contrôles manuels)
+### 📋 CASSANDRA_41 (`9` contrôles manuels)
 
 | ID Règle | Nom du Contrôle | Catégorie | Note de Vérification |
 | :---: | :--- | :--- | :--- |
 | **1.1** | S'assurer qu'un utilisateur et un groupe dédiés existent pour Cassandra | 1 Installation et Mises à jour | Vérification visuelle / politique organisationnelle requise |
+| **1.4** | S'assurer que la dernière version de Cassandra est installée | 1 Installation et Mises à jour | Vérification visuelle / politique organisationnelle requise |
 | **1.6** | S'assurer que les horloges sont synchronisées sur tous les nœuds | 1 Installation et Mises à jour | Vérification visuelle / politique organisationnelle requise |
 | **3.3** | S'assurer qu'il n'y a pas de rôles ou privilèges excessifs | 3 Contrôle d'accès | Vérification visuelle / politique organisationnelle requise |
 | **3.5** | S'assurer que Cassandra n'écoute que sur les interfaces autorisées | 3 Contrôle d'accès | Vérification visuelle / politique organisationnelle requise |
@@ -322,11 +300,12 @@
 | **3.8** | Réviser les rôles superuser/administrateur | 3 Contrôle d'accès | Vérification visuelle / politique organisationnelle requise |
 | **4.2** | S'assurer que l'audit est activé | 4 Audit et Journalisation | Vérification visuelle / politique organisationnelle requise |
 
-### 📋 CASSANDRA_50 (`8` contrôles manuels)
+### 📋 CASSANDRA_50 (`9` contrôles manuels)
 
 | ID Règle | Nom du Contrôle | Catégorie | Note de Vérification |
 | :---: | :--- | :--- | :--- |
 | **1.1** | S'assurer qu'un utilisateur et un groupe dédiés existent pour Cassandra | 1 Installation et Mises à jour | Vérification visuelle / politique organisationnelle requise |
+| **1.4** | S'assurer que la dernière version de Cassandra est installée | 1 Installation et Mises à jour | Vérification visuelle / politique organisationnelle requise |
 | **1.6** | S'assurer que les horloges sont synchronisées sur tous les nœuds | 1 Installation et Mises à jour | Vérification visuelle / politique organisationnelle requise |
 | **3.3** | S'assurer qu'il n'y a pas de rôles ou privilèges excessifs | 3 Contrôle d'accès | Vérification visuelle / politique organisationnelle requise |
 | **3.5** | S'assurer que Cassandra n'écoute que sur les interfaces autorisées | 3 Contrôle d'accès | Vérification visuelle / politique organisationnelle requise |
@@ -335,25 +314,47 @@
 | **3.8** | Réviser les rôles superuser/administrateur | 3 Contrôle d'accès | Vérification visuelle / politique organisationnelle requise |
 | **4.2** | S'assurer que l'audit est activé | 4 Audit et Journalisation | Vérification visuelle / politique organisationnelle requise |
 
-### 📋 MARIADB_1011 (`32` contrôles manuels)
+### 📋 MARIADB_1011 (`67` contrôles manuels)
 
 | ID Règle | Nom du Contrôle | Catégorie | Note de Vérification |
 | :---: | :--- | :--- | :--- |
+| **1.1** | Placer les bases de données sur des partitions non-système | 1. Configuration Système d'exploitation | Vérification visuelle / politique organisationnelle requise |
 | **1.7** | Exécuter MariaDB dans un environnement sandbox | 1. Configuration Système d'exploitation | Vérification visuelle / politique organisationnelle requise |
 | **2.1.1** | Politique de sauvegarde en place | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.2** | Validation des sauvegardes | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.3** | Sécuriser les identifiants de sauvegarde | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.4** | Sécuriser les fichiers de sauvegarde | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.1.5** | Point-in-Time Recovery | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.6** | Plan de reprise d'activité (DR) | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.7** | Sauvegarde des fichiers de configuration | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.2** | Dédier la machine à MariaDB | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.3** | Ne pas spécifier de mots de passe en ligne de commande | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.4** | Ne pas réutiliser les noms d'utilisateurs | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.5** | S'assurer que le matériel cryptographique est unique et non par défaut | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.6** | Assurer que password_lifetime <= 365 | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.7** | Verrouiller les comptes inutilisés | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.8** | Utilisation appropriée de l'authentification Socket Peer-Credential | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.9** | S'assurer que MariaDB est lié à une adresse IP | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.10** | Limiter les versions TLS acceptées | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.11** | Exiger des certificats côté client (X.509) | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.12** | S'assurer que seuls les chiffrement approuvés sont utilisés | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **3.1** | Permissions adéquates sur 'datadir' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.2** | Permissions sur les fichiers 'log_bin_basename' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
 | **3.3** | Permissions sur 'log_error' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.4** | Permissions sur 'slow_query_log' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.5** | Permissions sur 'relay_log_basename' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.6** | Permissions sur 'general_log_file' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.7** | Permissions sur les fichiers de clés SSL | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.8** | Permissions sur le répertoire des plugins | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.9** | Permissions sur 'server_audit_file_path' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.10** | Permissions sur les fichiers du plugin File Key Management | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
 | **4.1** | S'assurer que les derniers correctifs de sécurité sont appliqués | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.2** | S'assurer que les bases de test ne sont pas installées en production | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.4** | Renforcer l'utilisation de 'local_infile' sur les clients MariaDB | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.6** | S'assurer que les liens symboliques sont désactivés | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.7** | S'assurer que 'secure_file_priv' est configuré correctement | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.8** | S'assurer que sql_mode contient STRICT_ALL_TABLES | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.9** | Activer le chiffrement des données au repos dans MariaDB | 4. Général | Vérification visuelle / politique organisationnelle requise |
 | **5.1** | Limiter l'accès complet à mysql.* aux seuls administrateurs | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
 | **5.2** | Retirer le droit FILE aux non-admins | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
 | **5.3** | Retirer le droit PROCESS aux non-admins | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
@@ -364,7 +365,20 @@
 | **5.8** | Limiter REPLICATION SLAVE aux comptes de réplication | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
 | **5.9** | Limiter les droits DML/DDL à des BD/comptes précis | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
 | **5.10** | Définir proprement DEFINER/INVOKER des SP/Functions | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
+| **6.1** | Configurer log_error correctement | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.2** | Journal hors partition système | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.3** | log_warnings=2 | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.4** | Activer la journalisation d'audit (server_audit) | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.5** | Interdire le déchargement du plugin d'audit | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.6** | Chiffrer les Binary et Relay Logs | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **7.1** | Désactiver mysql_old_password (old_passwords=OFF, secure_auth=ON) | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **7.3** | Authentification forte pour tous les comptes | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **7.4** | Politique de complexité des mots de passe (simple_password_check) | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **7.5** | Pas de wildcard '%' dans host | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **7.6** | Supprimer les comptes anonymes | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
 | **7.7** | Empêcher la réutilisation des mots de passe (password_reuse_check) | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **8.1** | Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES) | 8. Sécurité réseau | Vérification visuelle / politique organisationnelle requise |
+| **8.2** | Exiger TLS côté utilisateur (ssl_type) | 8. Sécurité réseau | Vérification visuelle / politique organisationnelle requise |
 | **8.3** | Limiter le nombre de connexions | 8. Sécurité réseau | Vérification visuelle / politique organisationnelle requise |
 | **9.1** | Chiffrer le trafic de réplication | 9. Réplication | Vérification visuelle / politique organisationnelle requise |
 | **9.2** | MASTER_SSL_VERIFY_SERVER_CERT activé | 9. Réplication | Vérification visuelle / politique organisationnelle requise |
@@ -372,25 +386,47 @@
 | **9.4** | Chiffrement approuvé pour la réplication | 9. Réplication | Vérification visuelle / politique organisationnelle requise |
 | **9.5** | TLS mutuel activé pour la réplication | 9. Réplication | Vérification visuelle / politique organisationnelle requise |
 
-### 📋 MARIADB_106 (`31` contrôles manuels)
+### 📋 MARIADB_106 (`66` contrôles manuels)
 
 | ID Règle | Nom du Contrôle | Catégorie | Note de Vérification |
 | :---: | :--- | :--- | :--- |
+| **1.1** | Placer les bases de données sur des partitions non-système | 1. Configuration Système d'exploitation | Vérification visuelle / politique organisationnelle requise |
 | **1.7** | Exécuter MariaDB dans un environnement sandbox | 1. Configuration Système d'exploitation | Vérification visuelle / politique organisationnelle requise |
 | **2.1.1** | Politique de sauvegarde en place | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.2** | Validation des sauvegardes | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.3** | Sécuriser les identifiants de sauvegarde | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.4** | Sécuriser les fichiers de sauvegarde | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.1.5** | Point-in-Time Recovery | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.6** | Plan de reprise d'activité (DR) | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.1.7** | Sauvegarde des fichiers de configuration | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.2** | Dédier la machine à MariaDB | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.3** | Ne pas spécifier de mots de passe en ligne de commande | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.4** | Ne pas réutiliser les noms d'utilisateurs | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.5** | S'assurer que le matériel cryptographique est unique et non par défaut | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.6** | Assurer que password_lifetime <= 365 | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.7** | Verrouiller les comptes inutilisés | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
 | **2.8** | Utilisation appropriée de l'authentification Socket Peer-Credential | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.9** | S'assurer que MariaDB est lié à une adresse IP | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.10** | Limiter les versions TLS acceptées | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.11** | Exiger des certificats côté client (X.509) | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **2.12** | S'assurer que seuls les chiffrement approuvés sont utilisés | 2. Installation et Planification | Vérification visuelle / politique organisationnelle requise |
+| **3.1** | Permissions adéquates sur 'datadir' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.2** | Permissions sur les fichiers 'log_bin_basename' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
 | **3.3** | Permissions sur 'log_error' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.4** | Permissions sur 'slow_query_log' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.5** | Permissions sur 'relay_log_basename' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.6** | Permissions sur 'general_log_file' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.7** | Permissions sur les fichiers de clés SSL | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.8** | Permissions sur le répertoire des plugins | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.9** | Permissions sur 'server_audit_file_path' | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
+| **3.10** | Permissions sur les fichiers du plugin File Key Management | 3. Permissions Fichiers | Vérification visuelle / politique organisationnelle requise |
 | **4.1** | S'assurer que les derniers correctifs de sécurité sont appliqués | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.2** | S'assurer que les bases de test ne sont pas installées en production | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.4** | Renforcer l'utilisation de 'local_infile' sur les clients MariaDB | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.6** | S'assurer que les liens symboliques sont désactivés | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.7** | S'assurer que 'secure_file_priv' est configuré correctement | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.8** | S'assurer que sql_mode contient STRICT_ALL_TABLES | 4. Général | Vérification visuelle / politique organisationnelle requise |
+| **4.9** | Activer le chiffrement des données au repos dans MariaDB | 4. Général | Vérification visuelle / politique organisationnelle requise |
 | **5.1** | Limiter l'accès complet à mysql.* aux seuls administrateurs | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
 | **5.2** | Retirer le droit FILE aux non-admins | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
 | **5.3** | Retirer le droit PROCESS aux non-admins | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
@@ -401,6 +437,19 @@
 | **5.8** | Limiter REPLICATION SLAVE aux comptes de réplication | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
 | **5.9** | Limiter les droits DML/DDL à des BD/comptes précis | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
 | **5.10** | Définir proprement DEFINER/INVOKER des SP/Functions | 5. Permissions MariaDB | Vérification visuelle / politique organisationnelle requise |
+| **6.1** | Configurer log_error correctement | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.2** | Journal hors partition système | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.3** | log_warnings=2 | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.4** | Activer la journalisation d'audit (server_audit) | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.5** | Interdire le déchargement du plugin d'audit | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **6.6** | Chiffrer les Binary et Relay Logs | 6. Audit & Journalisation | Vérification visuelle / politique organisationnelle requise |
+| **7.1** | Désactiver mysql_old_password (old_passwords=OFF, secure_auth=ON) | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **7.3** | Authentification forte pour tous les comptes | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **7.4** | Politique de complexité des mots de passe (simple_password_check) | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **7.5** | Pas de wildcard '%' dans host | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **7.6** | Supprimer les comptes anonymes | 7. Authentification | Vérification visuelle / politique organisationnelle requise |
+| **8.1** | Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES) | 8. Sécurité réseau | Vérification visuelle / politique organisationnelle requise |
+| **8.2** | Exiger TLS côté utilisateur (ssl_type) | 8. Sécurité réseau | Vérification visuelle / politique organisationnelle requise |
 | **8.3** | Limiter le nombre de connexions | 8. Sécurité réseau | Vérification visuelle / politique organisationnelle requise |
 | **9.1** | Chiffrer le trafic de réplication | 9. Réplication | Vérification visuelle / politique organisationnelle requise |
 | **9.2** | MASTER_SSL_VERIFY_SERVER_CERT activé | 9. Réplication | Vérification visuelle / politique organisationnelle requise |
