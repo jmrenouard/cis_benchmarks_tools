@@ -50,7 +50,7 @@
         <header class="bg-white border-b border-gray-200 p-6 flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS CIS Benchmark</h1>
-                <p class="text-sm text-gray-500">Date du rapport: 12/08/2026 14:33:11</p>
+                <p class="text-sm text-gray-500">Date du rapport: 12/08/2026 20:49:50</p>
             </div>
             <div class="flex items-center space-x-3">
                 <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
@@ -209,20 +209,20 @@
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">5 Audit Logging</span>
-            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">33.3% (1/3)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/3)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 33.3%; background: #10b981;" title="Réussi: 1"></div><div style="width: 66.7%; background: #ef4444;" title="Échoué: 2"></div>
+            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 3"></div>
           </div>
         </div>
         
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">6 Operating System Hardening</span>
-            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/1)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #10b981;">100.0% (1/1)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 1"></div>
+            <div style="width: 100.0%; background: #10b981;" title="Réussi: 1"></div>
           </div>
         </div>
         
@@ -312,10 +312,10 @@ Exécuter &#x27;mongosh --quiet --eval &quot;print(db.version())&quot;&#x27; OU 
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;authorization&quot;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
-authorization: disabled
-Stderr:
 
-Return Code: 0
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
 
 Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">Démarrer l&#x27;instance sans authentification, créer un utilisateur administrateur, configurer &#x27;security.authorization: enabled&#x27; dans le fichier de configuration et redémarrer.</td>
@@ -330,7 +330,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-
+cat: /etc/mongod.conf: No such file or directory
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -346,7 +346,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-
+cat: /etc/mongod.conf: No such file or directory
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -479,7 +479,7 @@ Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.runCommand( {rolesInfo
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-
+cat: /etc/mongod.conf: No such file or directory
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -495,7 +495,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-
+cat: /etc/mongod.conf: No such file or directory
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -509,11 +509,10 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep -A20 &#x27;net&#x27; | grep -A10 &#x27;tls&#x27; | grep &#x27;mode&#x27;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
-mode: disabled
-  mode: slowOp
-Stderr:
 
-Return Code: 0
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
 
 Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">Définir &#x27;net.tls.mode: requireTLS&#x27;, &#x27;net.tls.certificateKeyFile&#x27;, &#x27;net.tls.CAFile&#x27; dans le fichier de configuration et redémarrer.</td>
@@ -528,7 +527,7 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-
+cat: /etc/mongod.conf: No such file or directory
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -554,8 +553,8 @@ cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryption
 
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">5 Audit Logging</h2>
-            <p class="text-lg font-bold text-red-600">33.33%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/3 vérifiés).</p>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/3 vérifiés).</p>
             <p class="text-gray-700">1 contrôles nécessitent une vérification manuelle.</p>
             <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
@@ -583,7 +582,7 @@ cat /etc/mongod.conf | grep &quot;enableEncryption&quot; | grep &quot;encryption
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-
+cat: /etc/mongod.conf: No such file or directory
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -612,7 +611,7 @@ cat /etc/mongod.conf | grep -A10 &quot;auditLog&quot; | grep &quot;filter&quot;.
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-
+cat: /etc/mongod.conf: No such file or directory
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -624,12 +623,14 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal</td>
                         <td class="py-3 px-4 text-left align-top">Automated</td>
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;logAppend&quot;</code></td>
-                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
-logAppend: true
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">Définir &#x27;systemLog.logAppend: true&#x27; dans le fichier de configuration.</td>
                     </tr>
 
@@ -639,8 +640,8 @@ Return Code: 0</pre></td>
 
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">6 Operating System Hardening</h2>
-            <p class="text-lg font-bold text-red-600">0.00%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/1 vérifiés).</p>
+            <p class="text-lg font-bold text-green-600">100.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/1 vérifiés).</p>
             <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
             <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
@@ -664,14 +665,12 @@ Return Code: 0</pre></td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que MongoDB utilise un port non-standard</td>
                         <td class="py-3 px-4 text-left align-top">Automated</td>
                         <td class="py-3 px-4 text-left align-top"><code>cat /etc/mongod.conf | grep &quot;port&quot;</code></td>
-                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-pass font-semibold">✅ Réussi</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
-port: 27017
+
 Stderr:
-
-Return Code: 0
-
-Condition de succès non remplie.</pre></td>
+cat: /etc/mongod.conf: No such file or directory
+Return Code: 1</pre></td>
                         <td class="py-3 px-4 text-left align-top">Changer le port &#x27;net.port&#x27; dans le fichier de configuration pour un numéro autre que 27017.</td>
                     </tr>
 
