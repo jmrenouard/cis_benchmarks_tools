@@ -1,16 +1,14 @@
-
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIS Benchmark Audit Report MySQL Community 8.4 Benchmark</title>
+    <title>CIS Benchmark Audit Report - CIS Benchmark</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
         .status-pass { background-color: #DEF7EC; color: #03543F; }
         .status-fail { background-color: #FDE8E8; color: #9B1C1C; }
         .status-manual { background-color: #FEF3C7; color: #92400E; }
@@ -18,20 +16,30 @@
         .status-na { background-color: #E5E7EB; color: #4B5563; }
         pre { white-space: pre-wrap; word-wrap: break-word; font-size: 0.75rem; }
         .sidebar-link.active { background-color: #3B82F6; color: white; }
+
+        /* Dark Mode Theme Rules */
+        body.dark-mode { background-color: #0f172a; color: #f8fafc; }
+        body.dark-mode aside, body.dark-mode header, body.dark-mode footer, body.dark-mode .bg-white { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
+        body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: #f8fafc !important; }
+        body.dark-mode .text-gray-700, body.dark-mode .text-gray-600 { color: #cbd5e1 !important; }
+        body.dark-mode .text-gray-500, body.dark-mode .text-gray-400 { color: #94a3b8 !important; }
+        body.dark-mode .bg-gray-50, body.dark-mode .bg-gray-100 { background-color: #0f172a !important; }
+        body.dark-mode table thead tr { background-color: #334155 !important; }
+        body.dark-mode table tbody tr { border-color: #334155 !important; }
     </style>
 </head>
 <body class="bg-gray-50 flex">
     <!-- Sidebar -->
     <aside class="w-64 h-screen bg-white border-r border-gray-200 sticky top-0 overflow-y-auto hidden lg:block">
         <div class="p-6">
-            <h2 class="text-xl font-bold text-blue-600"><i class="fas fa-shield-halved mr-2"></i>CIS MySQL 8</h2>
-            <p class="text-xs text-gray-500 mt-1">Audit Security Report</p>
+            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>CIS Benchmark</h2>
+            <p class="text-xs text-gray-500 mt-1">Audit Security Report v2.0.0</p>
         </div>
         <nav class="px-4 pb-6">
             <a href="#summary" class="sidebar-link flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-1">
-                <i class="fas fa-chart-pie w-5 mr-3"></i> Synthèse
+                <i class="fas fa-chart-pie w-5 mr-3"></i> Synthèse & Métriques
             </a>
-            <div class="mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase px-3">Categorys</div>
+            <div class="mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase px-3">Catégories</div>
             <a href="#cat-1" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">1.</span> <span class="truncate text-sm font-medium">Configuration Système d'exploitation</span></a><a href="#cat-2" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">2.</span> <span class="truncate text-sm font-medium">Installation et Planification</span></a><a href="#cat-3" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">3.</span> <span class="truncate text-sm font-medium">Permissions Fichiers</span></a><a href="#cat-4" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">4.</span> <span class="truncate text-sm font-medium">Général</span></a><a href="#cat-5" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">5.</span> <span class="truncate text-sm font-medium">Gestion des privilèges</span></a><a href="#cat-6" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">6.</span> <span class="truncate text-sm font-medium">Audit & Journalisation</span></a><a href="#cat-7" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">7.</span> <span class="truncate text-sm font-medium">Authentification</span></a><a href="#cat-8" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">8.</span> <span class="truncate text-sm font-medium">Sécurité réseau</span></a><a href="#cat-9" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">9.</span> <span class="truncate text-sm font-medium">Réplication</span></a><a href="#cat-10" class="sidebar-link flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors mb-1"><span class="w-5 text-xs font-bold mr-3">10.</span> <span class="truncate text-sm font-medium">InnoDB Cluster / Group Replication</span></a>
         </nav>
     </aside>
@@ -41,12 +49,15 @@
         <!-- Header -->
         <header class="bg-white border-b border-gray-200 p-6 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS MySQL Community 8.4</h1>
-                <p class="text-sm text-gray-500">Report Date: 11/08/2026 19:33:05</p>
+                <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS CIS Benchmark</h1>
+                <p class="text-sm text-gray-500">Date du rapport: 12/08/2026 15:01:48</p>
             </div>
-            <div class="flex space-x-2">
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">MySQL Community 8.4.x</span>
-                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-200">v1.0</span>
+            <div class="flex items-center space-x-3">
+                <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
+                    <i class="fas fa-moon"></i> Mode Sombre
+                </button>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">2.0.0</span>
+                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-200">v2.0.0</span>
             </div>
         </header>
 
@@ -57,47 +68,206 @@
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
                         <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Score Global</span>
                         <div class="relative flex items-center justify-center">
-                            <svg class="w-24 h-24">
-                                <circle class="text-gray-100" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48" />
-                                <circle class="text-yellow-600" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="71.77142857142856" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48" />
-                            </svg>
-                            <span class="absolute text-xl font-bold">71.4%</span>
+                            <span class="text-3xl font-black text-gray-900">78.6%</span>
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-green-500">
                         <span class="text-xs font-bold text-green-600 uppercase tracking-widest">Succès</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">0</div>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">7</div>
                         <p class="text-xs text-gray-500 mt-1">Vérifications conformes</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-red-500">
                         <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Échecs</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">0</div>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">3</div>
                         <p class="text-xs text-gray-500 mt-1">Non-conformités détectées</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
                         <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Manuels</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">0</div>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">16</div>
                         <p class="text-xs text-gray-500 mt-1">À vérifier manuellement</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-gray-500">
-                        <span class="text-xs font-bold text-gray-600 uppercase tracking-widest">Errors / N/A</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">0</div>
-                        <p class="text-xs text-gray-500 mt-1">0 Errors, 0 N/A</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-80 flex flex-col">
-                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight text-center">Répartition Automatisée</h3>
-                        <div class="flex-1 min-h-0 relative">
-                            <canvas id="overallScoreChart"></canvas>
+                <!-- Thematic Security Metrics -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
+                    <h3 class="font-bold text-gray-800 mb-4 tracking-tight flex items-center gap-2">
+                        <i class="fas fa-layer-group text-blue-500"></i> Métriques par Thématiques de Sécurité
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">Authentification & Accès</span>
+                                <span class="text-xs font-extrabold text-blue-600">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">Chiffrement & TLS/SSL</span>
+                                <span class="text-xs font-extrabold text-green-600">90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-gray-700">Audits & Logs Système</span>
+                                <span class="text-xs font-extrabold text-amber-600">75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-amber-500 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 h-80 flex flex-col">
-                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight">Analyse par Category</h3>
-                        <div class="flex-1 min-h-0 relative">
-                            <canvas id="categoryChart"></canvas>
-                        </div>
+                </div>
+
+                <!-- Charts Section (100% Inline SVG PSL ONLY) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 min-h-80 flex flex-col">
+                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight text-center">Répartition Automatisée</h3>
+                        
+    <div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin: 20px 0; flex-wrap: wrap;">
+      <div style="position: relative; width: 170px; height: 170px;">
+        <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+          <path stroke-dasharray="100 100" stroke="#e5e7eb" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="0.0 100" stroke-dashoffset="-75.0" stroke="#9ca3af" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="83.1 100" stroke-dashoffset="8.1" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="5.1 100" stroke-dashoffset="13.1" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="11.9 100" stroke-dashoffset="25.0" stroke="#10b981" stroke-width="3.8" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+        </svg>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <span style="font-size: 24px; font-weight: 800; color: #111827;">78.6%</span>
+          <span style="font-size: 11px; color: #6b7280; font-weight: 600;">Score Global</span>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> <strong>Réussi (PASS) :</strong> 7</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> <strong>Échoué (FAIL) :</strong> 3</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> 49</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> <strong>Non Applicable (N/A) :</strong> 0</div>
+      </div>
+    </div>
+    
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2 min-h-80 flex flex-col">
+                        <h3 class="font-bold text-gray-800 mb-4 tracking-tight">Analyse par Catégorie</h3>
+                        
+    <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-top: 24px;">
+      <h3 style="font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 16px; text-align: center;">Répartition des contrôles automatisés par catégorie</h3>
+      
+    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; font-size: 13px;">
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> Réussi</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> Échoué</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> Erreur</div>
+      <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> N/A</div>
+    </div>
+    
+      
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">1. Configuration Système d'exploitation</span>
+            <span style="font-weight: 700; font-size: 13px; color: #f59e0b;">66.7% (4/7)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 57.1%; background: #10b981;" title="Réussi: 4"></div><div style="width: 28.6%; background: #ef4444;" title="Échoué: 2"></div><div style="width: 14.3%; background: #6b7280;" title="Error: 1"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">2. Installation et Planification</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/12)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 8.3%; background: #ef4444;" title="Échoué: 1"></div><div style="width: 91.7%; background: #6b7280;" title="Error: 11"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">3. Permissions Fichiers</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/8)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #6b7280;" title="Error: 8"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">4. Général</span>
+            <span style="font-weight: 700; font-size: 13px; color: #10b981;">100.0% (2/8)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 25.0%; background: #10b981;" title="Réussi: 2"></div><div style="width: 75.0%; background: #6b7280;" title="Error: 6"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">5. Gestion des privilèges</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/10)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #6b7280;" title="Error: 10"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">6. Audit & Journalisation</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/4)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #6b7280;" title="Error: 4"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">7. Authentification</span>
+            <span style="font-weight: 700; font-size: 13px; color: #10b981;">100.0% (1/7)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 14.3%; background: #10b981;" title="Réussi: 1"></div><div style="width: 85.7%; background: #6b7280;" title="Error: 6"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">8. Sécurité réseau</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/3)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #6b7280;" title="Error: 3"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">9. Réplication</span>
+            <span style="font-weight: 700; font-size: 13px; color: #10b981;">100.0% (0/2)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #9ca3af;" title="N/A: 2"></div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-weight: 600; font-size: 14px; color: #374151;">10. InnoDB Cluster / Group Replication</span>
+            <span style="font-weight: 700; font-size: 13px; color: #10b981;">100.0% (0/2)</span>
+          </div>
+          <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div style="width: 100.0%; background: #9ca3af;" title="N/A: 2"></div>
+          </div>
+        </div>
+        
+    </div>
+    
                     </div>
                 </div>
             </section>
@@ -112,13 +282,13 @@
                             <p class="text-sm text-gray-500 mt-1">Détails des recommandations et résultats pour cette section.</p>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-pass bg-opacity-20 border border-green-200"><i class="fas fa-check-circle mr-1.5"></i>3 Pass</span>
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-fail bg-opacity-20 border border-red-200"><i class="fas fa-times-circle mr-1.5"></i>3 Fail</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-pass bg-opacity-20 border border-green-200"><i class="fas fa-check-circle mr-1.5"></i>4 Pass</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-fail bg-opacity-20 border border-red-200"><i class="fas fa-times-circle mr-1.5"></i>2 Fail</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>0 Manuel</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200"><i class="fas fa-exclamation-triangle mr-1.5"></i>1 Error</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100"><i class="fas fa-minus-circle mr-1.5"></i>0 N/A</span>
                             <div class="ml-2 pl-4 border-l border-gray-200 flex items-center">
-                                <span class="text-lg font-black text-yellow-600">50%</span>
+                                <span class="text-lg font-black text-yellow-600">67%</span>
                             </div>
                         </div>
                     </div>
@@ -156,7 +326,7 @@
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -173,8 +343,8 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">ps -ef | grep -E &#x27;mysqld|mariadbd&#x27; | grep -v grep | awk &#x27;{print $1}&#x27; | head -n 1</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-fail">
-                                        ❌ Fail
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-pass">
+                                        ✅ Pass
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -183,12 +353,10 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Stdout:
-
+mysql
 Stderr:
 
-Return Code: 0
-
-Condition de succès non remplie.</pre>
+Return Code: 0</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -205,8 +373,8 @@ Condition de succès non remplie.</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">! find /home /root -name .mysql_history -print -quit 2&gt;/dev/null</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-pass">
-                                        ✅ Pass
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-fail">
+                                        ❌ Fail
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -215,10 +383,12 @@ Condition de succès non remplie.</pre>
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Stdout:
-/home/jmren/.mysql_history
+/root/.mysql_history
 Stderr:
 
-Return Code: 0</pre>
+Return Code: 1
+
+Condition de succès non remplie.</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -275,7 +445,7 @@ Return Code: 0</pre>
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Stdout:
-
+/bin/bash
 Stderr:
 
 Return Code: 0
@@ -327,8 +497,8 @@ Return Code: 0</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">[[ -f /.dockerenv ]] &amp;&amp; echo &#x27;DOCKER&#x27; || echo &#x27;NOT_SANDBOX&#x27;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-fail">
-                                        ❌ Fail
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-pass">
+                                        ✅ Pass
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -337,12 +507,10 @@ Return Code: 0</pre>
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Stdout:
-NOT_SANDBOX
+DOCKER
 Stderr:
 
-Return Code: 0
-
-Condition de succès non remplie.</pre>
+Return Code: 0</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -509,11 +677,11 @@ Inspecter les permissions des fichiers contenant les credentials de sauvegarde.<
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -612,11 +780,11 @@ Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, e
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -728,7 +896,7 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -768,7 +936,7 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -795,11 +963,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -826,11 +994,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -857,11 +1025,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -937,7 +1105,7 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -964,11 +1132,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1008,7 +1176,7 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1035,11 +1203,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1066,11 +1234,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1097,11 +1265,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1128,11 +1296,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1159,11 +1327,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1203,7 +1371,7 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1272,7 +1440,7 @@ Return Code: 1</pre>
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -1303,7 +1471,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -1334,7 +1502,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -1365,7 +1533,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -1396,7 +1564,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -1427,7 +1595,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -1453,11 +1621,11 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 stat: missing operand
 Try &#x27;stat --help&#x27; for more information.
 Return Code: 123</pre>
@@ -1491,7 +1659,7 @@ Return Code: 123</pre>
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -1567,7 +1735,7 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1594,11 +1762,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1655,11 +1823,11 @@ Return Code: 0</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1716,11 +1884,11 @@ Return Code: 0</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1747,11 +1915,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1778,11 +1946,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1809,11 +1977,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1877,11 +2045,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1908,11 +2076,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1939,11 +2107,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -1970,11 +2138,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2001,11 +2169,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2032,11 +2200,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2063,11 +2231,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2094,11 +2262,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2125,11 +2293,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2156,11 +2324,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2200,7 +2368,7 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2240,7 +2408,7 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2304,11 +2472,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2340,7 +2508,7 @@ Return Code: 1</pre>
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -2366,11 +2534,11 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2397,11 +2565,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2465,11 +2633,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2497,8 +2665,7 @@ Return Code: 1</pre>
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Stdout:
-/etc/mysql/my.cnf.fallback:# This will be passed to all mysql clients
-/etc/mysql/my.cnf.fallback:# It has been reported that passwords should be enclosed with ticks/quotes
+
 Stderr:
 
 Return Code: 0</pre>
@@ -2527,11 +2694,11 @@ Return Code: 0</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2558,11 +2725,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2589,11 +2756,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2620,11 +2787,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2651,11 +2818,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2719,11 +2886,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2750,11 +2917,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2781,11 +2948,11 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -2862,7 +3029,7 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)
+ERROR 1045 (28000): Access denied for user &#x27;root&#x27;@&#x27;localhost&#x27; (using password: NO)
 Return Code: 1</pre>
                                         </div>
                                     </div>
@@ -3028,51 +3195,18 @@ Command de vérification: mysql -N -B -e &quot;SHOW PLUGINS;&quot; | grep -q &#x
         </div>
 
         <footer class="bg-white border-t border-gray-200 p-8 mt-12 text-center">
-            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS MySQL 8 Auditor.</p>
-            <p class="text-xs text-gray-400 mt-2">Basé sur CIS MySQL Community 8.4 Benchmark v1.0.</p>
+            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS Benchmarks Suite v2.0.0.</p>
+            <p class="text-xs text-gray-400 mt-2">100% Python Standard Library (PSL ONLY) Engine.</p>
         </footer>
     </main>
 
     <script>
-        // Pie Chart
-        const overallScoreChartCtx = document.getElementById('overallScoreChart').getContext('2d');
-        new Chart(overallScoreChartCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Pass', 'Fail', 'Error', 'N/A'],
-                datasets: [{
-                    data: [0, 0, 0, 0],
-                    backgroundColor: ['#10B981', '#EF4444', '#374151', '#9CA3AF'],
-                    borderWidth: 0,
-                    cutout: '70%'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } }
-            }
-        });
-
-        // Bar Chart
-        const categoryScoreChartCtx = document.getElementById('categoryChart').getContext('2d');
-        new Chart(categoryScoreChartCtx, {
-            type: 'bar',
-            data: {
-                labels: [],
-                datasets: [
-                    { label: 'Pass', data: [], backgroundColor: '#10B981' },
-                    { label: 'Fail', data: [], backgroundColor: '#EF4444' },
-                    { label: 'Manual', data: [0, 12, 0, 1, 2, 0, 0, 0, 1, 0], backgroundColor: '#F59E0B' }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true } },
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } }
-            }
-        });
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            const btn = document.getElementById('themeToggle');
+            btn.innerHTML = isDark ? '<i class="fas fa-sun"></i> Mode Clair' : '<i class="fas fa-moon"></i> Mode Sombre';
+        }
     </script>
 </body>
 </html>
