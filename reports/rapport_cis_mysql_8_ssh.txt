@@ -30,7 +30,6 @@ Total Controls: 70
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [FAIL] 1.2 - Utiliser un compte dédié et privilégié minimal pour MySQL
@@ -38,7 +37,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -49,7 +47,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -60,7 +57,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -71,7 +67,6 @@ Condition de succès non remplie.
   Output: Stdout:
 Try `getent --help' or `getent --usage' for more information.
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 getent: wrong number of arguments
 Return Code: 0
 
@@ -83,7 +78,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -94,7 +88,6 @@ Condition de succès non remplie.
   Output: Stdout:
 NOT_SANDBOX
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 -f: -c: line 2: unexpected token `EOF' in conditional command
 -f: -c: line 2: syntax error: unexpected end of file
 Return Code: 0
@@ -107,7 +100,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -140,7 +132,6 @@ Examiner les permissions et la présence de chiffrement sur les fichiers de sauv
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -165,7 +156,6 @@ Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, e
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.2 - Permissions sur les fichiers 'log_bin_basename'
@@ -175,7 +165,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.3 - Permissions sur 'log_error'
@@ -185,7 +174,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.4 - Permissions sur 'slow_query_log'
@@ -195,7 +183,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.5 - Permissions sur 'relay_log_basename'
@@ -205,7 +192,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.6 - Permissions sur 'general_log_file'
@@ -215,7 +201,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.7 - Permissions sur les fichiers de clés SSL
@@ -224,7 +209,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 stat: missing operand
 Try 'stat --help' for more information.
@@ -237,7 +221,6 @@ Return Code: 123
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.9 - Permissions sur 'audit_log_file'
@@ -247,7 +230,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.10 - Sécuriser le Keyring MySQL
@@ -256,7 +238,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 stat: missing operand
 Try 'stat --help' for more information.
@@ -270,7 +251,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -280,7 +260,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -289,7 +268,6 @@ Return Code: 1
   Output: Stdout:
 NOT FOUND
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.4 - Harden Usage for 'local_infile' on MySQL Clients
@@ -298,7 +276,6 @@ Return Code: 0
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -307,7 +284,6 @@ Return Code: 1
   Output: Stdout:
 NOT FOUND
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 4.6 - Ensure Symbolic Links are Disabled
@@ -316,7 +292,6 @@ Return Code: 0
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -326,7 +301,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -336,7 +310,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -346,7 +319,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -356,7 +328,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -366,7 +337,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -376,7 +346,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -386,7 +355,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -396,7 +364,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -406,7 +373,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -416,7 +382,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -426,7 +391,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -436,7 +400,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -446,7 +409,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -456,7 +418,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -466,7 +427,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -476,7 +436,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -486,7 +445,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -497,7 +455,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 ------------------------------------------------------------------------------------------
 [MANUAL] 6.3 - log_error_verbosity=2
@@ -506,7 +463,6 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -516,7 +472,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -526,7 +481,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -543,7 +497,6 @@ Vérifier la configuration du plugin d'audit pour s'assurer qu'un filtre 'log_al
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -552,7 +505,6 @@ Return Code: 1
   Output: Stdout:
 NOT FOUND
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -564,7 +516,6 @@ Condition de succès non remplie.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -573,7 +524,6 @@ Return Code: 1
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -585,7 +535,6 @@ Condition de succès non remplie.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -595,7 +544,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -605,7 +553,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -615,7 +562,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -625,7 +571,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -635,7 +580,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -645,7 +589,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
@@ -655,7 +598,6 @@ Return Code: 1
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
 ------------------------------------------------------------------------------------------
