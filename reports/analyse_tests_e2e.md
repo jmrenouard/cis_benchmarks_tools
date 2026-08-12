@@ -1,6 +1,6 @@
 # 📊 CIS Benchmarks Suite - E2E Execution Audit & Compliance Analysis
 
-> **Rapport d'Analyse des Tests E2E généré le** : `2026-08-12 16:24:41`  
+> **Rapport d'Analyse des Tests E2E généré le** : `2026-08-12 16:35:19`  
 > **Moteur d'Audit** : `CIS Benchmarks Tools Suite v2.0.0` (100% Python Standard Library - PSL ONLY)  
 > **Périmètre** : 19 cibles d'audit évaluées (Bases de données & Systèmes Linux RHEL)
 
@@ -13,19 +13,19 @@
 | **CASSANDRA_40** | `Local` | 2026-08-12 13:55:04 | 🟡 `50.0%` | 20 | 6 | 6 | 0 | 8 |
 | **CASSANDRA_41** | `Local` | 2026-08-12 13:55:46 | 🔴 `41.7%` | 20 | 5 | 7 | 0 | 8 |
 | **CASSANDRA_50** | `Local` | 2026-08-12 13:56:30 | 🔴 `41.7%` | 20 | 5 | 7 | 0 | 8 |
-| **MARIADB_1011** | `Local` | 2026-08-12 13:49:07 | 🔴 `42.2%` | 75 | 17 | 26 | 0 | 32 |
-| **MARIADB_106** | `Local` | 2026-08-12 13:48:42 | 🔴 `42.2%` | 74 | 17 | 26 | 0 | 31 |
-| **MONGODB_7** | `Local` | 2026-08-12 13:54:00 | 🔴 `9.1%` | 23 | 1 | 10 | 0 | 12 |
-| **MONGODB_8** | `Local` | 2026-08-12 13:54:24 | 🔴 `9.1%` | 23 | 1 | 10 | 0 | 12 |
-| **MYSQL_80** | `Local` | 2026-08-12 13:50:51 | 🟡 `70.6%` | 70 | 6 | 5 | 0 | 59 |
+| **MARIADB_1011** | `Local` | 2026-08-12 14:29:25 | 🟡 `53.3%` | 75 | 22 | 21 | 0 | 32 |
+| **MARIADB_106** | `Local` | 2026-08-12 14:29:00 | 🟡 `53.3%` | 74 | 22 | 21 | 0 | 31 |
+| **MONGODB_7** | `Local` | 2026-08-12 14:33:12 | 🔴 `9.1%` | 23 | 1 | 10 | 0 | 12 |
+| **MONGODB_8** | `Local` | 2026-08-12 14:33:33 | 🔴 `9.1%` | 23 | 1 | 10 | 0 | 12 |
+| **MYSQL_80** | `Local` | 2026-08-12 14:29:53 | 🟡 `70.6%` | 70 | 6 | 5 | 0 | 59 |
 | **MYSQL_80** | `Local` | 2026-08-11 19:34:32 | 🟡 `70.6%` | 70 | 6 | 5 | 0 | 59 |
-| **MYSQL_COMMUNITY_84** | `Local` | 2026-08-12 13:51:18 | 🟡 `78.6%` | 79 | 7 | 3 | 0 | 69 |
-| **MYSQL_COMMUNITY_97** | `Local` | 2026-08-12 13:52:08 | 🟡 `76.5%` | 70 | 7 | 4 | 0 | 59 |
-| **MYSQL_ENTERPRISE_84** | `Local` | 2026-08-12 13:51:41 | 🟡 `76.5%` | 70 | 7 | 4 | 0 | 59 |
-| **MYSQL_ENTERPRISE_97** | `Local` | 2026-08-12 13:52:34 | 🟡 `76.5%` | 70 | 7 | 4 | 0 | 59 |
-| **POSTGRESQL_16** | `Local` | 2026-08-12 13:52:57 | 🟡 `57.1%` | 71 | 16 | 12 | 0 | 43 |
-| **POSTGRESQL_17** | `Local` | 2026-08-12 13:53:16 | 🟡 `57.1%` | 71 | 16 | 12 | 0 | 43 |
-| **POSTGRESQL_18** | `Local` | 2026-08-12 13:53:39 | 🟡 `57.1%` | 71 | 16 | 12 | 0 | 43 |
+| **MYSQL_COMMUNITY_84** | `Local` | 2026-08-12 14:30:21 | 🟡 `78.6%` | 79 | 7 | 3 | 0 | 69 |
+| **MYSQL_COMMUNITY_97** | `Local` | 2026-08-12 14:31:13 | 🟡 `76.5%` | 70 | 7 | 4 | 0 | 59 |
+| **MYSQL_ENTERPRISE_84** | `Local` | 2026-08-12 14:30:49 | 🟡 `76.5%` | 70 | 7 | 4 | 0 | 59 |
+| **MYSQL_ENTERPRISE_97** | `Local` | 2026-08-12 14:31:40 | 🟡 `76.5%` | 70 | 7 | 4 | 0 | 59 |
+| **POSTGRESQL_16** | `Local` | 2026-08-12 14:32:03 | 🟡 `57.1%` | 71 | 16 | 12 | 0 | 43 |
+| **POSTGRESQL_17** | `Local` | 2026-08-12 14:32:24 | 🟡 `57.1%` | 71 | 16 | 12 | 0 | 43 |
+| **POSTGRESQL_18** | `Local` | 2026-08-12 14:32:48 | 🟡 `57.1%` | 71 | 16 | 12 | 0 | 43 |
 | **RHEL_10** | `Local` | 2026-08-11 19:36:19 | 🔴 `45.0%` | 20 | 9 | 11 | 0 | 0 |
 | **RHEL_8** | `Local` | 2026-08-11 19:36:20 | 🔴 `45.0%` | 20 | 9 | 11 | 0 | 0 |
 | **RHEL_9** | `Local` | 2026-08-11 19:36:22 | 🔴 `45.0%` | 20 | 9 | 11 | 0 | 0 |
@@ -34,9 +34,9 @@
 
 - **Nombre total de benchmarks évalués** : `19`
 - **Nombre total de règles/contrôles vérifiés** : `957`
-- **Score de conformité moyen** : `52.2%`
-- **Contrôles en succès (`PASS`)** : `167` (17.5%)
-- **Contrôles en échec (`FAIL`)** : `186` (19.4%)
+- **Score de conformité moyen** : `53.4%`
+- **Contrôles en succès (`PASS`)** : `177` (18.5%)
+- **Contrôles en échec (`FAIL`)** : `176` (18.4%)
 - **Contrôles en erreur d'exécution (`ERROR`)** : `0` (0.0%)
 - **Contrôles à vérification manuelle (`MANUAL`)** : `604` (63.1%)
 
@@ -81,14 +81,12 @@ Ce registre liste l'ensemble des règles ayant échoué lors de l'exécution aut
 | **3.4** | 🔴 FAIL | S'assurer que Cassandra est exécuté sous un compte de service dédié | 3 Contrôle d'accès | `Stdout:` | Configurer le service Cassandra pour qu'il s'exécute sous l'utilisateur 'cassandra'. |
 | **5.1** | 🔴 FAIL | Chiffrement inter-nœuds | 5 Chiffrement | `Stdout:` | Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les |
 
-### 🛑 MARIADB_1011 (`26` échecs / erreurs)
+### 🛑 MARIADB_1011 (`21` échecs / erreurs)
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation Suggérée |
 | :---: | :---: | :--- | :--- | :--- | :--- |
 | **1.3** | 🔴 FAIL | Désactiver l'historique des commandes MariaDB | 1. Configuration Système d'exploitation | `Stdout:` | Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HI |
 | **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s / |
-| **2.6** | 🔴 FAIL | Assurer que password_lifetime <= 365 | 2. Installation et Planification | `Stdout:` | SET GLOBAL default_password_lifetime=365; |
-| **2.11** | 🔴 FAIL | Exiger des certificats côté client (X.509) | 2. Installation et Planification | `Stdout:` | ALTER USER '<user>'@'<host>' REQUIRE X509; |
 | **2.12** | 🔴 FAIL | S'assurer que seuls les chiffrement approuvés sont utilisés | 2. Installation et Planification | `Stdout:` | Configurer ssl_cipher avec une liste de chiffrements approuvés dans mariadb.cnf. |
 | **3.2** | 🔴 FAIL | Permissions sur les fichiers 'log_bin_basename' | 3. Permissions Fichiers | `Stdout:` | Appliquer chmod 600 sur les fichiers binaires. |
 | **3.4** | 🔴 FAIL | Permissions sur 'slow_query_log' | 3. Permissions Fichiers | `Stdout:` | Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600). |
@@ -97,7 +95,6 @@ Ce registre liste l'ensemble des règles ayant échoué lors de l'exécution aut
 | **3.7** | 🔴 FAIL | Permissions sur les fichiers de clés SSL | 3. Permissions Fichiers | `Stdout:` | Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql. |
 | **3.9** | 🔴 FAIL | Permissions sur 'server_audit_file_path' | 3. Permissions Fichiers | `Stdout:` | Appliquer des permissions restrictives (ex: 640 ou 600). |
 | **3.10** | 🔴 FAIL | Permissions sur les fichiers du plugin File Key Management | 3. Permissions Fichiers | `Stdout:` | Restreindre l'accès aux fichiers de clés de chiffrement (chmod 640). |
-| **4.4** | 🔴 FAIL | Renforcer l'utilisation de 'local_infile' sur les clients MariaDB | 4. Général | `Stdout:` | Ajouter local-infile=0 à la section [mariadbd] et [client] du fichier de configuration MariaDB. |
 | **4.6** | 🔴 FAIL | S'assurer que les liens symboliques sont désactivés | 4. Général | `Stdout:` | Ajouter skip-symbolic-links dans la section [mariadbd] du fichier mariadb.cnf. |
 | **4.7** | 🔴 FAIL | S'assurer que 'secure_file_priv' est configuré correctement | 4. Général | `Stdout:` | Configurer secure_file_priv sur NULL (pour désactiver) ou sur un chemin spécifique dans mariadb.cnf. |
 | **4.8** | 🔴 FAIL | S'assurer que sql_mode contient STRICT_ALL_TABLES | 4. Général | `Stdout:` | Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans mariadb.cnf. |
@@ -108,18 +105,14 @@ Ce registre liste l'ensemble des règles ayant échoué lors de l'exécution aut
 | **6.6** | 🔴 FAIL | Chiffrer les Binary et Relay Logs | 6. Audit & Journalisation | `Stdout:` | Ajouter encrypt_binlog=ON dans mariadb.cnf (nécessite un plugin de gestion de clés). |
 | **7.3** | 🔴 FAIL | Authentification forte pour tous les comptes | 7. Authentification | `Stdout:` | Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte. |
 | **7.4** | 🔴 FAIL | Politique de complexité des mots de passe (simple_password_check) | 7. Authentification | `Stdout:` | Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_pas |
-| **7.5** | 🔴 FAIL | Pas de wildcard '%' dans host | 7. Authentification | `Stdout:` | ALTER USER '<user>'@'%' ... ou supprimer le compte. |
 | **8.1** | 🔴 FAIL | Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES) | 8. Sécurité réseau | `Stdout:` | Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf. |
-| **8.2** | 🔴 FAIL | Exiger TLS côté utilisateur (ssl_type) | 8. Sécurité réseau | `Stdout:` | ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509; |
 
-### 🛑 MARIADB_106 (`26` échecs / erreurs)
+### 🛑 MARIADB_106 (`21` échecs / erreurs)
 
 | ID Règle | Statut | Nom du Contrôle | Catégorie | Extrait Résultat / Message d'Erreur | Procédure de Remédiation Suggérée |
 | :---: | :---: | :--- | :--- | :--- | :--- |
 | **1.3** | 🔴 FAIL | Désactiver l'historique des commandes MariaDB | 1. Configuration Système d'exploitation | `Stdout:` | Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HI |
 | **1.5** | 🔴 FAIL | Désactiver l'accès interactif pour l'utilisateur MySQL | 1. Configuration Système d'exploitation | `Stdout:` | Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s / |
-| **2.6** | 🔴 FAIL | Assurer que password_lifetime <= 365 | 2. Installation et Planification | `Stdout:` | SET GLOBAL default_password_lifetime=365; |
-| **2.11** | 🔴 FAIL | Exiger des certificats côté client (X.509) | 2. Installation et Planification | `Stdout:` | ALTER USER '<user>'@'<host>' REQUIRE X509; |
 | **2.12** | 🔴 FAIL | S'assurer que seuls les chiffrement approuvés sont utilisés | 2. Installation et Planification | `Stdout:` | Configurer ssl_cipher avec une liste de chiffrements approuvés dans mariadb.cnf. |
 | **3.2** | 🔴 FAIL | Permissions sur les fichiers 'log_bin_basename' | 3. Permissions Fichiers | `Stdout:` | Appliquer chmod 600 sur les fichiers binaires. |
 | **3.4** | 🔴 FAIL | Permissions sur 'slow_query_log' | 3. Permissions Fichiers | `Stdout:` | Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600). |
@@ -128,7 +121,6 @@ Ce registre liste l'ensemble des règles ayant échoué lors de l'exécution aut
 | **3.7** | 🔴 FAIL | Permissions sur les fichiers de clés SSL | 3. Permissions Fichiers | `Stdout:` | Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql. |
 | **3.9** | 🔴 FAIL | Permissions sur 'server_audit_file_path' | 3. Permissions Fichiers | `Stdout:` | Appliquer des permissions restrictives (ex: 640 ou 600). |
 | **3.10** | 🔴 FAIL | Permissions sur les fichiers du plugin File Key Management | 3. Permissions Fichiers | `Stdout:` | Restreindre l'accès aux fichiers de clés de chiffrement (chmod 640). |
-| **4.4** | 🔴 FAIL | Renforcer l'utilisation de 'local_infile' sur les clients MariaDB | 4. Général | `Stdout:` | Ajouter local-infile=0 à la section [mariadbd] et [client] du fichier de configuration MariaDB. |
 | **4.6** | 🔴 FAIL | S'assurer que les liens symboliques sont désactivés | 4. Général | `Stdout:` | Ajouter skip-symbolic-links dans la section [mariadbd] du fichier mariadb.cnf. |
 | **4.7** | 🔴 FAIL | S'assurer que 'secure_file_priv' est configuré correctement | 4. Général | `Stdout:` | Configurer secure_file_priv sur NULL (pour désactiver) ou sur un chemin spécifique dans mariadb.cnf. |
 | **4.8** | 🔴 FAIL | S'assurer que sql_mode contient STRICT_ALL_TABLES | 4. Général | `Stdout:` | Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans mariadb.cnf. |
@@ -139,9 +131,7 @@ Ce registre liste l'ensemble des règles ayant échoué lors de l'exécution aut
 | **6.6** | 🔴 FAIL | Chiffrer les Binary et Relay Logs | 6. Audit & Journalisation | `Stdout:` | Ajouter encrypt_binlog=ON dans mariadb.cnf (nécessite un plugin de gestion de clés). |
 | **7.3** | 🔴 FAIL | Authentification forte pour tous les comptes | 7. Authentification | `Stdout:` | Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte. |
 | **7.4** | 🔴 FAIL | Politique de complexité des mots de passe (simple_password_check) | 7. Authentification | `Stdout:` | Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_pas |
-| **7.5** | 🔴 FAIL | Pas de wildcard '%' dans host | 7. Authentification | `Stdout:` | ALTER USER '<user>'@'%' ... ou supprimer le compte. |
 | **8.1** | 🔴 FAIL | Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES) | 8. Sécurité réseau | `Stdout:` | Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf. |
-| **8.2** | 🔴 FAIL | Exiger TLS côté utilisateur (ssl_type) | 8. Sécurité réseau | `Stdout:` | ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509; |
 
 ### 🛑 MONGODB_7 (`10` échecs / erreurs)
 
@@ -156,7 +146,7 @@ Ce registre liste l'ensemble des règles ayant échoué lors de l'exécution aut
 | **4.4** | 🔴 FAIL | S'assurer que la norme FIPS (Federal Information Processing Standard) est activée | 4 Data Encryption | `Stdout:` | Définir 'net.tls.FIPSMode: true' dans le fichier de configuration et redémarrer. |
 | **5.1** | 🔴 FAIL | S'assurer que l'activité du système est auditée | 5 Audit Logging | `Stdout:` | Définir 'auditLog.destination' sur 'syslog', 'console' ou 'file' dans le fichier de configuration. |
 | **5.3** | 🔴 FAIL | S'assurer que la journalisation capture autant d'informations que possible | 5 Audit Logging | `Stdout:` | Définir 'systemLog.quiet: false' dans le fichier de configuration. |
-| **5.4** | 🔴 FAIL | S'assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal | 5 Audit Logging | `Stdout:` | Définir 'systemLog.logAppend: true' dans le fichier de configuration. |
+| **6.1** | 🔴 FAIL | S'assurer que MongoDB utilise un port non-standard | 6 Operating System Hardening | `Stdout:` | Changer le port 'net.port' dans le fichier de configuration pour un numéro autre que 27017. |
 
 ### 🛑 MONGODB_8 (`10` échecs / erreurs)
 
@@ -171,7 +161,7 @@ Ce registre liste l'ensemble des règles ayant échoué lors de l'exécution aut
 | **4.4** | 🔴 FAIL | S'assurer que la norme FIPS (Federal Information Processing Standard) est activée | 4 Data Encryption | `Stdout:` | Définir 'net.tls.FIPSMode: true' dans le fichier de configuration et redémarrer. |
 | **5.1** | 🔴 FAIL | S'assurer que l'activité du système est auditée | 5 Audit Logging | `Stdout:` | Définir 'auditLog.destination' sur 'syslog', 'console' ou 'file' dans le fichier de configuration. |
 | **5.3** | 🔴 FAIL | S'assurer que la journalisation capture autant d'informations que possible | 5 Audit Logging | `Stdout:` | Définir 'systemLog.quiet: false' dans le fichier de configuration. |
-| **5.4** | 🔴 FAIL | S'assurer que les nouvelles entrées sont ajoutées à la fin du fichier journal | 5 Audit Logging | `Stdout:` | Définir 'systemLog.logAppend: true' dans le fichier de configuration. |
+| **6.1** | 🔴 FAIL | S'assurer que MongoDB utilise un port non-standard | 6 Operating System Hardening | `Stdout:` | Changer le port 'net.port' dans le fichier de configuration pour un numéro autre que 27017. |
 
 ### 🛑 MYSQL_80 (`5` échecs / erreurs)
 
