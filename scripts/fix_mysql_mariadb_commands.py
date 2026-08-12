@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Ensure mysql/mariadb commands are resilient across all MySQL and MariaDB audit scripts.
-Supports both mariadb and mysql CLI binaries with sudo and fallback handling (PSL ONLY).
+Supports both mariadb and mysql CLI binaries with non-interactive sudo (-n) and fallback handling (PSL ONLY).
 """
 
 import glob
@@ -14,7 +14,7 @@ new_path_block = '''                if "path_command" in rec:
                     path_cmd = rec["path_command"]
                     path_cmd_to_run = path_cmd
                     if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
-                        path_cmd_to_run = f"{path_cmd} 2>/dev/null || mariadb -N -B -e \\\"SELECT @@datadir;\\\" 2>/dev/null || sudo mysql -N -B -e \\\"SELECT @@datadir;\\\" 2>/dev/null || sudo mariadb -N -B -e \\\"SELECT @@datadir;\\\" 2>/dev/null"
+                        path_cmd_to_run = f"{path_cmd} 2>/dev/null || mariadb -N -B -e \\\"SELECT @@datadir;\\\" 2>/dev/null || sudo -n mysql -N -B -e \\\"SELECT @@datadir;\\\" 2>/dev/null || sudo -n mariadb -N -B -e \\\"SELECT @@datadir;\\\" 2>/dev/null"
                     
                     path_stdout, path_stderr, path_returncode = run_command(path_cmd_to_run, remote_host=remote_host)
 
@@ -40,15 +40,10 @@ for fpath in db_audit_files:
     with open(fpath, "r", encoding="utf-8") as f:
         content = f.read()
 
-    if "audit_cis_mariadb" in fpath:
-        content = content.replace('MYSQL_CMD = "mysql -N -B"', 'MYSQL_CMD = "mariadb -N -B 2>/dev/null || mysql -N -B"')
-    elif "audit_cis_mysql" in fpath:
-        content = content.replace('MYSQL_CMD = "mysql -N -B"', 'MYSQL_CMD = "mysql -N -B 2>/dev/null || mariadb -N -B"')
-
     pattern = r'                if "path_command" in rec:\n.*?(?=\n                    dynamic_path = |\n                elif "test_procedure" in rec:)'
     content = re.sub(pattern, new_path_block, content, flags=re.DOTALL)
 
     with open(fpath, "w", encoding="utf-8") as f:
         f.write(content)
 
-print("✅ Enhanced MySQL/MariaDB command resilience across all database audit scripts!")
+print("✅ Updated MySQL/MariaDB command resilience with non-interactive sudo (-n)!")
