@@ -457,15 +457,25 @@ def load_recommendations(target_key):
 
 
 
-def run_command(command, remote_host=None):
-    """Execute command safely with timeout=10, stdin=DEVNULL, and clean SSH noise (PSL ONLY)."""
+def detect_docker_container(remote_host=None, docker_name=None):
+    """Detect active PostgreSQL Docker container name."""
+    if docker_name:
+        return docker_name
+    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' 2>/dev/null | grep -iE 'postgres|pg' | head -n 1", remote_host=remote_host)
+    if ret == 0 and stdout:
+        return stdout.strip()
+    return None
+
+
+def run_command(command, remote_host=None, docker_container=None):
+    """Execute command safely locally, over SSH, or inside Docker container (PSL ONLY)."""
     try:
         if isinstance(command, str):
-            if "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
+            if docker_container and not command.startswith("docker exec"):
+                command = f"docker exec -i {docker_container} /bin/bash -c {json.dumps(command)}"
+            elif "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
                 if "postgresql" in command:
                     command = "pg_isready -h localhost -p 5432 || ps aux | grep -v grep | grep postgres"
-                elif "mariadb" in command or "mysql" in command:
-                    command = "mariadb -e 'SELECT 1;' 2>/dev/null || mysql -e 'SELECT 1;' 2>/dev/null || ps aux | grep -v grep | grep mysqld"
             cmd_args = ["/bin/bash", "-c", command]
         else:
             cmd_args = list(command)
@@ -541,7 +551,7 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     # Ajouter d'autres types de conditions au besoin
     return False # Type de condition inconnu
 
-def perform_checks(recommendations, remote_host=None):
+def perform_checks(recommendations, remote_host=None, docker_container=None):
     """Exécute tous les contrôles et stocke les résultats."""
     results = {}
     for rec in recommendations:
@@ -1114,6 +1124,7 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
 # --- Main Execution ---
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CIS Audit Benchmark (Local & SSH Remote Modes)")
+    parser.add_argument("--docker", "--container", dest="docker_container", default=None, help="Target Docker container name or ID")
     parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
     parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
     parser.add_argument("--ssh-port", type=int, default=22, help="SSH port for remote execution (default: 22)")
@@ -1140,6 +1151,7 @@ if __name__ == "__main__":
         print("🖥️  Running Audit in Local Mode on local machine...")
 
     rules_data = load_recommendations("postgresql_17")
-    check_results = perform_checks(rules_data, remote_host=remote_target)
+    docker_target = detect_docker_container(remote_host=remote_target, docker_name=args.docker_container)
+    check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target)
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
     export_results(check_results, overall_score, categories_scores, target_name="postgresql_17", filename=args.output, fmt=args.format, lang=args.lang)
