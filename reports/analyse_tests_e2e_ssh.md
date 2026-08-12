@@ -1,6 +1,6 @@
 # 📊 CIS Benchmarks Suite - Analyse Spécifique Mode SSH Remote (-m ssh)
 
-> **Rapport d'Analyse E2E (Mode SSH Remote (-m ssh)) généré le** : `2026-08-12 17:11:40`  
+> **Rapport d'Analyse E2E (Mode SSH Remote (-m ssh)) généré le** : `2026-08-12 22:14:42`  
 > **Moteur d'Audit** : `CIS Benchmarks Tools Suite v2.0.0` (100% Python Standard Library - PSL ONLY)  
 > **Mode d'Exécution** : 🌐 `SSH Remote`  
 > **Périmètre** : 10 cibles d'audit évaluées dans ce mode
