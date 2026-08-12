@@ -1,266 +1,266 @@
 <?xml version='1.0' encoding='utf-8'?>
-<testsuite name="mysql_80" tests="70" failures="5" timestamp="2026-08-11T19:34:31.206781"><testcase id="1.1" name="Placer les bases de données sur des partitions non-système" classname="1. Configuration Système d'exploitation"><error message="Control execution error">Error lors de l'obtention du chemin via:
+<testsuite name="mysql_80" tests="70" failures="5" timestamp="2026-08-12T20:49:55.358022"><testcase id="1.1" name="Placer les bases de données sur des partitions non-système" classname="1. Configuration Système d'exploitation"><remediation>Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service.</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@datadir;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="1.2" name="Utiliser un compte dédié et privilégié minimal pour MySQL" classname="1. Configuration Système d'exploitation"><failure message="Control failed">Stdout:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="1.2" name="Utiliser un compte dédié et privilégié minimal pour MySQL" classname="1. Configuration Système d'exploitation"><system-out>Test Command: ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | awk '{print $1}' | head -n 1</system-out><remediation>Configurer le service MySQL pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux.</remediation><failure message="Control failed">Stdout:
 
 Stderr:
 
 Return Code: 0
 
-Condition de succès non remplie.</failure></testcase><testcase id="1.3" name="Désactiver l'historique des commandes MySQL" classname="1. Configuration Système d'exploitation" /><testcase id="1.4" name="Vérifier que MYSQL_PWD n'est pas utilisé" classname="1. Configuration Système d'exploitation" /><testcase id="1.5" name="Désactiver l'accès interactif pour l'utilisateur MySQL" classname="1. Configuration Système d'exploitation"><failure message="Control failed">Stdout:
+Condition de succès non remplie.</failure></testcase><testcase id="1.3" name="Désactiver l'historique des commandes MySQL" classname="1. Configuration Système d'exploitation"><system-out>Test Command: ! find /home /root -name .mysql_history -print -quit 2&gt;/dev/null</system-out><remediation>Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.</remediation></testcase><testcase id="1.4" name="Vérifier que MYSQL_PWD n'est pas utilisé" classname="1. Configuration Système d'exploitation"><system-out>Test Command: ! grep -qs MYSQL_PWD /proc/*/environ</system-out><remediation>Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifiée.</remediation></testcase><testcase id="1.5" name="Désactiver l'accès interactif pour l'utilisateur MySQL" classname="1. Configuration Système d'exploitation"><system-out>Test Command: getent passwd mysql | cut -d: -f7</system-out><remediation>Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).</remediation><failure message="Control failed">Stdout:
 
 Stderr:
 
 Return Code: 0
 
-Condition de succès non remplie.</failure></testcase><testcase id="1.6" name="Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs" classname="1. Configuration Système d'exploitation" /><testcase id="1.7" name="Exécuter MySQL dans un environnement sandbox" classname="1. Configuration Système d'exploitation"><failure message="Control failed">Stdout:
+Condition de succès non remplie.</failure></testcase><testcase id="1.6" name="Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs" classname="1. Configuration Système d'exploitation"><system-out>Test Command: ! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2&gt;/dev/null</system-out><remediation>Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD.</remediation></testcase><testcase id="1.7" name="Exécuter MySQL dans un environnement sandbox" classname="1. Configuration Système d'exploitation"><system-out>Test Command: [[ -f /.dockerenv ]] &amp;&amp; echo 'DOCKER' || echo 'NOT_SANDBOX'</system-out><remediation>Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker.</remediation><failure message="Control failed">Stdout:
 NOT_SANDBOX
 Stderr:
 
 Return Code: 0
 
-Condition de succès non remplie.</failure></testcase><testcase id="2.1.1" name="Politique de sauvegarde en place" classname="2. Installation et Planification"><failure message="Control failed">Stdout:
+Condition de succès non remplie.</failure></testcase><testcase id="2.1.1" name="Politique de sauvegarde en place" classname="2. Installation et Planification"><system-out>Test Command: crontab -l 2&gt;/dev/null | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep</system-out><remediation>Créer une politique de sauvegarde et planifier des sauvegardes automatiques.</remediation><failure message="Control failed">Stdout:
 
 Stderr:
 
 Return Code: 1
 
-Condition de succès non remplie.</failure></testcase><testcase id="2.1.2" name="Validation des sauvegardes" classname="2. Installation et Planification" /><testcase id="2.1.3" name="Sécuriser les identifiants de sauvegarde" classname="2. Installation et Planification" /><testcase id="2.1.4" name="Sécuriser les fichiers de sauvegarde" classname="2. Installation et Planification" /><testcase id="2.1.5" name="Point-in-Time Recovery" classname="2. Installation et Planification"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Condition de succès non remplie.</failure></testcase><testcase id="2.1.2" name="Validation des sauvegardes" classname="2. Installation et Planification"><system-out>Test Command: Analyser les rapports de tests de restauration.</system-out><remediation>Planifier et documenter les tests de restauration périodiques.</remediation></testcase><testcase id="2.1.3" name="Sécuriser les identifiants de sauvegarde" classname="2. Installation et Planification"><system-out>Test Command: Inspecter les permissions des fichiers contenant les credentials de sauvegarde.</system-out><remediation>Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.</remediation></testcase><testcase id="2.1.4" name="Sécuriser les fichiers de sauvegarde" classname="2. Installation et Planification"><system-out>Test Command: Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.</system-out><remediation>Utiliser l'option --encrypt-password de MySQL Enterprise Backup ou une méthode de chiffrement équivalente.</remediation></testcase><testcase id="2.1.5" name="Point-in-Time Recovery" classname="2. Installation et Planification"><system-out>Test Command: mysql -N -B -e "SELECT @@log_bin;"</system-out><remediation>Activer log_bin (log-bin=mysql-bin dans my.cnf), configurer l'expiration (expire_logs_days ou binlog_expire_logs_seconds), tester les restaurations PITR.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="2.1.6" name="Plan de reprise d'activité (DR)" classname="2. Installation et Planification" /><testcase id="2.1.7" name="Sauvegarde des fichiers de configuration" classname="2. Installation et Planification" /><testcase id="3.1" name="Permissions adéquates sur 'datadir'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+Return Code: 1</error></testcase><testcase id="2.1.6" name="Plan de reprise d'activité (DR)" classname="2. Installation et Planification"><system-out>Test Command: Vérifier l'existence et la validité du plan DR.</system-out><remediation>Documenter et tester un plan DR incluant réplication, backups offsite.</remediation></testcase><testcase id="2.1.7" name="Sauvegarde des fichiers de configuration" classname="2. Installation et Planification"><system-out>Test Command: Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).</system-out><remediation>Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.</remediation></testcase><testcase id="3.1" name="Permissions adéquates sur 'datadir'" classname="3. Permissions Fichiers"><remediation>chown -R mysql:mysql &lt;datadir&gt; &amp;&amp; chmod 700 &lt;datadir&gt;</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@datadir;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.2" name="Permissions sur les fichiers 'log_bin_basename'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.2" name="Permissions sur les fichiers 'log_bin_basename'" classname="3. Permissions Fichiers"><remediation>Appliquer chmod 600 sur les fichiers binaires.</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@log_bin_basename;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.3" name="Permissions sur 'log_error'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.3" name="Permissions sur 'log_error'" classname="3. Permissions Fichiers"><remediation>Appliquer des permissions restrictives (ex: 640 ou 600).</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@log_error;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.4" name="Permissions sur 'slow_query_log'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.4" name="Permissions sur 'slow_query_log'" classname="3. Permissions Fichiers"><remediation>Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600).</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@slow_query_log_file;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.5" name="Permissions sur 'relay_log_basename'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.5" name="Permissions sur 'relay_log_basename'" classname="3. Permissions Fichiers"><remediation>Appliquer chmod 600.</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@relay_log_basename;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.6" name="Permissions sur 'general_log_file'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.6" name="Permissions sur 'general_log_file'" classname="3. Permissions Fichiers"><remediation>Restreindre les droits d'accès (ex: 640 ou 600).</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@general_log_file;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.7" name="Permissions sur les fichiers de clés SSL" classname="3. Permissions Fichiers"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.7" name="Permissions sur les fichiers de clés SSL" classname="3. Permissions Fichiers"><system-out>Test Command: mysql -N -B -e "SHOW VARIABLES LIKE 'ssl_key';" | awk '{print $2}' | xargs stat -c '%a'</system-out><remediation>Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 stat: missing operand
 Try 'stat --help' for more information.
-Return Code: 123</error></testcase><testcase id="3.8" name="Permissions sur le répertoire des plugins" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+Return Code: 123</error></testcase><testcase id="3.8" name="Permissions sur le répertoire des plugins" classname="3. Permissions Fichiers"><remediation>chown -R mysql:mysql &lt;plugin_dir&gt; &amp;&amp; chmod 755 &lt;plugin_dir&gt;</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@plugin_dir;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.9" name="Permissions sur 'audit_log_file'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.9" name="Permissions sur 'audit_log_file'" classname="3. Permissions Fichiers"><remediation>Appliquer des permissions restrictives (ex: 640 ou 600).</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@audit_log_file;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.10" name="Sécuriser le Keyring MySQL" classname="3. Permissions Fichiers"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="3.10" name="Sécuriser le Keyring MySQL" classname="3. Permissions Fichiers"><system-out>Test Command: mysql -N -B -e "SHOW VARIABLES LIKE 'keyring_file_data';" | awk '{print $2}' | xargs stat -c '%a'</system-out><remediation>Chiffrer et restreindre l'accès au fichier keyring.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
 stat: missing operand
 Try 'stat --help' for more information.
-Return Code: 123</error></testcase><testcase id="4.1" name="Ensure the Latest Security Patches are Applied" classname="4. Général" /><testcase id="4.2" name="Ensure Example or Test Databases are Not Installed on Production Servers" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 123</error></testcase><testcase id="4.1" name="Ensure the Latest Security Patches are Applied" classname="4. Général"><system-out>Test Command: mysql -N -B -e "SELECT @@version;"</system-out><remediation>Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.</remediation></testcase><testcase id="4.2" name="Ensure Example or Test Databases are Not Installed on Production Servers" classname="4. Général"><system-out>Test Command: mysql -N -B -e "SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME IN ('employees', 'world', 'world_x', 'sakila', 'airportdb', 'menagerie');"</system-out><remediation>Exécutez DROP DATABASE &lt;database name&gt;; pour supprimer une base de données d'exemple.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="4.3" name="Ensure 'allow-suspicious-udfs' is Set to 'OFF'" classname="4. Général" /><testcase id="4.4" name="Harden Usage for 'local_infile' on MySQL Clients" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="4.3" name="Ensure 'allow-suspicious-udfs' is Set to 'OFF'" classname="4. Général"><system-out>Test Command: my_print_defaults mysqld | grep -q 'allow-suspicious-udfs' &amp;&amp; echo 'FOUND' || echo 'NOT FOUND'</system-out><remediation>Supprimer --allow-suspicious-udfs de la ligne de commande ou du fichier de configuration.</remediation></testcase><testcase id="4.4" name="Harden Usage for 'local_infile' on MySQL Clients" classname="4. Général"><system-out>Test Command: mysql -N -B -e "SELECT @@local_infile;"</system-out><remediation>Ajouter local-infile=0 à la section [mysqld] et [mysql] du fichier de configuration MySQL et redémarrer le service. Si nécessaire, utiliser --load-data-local-dir et TLS.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="4.5" name="Ensure 'mysqld' is Not Started With '--skip-grant-tables'" classname="4. Général" /><testcase id="4.6" name="Ensure Symbolic Links are Disabled" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="4.5" name="Ensure 'mysqld' is Not Started With '--skip-grant-tables'" classname="4. Général"><system-out>Test Command: ps -ef | grep mysqld | grep -v grep | grep -q 'skip-grant-tables' &amp;&amp; echo 'FOUND' || echo 'NOT FOUND'</system-out><remediation>Supprimer l'option --skip-grant-tables de la ligne de commande ou du fichier de configuration.</remediation></testcase><testcase id="4.6" name="Ensure Symbolic Links are Disabled" classname="4. Général"><system-out>Test Command: mysql -N -B -e "SELECT @@have_symlink;"</system-out><remediation>Ajouter skip-symbolic-links dans la section [mysqld] du fichier my.cnf.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="4.7" name="Ensure the 'daemon_memcached' Plugin is Disabled" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="4.7" name="Ensure the 'daemon_memcached' Plugin is Disabled" classname="4. Général"><system-out>Test Command: mysql -N -B -e "SELECT PLUGIN_STATUS FROM information_schema.plugins WHERE PLUGIN_NAME = 'daemon_memcached';"</system-out><remediation>Exécutez UNINSTALL PLUGIN daemon_memcached;</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="4.8" name="Ensure the 'secure_file_priv' is Configured Correctly" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="4.8" name="Ensure the 'secure_file_priv' is Configured Correctly" classname="4. Général"><system-out>Test Command: mysql -N -B -e "SELECT @@secure_file_priv;"</system-out><remediation>Définir secure_file_priv sur NULL (pour désactiver) ou sur un chemin spécifique dans my.cnf.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="4.9" name="Ensure 'sql_mode' Contains 'STRICT_ALL_TABLES'" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="4.9" name="Ensure 'sql_mode' Contains 'STRICT_ALL_TABLES'" classname="4. Général"><system-out>Test Command: mysql -N -B -e "SELECT @@sql_mode;"</system-out><remediation>Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans my.cnf.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="4.10" name="Use MySQL TDE for At-Rest Data Encryption" classname="4. Général"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="4.10" name="Use MySQL TDE for At-Rest Data Encryption" classname="4. Général"><system-out>Test Command: mysql -N -B -e "SELECT count(*) FROM information_schema.TABLES WHERE CREATE_OPTIONS NOT LIKE '%ENCRYPTION="Y"%' AND TABLE_SCHEMA NOT IN ('mysql', 'information_schema', 'performance_schema', 'sys');"</system-out><remediation>Activer le chiffrement pour les tables/tablespaces nécessaires via ALTER TABLE ... ENCRYPTION='Y';. Configurer le chiffrement pour les logs (binlog, redo, undo) et l'audit log si nécessaire.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.1" name="Limiter l'accès complet à mysql.* aux seuls administrateurs" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.1" name="Limiter l'accès complet à mysql.* aux seuls administrateurs" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT count(*) FROM mysql.db WHERE db='mysql' AND user NOT IN ('mysql.sys', 'mysql.session', 'root') AND (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y');"</system-out><remediation>Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.2" name="Retirer le droit FILE aux non-admins" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.2" name="Retirer le droit FILE aux non-admins" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE File_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"</system-out><remediation>REVOKE FILE ON *.* FROM '&lt;user&gt;'@'&lt;host&gt;';</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.3" name="Retirer le droit PROCESS aux non-admins" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.3" name="Retirer le droit PROCESS aux non-admins" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Process_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"</system-out><remediation>REVOKE PROCESS ON *.* FROM '&lt;user&gt;'@'&lt;host&gt;';</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.4" name="Retirer le droit SUPER (prérogative obsolète)" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.4" name="Retirer le droit SUPER (prérogative obsolète)" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Super_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"</system-out><remediation>Migrer vers les droits dynamiques (ex: BACKUP_ADMIN, REPLICATION_SLAVE_ADMIN) puis REVOKE SUPER ON *.* FROM '&lt;user&gt;'@'&lt;host&gt;';</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.5" name="Retirer le droit SHUTDOWN" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.5" name="Retirer le droit SHUTDOWN" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Shutdown_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"</system-out><remediation>REVOKE SHUTDOWN ON *.* FROM '&lt;user&gt;'@'&lt;host&gt;';</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.6" name="Retirer CREATE USER aux non-admins" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.6" name="Retirer CREATE USER aux non-admins" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Create_user_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"</system-out><remediation>REVOKE CREATE USER ON *.* FROM '&lt;user&gt;'@'&lt;host&gt;';</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.7" name="Retirer GRANT OPTION aux non-admins" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.7" name="Retirer GRANT OPTION aux non-admins" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE Grant_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');"</system-out><remediation>REVOKE GRANT OPTION ON *.* FROM '&lt;user&gt;'@'&lt;host&gt;';</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.8" name="Limiter REPLICATION SLAVE aux comptes de réplication" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.8" name="Limiter REPLICATION SLAVE aux comptes de réplication" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE Repl_slave_priv = 'Y' AND user NOT LIKE '%repl%';"</system-out><remediation>REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.9" name="Limiter les droits DML/DDL à des BD/comptes précis" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.9" name="Limiter les droits DML/DDL à des BD/comptes précis" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y') AND user NOT IN ('root', 'mysql.sys', 'mysql.session');"</system-out><remediation>Révoquer les droits superflus par base de données/compte.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.10" name="Définir proprement DEFINER/INVOKER des SP/Functions" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.10" name="Définir proprement DEFINER/INVOKER des SP/Functions" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT count(*) FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mysql.sys@localhost');"</system-out><remediation>Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.11" name="Restreindre le droit SET_ANY_DEFINER" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.11" name="Restreindre le droit SET_ANY_DEFINER" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='SET_ANY_DEFINER');"</system-out><remediation>REVOKE SET_ANY_DEFINER ON *.* FROM '&lt;user&gt;'@'&lt;host&gt;';</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="5.12" name="Restreindre ALLOW_NONEXISTENT_DEFINER" classname="5. Gestion des privilèges"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="5.12" name="Restreindre ALLOW_NONEXISTENT_DEFINER" classname="5. Gestion des privilèges"><system-out>Test Command: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='ALLOW_NONEXISTENT_DEFINER');"</system-out><remediation>REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '&lt;user&gt;'@'&lt;host&gt;';</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="6.1" name="Configurer log_error" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="6.1" name="Configurer log_error" classname="6. Audit &amp; Journalisation"><system-out>Test Command: mysql -N -B -e "SELECT @@log_error;"</system-out><remediation>Définir log-error=/chemin/vers/mysql.err dans my.cnf.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="6.2" name="Journal hors partition système" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error lors de l'obtention du chemin via:
+Return Code: 1</error></testcase><testcase id="6.2" name="Journal hors partition système" classname="6. Audit &amp; Journalisation"><remediation>Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système.</remediation><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@log_error;"`
 Stdout:
 
 Stderr:
-ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="6.3" name="log_error_verbosity=2" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)</error></testcase><testcase id="6.3" name="log_error_verbosity=2" classname="6. Audit &amp; Journalisation"><system-out>Test Command: mysql -N -B -e "SELECT @@log_error_verbosity;"</system-out><remediation>Ajouter log_error_verbosity=2 dans my.cnf.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="6.4" name="log-raw OFF" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="6.4" name="log-raw OFF" classname="6. Audit &amp; Journalisation"><system-out>Test Command: mysql -N -B -e "SHOW VARIABLES LIKE 'log_raw';"</system-out><remediation>S'assurer que 'log-raw' n'est pas activé ou est explicitement OFF dans my.cnf.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="6.5" name="Filtrer et journaliser les connexions" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="6.5" name="Filtrer et journaliser les connexions" classname="6. Audit &amp; Journalisation"><system-out>Test Command: mysql -N -B -e "SELECT count(*) FROM information_schema.plugins WHERE PLUGIN_NAME = 'audit_log' AND PLUGIN_STATUS='ACTIVE';"</system-out><remediation>Configurer le plugin d'audit pour journaliser les succès et échecs de connexion.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="6.6" name="Filtre &lt;&lt; tout journaliser &gt;&gt;" classname="6. Audit &amp; Journalisation" /><testcase id="6.7" name="audit_log_strategy = (S)SYNC" classname="6. Audit &amp; Journalisation"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="6.6" name="Filtre &lt;&lt; tout journaliser &gt;&gt;" classname="6. Audit &amp; Journalisation"><system-out>Test Command: Vérifier la configuration du plugin d'audit pour s'assurer qu'un filtre 'log_all' ou équivalent est appliqué.</system-out><remediation>Créer et appliquer un filtre d'audit pour journaliser toutes les actions.</remediation></testcase><testcase id="6.7" name="audit_log_strategy = (S)SYNC" classname="6. Audit &amp; Journalisation"><system-out>Test Command: mysql -N -B -e "SHOW VARIABLES LIKE 'audit_log_strategy';"</system-out><remediation>Configurer audit_log_strategy='SEMISYNCHRONOUS' ou 'SYNCHRONOUS' via le plugin d'audit.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="6.8" name="Interdire le déchargement du plugin audit" classname="6. Audit &amp; Journalisation"><failure message="Control failed">Stdout:
+Return Code: 1</error></testcase><testcase id="6.8" name="Interdire le déchargement du plugin audit" classname="6. Audit &amp; Journalisation"><system-out>Test Command: my_print_defaults mysqld | grep -q 'audit_log=FORCE_PLUS_PERMANENT' &amp;&amp; echo 'FOUND' || echo 'NOT FOUND'</system-out><remediation>Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf.</remediation><failure message="Control failed">Stdout:
 NOT FOUND
 Stderr:
 
 Return Code: 0
 
-Condition de succès non remplie.</failure></testcase><testcase id="7.1" name="Plugin d'authentification sûr (caching_sha2_password)" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Condition de succès non remplie.</failure></testcase><testcase id="7.1" name="Plugin d'authentification sûr (caching_sha2_password)" classname="7. Authentification"><system-out>Test Command: mysql -N -B -e "SELECT @@default_authentication_plugin;"</system-out><remediation>Définir default_authentication_plugin=caching_sha2_password dans my.cnf et migrer les comptes existants.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="7.2" name="Aucun mot de passe dans le my.cnf global" classname="7. Authentification" /><testcase id="7.3" name="Tous les comptes ont un mot de passe" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="7.2" name="Aucun mot de passe dans le my.cnf global" classname="7. Authentification"><system-out>Test Command: ! grep -riE "password|pwd|pass" /etc/my.cnf /etc/mysql/ 2&gt;/dev/null</system-out><remediation>Utiliser mysql_config_editor ou des fichiers .my.cnf privés avec permissions restreintes.</remediation></testcase><testcase id="7.3" name="Tous les comptes ont un mot de passe" classname="7. Authentification"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE authentication_string = '' OR plugin='mysql_no_login';"</system-out><remediation>ALTER USER '&lt;user&gt;'@'&lt;host&gt;' IDENTIFIED BY '&lt;password&gt;'; ou utiliser mysql_secure_installation.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="7.4" name="Expiration annuelle des mots de passe" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="7.4" name="Expiration annuelle des mots de passe" classname="7. Authentification"><system-out>Test Command: mysql -N -B -e "SELECT @@default_password_lifetime;"</system-out><remediation>SET PERSIST default_password_lifetime=365;</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="7.5" name="Politique de complexité forte" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="7.5" name="Politique de complexité forte" classname="7. Authentification"><system-out>Test Command: mysql -N -B -e "SHOW VARIABLES LIKE 'validate_password.policy';"</system-out><remediation>Installer et configurer component_validate_password avec une politique forte (ex: validate_password.policy=STRONG).</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="7.6" name="Pas de wildcard '%' dans host" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="7.6" name="Pas de wildcard '%' dans host" classname="7. Authentification"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE host = '%' AND user NOT IN ('root');"</system-out><remediation>ALTER USER '&lt;user&gt;'@'%' IDENTIFIED BY '...' RENAME TO '&lt;user&gt;'@'&lt;specific_host&gt;'; ou supprimer le compte.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="7.7" name="Supprimer les comptes anonymes" classname="7. Authentification"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="7.7" name="Supprimer les comptes anonymes" classname="7. Authentification"><system-out>Test Command: mysql -N -B -e "SELECT user, host FROM mysql.user WHERE user = '';"</system-out><remediation>DROP USER ''@'&lt;host&gt;'; ou utiliser mysql_secure_installation.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="8.1" name="Forcer SSL/TLS (require_secure_transport=ON)" classname="8. Sécurité réseau"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="8.1" name="Forcer SSL/TLS (require_secure_transport=ON)" classname="8. Sécurité réseau"><system-out>Test Command: mysql -N -B -e "SELECT @@require_secure_transport;"</system-out><remediation>Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans my.cnf.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="8.2" name="Exiger TLS côté utilisateur (ssl_type)" classname="8. Sécurité réseau"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="8.2" name="Exiger TLS côté utilisateur (ssl_type)" classname="8. Sécurité réseau"><system-out>Test Command: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type = '';"</system-out><remediation>ALTER USER '&lt;user&gt;'@'&lt;host&gt;' REQUIRE SSL; ou REQUIRE X509;</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="8.3" name="Limiter le nombre de connexions" classname="8. Sécurité réseau"><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
+Return Code: 1</error></testcase><testcase id="8.3" name="Limiter le nombre de connexions" classname="8. Sécurité réseau"><system-out>Test Command: mysql -N -B -e "SELECT @@max_connections;"</system-out><remediation>Ajuster max_connections et max_user_connections dans my.cnf selon les besoins.</remediation><error message="Control execution error">Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
 ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)
-Return Code: 1</error></testcase><testcase id="9.1" name="Chiffrer le trafic de réplication" classname="9. Réplication" /><testcase id="9.2" name="SOURCE_SSL_VERIFY_SERVER_CERT = 1" classname="9. Réplication" /><testcase id="9.3" name="master_info_repository TABLE" classname="9. Réplication" /><testcase id="9.4" name="Retirer SUPER aux comptes de réplication" classname="9. Réplication" /><testcase id="10.1" name="Chiffrer le trafic Group Replication" classname="10. InnoDB Cluster / Group Replication" /><testcase id="10.2" name="Définir une allow-list de nœuds" classname="10. InnoDB Cluster / Group Replication" /></testsuite>
+Return Code: 1</error></testcase><testcase id="9.1" name="Chiffrer le trafic de réplication" classname="9. Réplication"><system-out>Test Command: mysql -N -B -e "SHOW REPLICA STATUS\G" | grep -E 'SSL_Allowed|Master_SSL_Verify_Server_Cert'</system-out><remediation>Configurer TLS pour la réplication (SOURCE_SSL=1, SOURCE_SSL_CA, etc.) ou utiliser un tunnel sécurisé.</remediation></testcase><testcase id="9.2" name="SOURCE_SSL_VERIFY_SERVER_CERT = 1" classname="9. Réplication"><system-out>Test Command: mysql -N -B -e "SHOW REPLICA STATUS\G" | grep 'Master_SSL_Verify_Server_Cert'</system-out><remediation>Exécuter CHANGE REPLICATION SOURCE TO SOURCE_SSL_VERIFY_SERVER_CERT = 1;</remediation></testcase><testcase id="9.3" name="master_info_repository TABLE" classname="9. Réplication"><system-out>Test Command: mysql -N -B -e "SELECT @@master_info_repository;"</system-out><remediation>Configurer master_info_repository=TABLE dans my.cnf.</remediation></testcase><testcase id="9.4" name="Retirer SUPER aux comptes de réplication" classname="9. Réplication"><system-out>Test Command: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%' AND Super_priv = 'Y';"</system-out><remediation>REVOKE SUPER ON *.* FROM '&lt;repl_user&gt;'@'&lt;repl_host&gt;'; et accorder les privilèges dynamiques nécessaires (ex: REPLICATION_SLAVE_ADMIN).</remediation></testcase><testcase id="10.1" name="Chiffrer le trafic Group Replication" classname="10. InnoDB Cluster / Group Replication"><system-out>Test Command: mysql -N -B -e "SELECT @@group_replication_ssl_mode;"</system-out><remediation>Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf.</remediation></testcase><testcase id="10.2" name="Définir une allow-list de nœuds" classname="10. InnoDB Cluster / Group Replication"><system-out>Test Command: mysql -N -B -e "SELECT @@group_replication_ip_allowlist;"</system-out><remediation>Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés.</remediation></testcase></testsuite>

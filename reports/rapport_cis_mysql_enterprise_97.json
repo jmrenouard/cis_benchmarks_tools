@@ -1,7 +1,7 @@
 {
   "benchmark": "mysql_enterprise_97",
-  "report_date": "2026-08-12T15:05:44.724209",
-  "overall_score": 76.47058823529412,
+  "report_date": "2026-08-12T20:50:20.263932",
+  "overall_score": 70.58823529411765,
   "total_checks": 70,
   "results": [
     {
@@ -12,8 +12,8 @@
       "remediation": "Sauvegarder la base, d\u00e9placer les fichiers de donn\u00e9es vers une partition d\u00e9di\u00e9e, mettre \u00e0 jour datadir dans la configuration MySQL, red\u00e9marrer le service.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -23,8 +23,8 @@
       "test_procedure": "ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | awk '{print $1}' | head -n 1",
       "remediation": "Configurer le service MySQL pour qu'il s'ex\u00e9cute sous un utilisateur d\u00e9di\u00e9 (ex: 'mysql') avec les privil\u00e8ges minimaux.",
       "manual_steps": [],
-      "status": "Pass",
-      "output": "Stdout:\nmysql\nStderr:\n\nReturn Code: 0",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
@@ -35,8 +35,8 @@
       "test_procedure": "! find /home /root -name .mysql_history -print -quit 2>/dev/null",
       "remediation": "Supprimer les fichiers d'historique, cr\u00e9er un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.",
       "manual_steps": [],
-      "status": "Fail",
-      "output": "Stdout:\n/root/.mysql_history\nStderr:\n\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\n/home/jmren/.mysql_history\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
@@ -60,7 +60,7 @@
       "remediation": "Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n/bin/bash\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "output": "Stdout:\n\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
@@ -83,8 +83,8 @@
       "test_procedure": "[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'",
       "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur sp\u00e9cifique, ou d\u00e9ployer MySQL sous Docker.",
       "manual_steps": [],
-      "status": "Pass",
-      "output": "Stdout:\nDOCKER\nStderr:\n\nReturn Code: 0",
+      "status": "Fail",
+      "output": "Stdout:\nNOT_SANDBOX\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
@@ -158,8 +158,8 @@
       "remediation": "Activer log_bin (log-bin=mysql-bin dans my.cnf), configurer l'expiration (expire_logs_days ou binlog_expire_logs_seconds), tester les restaurations PITR.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "2. Installation et Planification"
     },
     {
@@ -201,8 +201,8 @@
       "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -213,8 +213,8 @@
       "remediation": "Appliquer chmod 600 sur les fichiers binaires.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -225,8 +225,8 @@
       "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -237,8 +237,8 @@
       "remediation": "Limiter l'acc\u00e8s aux utilisateurs autoris\u00e9s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@slow_query_log_file;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@slow_query_log_file;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -249,8 +249,8 @@
       "remediation": "Appliquer chmod 600.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@relay_log_basename;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@relay_log_basename;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -261,8 +261,8 @@
       "remediation": "Restreindre les droits d'acc\u00e8s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@general_log_file;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@general_log_file;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -273,8 +273,8 @@
       "remediation": "Restreindre l'acc\u00e8s aux cl\u00e9s priv\u00e9es (ex: chmod 600) et s'assurer que le propri\u00e9taire est mysql.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nstat: missing operand\nTry 'stat --help' for more information.\nReturn Code: 123",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nstat: missing operand\nTry 'stat --help' for more information.",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nstat: missing operand\nTry 'stat --help' for more information.\nReturn Code: 123",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nstat: missing operand\nTry 'stat --help' for more information.",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -285,8 +285,8 @@
       "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@plugin_dir;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@plugin_dir;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -297,8 +297,8 @@
       "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@audit_log_file;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@audit_log_file;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -309,8 +309,8 @@
       "remediation": "Chiffrer et restreindre l'acc\u00e8s au fichier keyring.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nstat: missing operand\nTry 'stat --help' for more information.\nReturn Code: 123",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nstat: missing operand\nTry 'stat --help' for more information.",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nstat: missing operand\nTry 'stat --help' for more information.\nReturn Code: 123",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nstat: missing operand\nTry 'stat --help' for more information.",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -325,8 +325,8 @@
         "V\u00e9rifier les CVE critiques."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -337,8 +337,8 @@
       "remediation": "Ex\u00e9cutez DROP DATABASE <database name>; pour supprimer une base de donn\u00e9es d'exemple.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -361,8 +361,8 @@
       "remediation": "Ajouter local-infile=0 \u00e0 la section [mysqld] et [mysql] du fichier de configuration MySQL et red\u00e9marrer le service. Si n\u00e9cessaire, utiliser --load-data-local-dir et TLS.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -385,8 +385,8 @@
       "remediation": "Ajouter skip-symbolic-links dans la section [mysqld] du fichier my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -397,8 +397,8 @@
       "remediation": "Ex\u00e9cutez UNINSTALL PLUGIN daemon_memcached;",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -409,8 +409,8 @@
       "remediation": "D\u00e9finir secure_file_priv sur NULL (pour d\u00e9sactiver) ou sur un chemin sp\u00e9cifique dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -421,8 +421,8 @@
       "remediation": "Ajouter STRICT_ALL_TABLES au param\u00e8tre sql_mode dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -433,8 +433,8 @@
       "remediation": "Activer le chiffrement pour les tables/tablespaces n\u00e9cessaires via ALTER TABLE ... ENCRYPTION='Y';. Configurer le chiffrement pour les logs (binlog, redo, undo) et l'audit log si n\u00e9cessaire.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -445,8 +445,8 @@
       "remediation": "R\u00e9voquer les privil\u00e8ges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -457,8 +457,8 @@
       "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -469,8 +469,8 @@
       "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -481,8 +481,8 @@
       "remediation": "Migrer vers les droits dynamiques (ex: BACKUP_ADMIN, REPLICATION_SLAVE_ADMIN) puis REVOKE SUPER ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -493,8 +493,8 @@
       "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -505,8 +505,8 @@
       "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -517,8 +517,8 @@
       "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -529,8 +529,8 @@
       "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non d\u00e9di\u00e9s \u00e0 la r\u00e9plication.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -541,8 +541,8 @@
       "remediation": "R\u00e9voquer les droits superflus par base de donn\u00e9es/compte.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -553,8 +553,8 @@
       "remediation": "Recr\u00e9er les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -565,8 +565,8 @@
       "remediation": "REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -577,8 +577,8 @@
       "remediation": "REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -589,8 +589,8 @@
       "remediation": "D\u00e9finir log-error=/chemin/vers/mysql.err dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -601,8 +601,8 @@
       "remediation": "D\u00e9placer les r\u00e9pertoires des journaux (log-bin, log-error) hors des partitions syst\u00e8me.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -613,8 +613,8 @@
       "remediation": "Ajouter log_error_verbosity=2 dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -625,8 +625,8 @@
       "remediation": "S'assurer que 'log-raw' n'est pas activ\u00e9 ou est explicitement OFF dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -637,8 +637,8 @@
       "remediation": "Configurer le plugin d'audit pour journaliser les succ\u00e8s et \u00e9checs de connexion.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -664,8 +664,8 @@
       "remediation": "Configurer audit_log_strategy='SEMISYNCHRONOUS' ou 'SYNCHRONOUS' via le plugin d'audit.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -688,8 +688,8 @@
       "remediation": "D\u00e9finir default_authentication_plugin=caching_sha2_password dans my.cnf et migrer les comptes existants.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "7. Authentification"
     },
     {
@@ -700,7 +700,7 @@
       "remediation": "Utiliser mysql_config_editor ou des fichiers .my.cnf priv\u00e9s avec permissions restreintes.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\n\nReturn Code: 0",
+      "output": "Stdout:\n/etc/mysql/my.cnf.fallback:# This will be passed to all mysql clients\n/etc/mysql/my.cnf.fallback:# It has been reported that passwords should be enclosed with ticks/quotes\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "7. Authentification"
     },
@@ -712,8 +712,8 @@
       "remediation": "ALTER USER '<user>'@'<host>' IDENTIFIED BY '<password>'; ou utiliser mysql_secure_installation.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "7. Authentification"
     },
     {
@@ -724,8 +724,8 @@
       "remediation": "SET PERSIST default_password_lifetime=365;",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "7. Authentification"
     },
     {
@@ -736,8 +736,8 @@
       "remediation": "Installer et configurer component_validate_password avec une politique forte (ex: validate_password.policy=STRONG).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "7. Authentification"
     },
     {
@@ -748,8 +748,8 @@
       "remediation": "ALTER USER '<user>'@'%' IDENTIFIED BY '...' RENAME TO '<user>'@'<specific_host>'; ou supprimer le compte.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "7. Authentification"
     },
     {
@@ -760,8 +760,8 @@
       "remediation": "DROP USER ''@'<host>'; ou utiliser mysql_secure_installation.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "7. Authentification"
     },
     {
@@ -772,8 +772,8 @@
       "remediation": "Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -784,8 +784,8 @@
       "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -796,8 +796,8 @@
       "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\nERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)\nReturn Code: 1",
-      "error": "ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)",
+      "output": "Error: Impossible de se connecter \u00e0 MySQL (serveur arr\u00eat\u00e9 ou mauvais socket).\nStdout:\n\nStderr:\nERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)\nReturn Code: 1",
+      "error": "ERROR 2002 (HY000): Can't connect to local server through socket '/run/mysqld/mysqld.sock' (2)",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
