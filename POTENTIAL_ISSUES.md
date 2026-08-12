@@ -6,7 +6,11 @@ This document tracks technical debt, security considerations, active quality con
 
 ## 🔒 Resolved Architectural Backlog
 
-### 1. Phase 10 MariaDB Zero-Error Engine, Docker Auto-Routing & Manual Automation (Resolved in v2.2.0 ✅)
+### 1. Phase 11 Universal Product Hardening, Docker Auto-Routing & Info Maximization (Resolved in v2.3.0 ✅)
+- **Problem**: Audit scripts across MySQL, PostgreSQL, MongoDB, Cassandra, and RHEL needed native Docker auto-routing, zero-error execution guarantees, maximized diagnostic output collection, and product justification reports.
+- **Resolution**: Extended `detect_docker_container()` and `--docker` CLI parameter across all 18 audit scripts. Automated verifiable manual checks via CLI/SQL queries. Generated product-specific manual controls justification reports in `reports/` (MySQL, PostgreSQL, MongoDB, Cassandra, RHEL). Ensured all manual checks execute diagnostic inspection commands to collect maximum output details in audit reports. Added 52 automated unit tests in `tests/`.
+
+### 2. Phase 10 MariaDB Zero-Error Engine, Docker Auto-Routing & Manual Automation (Resolved in v2.2.0 ✅)
 - **Problem**: MariaDB audit scripts could produce raw execution error noise when services were stopped/unreachable, lacked native Docker container auto-routing, and contained manual checks that could be automated via SQL or system checks.
 - **Resolution**: Enhanced `audit_cis_mariadb_106.py`, `audit_cis_mariadb_1011.py`, and rule specifications `rules/mariadb_106.json` and `rules/mariadb_1011.json`. Implemented `detect_docker_container()` and automatic Docker container command routing via `--docker` CLI parameter and `docker exec`. Automated verifiable manual checks via SQL queries (user reuse, socket plugin, password_reuse_check, privilege checks). Generated detailed justification report [mariadb_manual_controls_justification.md](file:///home/jmren/GIT_REPOS/cis_benchmarks_tools/reports/mariadb_manual_controls_justification.md) for controls requiring human policy review. Added 42 automated unit tests in `tests/test_mariadb_audit_engine.py`.
 
