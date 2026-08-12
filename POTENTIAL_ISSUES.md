@@ -6,7 +6,11 @@ This document tracks technical debt, security considerations, active quality con
 
 ## 🔒 Resolved Architectural Backlog
 
-### 1. Phase 9 Verification Commands & Remediation Procedures in Reports (Resolved in v2.1.0 ✅)
+### 1. Phase 10 MariaDB Zero-Error Engine, Docker Auto-Routing & Manual Automation (Resolved in v2.2.0 ✅)
+- **Problem**: MariaDB audit scripts could produce raw execution error noise when services were stopped/unreachable, lacked native Docker container auto-routing, and contained manual checks that could be automated via SQL or system checks.
+- **Resolution**: Enhanced `audit_cis_mariadb_106.py`, `audit_cis_mariadb_1011.py`, and rule specifications `rules/mariadb_106.json` and `rules/mariadb_1011.json`. Implemented `detect_docker_container()` and automatic Docker container command routing via `--docker` CLI parameter and `docker exec`. Automated verifiable manual checks via SQL queries (user reuse, socket plugin, password_reuse_check, privilege checks). Generated detailed justification report [mariadb_manual_controls_justification.md](file:///home/jmren/GIT_REPOS/cis_benchmarks_tools/reports/mariadb_manual_controls_justification.md) for controls requiring human policy review. Added 42 automated unit tests in `tests/test_mariadb_audit_engine.py`.
+
+### 2. Phase 9 Verification Commands & Remediation Procedures in Reports (Resolved in v2.1.0 ✅)
 - **Problem**: Audit test verification commands (`test_procedure` / `audit`) were omitted from TXT, XML, and RHEL HTML reports, and remediation procedures (`remediation`) were hidden for non-FAIL controls or missing in RHEL HTML report layouts.
 - **Resolution**: Updated `scripts/add_multiformat_exporters.py` to systematically include test verification commands and remediation procedures across all export formats (TXT, JSON, XML, HTML). Updated RHEL audit scripts (`audit_cis_rhel_8.py`, `9.py`, `10.py`) to save test procedures and display `Commande de test` and `Procédure de remédiation` in HTML table reports.
 
