@@ -630,20 +630,14 @@ def perform_checks(recommendations, remote_host=None):
                     if path_returncode != 0 or not path_stdout:
                         if "Unknown system variable" in path_stderr or "ERROR 1193" in path_stderr:
                              check_result["status"] = "Not Applicable"
-                             check_result["output"] = f"Variable/Plugin non disponible (N/A).
-Stderr:
-{path_stderr}"
+                             check_result["output"] = "Variable/Plugin non disponible (N/A)." + chr(10) + "Stderr:" + chr(10) + path_stderr
                         else:
                              check_result["status"] = "Error"
                              err_detail = path_stderr if path_stderr else "Impossible d'exécuter la commande client MariaDB/MySQL (vérifier si le service est démarré)."
-                             check_result["output"] = f"Error lors de l'obtention du chemin via:
-`{path_cmd}`
-Output:
-{err_detail}"
+                             check_result["output"] = "Error lors de l'obtention du chemin via:" + chr(10) + f"`{path_cmd}`" + chr(10) + "Output:" + chr(10) + err_detail
                              check_result["error"] = err_detail
                         results[category].append(check_result)
                         continue
-
                     dynamic_path = path_stdout.strip()
                     stored_outputs[check_number + "_path"] = dynamic_path
 

@@ -629,20 +629,29 @@ def perform_checks(recommendations, remote_host=None):
                 # Handle checks that require getting a dynamic path first
                 if "path_command" in rec:
                     path_cmd = rec["path_command"]
-                    path_stdout, path_stderr, path_returncode = run_command(path_cmd, remote_host=remote_host)
+                    path_cmd_to_run = path_cmd
+                    if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
+                        path_cmd_to_run = f"{path_cmd} 2>/dev/null || mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo mysql -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null"
+                    
+                    path_stdout, path_stderr, path_returncode = run_command(path_cmd_to_run, remote_host=remote_host)
+
+                    if (path_returncode != 0 or not path_stdout) and "datadir" in path_cmd:
+                        fb_stdout, fb_stderr, fb_ret = run_command("ls -d /var/lib/mariadb /var/lib/mysql 2>/dev/null | head -n 1", remote_host=remote_host)
+                        if fb_ret == 0 and fb_stdout:
+                            path_stdout = fb_stdout.strip()
+                            path_returncode = 0
 
                     if path_returncode != 0 or not path_stdout:
-                        # Check if it's a missing variable that makes it N/A
                         if "Unknown system variable" in path_stderr or "ERROR 1193" in path_stderr:
                              check_result["status"] = "Not Applicable"
-                             check_result["output"] = f"Variable/Plugin non disponible (N/A).\nStderr:\n{path_stderr}"
+                             check_result["output"] = "Variable/Plugin non disponible (N/A)." + chr(10) + "Stderr:" + chr(10) + path_stderr
                         else:
                              check_result["status"] = "Error"
-                             check_result["output"] = f"Error lors de l'obtention du chemin via:\n`{path_cmd}`\nStdout:\n{path_stdout}\nStderr:\n{path_stderr}"
-                             check_result["error"] = path_stderr
+                             err_detail = path_stderr if path_stderr else "Impossible d'exécuter la commande client MariaDB/MySQL (vérifier si le service est démarré)."
+                             check_result["output"] = "Error lors de l'obtention du chemin via:" + chr(10) + f"`{path_cmd}`" + chr(10) + "Output:" + chr(10) + err_detail
+                             check_result["error"] = err_detail
                         results[category].append(check_result)
-                        continue # Skip to next recommendation
-
+                        continue
                     dynamic_path = path_stdout.strip()
                     stored_outputs[check_number + "_path"] = dynamic_path
 
