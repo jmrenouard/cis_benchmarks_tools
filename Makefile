@@ -116,6 +116,9 @@ help:
 test-e2e:
 	python3 scripts/run_e2e_tests.py
 
+analyze-e2e:
+	python3 scripts/analyze_e2e_reports.py
+
 test-all: test-mariadb106 test-mariadb1011 test-mysql80 test-mysql-community84 test-mysql-enterprise84 test-mysql-community97 test-mysql-enterprise97 test-postgresql16 test-postgresql17 test-postgresql18 test-mongodb7 test-mongodb8 test-cassandra40 test-cassandra41 test-cassandra50
 	@echo "🎉 All database CIS benchmark tests completed!"
 
