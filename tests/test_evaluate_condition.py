@@ -7,7 +7,6 @@ Uses Python Standard Library ONLY (unittest).
 
 import os
 import sys
-import tempfile
 import unittest
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,7 +17,7 @@ from audit_cis_postgresql_18 import evaluate_condition
 
 
 class TestEvaluateConditionEngine(unittest.TestCase):
-    """100% Code Coverage unit tests for evaluate_condition engine."""
+    """Unit tests for evaluate_condition engine across all operators."""
 
     def test_empty_or_none_condition(self):
         self.assertFalse(evaluate_condition(None, "output", "", 0))
@@ -68,28 +67,19 @@ class TestEvaluateConditionEngine(unittest.TestCase):
         cond = {"type": "stdout_contains_any", "values": ["/bin/false", "/sbin/nologin"]}
         self.assertTrue(evaluate_condition(cond, "/sbin/nologin", "", 0))
         self.assertFalse(evaluate_condition(cond, "/bin/bash", "", 0))
-
-        # None values fallback
-        cond_none = {"type": "stdout_contains_any", "values": None}
-        self.assertFalse(evaluate_condition(cond_none, "output", "", 0))
+        self.assertFalse(evaluate_condition({"type": "stdout_contains_any", "values": None}, "output", "", 0))
 
     def test_stdout_not_contains_any(self):
         cond = {"type": "stdout_not_contains_any", "values": ["root", "admin"]}
         self.assertTrue(evaluate_condition(cond, "postgres", "", 0))
         self.assertFalse(evaluate_condition(cond, "root", "", 0))
-
-        # None values fallback
-        cond_none = {"type": "stdout_not_contains_any", "values": None}
-        self.assertTrue(evaluate_condition(cond_none, "output", "", 0))
+        self.assertTrue(evaluate_condition({"type": "stdout_not_contains_any", "values": None}, "output", "", 0))
 
     def test_stdout_regex_match(self):
         cond = {"type": "stdout_regex_match", "pattern": r"^mysql:mysql\s+7[05][05]$"}
         self.assertTrue(evaluate_condition(cond, "mysql:mysql 700", "", 0))
         self.assertFalse(evaluate_condition(cond, "root:root 777", "", 0))
-
-        # None pattern fallback
-        cond_none = {"type": "stdout_regex_match", "pattern": None}
-        self.assertFalse(evaluate_condition(cond_none, "output", "", 0))
+        self.assertFalse(evaluate_condition({"type": "stdout_regex_match", "pattern": None}, "output", "", 0))
 
     def test_stdout_is_numeric_greater_than(self):
         cond = {"type": "stdout_is_numeric_greater_than", "value": 100}
@@ -98,8 +88,8 @@ class TestEvaluateConditionEngine(unittest.TestCase):
         self.assertFalse(evaluate_condition(cond, "non_numeric", "", 0))
 
     def test_unknown_condition_type(self):
-        cond = {"type": "unknown_invalid_type"}
-        self.assertFalse(evaluate_condition(cond, "output", "", 0))
+        cond = {"type": "unknown_operator_xyz"}
+        self.assertFalse(evaluate_condition(cond, "data", "", 0))
 
 
 if __name__ == "__main__":
