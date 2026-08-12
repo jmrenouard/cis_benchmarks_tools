@@ -22,6 +22,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 5** | Rule Spec Externalization & Offline SVG Charts Engine | `v1.7.0` | `Completed ✅` | 5/5 | 100% |
 | **Phase 6** | PR Diff Size Limits & Centralized HTML Templates | `v1.8.0` | `Completed ✅` | 4/4 | 100% |
 | **Phase 7** | Dual Local/SSH Modes & Database Connection Parameters | `v1.9.0` | `Completed ✅` | 5/5 | 100% |
+| **Phase 8** | Advanced Formatting, Rule Exclusions & Visual UI Validation | `v2.0.0` | `Planned ⏳` | 0/7 | 0% |
 
 ---
 
@@ -133,6 +134,24 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 #### 7.2 E2E Dual-Mode Testing Suite
 - [x] **Dual Mode E2E Test Runner**: Update `scripts/run_e2e_tests.py` to execute and validate report generation for BOTH Local Mode and SSH Remote Mode.
 - [x] **100% PSL Compliance**: Guarantee OpenSSH command execution (`ssh -o BatchMode=yes`) using standard Python `subprocess` (zero pip packages).
+
+---
+
+### Phase 8: Advanced Formatting, Rule Exclusions & Visual UI Validation (`Planned ⏳ - v2.0.0 Target`)
+**Summary**: Enhance text report outputs, add thematic security metrics, upgrade HTML templates, sanitize rule commands, expand check automation, support rule exclusions, and automate visual UI browser testing.
+
+#### 8.1 Plain-Text Reporting & Thematic Metrics
+- [ ] **1° Enhanced Plain-Text ASCII Summary Tables**: Upgrade `--format txt` output to generate formatted ASCII summary tables with category scores, PASS/FAIL ratios, and clear alignment.
+- [ ] **2° Thematic Security Domain Metrics**: Group compliance metrics by security domain (Authentication, Access Control, Network Isolation, TLS/Encryption, Logging & Auditing).
+
+#### 8.2 HTML Template Polish & Rule Exclusion Engine
+- [ ] **3° Aesthetic & Functional HTML Template Upgrade**: Enhance `templates/report_template.html` with modern UI, responsive alignment, dark mode toggle, visual icons, and zero layout overflow.
+- [ ] **6° Rule Exclusion Engine (`--exclude-rules` / `--skip-rule`)**: Implement CLI flags and JSON config support to skip or exclude specific control IDs or categories during audits.
+
+#### 8.3 Command Verification, Automation Expansion & Visual Browser Testing
+- [ ] **4° Rule Command Validation & Execution Safety**: Enhance `rules/*.json` specifications to validate test procedure shell syntax and enforce command execution safety.
+- [ ] **5° Check Automation Expansion (Minimize Manual Checks)**: Convert legacy `Manual` inspection items into automated database queries and system command verifications.
+- [ ] **7° Automated Headless Browser Visual UI Validation**: Integrate automated browser testing (headless Chromium visual QA) in E2E tests to detect layout regressions (no text overflow, no misaligned tables, no missing icons).
 
 ---
 

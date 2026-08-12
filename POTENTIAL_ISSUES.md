@@ -1,6 +1,38 @@
-# 🛠️ CIS Benchmarks Tools - Resolved Debt & Technical Backlog (v1.9.0)
+# 🛠️ CIS Benchmarks Tools - Technical Backlog & Resolved Debt (v1.9.0)
 
-This document tracks technical debt, security considerations, active quality controls, and resolved architectural backlog items.
+This document tracks technical debt, active architectural backlog items (Target v2.0.0), security considerations, active quality controls, and resolved architectural backlog items.
+
+---
+
+## ⏳ Active Architectural Backlog (Target v2.0.0)
+
+### 1. Plain-Text ASCII Summary Table Exporters (`--format txt`)
+- **Problem**: Plain-text summary output lacks formatted ASCII summary tables and category breakdown ratios.
+- **Planned Resolution**: Implement formatted ASCII summary table generator in `export_results()`.
+
+### 2. Thematic Security Domain Metrics
+- **Problem**: Compliance scores are grouped strictly by benchmark sections, lacking domain-level aggregation (Authentication, Access Control, Encryption, Network Isolation, Logging).
+- **Planned Resolution**: Add thematic security tag aggregation in evaluation engine and report generators.
+
+### 3. HTML Template Aesthetic & Functional Upgrade
+- **Problem**: HTML report layout needs ultra-premium visual aesthetics, dark mode support, dynamic status badges, and enhanced responsive alignment.
+- **Planned Resolution**: Upgrade `templates/report_template.html` and `templates/category_report_template.html`.
+
+### 4. Rule Command Validation & Execution Safety
+- **Problem**: Test procedure commands in JSON rules need pre-execution syntax validation and safety checks.
+- **Planned Resolution**: Add command syntax validator and safety checker in `load_recommendations()`.
+
+### 5. Check Automation Expansion (Minimize Manual Audits)
+- **Problem**: Some controls currently require manual verification (`type: Manual`).
+- **Planned Resolution**: Refactor manual checks into automated SQL queries and system commands to maximize automation.
+
+### 6. Rule Exclusion & Skip Engine (`--exclude-rules` / `--skip-rule`)
+- **Problem**: Users cannot exclude specific control IDs or categories during audit execution.
+- **Planned Resolution**: Add `--exclude-rules` / `--skip-rule` CLI flags and JSON exclusion configuration handling.
+
+### 7. Headless Browser Visual UI Validation in E2E Pipeline
+- **Problem**: E2E test runner validates file size and HTML syntax, but does not visually verify browser rendering (layout overflow, misaligned tables, missing icons).
+- **Planned Resolution**: Integrate headless browser visual QA runner in `scripts/run_e2e_tests.py` (`make test-e2e`).
 
 ---
 
