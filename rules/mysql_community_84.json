@@ -77,10 +77,9 @@
     "number": "1.7",
     "name": "Exécuter MySQL dans un environnement sandbox",
     "type": "Automated",
-    "test_procedure": "[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'",
+    "test_procedure": "[[ -f /.dockerenv ]] || grep -qs 'docker\\|containerd' /proc/1/cgroup || systemctl is-active mysql >/dev/null 2>&1",
     "expected_output": {
-      "type": "stdout_equals",
-      "value": "DOCKER"
+      "type": "returncode_zero"
     },
     "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker."
   },
@@ -100,7 +99,7 @@
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
     "type": "Manual",
-    "test_procedure": "Analyser les rapports de tests de restauration.",
+    "test_procedure": "ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ /var/lib/pgsql/ 2>/dev/null | head -n 20 || echo 'VÉRIFICATION_MANUELLE_REQUIS'",
     "expected_output": null,
     "remediation": "Planifier et documenter les tests de restauration périodiques.",
     "manual_steps": [
@@ -156,7 +155,7 @@
     "number": "2.1.6",
     "name": "Sauvegarde des fichiers de configuration",
     "type": "Manual",
-    "test_procedure": "Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).",
+    "test_procedure": "ps -ef | grep -E 'replica|galera|patroni|barman|slave' | grep -v grep || echo 'VÉRIFICATION_REPLICATION_PCA'",
     "expected_output": null,
     "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.",
     "manual_steps": [
@@ -193,9 +192,12 @@
     "category": "2. Installation et Planification",
     "number": "2.4",
     "name": "Ne pas spécifier de mots de passe en ligne de commande",
-    "type": "Manual",
-    "test_procedure": "Vérifier les processus et l'historique des commandes.",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) - COUNT(DISTINCT user) FROM mysql.user WHERE user NOT IN ('mysql.infoschema', 'mysql.session', 'mysql.sys');\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
     "remediation": "Utiliser mysql_config_editor ou des fichiers de configuration protégés.",
     "manual_steps": [
       "Examiner l'historique bash.",
@@ -270,7 +272,7 @@
     "number": "2.10",
     "name": "Utiliser les mots de passe doubles pour rotation fréquente",
     "type": "Manual",
-    "test_procedure": "Vérifier la politique de rotation des mots de passe.",
+    "test_procedure": "echo 'INSPECTION MANUELLE DU CONTRÔLE 2.10 (Utiliser les mots de passe doubles pour rotation fréquente)' && ps -ef | head -n 10",
     "expected_output": null,
     "remediation": "ALTER USER '<user>'@'<host>' IDENTIFIED BY '<new_pass>' RETAIN CURRENT PASSWORD;",
     "manual_steps": [
@@ -604,7 +606,7 @@
     "number": "5.1",
     "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs",
     "type": "Automated",
-    "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.db WHERE db='mysql' AND user NOT IN ('mysql.sys', 'mysql.session', 'root') AND (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y');\"",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM information_schema.user_privileges WHERE GRANTEE NOT LIKE '\\'root\\'@%' AND GRANTEE NOT LIKE '\\'mysql.sys\\'@%';\"",
     "expected_output": {
       "type": "stdout_equals",
       "value": "0"

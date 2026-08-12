@@ -479,15 +479,25 @@ def load_recommendations(target_key):
 
 
 
-def run_command(command, remote_host=None):
-    """Execute command safely with timeout=10, stdin=DEVNULL, and clean SSH noise (PSL ONLY)."""
+def detect_docker_container(remote_host=None, docker_name=None):
+    """Detect active MySQL Docker container name."""
+    if docker_name:
+        return docker_name
+    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' 2>/dev/null | grep -iE 'mysql|mariadb' | head -n 1", remote_host=remote_host)
+    if ret == 0 and stdout:
+        return stdout.strip()
+    return None
+
+
+def run_command(command, remote_host=None, docker_container=None):
+    """Execute command safely locally, over SSH, or inside Docker container (PSL ONLY)."""
     try:
         if isinstance(command, str):
-            if "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
-                if "postgresql" in command:
-                    command = "pg_isready -h localhost -p 5432 || ps aux | grep -v grep | grep postgres"
-                elif "mariadb" in command or "mysql" in command:
-                    command = "mariadb -e 'SELECT 1;' 2>/dev/null || mysql -e 'SELECT 1;' 2>/dev/null || ps aux | grep -v grep | grep mysqld"
+            if docker_container and not command.startswith("docker exec"):
+                command = f"docker exec -i {docker_container} /bin/bash -c {json.dumps(command)}"
+            elif "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
+                if "mysql" in command or "mariadb" in command:
+                    command = "mysql -e 'SELECT 1;' 2>/dev/null || mariadb -e 'SELECT 1;' 2>/dev/null || ps aux | grep -v grep | grep mysqld"
             cmd_args = ["/bin/bash", "-c", command]
         else:
             cmd_args = list(command)
@@ -582,7 +592,7 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     print(f"WARN: Unknown condition type '{condition_type}'")
     return False
 
-def perform_checks(recommendations, remote_host=None):
+def perform_checks(recommendations, remote_host=None, docker_container=None):
     """Exécute tous les contrôles et stocke les résultats."""
     results = {}
     stored_outputs = {} # Store outputs globally for potential cross-check references (if needed later)
@@ -621,7 +631,7 @@ def perform_checks(recommendations, remote_host=None):
                     results[category].append(check_result)
                     continue
             should_run = True
-        elif rec["type"] == "Manual" and "test_procedure" in rec and ("mysql" in rec["test_procedure"].lower() or "crontab" in rec["test_procedure"].lower() or "ps" in rec["test_procedure"].lower()):
+        elif rec["type"] == "Manual" and "test_procedure" in rec and rec["test_procedure"].strip():
             should_run = True # Run it to provide information even if manual
 
         if should_run:
@@ -1095,6 +1105,7 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
 # --- Main Execution ---
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CIS Audit Benchmark (Local & SSH Remote Modes)")
+    parser.add_argument("--docker", "--container", dest="docker_container", default=None, help="Target Docker container name or ID")
     parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
     parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
     parser.add_argument("--ssh-port", type=int, default=22, help="SSH port for remote execution (default: 22)")
@@ -1121,6 +1132,7 @@ if __name__ == "__main__":
         print("🖥️  Running Audit in Local Mode on local machine...")
 
     rules_data = load_recommendations("mysql_community_84")
-    check_results = perform_checks(rules_data, remote_host=remote_target)
+    docker_target = detect_docker_container(remote_host=remote_target, docker_name=args.docker_container)
+    check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target)
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
     export_results(check_results, overall_score, categories_scores, target_name="mysql_community_84", filename=args.output, fmt=args.format, lang=args.lang)
