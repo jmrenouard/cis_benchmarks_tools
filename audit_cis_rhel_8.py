@@ -434,6 +434,7 @@ def perform_checks(recommendations, remote_host=None):
             "stderr": stderr,
             "code": code,
             "output": stdout or stderr,
+            "test_procedure": rec.get("audit", rec.get("test_procedure", "")),
             "remediation": rec.get("remediation", "")
         })
     return results
@@ -462,6 +463,8 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     elif c_type == "returncode_zero":
         return returncode == 0
     return False
+
+
 
 
 
@@ -510,6 +513,14 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         root = ET.Element("testsuite", name=target_name, tests=str(len(flat_results)), failures=str(sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])), timestamp=datetime.now().isoformat())
         for r in flat_results:
             tc = ET.SubElement(root, "testcase", id=str(r.get("number", r.get("id", ""))), name=str(r.get("name", r.get("title", ""))), classname=str(r.get("category", "")))
+            test_proc = r.get("test_procedure", r.get("audit", ""))
+            if test_proc:
+                cmd_elem = ET.SubElement(tc, "system-out")
+                cmd_elem.text = f"Test Command: {str(test_proc).strip()}"
+            rem = r.get("remediation", "")
+            if rem:
+                rem_elem = ET.SubElement(tc, "remediation")
+                rem_elem.text = str(rem).strip()
             if r.get("status") in ["FAIL", "Fail"]:
                 failure = ET.SubElement(tc, "failure", message="Control failed")
                 failure.text = str(r.get("output", r.get("stdout", "")))
@@ -555,12 +566,15 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             rec_name = r.get("name", r.get("title", ""))
             lines.append(f"{status_icon} {rec_id} - {rec_name}")
             lines.append(f"  Category: {r.get('category')}")
+            test_proc = r.get("test_procedure", r.get("audit", ""))
+            if test_proc:
+                lines.append(f"  Commande de test: {str(test_proc).strip()}")
             out = r.get('output', r.get('stdout', ''))
             if out:
                 lines.append(f"  Output: {str(out).strip()}")
             rem = r.get('remediation', '')
-            if rem and status in ["FAIL", "Fail"]:
-                lines.append(f"  Remediation: {str(rem).strip()}")
+            if rem:
+                lines.append(f"  Procédure de remédiation: {str(rem).strip()}")
             lines.append("-" * 90)
         with open(filename, "w", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")
@@ -586,13 +600,17 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
     rows_html = ""
     for item in results:
         status_badge = '<span style="background-color: #def7ec; color: #03543f; padding: 4px 8px; border-radius: 4px; font-weight: bold;">PASS</span>' if item["status"] == "PASS" else '<span style="background-color: #fde8e8; color: #9b1c1c; padding: 4px 8px; border-radius: 4px; font-weight: bold;">FAIL</span>'
+        test_cmd = html.escape(item.get("test_procedure", item.get("audit", "")))
+        rem_cmd = html.escape(item.get("remediation", ""))
         rows_html += f"""
         <tr style="border-bottom: 1px solid #e5e7eb;">
             <td style="padding: 12px; font-weight: bold;">{html.escape(item['id'])}</td>
             <td style="padding: 12px;">{html.escape(item['title'])}</td>
             <td style="padding: 12px;">{html.escape(item['category'])}</td>
+            <td style="padding: 12px; font-family: monospace; font-size: 12px;"><code>{test_cmd}</code></td>
             <td style="padding: 12px; text-align: center;">{status_badge}</td>
             <td style="padding: 12px; font-family: monospace; font-size: 12px;">{html.escape(item['stdout'][:100])}</td>
+            <td style="padding: 12px; font-size: 12px;">{rem_cmd}</td>
         </tr>
         """
 
@@ -623,8 +641,10 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
                     <th>ID</th>
                     <th>Control Title</th>
                     <th>Category</th>
+                    <th>Commande de test</th>
                     <th>Status</th>
                     <th>Execution Output</th>
+                    <th>Procédure de remédiation</th>
                 </tr>
             </thead>
             <tbody>
