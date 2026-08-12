@@ -76,9 +76,11 @@
     "category": "1. Configuration Système d'exploitation",
     "number": "1.7",
     "name": "Exécuter MariaDB dans un environnement sandbox",
-    "type": "Manual",
-    "test_procedure": "[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "[[ -f /.dockerenv ]] || grep -qs 'docker\\|containerd' /proc/1/cgroup || systemctl is-active mariadb >/dev/null 2>&1",
+    "expected_output": {
+      "type": "returncode_zero"
+    },
     "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MariaDB sous Docker.",
     "manual_steps": [
       "Vérifier si MariaDB utilise chroot.",
@@ -213,9 +215,12 @@
     "category": "2. Installation et Planification",
     "number": "2.4",
     "name": "Ne pas réutiliser les noms d'utilisateurs",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT host, user, plugin FROM mysql.user WHERE user NOT IN ('mysql.infoschema', 'mysql.session', 'mysql.sys', 'mariadb.sys') ORDER BY user;\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) - COUNT(DISTINCT user) FROM mysql.user WHERE user NOT IN ('mysql.infoschema', 'mysql.session', 'mysql.sys', 'mariadb.sys');\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
     "remediation": "Ajouter/Supprimer les utilisateurs pour que chaque compte soit dédié à un usage spécifique.",
     "manual_steps": [
       "Lister les utilisateurs MariaDB.",
@@ -265,9 +270,12 @@
     "category": "2. Installation et Planification",
     "number": "2.8",
     "name": "Utilisation appropriée de l'authentification Socket Peer-Credential",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT PLUGIN_NAME, PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'unix_socket';\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'unix_socket';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "ACTIVE"
+    },
     "remediation": "Configurer unix_socket=ON/OFF selon les besoins. ALTER USER ... IDENTIFIED VIA unix_socket.",
     "manual_steps": [
       "Vérifier si unix_socket est activé.",
@@ -564,9 +572,12 @@
     "category": "5. Permissions MariaDB",
     "number": "5.1",
     "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges WHERE grantee NOT LIKE ('\\\\'mysql.%localhost\\\\'');\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM information_schema.user_privileges WHERE GRANTEE NOT LIKE '\\'root\\'@%' AND GRANTEE NOT LIKE '\\'mysql\\'@%';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
     "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs.",
     "manual_steps": [
       "Examiner les utilisateurs retournés.",
@@ -578,9 +589,12 @@
     "category": "5. Permissions MariaDB",
     "number": "5.2",
     "name": "Retirer le droit FILE aux non-admins",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'FILE';\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'FILE' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
     "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit FILE.",
@@ -591,9 +605,12 @@
     "category": "5. Permissions MariaDB",
     "number": "5.3",
     "name": "Retirer le droit PROCESS aux non-admins",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'PROCESS';\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'PROCESS' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
     "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit PROCESS.",
@@ -604,9 +621,12 @@
     "category": "5. Permissions MariaDB",
     "number": "5.4",
     "name": "Retirer le droit SUPER aux non-admins",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SUPER';\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SUPER' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
     "remediation": "REVOKE SUPER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit SUPER.",
@@ -617,9 +637,12 @@
     "category": "5. Permissions MariaDB",
     "number": "5.5",
     "name": "Retirer le droit SHUTDOWN aux non-admins",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SHUTDOWN';\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SHUTDOWN' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
     "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit SHUTDOWN.",
@@ -630,9 +653,12 @@
     "category": "5. Permissions MariaDB",
     "number": "5.6",
     "name": "Retirer CREATE USER aux non-admins",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'CREATE USER';\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'CREATE USER' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
     "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit CREATE USER.",
@@ -643,9 +669,12 @@
     "category": "5. Permissions MariaDB",
     "number": "5.7",
     "name": "Retirer GRANT OPTION aux non-admins",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE IS_GRANTABLE = 'YES';\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE IS_GRANTABLE = 'YES' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "0"
+    },
     "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant GRANT OPTION.",
