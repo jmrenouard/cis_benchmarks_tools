@@ -35,7 +35,6 @@ Total Controls: 71
   Output: Stdout:
 /var/run/postgresql:5432 - accepting connections
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -47,7 +46,6 @@ Condition de succès non remplie.
 Stdout:
 /var/run/postgresql:5432 - accepting connections
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ---
 Condition de succès non remplie.
@@ -62,7 +60,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -74,7 +71,6 @@ Supprimer toute définition de PGPASSWORD dans les scripts de connexion, utilise
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -91,7 +87,6 @@ Identifier et modifier les scripts/processus pour ne plus utiliser PGPASSWORD.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -110,7 +105,6 @@ Return Code: 1
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -126,7 +120,6 @@ Supprimer le fichier .psql_history et ajouter \set HISTFILE /dev/null dans ~/.ps
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -148,7 +141,6 @@ ALTER SYSTEM SET log_destination = 'csvlog'; SELECT pg_reload_conf();
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -171,7 +163,6 @@ ALTER SYSTEM SET logging_collector = 'on'; puis systemctl restart postgresql@16-
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 et: line 1: Installer: command not found
 bash: line 2: SELECT: command not found
 Return Code: 127
@@ -183,7 +174,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -205,7 +195,6 @@ ALTER SYSTEM SET log_directory = '/var/log/postgres'; SELECT pg_reload_conf();
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -227,7 +216,6 @@ ALTER SYSTEM SET log_filename = 'postgresql-%Y%m%d.log'; SELECT pg_reload_conf()
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -249,7 +237,6 @@ ALTER SYSTEM SET log_file_mode = '0600'; SELECT pg_reload_conf();
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -271,7 +258,6 @@ ALTER SYSTEM SET log_truncate_on_rotation = 'on'; SELECT pg_reload_conf();
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -289,7 +275,6 @@ Return Code: 1
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -311,7 +296,6 @@ Return Code: 1
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -333,7 +317,6 @@ ALTER SYSTEM SET syslog_split_messages = 'on'; SELECT pg_reload_conf();
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -355,7 +338,6 @@ Même que 3.1.11.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -381,7 +363,6 @@ ALTER SYSTEM SET syslog_ident = 'proddb'; SELECT pg_reload_conf();
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 /bin/bash: -c: option requires an argument
 Return Code: 2
 ------------------------------------------------------------------------------------------
@@ -390,7 +371,6 @@ Return Code: 2
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -412,7 +392,6 @@ ALTER SYSTEM SET debug_print_parse = 'off'; SELECT pg_reload_conf();
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -434,7 +413,6 @@ ALTER SYSTEM SET debug_print_rewritten = 'off'; SELECT pg_reload_conf();
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -456,7 +434,6 @@ ALTER SYSTEM SET debug_print_plan = 'off'; SELECT pg_reload_conf();
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -478,7 +455,6 @@ ALTER SYSTEM SET debug_pretty_print = 'on'; SELECT pg_reload_conf();.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -500,7 +476,6 @@ ALTER SYSTEM SET log_connections = 'on'; SELECT pg_reload_conf();.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -522,7 +497,6 @@ ALTER SYSTEM SET log_disconnections = 'on'; SELECT pg_reload_conf();.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -544,7 +518,6 @@ ALTER SYSTEM SET log_error_verbosity = 'verbose'; SELECT pg_reload_conf();.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -566,7 +539,6 @@ ALTER SYSTEM SET log_hostname = 'off'; SELECT pg_reload_conf();.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -588,7 +560,6 @@ ALTER SYSTEM SET log_line_prefix = '%m [%p] user=%u db=%d '; SELECT pg_reload_co
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -610,7 +581,6 @@ ALTER SYSTEM SET log_statement = 'ddl'; SELECT pg_reload_conf();.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -661,7 +631,6 @@ ALTER SYSTEM SET log_timezone = 'UTC'; SELECT pg_reload_conf();.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 set_user: line 1: Utiliser: command not found
 bash: line 2: SELECT: command not found
 Return Code: 127
@@ -705,7 +674,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 /bin/bash: -c: option requires an argument
 Return Code: 2
 ------------------------------------------------------------------------------------------
@@ -731,7 +699,6 @@ Return Code: 2
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 qu’OpenSSL: line 1: S’assurer: command not found
 bash: line 2: SHOW: command not found
 bash: line 2: et: command not found
@@ -744,7 +711,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 /bin/bash: -c: option requires an argument
 Return Code: 2
 ------------------------------------------------------------------------------------------
@@ -754,7 +720,6 @@ Return Code: 2
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 au: line 1: Forcer: command not found
 bash: line 2: SHOW: command not found
 bash: line 2: doit: command not found
@@ -768,7 +733,6 @@ Condition de succès non remplie.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 RC4,: line 1: Exclure: command not found
 bash: line 2: SHOW: command not found
 bash: line 2: vérifier: command not found
@@ -780,7 +744,6 @@ Return Code: 127
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 pgcrypto: line 1: Activer: command not found
 bash: line 2: SELECT: command not found
 Return Code: 127
@@ -797,7 +760,6 @@ Condition de succès non remplie.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 log_replication_commands: line 1: Activer: command not found
 bash: line 2: SHOW: command not found
 bash: line 2: doit: command not found
@@ -814,7 +776,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 /bin/bash: -c: option requires an argument
 Return Code: 2
 ------------------------------------------------------------------------------------------
@@ -831,7 +792,6 @@ Return Code: 2
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]

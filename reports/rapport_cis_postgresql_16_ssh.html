@@ -315,7 +315,6 @@
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 /var/run/postgresql:5432 - accepting connections
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.</pre></td>
@@ -332,7 +331,6 @@ Condition de succès non remplie.</pre></td>
 Stdout:
 /var/run/postgresql:5432 - accepting connections
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 Return Code: 0
 ---
 Condition de succès non remplie.</pre></td>
@@ -358,7 +356,6 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -375,7 +372,6 @@ Supprimer toute définition de PGPASSWORD dans les scripts de connexion, utilise
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -430,7 +426,6 @@ Ajouter umask 077 dans ~postgres/.bash_profile (ou .profile/.bashrc), recharger 
 Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -456,7 +451,6 @@ chown root:root $(sudo -u postgres pg_config --sharedir)/extension &amp;&amp; ch
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -510,7 +504,6 @@ Supprimer toutes les lignes password= identifiées.</td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -537,7 +530,6 @@ ALTER SYSTEM SET log_destination = &#x27;csvlog&#x27;; SELECT pg_reload_conf();<
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -566,7 +558,6 @@ SELECT * FROM pg_extension WHERE extname = &#x27;pgaudit&#x27;;</code></td>
 Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 et: line 1: Installer: command not found
 bash: line 2: SELECT: command not found
 Return Code: 127
@@ -611,7 +602,6 @@ CREATE EXTENSION pgaudit; ALTER SYSTEM SET pgaudit.log = &#x27;all&#x27;; SELECT
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -638,7 +628,6 @@ ALTER SYSTEM SET log_directory = &#x27;/var/log/postgres&#x27;; SELECT pg_reload
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -665,7 +654,6 @@ ALTER SYSTEM SET log_filename = &#x27;postgresql-%Y%m%d.log&#x27;; SELECT pg_rel
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -692,7 +680,6 @@ ALTER SYSTEM SET log_file_mode = &#x27;0600&#x27;; SELECT pg_reload_conf();</td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -719,7 +706,6 @@ ALTER SYSTEM SET log_truncate_on_rotation = &#x27;on&#x27;; SELECT pg_reload_con
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -744,7 +730,6 @@ ALTER SYSTEM SET log_rotation_age = &#x27;1d&#x27;; SELECT pg_reload_conf();</td
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -780,7 +765,6 @@ ALTER SYSTEM SET syslog_facility = &#x27;LOCAL1&#x27;; SELECT pg_reload_conf();<
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -807,7 +791,6 @@ ALTER SYSTEM SET syslog_split_messages = &#x27;on&#x27;; SELECT pg_reload_conf()
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -834,7 +817,6 @@ Même que 3.1.11.</td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -872,7 +854,6 @@ ALTER SYSTEM SET log_statement = &#x27;all&#x27;; ALTER SYSTEM SET log_min_error
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 /bin/bash: -c: option requires an argument
 Return Code: 2</pre></td>
                         <td class="py-3 px-6 text-left align-top">Consigner les instructions SQL ayant généré des erreurs.
@@ -888,7 +869,6 @@ ALTER SYSTEM SET log_error_verbosity = &#x27;verbose&#x27;; puis SELECT pg_reloa
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -915,7 +895,6 @@ ALTER SYSTEM SET debug_print_parse = &#x27;off&#x27;; SELECT pg_reload_conf();</
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -942,7 +921,6 @@ ALTER SYSTEM SET debug_print_rewritten = &#x27;off&#x27;; SELECT pg_reload_conf(
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -969,7 +947,6 @@ ALTER SYSTEM SET debug_print_plan = &#x27;off&#x27;; SELECT pg_reload_conf();</t
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -996,7 +973,6 @@ ALTER SYSTEM SET debug_pretty_print = &#x27;on&#x27;; SELECT pg_reload_conf();.<
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -1023,7 +999,6 @@ ALTER SYSTEM SET log_connections = &#x27;on&#x27;; SELECT pg_reload_conf();.</td
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -1050,7 +1025,6 @@ ALTER SYSTEM SET log_disconnections = &#x27;on&#x27;; SELECT pg_reload_conf();.<
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -1077,7 +1051,6 @@ ALTER SYSTEM SET log_error_verbosity = &#x27;verbose&#x27;; SELECT pg_reload_con
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -1104,7 +1077,6 @@ ALTER SYSTEM SET log_hostname = &#x27;off&#x27;; SELECT pg_reload_conf();.</td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -1131,7 +1103,6 @@ ALTER SYSTEM SET log_line_prefix = &#x27;%m [%p] user=%u db=%d &#x27;; SELECT pg
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -1158,7 +1129,6 @@ ALTER SYSTEM SET log_statement = &#x27;ddl&#x27;; SELECT pg_reload_conf();.</td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
@@ -1303,7 +1273,6 @@ SELECT * FROM pg_extension WHERE extname = &#x27;set_user&#x27;;</code></td>
 Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 set_user: line 1: Utiliser: command not found
 bash: line 2: SELECT: command not found
 Return Code: 127
@@ -1471,7 +1440,6 @@ Mettre à jour la documentation interne, auditer régulièrement.</td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 /bin/bash: -c: option requires an argument
 Return Code: 2</pre></td>
                         <td class="py-3 px-6 text-left align-top">Ajuster max_connections, shared_buffers, work_mem, etc., pour limiter l’exposition.
@@ -1537,7 +1505,6 @@ SHOW ssl_library; et vérifier la version OpenSSL.</code></td>
 Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 qu’OpenSSL: line 1: S’assurer: command not found
 bash: line 2: SHOW: command not found
 bash: line 2: et: command not found
@@ -1557,7 +1524,6 @@ Recompiler PostgreSQL avec FIPS ou configurer la bibliothèque FIPS.</td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 /bin/bash: -c: option requires an argument
 Return Code: 2</pre></td>
                         <td class="py-3 px-6 text-left align-top">Installer certificats TLS et configurer ssl_cert_file, ssl_key_file.
@@ -1575,7 +1541,6 @@ SHOW ssl_min_protocol_version; doit être TLSv1.3.</code></td>
 Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 au: line 1: Forcer: command not found
 bash: line 2: SHOW: command not found
 bash: line 2: doit: command not found
@@ -1597,7 +1562,6 @@ SHOW ssl_cipher_suites; vérifier l’absence de ciphers faibles.</code></td>
 Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 RC4,: line 1: Exclure: command not found
 bash: line 2: SHOW: command not found
 bash: line 2: vérifier: command not found
@@ -1617,7 +1581,6 @@ SELECT * FROM pg_extension WHERE extname = &#x27;pgcrypto&#x27;;</code></td>
 Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 pgcrypto: line 1: Activer: command not found
 bash: line 2: SELECT: command not found
 Return Code: 127
@@ -1676,7 +1639,6 @@ SHOW log_replication_commands; doit être on.</code></td>
 Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 log_replication_commands: line 1: Activer: command not found
 bash: line 2: SHOW: command not found
 bash: line 2: doit: command not found
@@ -1708,7 +1670,6 @@ Mettre en place un script de sauvegarde automatisée avec pg_basebackup.</td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 /bin/bash: -c: option requires an argument
 Return Code: 2</pre></td>
                         <td class="py-3 px-6 text-left align-top">Activer archive_mode et archive_command pour conserver les WAL.
@@ -1774,7 +1735,6 @@ Set temp_tablespaces and log_directory on another volume and reload.</td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-Warning: Permanently added &#x27;127.0.0.1&#x27; (ED25519) to the list of known hosts.
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-ABkNnS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-ABkNnS] [-g group] [-h host] [-p prompt] [-U user]
