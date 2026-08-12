@@ -29,14 +29,12 @@ Total Controls: 74
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ------------------------------------------------------------------------------------------
 [FAIL] 1.2 - Utiliser un compte dédié et privilégié minimal pour MariaDB
   Category: 1. Configuration Système d'exploitation
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -47,7 +45,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -58,7 +55,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -69,7 +65,6 @@ Condition de succès non remplie.
   Output: Stdout:
 Try `getent --help' or `getent --usage' for more information.
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 getent: wrong number of arguments
 Return Code: 0
 
@@ -81,7 +76,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -102,7 +96,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 AUCUNE_SAUVEGARDE_PLANIFIEE
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.1.2 - Validation des sauvegardes
@@ -131,7 +124,6 @@ Examiner les permissions et la présence de chiffrement sur les fichiers de sauv
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -152,7 +144,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 bash: -c: line 1: syntax error near unexpected token `('
 bash: -c: line 1: `/bin/bash -c Contrôler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, clés SSL, etc.).'
 Return Code: 2
@@ -172,7 +163,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.4 - Ne pas réutiliser les noms d'utilisateurs
@@ -183,7 +173,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.5 - S'assurer que le matériel cryptographique est unique et non par défaut
@@ -194,7 +183,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 les: line 1: Vérifier: command not found
 Return Code: 127
 ------------------------------------------------------------------------------------------
@@ -203,7 +191,6 @@ Return Code: 127
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -217,7 +204,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 2.8 - Utilisation appropriée de l'authentification Socket Peer-Credential
@@ -228,7 +214,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [PASS] 2.9 - S'assurer que MariaDB est lié à une adresse IP
@@ -236,7 +221,6 @@ Return Code: 0
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [FAIL] 2.10 - Limiter les versions TLS acceptées
@@ -244,7 +228,6 @@ Return Code: 0
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -255,7 +238,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -266,7 +248,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -279,7 +260,6 @@ Condition de succès non remplie.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.2 - Permissions sur les fichiers 'log_bin_basename'
   Category: 3. Permissions Fichiers
@@ -288,7 +268,6 @@ Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.3 - Permissions sur 'log_error'
   Category: 3. Permissions Fichiers
@@ -297,7 +276,6 @@ Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.4 - Permissions sur 'slow_query_log'
   Category: 3. Permissions Fichiers
@@ -306,7 +284,6 @@ Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.5 - Permissions sur 'relay_log_basename'
   Category: 3. Permissions Fichiers
@@ -315,7 +292,6 @@ Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ------------------------------------------------------------------------------------------
 [MANUAL] 3.6 - Permissions sur 'general_log_file'
   Category: 3. Permissions Fichiers
@@ -324,14 +300,12 @@ Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ------------------------------------------------------------------------------------------
 [FAIL] 3.7 - Permissions sur les fichiers de clés SSL
   Category: 3. Permissions Fichiers
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 stat: missing operand
 Try 'stat --help' for more information.
 Return Code: 123
@@ -346,14 +320,12 @@ Condition de succès non remplie.
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ------------------------------------------------------------------------------------------
 [FAIL] 3.9 - Permissions sur 'server_audit_file_path'
   Category: 3. Permissions Fichiers
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 stat: missing operand
 Try 'stat --help' for more information.
 Return Code: 123
@@ -366,7 +338,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 stat: missing operand
 Try 'stat --help' for more information.
 Return Code: 123
@@ -382,7 +353,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [PASS] 4.2 - S'assurer que les bases de test ne sont pas installées en production
@@ -390,7 +360,6 @@ Return Code: 0
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [PASS] 4.3 - S'assurer que 'allow-suspicious-udfs' est à 'OFF'
@@ -398,7 +367,6 @@ Return Code: 0
   Output: Stdout:
 NOT FOUND
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [FAIL] 4.4 - Renforcer l'utilisation de 'local_infile' sur les clients MariaDB
@@ -406,7 +374,6 @@ Return Code: 0
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -417,7 +384,6 @@ Condition de succès non remplie.
   Output: Stdout:
 NOT FOUND
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [FAIL] 4.6 - S'assurer que les liens symboliques sont désactivés
@@ -425,7 +391,6 @@ Return Code: 0
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -436,7 +401,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -447,7 +411,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -458,7 +421,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -472,7 +434,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.2 - Retirer le droit FILE aux non-admins
@@ -483,7 +444,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.3 - Retirer le droit PROCESS aux non-admins
@@ -494,7 +454,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.4 - Retirer le droit SUPER aux non-admins
@@ -505,7 +464,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.5 - Retirer le droit SHUTDOWN aux non-admins
@@ -516,7 +474,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.6 - Retirer CREATE USER aux non-admins
@@ -527,7 +484,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.7 - Retirer GRANT OPTION aux non-admins
@@ -538,7 +494,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.8 - Limiter REPLICATION SLAVE aux comptes de réplication
@@ -549,7 +504,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.9 - Limiter les droits DML/DDL à des BD/comptes précis
@@ -560,7 +514,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 5.10 - Définir proprement DEFINER/INVOKER des SP/Functions
@@ -571,7 +524,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [PASS] 6.1 - Configurer log_error correctement
@@ -579,7 +531,6 @@ Return Code: 0
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 6.2 - Journal hors partition système
@@ -589,14 +540,12 @@ Return Code: 0
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 ------------------------------------------------------------------------------------------
 [FAIL] 6.3 - log_warnings=2
   Category: 6. Audit & Journalisation
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -607,7 +556,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -618,7 +566,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -629,7 +576,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -640,7 +586,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -651,7 +596,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 
 Condition de succès non remplie.
@@ -662,7 +606,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [FAIL] 7.4 - Politique de complexité des mots de passe (simple_password_check)
@@ -670,7 +613,6 @@ Return Code: 0
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -681,7 +623,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [PASS] 7.6 - Supprimer les comptes anonymes
@@ -689,7 +630,6 @@ Return Code: 0
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [FAIL] 8.1 - Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES)
@@ -697,7 +637,6 @@ Return Code: 0
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -708,7 +647,6 @@ Condition de succès non remplie.
   Output: Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 
 Condition de succès non remplie.
@@ -722,7 +660,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 0
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.1 - Chiffrer le trafic de réplication
@@ -733,7 +670,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.2 - MASTER_SSL_VERIFY_SERVER_CERT activé
@@ -754,7 +690,6 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 ------------------------------------------------------------------------------------------
 [MANUAL] 9.5 - TLS mutuel activé pour la réplication
@@ -765,6 +700,5 @@ Résultat de l'extraction automatique pour aide:
 Stdout:
 
 Stderr:
-Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
 Return Code: 1
 ------------------------------------------------------------------------------------------

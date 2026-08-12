@@ -12,8 +12,8 @@
       "remediation": "Sauvegarder la base, d\u00e9placer les fichiers de donn\u00e9es vers une partition d\u00e9di\u00e9e, mettre \u00e0 jour datadir dans la configuration MariaDB, red\u00e9marrer le service.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\n
+      "error": "
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -24,8 +24,8 @@
       "remediation": "Configurer le service MariaDB pour qu'il s'ex\u00e9cute sous un utilisateur d\u00e9di\u00e9 (ex: 'mysql') avec les privil\u00e8ges minimaux.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -36,8 +36,8 @@
       "remediation": "Supprimer les fichiers d'historique, cr\u00e9er un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -48,8 +48,8 @@
       "remediation": "Modifier les scripts/utilisateurs pour \u00e9viter MYSQL_PWD, utiliser des m\u00e9thodes d'authentification s\u00e9curis\u00e9es.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -60,8 +60,8 @@
       "remediation": "Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\nTry `getent --help' or `getent --usage' for more information.\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\ngetent: wrong number of arguments\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\ngetent: wrong number of arguments",
+      "output": "Stdout:\nTry `getent --help' or `getent --usage' for more information.\nStderr:\n
+      "error": "
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -72,8 +72,8 @@
       "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -104,8 +104,8 @@
         "Documenter la politique de sauvegarde."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\nAUCUNE_SAUVEGARDE_PLANIFIEE\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\nAUCUNE_SAUVEGARDE_PLANIFIEE\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -165,8 +165,8 @@
       "remediation": "Activer les binlogs, configurer binlog_expire_logs_seconds dans mariadb.cnf, tester les restaurations PITR.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -196,8 +196,8 @@
         "V\u00e9rifier la pr\u00e9sence de /etc/mysql/mariadb.cnf et des certificats SSL."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nbash: -c: line 1: syntax error near unexpected token `('\nbash: -c: line 1: `/bin/bash -c Contr\u00f4ler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, cl\u00e9s SSL, etc.).'\nReturn Code: 2",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nbash: -c: line 1: syntax error near unexpected token `('\nbash: -c: line 1: `/bin/bash -c Contr\u00f4ler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, cl\u00e9s SSL, etc.).'",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -227,8 +227,8 @@
         "S'assurer que -p<password> n'appara\u00eet nulle part."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 1",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -242,8 +242,8 @@
         "V\u00e9rifier que chaque nom de compte n'est utilis\u00e9 que pour un seul r\u00f4le."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -257,8 +257,8 @@
         "V\u00e9rifier qu'ils ne contiennent pas 'Auto_Generated'."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nles: line 1: V\u00e9rifier: command not found\nReturn Code: 127",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nles: line 1: V\u00e9rifier: command not found",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -269,8 +269,8 @@
       "remediation": "SET GLOBAL default_password_lifetime=365;",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -285,8 +285,8 @@
         "Verrouiller les comptes non utilis\u00e9s."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -301,8 +301,8 @@
         "S'assurer que seuls les acc\u00e8s locaux autoris\u00e9s l'utilisent."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -313,8 +313,8 @@
       "remediation": "Configurer bind_address=<adresse_IP_sp\u00e9cifique> dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -325,8 +325,8 @@
       "remediation": "Configurer tls_version=TLSv1.2,TLSv1.3 dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -337,8 +337,8 @@
       "remediation": "ALTER USER '<user>'@'<host>' REQUIRE X509;",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -349,8 +349,8 @@
       "remediation": "Configurer ssl_cipher avec une liste de chiffrements approuv\u00e9s dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "2. Installation et Planification"
     },
     {
@@ -361,8 +361,8 @@
       "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -373,8 +373,8 @@
       "remediation": "Appliquer chmod 600 sur les fichiers binaires.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -385,8 +385,8 @@
       "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -397,8 +397,8 @@
       "remediation": "Limiter l'acc\u00e8s aux utilisateurs autoris\u00e9s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@slow_query_log_file;\"`\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@slow_query_log_file;\"`\nStdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -409,8 +409,8 @@
       "remediation": "Appliquer chmod 600.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@relay_log_basename;\"`\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@relay_log_basename;\"`\nStdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -421,8 +421,8 @@
       "remediation": "Restreindre les droits d'acc\u00e8s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@general_log_file;\"`\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@general_log_file;\"`\nStdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -433,8 +433,8 @@
       "remediation": "Restreindre l'acc\u00e8s aux cl\u00e9s priv\u00e9es (ex: chmod 600) et s'assurer que le propri\u00e9taire est mysql.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nstat: missing operand\nTry 'stat --help' for more information.\nReturn Code: 123\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nstat: missing operand\nTry 'stat --help' for more information.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -445,8 +445,8 @@
       "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@plugin_dir;\"`\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@plugin_dir;\"`\nStdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -457,8 +457,8 @@
       "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nstat: missing operand\nTry 'stat --help' for more information.\nReturn Code: 123\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nstat: missing operand\nTry 'stat --help' for more information.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -469,8 +469,8 @@
       "remediation": "Restreindre l'acc\u00e8s aux fichiers de cl\u00e9s de chiffrement (chmod 640).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nstat: missing operand\nTry 'stat --help' for more information.\nReturn Code: 123\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nstat: missing operand\nTry 'stat --help' for more information.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "3. Permissions Fichiers"
     },
     {
@@ -485,8 +485,8 @@
         "V\u00e9rifier les CVE critiques."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -497,8 +497,8 @@
       "remediation": "Ex\u00e9cutez DROP DATABASE <database name>; pour supprimer une base de donn\u00e9es d'exemple.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -509,8 +509,8 @@
       "remediation": "Supprimer --allow-suspicious-udfs de la ligne de commande ou du fichier de configuration.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\nNOT FOUND\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\nNOT FOUND\nStderr:\n
+      "error": "
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -521,8 +521,8 @@
       "remediation": "Ajouter local-infile=0 \u00e0 la section [mariadbd] et [client] du fichier de configuration MariaDB.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -533,8 +533,8 @@
       "remediation": "Supprimer l'option --skip-grant-tables de la ligne de commande ou du fichier de configuration.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\nNOT FOUND\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\nNOT FOUND\nStderr:\n
+      "error": "
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -545,8 +545,8 @@
       "remediation": "Ajouter skip-symbolic-links dans la section [mariadbd] du fichier mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -557,8 +557,8 @@
       "remediation": "Configurer secure_file_priv sur NULL (pour d\u00e9sactiver) ou sur un chemin sp\u00e9cifique dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -569,8 +569,8 @@
       "remediation": "Ajouter STRICT_ALL_TABLES au param\u00e8tre sql_mode dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -581,8 +581,8 @@
       "remediation": "Configurer file_key_management plugin et innodb_encrypt_tables=ON dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -597,8 +597,8 @@
         "REVOKE les privil\u00e8ges excessifs."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -612,8 +612,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -627,8 +627,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -642,8 +642,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -657,8 +657,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -672,8 +672,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -687,8 +687,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -702,8 +702,8 @@
         "S'assurer que seuls les comptes de r\u00e9plication l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -717,8 +717,8 @@
         "S'assurer du principe du moindre privil\u00e8ge."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -732,8 +732,8 @@
         "V\u00e9rifier que les DEFINER sont appropri\u00e9s."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "5. Permissions MariaDB"
     },
     {
@@ -744,8 +744,8 @@
       "remediation": "D\u00e9finir log-error=/chemin/vers/mariadb.err dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "6. Audit & Journalisation"
     },
     {
@@ -756,8 +756,8 @@
       "remediation": "D\u00e9placer les r\u00e9pertoires des journaux (log-bin, log-error) hors des partitions syst\u00e8me.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:\n
+      "error": "
       "category": "6. Audit & Journalisation"
     },
     {
@@ -768,8 +768,8 @@
       "remediation": "Ajouter log_warnings=2 dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "6. Audit & Journalisation"
     },
     {
@@ -780,8 +780,8 @@
       "remediation": "Installer et configurer le plugin server_audit : plugin_load_add=server_audit, server_audit_logging=ON dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "6. Audit & Journalisation"
     },
     {
@@ -792,8 +792,8 @@
       "remediation": "Ajouter server_audit=FORCE_PLUS_PERMANENT dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "6. Audit & Journalisation"
     },
     {
@@ -804,8 +804,8 @@
       "remediation": "Ajouter encrypt_binlog=ON dans mariadb.cnf (n\u00e9cessite un plugin de gestion de cl\u00e9s).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "6. Audit & Journalisation"
     },
     {
@@ -816,8 +816,8 @@
       "remediation": "Configurer old_passwords=0 et secure_auth=ON dans mariadb.cnf et red\u00e9marrer.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "7. Authentification"
     },
     {
@@ -828,8 +828,8 @@
       "remediation": "Utiliser des fichiers .my.cnf priv\u00e9s ou mysql_config_editor avec permissions restreintes.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "7. Authentification"
     },
     {
@@ -840,8 +840,8 @@
       "remediation": "Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "7. Authentification"
     },
     {
@@ -852,8 +852,8 @@
       "remediation": "Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_password_check';",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "7. Authentification"
     },
     {
@@ -864,8 +864,8 @@
       "remediation": "ALTER USER '<user>'@'%' ... ou supprimer le compte.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "7. Authentification"
     },
     {
@@ -876,8 +876,8 @@
       "remediation": "DROP USER ''@'<host>'; ou utiliser mariadb-secure-installation.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "7. Authentification"
     },
     {
@@ -888,8 +888,8 @@
       "remediation": "Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -900,8 +900,8 @@
       "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "Stdout:\n\nStderr:\n
+      "error": "
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -915,8 +915,8 @@
         "S'assurer que des limites raisonnables sont d\u00e9finies."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 0",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -931,8 +931,8 @@
         "Configurer TLS pour la r\u00e9plication si n\u00e9cessaire."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 1",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "9. R\u00e9plication"
     },
     {
@@ -970,8 +970,8 @@
         "S'assurer qu'un cipher fort est configur\u00e9."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 1",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "9. R\u00e9plication"
     },
     {
@@ -985,8 +985,8 @@
         "V\u00e9rifier ssl_type=X509 pour les utilisateurs de r\u00e9plication sur le primary."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\nWarning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.\nReturn Code: 1",
-      "error": "Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
+      "error": "
       "category": "9. R\u00e9plication"
     }
   ]
