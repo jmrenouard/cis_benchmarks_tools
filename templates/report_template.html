@@ -8,24 +8,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
-        .status-pass { background-color: #DEF7EC; color: #03543F; }
-        .status-fail { background-color: #FDE8E8; color: #9B1C1C; }
-        .status-manual { background-color: #FEF3C7; color: #92400E; }
-        .status-error { background-color: #F3F4F6; color: #1F2937; }
-        .status-na { background-color: #E5E7EB; color: #4B5563; }
-        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 0.75rem; }
-        .sidebar-link.active { background-color: #3B82F6; color: white; }
+        body {{ font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }}
+        .status-pass {{ background-color: #DEF7EC; color: #03543F; }}
+        .status-fail {{ background-color: #FDE8E8; color: #9B1C1C; }}
+        .status-manual {{ background-color: #FEF3C7; color: #92400E; }}
+        .status-error {{ background-color: #F3F4F6; color: #1F2937; }}
+        .status-na {{ background-color: #E5E7EB; color: #4B5563; }}
+        pre {{ white-space: pre-wrap; word-wrap: break-word; font-size: 0.75rem; }}
+        .sidebar-link.active {{ background-color: #3B82F6; color: white; }}
 
         /* Dark Mode Theme Rules */
-        body.dark-mode { background-color: #0f172a; color: #f8fafc; }
-        body.dark-mode aside, body.dark-mode header, body.dark-mode footer, body.dark-mode .bg-white { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
-        body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: #f8fafc !important; }
-        body.dark-mode .text-gray-700, body.dark-mode .text-gray-600 { color: #cbd5e1 !important; }
-        body.dark-mode .text-gray-500, body.dark-mode .text-gray-400 { color: #94a3b8 !important; }
-        body.dark-mode .bg-gray-50, body.dark-mode .bg-gray-100 { background-color: #0f172a !important; }
-        body.dark-mode table thead tr { background-color: #334155 !important; }
-        body.dark-mode table tbody tr { border-color: #334155 !important; }
+        body.dark-mode {{ background-color: #0f172a; color: #f8fafc; }}
+        body.dark-mode aside, body.dark-mode header, body.dark-mode footer, body.dark-mode .bg-white {{ background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }}
+        body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 {{ color: #f8fafc !important; }}
+        body.dark-mode .text-gray-700, body.dark-mode .text-gray-600 {{ color: #cbd5e1 !important; }}
+        body.dark-mode .text-gray-500, body.dark-mode .text-gray-400 {{ color: #94a3b8 !important; }}
+        body.dark-mode .bg-gray-50, body.dark-mode .bg-gray-100 {{ background-color: #0f172a !important; }}
+        body.dark-mode table thead tr {{ background-color: #334155 !important; }}
+        body.dark-mode table tbody tr {{ border-color: #334155 !important; }}
     </style>
 </head>
 <body class="bg-gray-50 flex">
@@ -149,12 +149,12 @@
     </main>
 
     <script>
-        function toggleDarkMode() {
+        function toggleDarkMode() {{
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
             const btn = document.getElementById('themeToggle');
             btn.innerHTML = isDark ? '<i class="fas fa-sun"></i> Mode Clair' : '<i class="fas fa-moon"></i> Mode Sombre';
-        }
+        }}
     </script>
 </body>
 </html>
