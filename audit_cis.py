@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unified CIS Benchmark Audit Engine v1.8.0
+Unified CIS Benchmark Audit Engine v1.9.0
 Automated security audit suite for databases and Linux operating systems (Local & SSH Remote Modes).
 100% Python Standard Library (PSL ONLY).
 """
@@ -12,7 +12,7 @@ import os
 import subprocess
 import sys
 
-__version__ = "1.8.0"
+__version__ = "1.9.0"
 
 TARGET_MAP = {
     "mariadb106": ("audit_cis_mariadb_106.py", "MariaDB 10.6", 74),
@@ -46,7 +46,7 @@ def list_targets():
     print()
 
 
-def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="local", remote_host=None):
+def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="local", remote_host=None, ssh_port=22, ssh_key=None, db_host=None, db_port=None, db_user=None, db_password=None, use_sudo=False):
     """Run audit for a single target in Local or SSH Remote mode."""
     if target_key not in TARGET_MAP:
         print(f"❌ Unknown target '{target_key}'. Use --list-targets to view valid keys.", file=sys.stderr)
@@ -66,6 +66,20 @@ def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="
     cmd = [sys.executable, script_path, "--format", fmt, "--lang", lang, "--mode", mode]
     if remote_host:
         cmd.extend(["--remote", remote_host])
+    if ssh_port and int(ssh_port) != 22:
+        cmd.extend(["--ssh-port", str(ssh_port)])
+    if ssh_key:
+        cmd.extend(["--ssh-key", ssh_key])
+    if db_host:
+        cmd.extend(["--db-host", db_host])
+    if db_port:
+        cmd.extend(["--db-port", str(db_port)])
+    if db_user:
+        cmd.extend(["--db-user", db_user])
+    if db_password:
+        cmd.extend(["--db-password", db_password])
+    if use_sudo:
+        cmd.append("--sudo")
     if output_file:
         cmd.extend(["--output", output_file])
 
@@ -113,6 +127,13 @@ def main():
     parser.add_argument("-t", "--target", choices=list(TARGET_MAP.keys()), help="Target database benchmark to audit")
     parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
     parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
+    parser.add_argument("--ssh-port", type=int, default=22, help="SSH port for remote execution (default: 22)")
+    parser.add_argument("--ssh-key", default=None, help="Path to SSH private key file")
+    parser.add_argument("--sudo", action="store_true", help="Execute remote/local commands with sudo privileges")
+    parser.add_argument("--db-host", "--host", dest="db_host", default="localhost", help="Database host address (default: localhost)")
+    parser.add_argument("--db-port", "--port", dest="db_port", type=int, default=None, help="Database port number")
+    parser.add_argument("--db-user", "--user", dest="db_user", default=None, help="Database username")
+    parser.add_argument("--db-password", "--password", dest="db_password", default=None, help="Database password")
     parser.add_argument("--local", action="store_true", help="Force local audit execution mode")
     parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
     parser.add_argument("--lang", choices=["en", "fr"], default="en", help="Language for report and CLI output (en/fr)")
@@ -139,7 +160,7 @@ def main():
         print(f"🌟 [v{__version__}] Executing CIS Audit for ALL targets [Mode: {exec_mode}]...")
         success_count = 0
         for target_key in TARGET_MAP:
-            if run_single_audit(target_key, fmt=args.format, lang=args.lang, mode=exec_mode, remote_host=args.remote_host):
+            if run_single_audit(target_key, fmt=args.format, lang=args.lang, mode=exec_mode, remote_host=args.remote_host, ssh_port=args.ssh_port, ssh_key=args.ssh_key, db_host=args.db_host, db_port=args.db_port, db_user=args.db_user, db_password=args.db_password, use_sudo=args.sudo):
                 success_count += 1
         print(f"\n🎉 Completed: {success_count}/{len(TARGET_MAP)} CIS audits succeeded.")
         sys.exit(0 if success_count == len(TARGET_MAP) else 1)
@@ -147,7 +168,7 @@ def main():
     if args.target:
         out = args.output_html or args.output_json
         fmt = "json" if args.output_json and not args.output_html else args.format
-        success = run_single_audit(args.target, output_file=out, fmt=fmt, lang=args.lang, mode=exec_mode, remote_host=args.remote_host)
+        success = run_single_audit(args.target, output_file=out, fmt=fmt, lang=args.lang, mode=exec_mode, remote_host=args.remote_host, ssh_port=args.ssh_port, ssh_key=args.ssh_key, db_host=args.db_host, db_port=args.db_port, db_user=args.db_user, db_password=args.db_password, use_sudo=args.sudo)
         sys.exit(0 if success else 1)
 
     parser.print_help()
