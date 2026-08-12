@@ -4,13 +4,10 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 
 ---
 
-## 🔒 Mandatory Architecture & Release Standards
+## 🔒 Governance & Core Standards
 
-> [!IMPORTANT]
-> 1. **Python Standard Library ONLY (PSL ONLY)**: All Python scripts (audit engine, `audit_cis_*.py` audit modules, unified CLI `audit_cis.py`, report generators, pre-commit scripts, unit tests, E2E runners) MUST use **EXCLUSIVELY the standard Python 3 library**. No external dependencies (`jinja2`, `yaml`, `requests`) are permitted.
-> 2. **Automated Documentation Synchronization**: For every Python modification, the product version (`VERSION`), `ROADMAP.md`, and `POTENTIAL_ISSUES.md` are **automatically updated and validated**.
-> 3. **Git Release Lifecycle & PR Diff Size Limit**: Version numbers MUST be embedded in Branch names (`feat/vX.Y.Z-...`), Issue titles (`[vX.Y.Z] ...`), and PR titles (`[vX.Y.Z] ...`). Total PR diff size MUST be **< 15,000 characters** (`git diff main...HEAD | wc -c` < 15000) to ensure review bot compatibility (Sourcery AI). Large benchmark additions must be split into atomic sub-15K PRs.
-> 4. **Multi-Language Documentation**: `README.md` (English) and `README_fr.md` (French) MUST remain strictly synchronized 1:1.
+> [!NOTE]
+> All development, git release lifecycles, PR size limits (< 15K diff chars), and Python Standard Library (PSL ONLY) enforcement rules strictly follow workspace governance defined in [.agents/AGENTS.md](file:///.agents/AGENTS.md).
 
 ---
 
