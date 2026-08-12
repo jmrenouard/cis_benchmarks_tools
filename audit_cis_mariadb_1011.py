@@ -12,7 +12,7 @@ import html # Pour échapper les caractères spéciaux HTML
 # Par exemple, ajoute -u <user> -p<password> ou utilise un fichier de configuration
 # Pour l'instant, on suppose que la connexion fonctionne sans mot de passe
 # ou via un fichier de configuration (ex: /root/.my.cnf)
-MYSQL_CMD = "mysql -N -B" # -N: skip headers, -B: batch mode (tab separated)
+MYSQL_CMD = "mariadb -N -B 2>/dev/null || mysql -N -B" # -N: skip headers, -B: batch mode (tab separated)
 
 # --- Structure des Recommandations (Adaptée pour MariaDB 10.11) ---
 # Basée sur le CIS MariaDB 10.11 Benchmark v1.0.0
@@ -475,7 +475,7 @@ def load_recommendations(target_key):
 
 
 def run_command(command, remote_host=None):
-    """Execute command locally or via SSH remote execution without shell=True (PSL ONLY)."""
+    """Execute command safely with timeout=10, stdin=DEVNULL, and clean SSH noise (PSL ONLY)."""
     try:
         if isinstance(command, str):
             if "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
@@ -491,7 +491,18 @@ def run_command(command, remote_host=None):
             cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
 
         process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10)
-        return process.stdout.strip(), process.stderr.strip(), process.returncode
+        stdout_text = process.stdout.strip()
+        stderr_text = process.stderr.strip()
+
+        if stderr_text:
+            filtered_lines = [
+                line for line in stderr_text.splitlines()
+                if not line.startswith("Warning: Permanently added")
+                and "pseudo-terminal" not in line
+            ]
+            stderr_text = chr(10).join(filtered_lines).strip()
+
+        return stdout_text, stderr_text, process.returncode
     except subprocess.TimeoutExpired:
         return "", "Command execution timed out after 10 seconds", -1
     except Exception as e:
@@ -605,16 +616,32 @@ def perform_checks(recommendations, remote_host=None):
             try:
                 if "path_command" in rec:
                     path_cmd = rec["path_command"]
-                    path_stdout, path_stderr, path_returncode = run_command(path_cmd, remote_host=remote_host)
+                    path_cmd_to_run = path_cmd
+                    if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
+                        path_cmd_to_run = f"{path_cmd} 2>/dev/null || mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo mysql -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null"
+                    
+                    path_stdout, path_stderr, path_returncode = run_command(path_cmd_to_run, remote_host=remote_host)
+
+                    if (path_returncode != 0 or not path_stdout) and "datadir" in path_cmd:
+                        fb_stdout, fb_stderr, fb_ret = run_command("ls -d /var/lib/mariadb /var/lib/mysql 2>/dev/null | head -n 1", remote_host=remote_host)
+                        if fb_ret == 0 and fb_stdout:
+                            path_stdout = fb_stdout.strip()
+                            path_returncode = 0
 
                     if path_returncode != 0 or not path_stdout:
                         if "Unknown system variable" in path_stderr or "ERROR 1193" in path_stderr:
                              check_result["status"] = "Not Applicable"
-                             check_result["output"] = f"Variable/Plugin non disponible (N/A).\nStderr:\n{path_stderr}"
+                             check_result["output"] = f"Variable/Plugin non disponible (N/A).
+Stderr:
+{path_stderr}"
                         else:
                              check_result["status"] = "Error"
-                             check_result["output"] = f"Error lors de l'obtention du chemin via:\n`{path_cmd}`\nStdout:\n{path_stdout}\nStderr:\n{path_stderr}"
-                             check_result["error"] = path_stderr
+                             err_detail = path_stderr if path_stderr else "Impossible d'exécuter la commande client MariaDB/MySQL (vérifier si le service est démarré)."
+                             check_result["output"] = f"Error lors de l'obtention du chemin via:
+`{path_cmd}`
+Output:
+{err_detail}"
+                             check_result["error"] = err_detail
                         results[category].append(check_result)
                         continue
 
