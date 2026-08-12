@@ -1,8 +1,27 @@
-======================================================================
-🛡️  mysql_community_84 - CIS Benchmark Audit Report
-Report Date: 2026-08-12 07:19:07
-Global Score: 78.6%
-======================================================================
+==========================================================================================
+               CIS BENCHMARK AUDIT REPORT - MYSQL_COMMUNITY_84
+==========================================================================================
+Report Date   : 2026-08-12 15:01:51
+Global Score  : 78.6%
+Total Controls: 79
+------------------------------------------------------------------------------------------
+ CATEGORY BREAKDOWN & COMPLIANCE SUMMARY TABLE
+------------------------------------------------------------------------------------------
+  ID     Category Name                                 Pass   Fail   Manual   Score   
+  ------ --------------------------------------------- ------ ------ -------- --------
+  1. Configuration Système d'exploitation 1. Configuration Système d'exploitation       4      2      0          66.7%
+  2. Installation et Planification 2. Installation et Planification              0      1      12          0.0%
+  3. Permissions Fichiers 3. Permissions Fichiers                       0      0      0           0.0%
+  4. Général 4. Général                                    2      0      1         100.0%
+  5. Gestion des privilèges 5. Gestion des privilèges                     0      0      2           0.0%
+  6. Audit & Journalisation 6. Audit & Journalisation                     0      0      0           0.0%
+  7. Authentification 7. Authentification                           1      0      0         100.0%
+  8. Sécurité réseau 8. Sécurité réseau                            0      0      0           0.0%
+  9. Réplication 9. Réplication                                0      0      1         100.0%
+  10. InnoDB Cluster / Group Replication 10. InnoDB Cluster / Group Replication        0      0      0         100.0%
+==========================================================================================
+ DETAILED CONTROL RESULTS
+==========================================================================================
 
 [MANUAL] 1.1 - Placer les bases de données sur des partitions non-système
   Category: 1. Configuration Système d'exploitation
@@ -12,7 +31,7 @@ Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [PASS] 1.2 - Utiliser un compte dédié et privilégié minimal pour MySQL
   Category: 1. Configuration Système d'exploitation
   Output: Stdout:
@@ -20,18 +39,18 @@ mysql
 Stderr:
 
 Return Code: 0
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [FAIL] 1.3 - Désactiver l'historique des commandes MySQL
   Category: 1. Configuration Système d'exploitation
   Output: Stdout:
-
+/root/.mysql_history
 Stderr:
 
 Return Code: 1
 
 Condition de succès non remplie.
   Remediation: Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [PASS] 1.4 - Vérifier que MYSQL_PWD n'est pas utilisé
   Category: 1. Configuration Système d'exploitation
   Output: Stdout:
@@ -39,7 +58,7 @@ Condition de succès non remplie.
 Stderr:
 
 Return Code: 0
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [FAIL] 1.5 - Désactiver l'accès interactif pour l'utilisateur MySQL
   Category: 1. Configuration Système d'exploitation
   Output: Stdout:
@@ -50,7 +69,7 @@ Return Code: 0
 
 Condition de succès non remplie.
   Remediation: Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [PASS] 1.6 - Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs
   Category: 1. Configuration Système d'exploitation
   Output: Stdout:
@@ -58,7 +77,7 @@ Condition de succès non remplie.
 Stderr:
 
 Return Code: 0
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [PASS] 1.7 - Exécuter MySQL dans un environnement sandbox
   Category: 1. Configuration Système d'exploitation
   Output: Stdout:
@@ -66,7 +85,7 @@ DOCKER
 Stderr:
 
 Return Code: 0
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [FAIL] 2.1.1 - Politique de sauvegarde en place
   Category: 2. Installation et Planification
   Output: Stdout:
@@ -77,21 +96,21 @@ Return Code: 1
 
 Condition de succès non remplie.
   Remediation: Créer une politique de sauvegarde et planifier des sauvegardes automatiques.
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.1.2 - Validation des sauvegardes
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Analyser les rapports de tests de restauration.
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.1.3 - Sécuriser les identifiants de sauvegarde
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Inspecter les permissions des fichiers contenant les credentials de sauvegarde.
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.1.4 - Point-in-Time Recovery
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -100,21 +119,21 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.1.5 - Plan de reprise d'activité (DR)
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Vérifier l'existence et la validité du plan DR.
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.1.6 - Sauvegarde des fichiers de configuration
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.2.1 - Chiffrer les binary et relay logs
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -123,21 +142,21 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.3 - Dédier la machine MySQL
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Vérifier qu'aucun autre service n'est hébergé sur le serveur.
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.4 - Ne pas spécifier de mots de passe en ligne de commande
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Vérifier les processus et l'historique des commandes.
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.5 - Ne pas réutiliser les noms d'utilisateurs
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
@@ -148,7 +167,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.6 - Matériel cryptographique unique et non-par-défaut
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
@@ -159,7 +178,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.7 - Durée de vie des mots de passe ≤ 365 jours
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -168,7 +187,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.8 - Exiger des mots de passe forts lors de la réinitialisation
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -177,7 +196,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.9 - Exiger le mot de passe actuel pour changer le mot de passe
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -186,14 +205,14 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.10 - Utiliser les mots de passe doubles pour rotation fréquente
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
 
 Procédure suggérée:
 Vérifier la politique de rotation des mots de passe.
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.11 - Verrouiller les comptes inutilisés
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
@@ -204,7 +223,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.12 - Configurer le mode de chiffrement AES
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -213,7 +232,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.13 - Authentification socket peer-credential appropriée
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
@@ -224,7 +243,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.14 - MySQL est lié à une adresse IP spécifique
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -233,7 +252,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.15 - Limiter les versions TLS acceptées
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -242,7 +261,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.16 - Exiger les certificats côté client (X.509)
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -251,7 +270,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.17 - Utiliser uniquement des ciphers approuvés
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -260,7 +279,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.18 - Délais de connexion pour limiter les tentatives échouées
   Category: 2. Installation et Planification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -269,7 +288,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 2.19 - Utiliser le chiffrement OpenSSL FIPS 140-2
   Category: 2. Installation et Planification
   Output: This control requires manual verification.
@@ -280,7 +299,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 3.1 - Permissions adéquates sur 'datadir'
   Category: 3. Permissions Fichiers
   Output: Error lors de l'obtention du chemin via:
@@ -289,7 +308,7 @@ Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 3.2 - Permissions sur les fichiers 'log_bin_basename'
   Category: 3. Permissions Fichiers
   Output: Error lors de l'obtention du chemin via:
@@ -298,7 +317,7 @@ Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 3.3 - Permissions sur 'log_error'
   Category: 3. Permissions Fichiers
   Output: Error lors de l'obtention du chemin via:
@@ -307,7 +326,7 @@ Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 3.4 - Permissions sur 'slow_query_log'
   Category: 3. Permissions Fichiers
   Output: Error lors de l'obtention du chemin via:
@@ -316,7 +335,7 @@ Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 3.5 - Permissions sur 'relay_log_basename'
   Category: 3. Permissions Fichiers
   Output: Error lors de l'obtention du chemin via:
@@ -325,7 +344,7 @@ Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 3.6 - Permissions sur 'general_log_file'
   Category: 3. Permissions Fichiers
   Output: Error lors de l'obtention du chemin via:
@@ -334,7 +353,7 @@ Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 3.7 - Permissions sur les fichiers de clés SSL
   Category: 3. Permissions Fichiers
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -345,7 +364,7 @@ ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: N
 stat: missing operand
 Try 'stat --help' for more information.
 Return Code: 123
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 3.8 - Permissions sur le répertoire des plugins
   Category: 3. Permissions Fichiers
   Output: Error lors de l'obtention du chemin via:
@@ -354,7 +373,7 @@ Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 4.1 - Appliquer les derniers correctifs de sécurité
   Category: 4. Général
   Output: This control requires manual verification.
@@ -365,7 +384,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 4.2 - S'assurer que les bases de test ne sont pas installées en production
   Category: 4. Général
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -374,7 +393,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [PASS] 4.3 - S'assurer que 'allow-suspicious-udfs' est à 'OFF'
   Category: 4. Général
   Output: Stdout:
@@ -382,7 +401,7 @@ NOT FOUND
 Stderr:
 
 Return Code: 0
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 4.4 - Renforcer l'utilisation de 'local_infile' sur les clients MySQL
   Category: 4. Général
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -391,7 +410,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [PASS] 4.5 - S'assurer que mysqld n'est pas démarré avec '--skip-grant-tables'
   Category: 4. Général
   Output: Stdout:
@@ -399,7 +418,7 @@ NOT FOUND
 Stderr:
 
 Return Code: 0
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 4.6 - Désactiver les liens symboliques
   Category: 4. Général
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -408,7 +427,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 4.7 - Configurer 'secure_file_priv' correctement
   Category: 4. Général
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -417,7 +436,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 4.8 - S'assurer que 'sql_mode' contient 'STRICT_ALL_TABLES'
   Category: 4. Général
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -426,7 +445,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 4.9 - Chiffrement des données au repos avec TDE
   Category: 4. Général
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -435,7 +454,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.1 - Limiter l'accès complet à mysql.* aux seuls administrateurs
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -444,7 +463,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.2 - Retirer le droit FILE aux non-admins
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -453,7 +472,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.3 - Retirer le droit PROCESS aux non-admins
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -462,7 +481,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.4 - Retirer le droit SUPER
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -471,7 +490,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.5 - Retirer le droit SHUTDOWN
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -480,7 +499,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.6 - Retirer CREATE USER aux non-admins
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -489,7 +508,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.7 - Retirer GRANT OPTION aux non-admins
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -498,7 +517,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.8 - Limiter REPLICATION SLAVE aux comptes de réplication
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -507,7 +526,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.9 - Limiter les droits DML/DDL à des BD/comptes précis
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -516,7 +535,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.10 - Définir proprement DEFINER/INVOKER des SP/Functions
   Category: 5. Gestion des privilèges
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -525,7 +544,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.11 - Restreindre le droit SET_ANY_DEFINER
   Category: 5. Gestion des privilèges
   Output: This control requires manual verification.
@@ -536,7 +555,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 5.12 - Restreindre ALLOW_NONEXISTENT_DEFINER
   Category: 5. Gestion des privilèges
   Output: This control requires manual verification.
@@ -547,7 +566,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 6.1 - Configurer log_error
   Category: 6. Audit & Journalisation
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -556,7 +575,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 6.2 - Journal hors partition système
   Category: 6. Audit & Journalisation
   Output: Error lors de l'obtention du chemin via:
@@ -565,7 +584,7 @@ Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 6.3 - log_error_verbosity=2
   Category: 6. Audit & Journalisation
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -574,7 +593,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 6.4 - log-raw OFF
   Category: 6. Audit & Journalisation
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -583,7 +602,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 7.1 - Politique d'authentification sécurisée (authentication_policy)
   Category: 7. Authentification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -592,7 +611,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [PASS] 7.2 - Aucun mot de passe dans le my.cnf global
   Category: 7. Authentification
   Output: Stdout:
@@ -600,7 +619,7 @@ Return Code: 1
 Stderr:
 
 Return Code: 0
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 7.3 - Tous les comptes ont un mot de passe
   Category: 7. Authentification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -609,7 +628,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 7.4 - Expiration annuelle des mots de passe
   Category: 7. Authentification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -618,7 +637,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 7.5 - Politique de complexité forte
   Category: 7. Authentification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -627,7 +646,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 7.6 - Pas de wildcard '%' dans host
   Category: 7. Authentification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -636,7 +655,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 7.7 - Supprimer les comptes anonymes
   Category: 7. Authentification
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -645,7 +664,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 8.1 - Forcer SSL/TLS (require_secure_transport=ON)
   Category: 8. Sécurité réseau
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -654,7 +673,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 8.2 - Exiger TLS côté utilisateur (ssl_type)
   Category: 8. Sécurité réseau
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -663,7 +682,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 8.3 - Limiter le nombre de connexions
   Category: 8. Sécurité réseau
   Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
@@ -672,7 +691,7 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 9.1 - Chiffrer le trafic de réplication
   Category: 9. Réplication
   Output: This control requires manual verification.
@@ -683,24 +702,24 @@ Stdout:
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
 Return Code: 1
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 9.2 - SOURCE_SSL_VERIFY_SERVER_CERT = YES
   Category: 9. Réplication
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 9.3 - Retirer SUPER aux comptes de réplication
   Category: 9. Réplication
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';" | grep -q '[1-9]'
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 10.1 - Chiffrer le trafic Group Replication
   Category: 10. InnoDB Cluster / Group Replication
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SHOW PLUGINS;" | grep -q 'group_replication'
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 [MANUAL] 10.2 - Définir une allow-list de nœuds
   Category: 10. InnoDB Cluster / Group Replication
   Output: Check non applicable dans cet environnement (Pré-condition non remplie).
 Command de vérification: mysql -N -B -e "SHOW PLUGINS;" | grep -q 'group_replication'
-----------------------------------------------------------------------
+------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 {
   "benchmark": "cassandra_40",
-  "report_date": "2026-08-11T21:55:23.391025",
-  "overall_score": 27.27272727272727,
+  "report_date": "2026-08-12T13:55:01.450151",
+  "overall_score": 50.0,
   "total_checks": 20,
   "results": [
     {
@@ -22,7 +22,7 @@
       "test_procedure": "java -version 2>&1 | head -1",
       "remediation": "Mettre \u00e0 jour Java vers la derni\u00e8re version LTS support\u00e9e (Java 11, 17 ou 21).",
       "status": "Pass",
-      "output": "Stdout:\nopenjdk version \"21.0.11\" 2026-04-21\nStderr:\n\nReturn Code: 0",
+      "output": "Stdout:\nopenjdk version \"11.0.31\" 2026-04-21\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "1 Installation et Mises \u00e0 jour"
     },
@@ -33,7 +33,7 @@
       "test_procedure": "python3 --version 2>&1",
       "remediation": "Mettre \u00e0 jour Python vers la derni\u00e8re version 3.x.",
       "status": "Pass",
-      "output": "Stdout:\nPython 3.12.3\nStderr:\n\nReturn Code: 0",
+      "output": "Stdout:\nPython 3.11.2\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "1 Installation et Mises \u00e0 jour"
     },
@@ -43,8 +43,8 @@
       "type": "Automated",
       "test_procedure": "cassandra -v 2>/dev/null || nodetool version 2>/dev/null",
       "remediation": "Mettre \u00e0 jour Cassandra vers la derni\u00e8re version 4.0.x.",
-      "status": "Error",
-      "output": "Error: Command not found.\nStdout:\n\nStderr:\n\nReturn Code: 127",
+      "status": "Pass",
+      "output": "Stdout:\n4.0.21\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "1 Installation et Mises \u00e0 jour"
     },
@@ -55,7 +55,7 @@
       "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
       "remediation": "Configurer le service Cassandra pour qu'il s'ex\u00e9cute sous un utilisateur d\u00e9di\u00e9 (ex: 'cassandra').",
       "status": "Pass",
-      "output": "Stdout:\njmren\nStderr:\n\nReturn Code: 0",
+      "output": "Stdout:\ncassand+\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "1 Installation et Mises \u00e0 jour"
     },
@@ -77,8 +77,8 @@
       "test_procedure": "grep -E '^authenticator:' /etc/cassandra/cassandra.yaml",
       "remediation": "Modifier cassandra.yaml pour d\u00e9finir 'authenticator: PasswordAuthenticator' et red\u00e9marrer Cassandra.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\ngrep: /etc/cassandra/cassandra.yaml: No such file or directory\nReturn Code: 2\n\nCondition de succ\u00e8s non remplie.",
-      "error": "grep: /etc/cassandra/cassandra.yaml: No such file or directory",
+      "output": "Stdout:\nauthenticator: AllowAllAuthenticator\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "error": "",
       "category": "2 Authentification et Autorisation"
     },
     {
@@ -88,8 +88,8 @@
       "test_procedure": "grep -E '^authorizer:' /etc/cassandra/cassandra.yaml",
       "remediation": "Modifier cassandra.yaml pour d\u00e9finir 'authorizer: CassandraAuthorizer' et red\u00e9marrer Cassandra.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\ngrep: /etc/cassandra/cassandra.yaml: No such file or directory\nReturn Code: 2\n\nCondition de succ\u00e8s non remplie.",
-      "error": "grep: /etc/cassandra/cassandra.yaml: No such file or directory",
+      "output": "Stdout:\nauthorizer: AllowAllAuthorizer\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "error": "",
       "category": "2 Authentification et Autorisation"
     },
     {
@@ -132,7 +132,7 @@
       "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
       "remediation": "Configurer le service Cassandra pour qu'il s'ex\u00e9cute sous l'utilisateur 'cassandra'.",
       "status": "Fail",
-      "output": "Stdout:\njmren\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "output": "Stdout:\ncassand+\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "3 Contr\u00f4le d'acc\u00e8s"
     },
@@ -186,8 +186,8 @@
       "type": "Automated",
       "test_procedure": "ls -la /var/log/cassandra/system.log 2>/dev/null || ls -la /opt/cassandra/logs/system.log 2>/dev/null",
       "remediation": "V\u00e9rifier que la journalisation est configur\u00e9e dans logback.xml et que les fichiers de log existent.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n\nReturn Code: 2\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\n-rw-r--r-- 1 cassandra cassandra 30031 Aug 12 13:54 /var/log/cassandra/system.log\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "4 Audit et Journalisation"
     },
@@ -209,8 +209,8 @@
       "test_procedure": "grep -A20 'server_encryption_options:' /etc/cassandra/cassandra.yaml | grep 'internode_encryption'",
       "remediation": "Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les certificats SSL/TLS.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\ngrep: /etc/cassandra/cassandra.yaml: No such file or directory\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "grep: /etc/cassandra/cassandra.yaml: No such file or directory",
+      "output": "Stdout:\ninternode_encryption: none\n    # optional defaults to true if internode_encryption is none\n    # Set to a valid keystore if internode_encryption is dc, rack or all\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "error": "",
       "category": "5 Chiffrement"
     },
     {
@@ -219,9 +219,9 @@
       "type": "Automated",
       "test_procedure": "grep -A20 'client_encryption_options:' /etc/cassandra/cassandra.yaml | grep 'enabled'",
       "remediation": "Configurer client_encryption_options dans cassandra.yaml : enabled: true, et fournir les certificats SSL/TLS.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\ngrep: /etc/cassandra/cassandra.yaml: No such file or directory\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "grep: /etc/cassandra/cassandra.yaml: No such file or directory",
+      "status": "Pass",
+      "output": "Stdout:\nenabled: false\n    # optional defaults to true when enabled is false, and false when enabled is true.\n    # Set keystore and keystore_password to valid keystores if enabled is true\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "5 Chiffrement"
     }
   ]

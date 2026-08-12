@@ -1,41 +1,24 @@
 <?xml version='1.0' encoding='utf-8'?>
-<testsuite name="postgresql_17" tests="71" failures="23" timestamp="2026-08-11T19:35:38.667121"><testcase id="1.1" name="Obtenir les paquets depuis des dépôts autorisés" classname="1. Installation et correctifs" /><testcase id="1.2" name="Installer uniquement les paquets requis" classname="1. Installation et correctifs" /><testcase id="1.3" name="Activer le service systemd" classname="1. Installation et correctifs"><failure message="Control failed">Stdout:
-not-found
-not-found
+<testsuite name="postgresql_17" tests="71" failures="6" timestamp="2026-08-12T15:07:46.706198"><testcase id="1.1" name="Obtenir les paquets depuis des dépôts autorisés" classname="1. Installation et correctifs" /><testcase id="1.2" name="Installer uniquement les paquets requis" classname="1. Installation et correctifs" /><testcase id="1.3" name="Activer le service systemd" classname="1. Installation et correctifs"><failure message="Control failed">Stdout:
+localhost:5432 - accepting connections
 Stderr:
 
-Return Code: 4
+Return Code: 0
 
 Condition de succès non remplie.</failure></testcase><testcase id="1.4" name="Initialiser correctement le cluster de données" classname="1. Installation et correctifs"><failure message="Control failed">--- Command 1: systemctl is-active postgresql@17-main.service || systemctl is-active postgresql-17.service ---
 Stdout:
-inactive
-inactive
+localhost:5432 - accepting connections
 Stderr:
 
-Return Code: 4
+Return Code: 0
 ---
-Condition de succès non remplie.</failure></testcase><testcase id="1.5" name="Appliquer les derniers correctifs de sécurité" classname="1. Installation et correctifs" /><testcase id="1.6" name="Vérifier que PGPASSWORD n'est pas défini dans les profils" classname="1. Installation et correctifs" /><testcase id="1.7" name="Vérifier que PGPASSWORD n'est pas utilisé par un processus" classname="1. Installation et correctifs" /><testcase id="2.1" name="Masque de permissions (umask)" classname="2. Permissions de répertoires et fichiers" /><testcase id="2.2" name="Propriétaire et permissions du répertoire d’extensions" classname="2. Permissions de répertoires et fichiers"><error message="Control execution error">--- Command pour obtenir le chemin: sudo -u postgres pg_config --sharedir ---
-Stdout:
+Condition de succès non remplie.</failure></testcase><testcase id="1.5" name="Appliquer les derniers correctifs de sécurité" classname="1. Installation et correctifs" /><testcase id="1.6" name="Vérifier que PGPASSWORD n'est pas défini dans les profils" classname="1. Installation et correctifs" /><testcase id="1.7" name="Vérifier que PGPASSWORD n'est pas utilisé par un processus" classname="1. Installation et correctifs" /><testcase id="2.1" name="Masque de permissions (umask)" classname="2. Permissions de répertoires et fichiers" /><testcase id="2.2" name="Propriétaire et permissions du répertoire d’extensions" classname="2. Permissions de répertoires et fichiers" /><testcase id="2.3" name="Désactiver l’historique des commandes psql" classname="2. Permissions de répertoires et fichiers"><failure message="Control failed">Stdout:
 
 Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
----</error></testcase><testcase id="2.3" name="Désactiver l’historique des commandes psql" classname="2. Permissions de répertoires et fichiers" /><testcase id="2.4" name="Ne pas stocker de mots de passe dans les fichiers de service" classname="2. Permissions de répertoires et fichiers" /><testcase id="3.1.2" name="Configurer log_destination" classname="3. Journalisation et audit"><failure message="Control failed">Stdout:
 
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
 Return Code: 1
 
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.3" name="Activer logging_collector" classname="3. Journalisation et audit"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.2" name="Activer l’extension pgAudit" classname="3. Journalisation et audit"><error message="Control execution error">Execution error: Command not found.
+Condition de succès non remplie.</failure></testcase><testcase id="2.4" name="Ne pas stocker de mots de passe dans les fichiers de service" classname="2. Permissions de répertoires et fichiers" /><testcase id="3.1.2" name="Configurer log_destination" classname="3. Journalisation et audit" /><testcase id="3.1.3" name="Activer logging_collector" classname="3. Journalisation et audit" /><testcase id="3.2" name="Activer l’extension pgAudit" classname="3. Journalisation et audit"><error message="Control execution error">Execution error: Command not found.
 Stdout:
 
 Stderr:
@@ -43,133 +26,19 @@ Stderr:
 /bin/bash: line 2: SELECT: command not found
 Return Code: 127
 
-Condition de succès non remplie.</error></testcase><testcase id="3.1.4" name="Définir log_directory" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
+Condition de succès non remplie.</error></testcase><testcase id="3.1.4" name="Définir log_directory" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.5" name="Définir log_filename" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.6" name="Configurer log_file_mode" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.7" name="Activer log_truncate_on_rotation" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.8" name="Définir log_rotation_age" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.9" name="Définir log_rotation_size" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.10" name="Choisir syslog_facility" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.11" name="Activer syslog_split_messages" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.12" name="Prévenir la perte de messages Syslog" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.13" name="Configurer syslog_ident" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.14" name="Assurer les bons messages dans le log serveur" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.15" name="Enregistrer les SQL en erreur" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.16" name="Désactiver debug_print_parse" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.17" name="Désactiver debug_print_rewritten" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.18" name="Désactiver debug_print_plan" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.19" name="Activer debug_pretty_print" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.20" name="Activer log_connections" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.21" name="Activer log_disconnections" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.22" name="Configurer log_error_verbosity" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
+default
 Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
 
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.5" name="Définir log_filename" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
+Return Code: 0
 
+Condition de succès non remplie.</failure></testcase><testcase id="3.1.23" name="Configurer log_hostname" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.24" name="Configurer log_line_prefix" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
+%m [%p] %q%u@%d
 Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
 
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.6" name="Configurer log_file_mode" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
+Return Code: 0
 
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.7" name="Activer log_truncate_on_rotation" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.8" name="Définir log_rotation_age" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.9" name="Définir log_rotation_size" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.10" name="Choisir syslog_facility" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.11" name="Activer syslog_split_messages" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.12" name="Prévenir la perte de messages Syslog" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.13" name="Configurer syslog_ident" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.14" name="Assurer les bons messages dans le log serveur" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.15" name="Enregistrer les SQL en erreur" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.16" name="Désactiver debug_print_parse" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.17" name="Désactiver debug_print_rewritten" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.18" name="Désactiver debug_print_plan" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.19" name="Activer debug_pretty_print" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.20" name="Activer log_connections" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.21" name="Activer log_disconnections" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.22" name="Configurer log_error_verbosity" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.23" name="Configurer log_hostname" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.24" name="Configurer log_line_prefix" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.25" name="Configurer log_statement" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="3.1.26" name="Configurer log_timezone" classname="3.1. Journalisation des erreurs serveur"><failure message="Control failed">Stdout:
-
-Stderr:
-sudo: unknown user postgres
-sudo: error initializing audit plugin sudoers_audit
-Return Code: 1
-
-Condition de succès non remplie.</failure></testcase><testcase id="4.1" name="Désactiver la connexion interactive" classname="4. Accès et autorisations utilisateur" /><testcase id="4.2" name="Configurer sudo correctement" classname="4. Accès et autorisations utilisateur" /><testcase id="4.3" name="Révoquer les privilèges administratifs excessifs" classname="4. Accès et autorisations utilisateur" /><testcase id="4.4" name="Verrouiller les comptes inactifs" classname="4. Accès et autorisations utilisateur" /><testcase id="4.5" name="Révoquer les privilèges de fonction excessifs" classname="4. Accès et autorisations utilisateur" /><testcase id="4.6" name="Révoquer les privilèges DML excessifs" classname="4. Accès et autorisations utilisateur" /><testcase id="4.7" name="Configurer Row Level Security (RLS)" classname="4. Accès et autorisations utilisateur" /><testcase id="4.8" name="Installer l’extension set_user" classname="4. Accès et autorisations utilisateur"><error message="Control execution error">Execution error: Command not found.
+Condition de succès non remplie.</failure></testcase><testcase id="3.1.25" name="Configurer log_statement" classname="3.1. Journalisation des erreurs serveur" /><testcase id="3.1.26" name="Configurer log_timezone" classname="3.1. Journalisation des erreurs serveur" /><testcase id="4.1" name="Désactiver la connexion interactive" classname="4. Accès et autorisations utilisateur" /><testcase id="4.2" name="Configurer sudo correctement" classname="4. Accès et autorisations utilisateur" /><testcase id="4.3" name="Révoquer les privilèges administratifs excessifs" classname="4. Accès et autorisations utilisateur" /><testcase id="4.4" name="Verrouiller les comptes inactifs" classname="4. Accès et autorisations utilisateur" /><testcase id="4.5" name="Révoquer les privilèges de fonction excessifs" classname="4. Accès et autorisations utilisateur" /><testcase id="4.6" name="Révoquer les privilèges DML excessifs" classname="4. Accès et autorisations utilisateur" /><testcase id="4.7" name="Configurer Row Level Security (RLS)" classname="4. Accès et autorisations utilisateur" /><testcase id="4.8" name="Installer l’extension set_user" classname="4. Accès et autorisations utilisateur"><error message="Control execution error">Execution error: Command not found.
 Stdout:
 
 Stderr:
@@ -222,7 +91,7 @@ Return Code: 127
 Condition de succès non remplie.</error></testcase><testcase id="7.3" name="Configurer les sauvegardes de base" classname="7. Réplication" /><testcase id="7.4" name="Configurer l’archivage WAL" classname="7. Réplication" /><testcase id="7.5" name="Configurer les paramètres de streaming" classname="7. Réplication" /><testcase id="8.1" name="Emplacements hors du cluster de données" classname="8. Considérations spéciales de configuration" /><testcase id="8.2" name="Installer/configurer pgBackRest" classname="8. Considérations spéciales de configuration"><failure message="Control failed">Stdout:
 
 Stderr:
-Command execution timed out after 5 seconds
-Return Code: -1
+sudo: pgbackrest: command not found
+Return Code: 1
 
 Condition de succès non remplie.</failure></testcase><testcase id="8.3" name="Vérifier autres paramètres divers" classname="8. Considérations spéciales de configuration" /></testsuite>

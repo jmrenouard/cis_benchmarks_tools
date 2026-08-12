@@ -1,6 +1,6 @@
 {
   "benchmark": "mysql_community_84",
-  "report_date": "2026-08-12T07:19:06.034599",
+  "report_date": "2026-08-12T15:01:49.551904",
   "overall_score": 78.57142857142857,
   "total_checks": 79,
   "results": [
@@ -36,7 +36,7 @@
       "remediation": "Supprimer les fichiers d'historique, cr\u00e9er un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
+      "output": "Stdout:\n/root/.mysql_history\nStderr:\n\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },

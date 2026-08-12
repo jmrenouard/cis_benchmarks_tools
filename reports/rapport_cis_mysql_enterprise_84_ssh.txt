@@ -1,0 +1,691 @@
+==========================================================================================
+               CIS BENCHMARK AUDIT REPORT - MYSQL_ENTERPRISE_84
+==========================================================================================
+Report Date   : 2026-08-12 15:04:03
+Global Score  : 47.1%
+Total Controls: 70
+------------------------------------------------------------------------------------------
+ CATEGORY BREAKDOWN & COMPLIANCE SUMMARY TABLE
+------------------------------------------------------------------------------------------
+  ID     Category Name                                 Pass   Fail   Manual   Score   
+  ------ --------------------------------------------- ------ ------ -------- --------
+  1. Configuration Système d'exploitation 1. Configuration Système d'exploitation       0      6      0           0.0%
+  2. Installation et Planification 2. Installation et Planification              0      1      5           0.0%
+  3. Permissions Fichiers 3. Permissions Fichiers                       0      0      0           0.0%
+  4. Général 4. Général                                    2      0      1         100.0%
+  5. Gestion des privilèges 5. Gestion des privilèges                     0      0      0           0.0%
+  6. Audit & Journalisation 6. Audit & Journalisation                     0      1      1           0.0%
+  7. Authentification 7. Authentification                           0      1      0           0.0%
+  8. Sécurité réseau 8. Sécurité réseau                            0      0      0           0.0%
+  9. Réplication 9. Réplication                                0      0      0         100.0%
+  10. InnoDB Cluster / Group Replication 10. InnoDB Cluster / Group Replication        0      0      0         100.0%
+==========================================================================================
+ DETAILED CONTROL RESULTS
+==========================================================================================
+
+[MANUAL] 1.1 - Placer les bases de données sur des partitions non-système
+  Category: 1. Configuration Système d'exploitation
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[FAIL] 1.2 - Utiliser un compte dédié et privilégié minimal pour MySQL
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer le service MySQL pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux.
+------------------------------------------------------------------------------------------
+[FAIL] 1.3 - Désactiver l'historique des commandes MySQL
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.
+------------------------------------------------------------------------------------------
+[FAIL] 1.4 - Vérifier que MYSQL_PWD n'est pas utilisé
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifiée.
+------------------------------------------------------------------------------------------
+[FAIL] 1.5 - Désactiver l'accès interactif pour l'utilisateur MySQL
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+Try `getent --help' or `getent --usage' for more information.
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+getent: wrong number of arguments
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).
+------------------------------------------------------------------------------------------
+[FAIL] 1.6 - Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD.
+------------------------------------------------------------------------------------------
+[FAIL] 1.7 - Exécuter MySQL dans un environnement sandbox
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+NOT_SANDBOX
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+-f: -c: line 2: unexpected token `EOF' in conditional command
+-f: -c: line 2: syntax error: unexpected end of file
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker.
+------------------------------------------------------------------------------------------
+[FAIL] 2.1.1 - Politique de sauvegarde en place
+  Category: 2. Installation et Planification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Créer une politique de sauvegarde et planifier des sauvegardes automatiques.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.2 - Validation des sauvegardes
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Analyser les rapports de tests de restauration.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.3 - Sécuriser les identifiants de sauvegarde
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Inspecter les permissions des fichiers contenant les credentials de sauvegarde.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.4 - Sécuriser les fichiers de sauvegarde
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.5 - Point-in-Time Recovery
+  Category: 2. Installation et Planification
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.6 - Plan de reprise d'activité (DR)
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Vérifier l'existence et la validité du plan DR.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.7 - Sauvegarde des fichiers de configuration
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Contrôler la liste des fichiers inclus dans la sauvegarde (my.cnf, clés SSL, etc.).
+------------------------------------------------------------------------------------------
+[MANUAL] 3.1 - Permissions adéquates sur 'datadir'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[MANUAL] 3.2 - Permissions sur les fichiers 'log_bin_basename'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_bin_basename;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[MANUAL] 3.3 - Permissions sur 'log_error'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_error;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[MANUAL] 3.4 - Permissions sur 'slow_query_log'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@slow_query_log_file;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[MANUAL] 3.5 - Permissions sur 'relay_log_basename'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@relay_log_basename;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[MANUAL] 3.6 - Permissions sur 'general_log_file'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@general_log_file;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[MANUAL] 3.7 - Permissions sur les fichiers de clés SSL
+  Category: 3. Permissions Fichiers
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123
+------------------------------------------------------------------------------------------
+[MANUAL] 3.8 - Permissions sur le répertoire des plugins
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@plugin_dir;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[MANUAL] 3.9 - Permissions sur 'audit_log_file'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@audit_log_file;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[MANUAL] 3.10 - Sécuriser le Keyring MySQL
+  Category: 3. Permissions Fichiers
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123
+------------------------------------------------------------------------------------------
+[MANUAL] 4.1 - Ensure the Latest Security Patches are Applied
+  Category: 4. Général
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 4.2 - Ensure Example or Test Databases are Not Installed on Production Servers
+  Category: 4. Général
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[PASS] 4.3 - Ensure 'allow-suspicious-udfs' is Set to 'OFF'
+  Category: 4. Général
+  Output: Stdout:
+NOT FOUND
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 4.4 - Harden Usage for 'local_infile' on MySQL Clients
+  Category: 4. Général
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[PASS] 4.5 - Ensure 'mysqld' is Not Started With '--skip-grant-tables'
+  Category: 4. Général
+  Output: Stdout:
+NOT FOUND
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 4.6 - Ensure Symbolic Links are Disabled
+  Category: 4. Général
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 4.7 - Ensure the 'daemon_memcached' Plugin is Disabled
+  Category: 4. Général
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 4.8 - Ensure the 'secure_file_priv' is Configured Correctly
+  Category: 4. Général
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 4.9 - Ensure 'sql_mode' Contains 'STRICT_ALL_TABLES'
+  Category: 4. Général
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 4.10 - Use MySQL TDE for At-Rest Data Encryption
+  Category: 4. Général
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.1 - Limiter l'accès complet à mysql.* aux seuls administrateurs
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.2 - Retirer le droit FILE aux non-admins
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.3 - Retirer le droit PROCESS aux non-admins
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.4 - Retirer le droit SUPER (prérogative obsolète)
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.5 - Retirer le droit SHUTDOWN
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.6 - Retirer CREATE USER aux non-admins
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.7 - Retirer GRANT OPTION aux non-admins
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.8 - Limiter REPLICATION SLAVE aux comptes de réplication
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.9 - Limiter les droits DML/DDL à des BD/comptes précis
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.10 - Définir proprement DEFINER/INVOKER des SP/Functions
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.11 - Restreindre le droit SET_ANY_DEFINER
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 5.12 - Restreindre ALLOW_NONEXISTENT_DEFINER
+  Category: 5. Gestion des privilèges
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 6.1 - Configurer log_error
+  Category: 6. Audit & Journalisation
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 6.2 - Journal hors partition système
+  Category: 6. Audit & Journalisation
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_error;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+------------------------------------------------------------------------------------------
+[MANUAL] 6.3 - log_error_verbosity=2
+  Category: 6. Audit & Journalisation
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 6.4 - log-raw OFF
+  Category: 6. Audit & Journalisation
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 6.5 - Filtrer et journaliser les connexions
+  Category: 6. Audit & Journalisation
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 6.6 - Filtre << tout journaliser >>
+  Category: 6. Audit & Journalisation
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Vérifier la configuration du plugin d'audit pour s'assurer qu'un filtre 'log_all' ou équivalent est appliqué.
+------------------------------------------------------------------------------------------
+[MANUAL] 6.7 - audit_log_strategy = (S)SYNC
+  Category: 6. Audit & Journalisation
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[FAIL] 6.8 - Interdire le déchargement du plugin audit
+  Category: 6. Audit & Journalisation
+  Output: Stdout:
+NOT FOUND
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Ajouter audit_log=FORCE_PLUS_PERMANENT dans my.cnf.
+------------------------------------------------------------------------------------------
+[MANUAL] 7.1 - Plugin d'authentification sûr (caching_sha2_password)
+  Category: 7. Authentification
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[FAIL] 7.2 - Aucun mot de passe dans le my.cnf global
+  Category: 7. Authentification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Utiliser mysql_config_editor ou des fichiers .my.cnf privés avec permissions restreintes.
+------------------------------------------------------------------------------------------
+[MANUAL] 7.3 - Tous les comptes ont un mot de passe
+  Category: 7. Authentification
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 7.4 - Expiration annuelle des mots de passe
+  Category: 7. Authentification
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 7.5 - Politique de complexité forte
+  Category: 7. Authentification
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 7.6 - Pas de wildcard '%' dans host
+  Category: 7. Authentification
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 7.7 - Supprimer les comptes anonymes
+  Category: 7. Authentification
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 8.1 - Forcer SSL/TLS (require_secure_transport=ON)
+  Category: 8. Sécurité réseau
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 8.2 - Exiger TLS côté utilisateur (ssl_type)
+  Category: 8. Sécurité réseau
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 8.3 - Limiter le nombre de connexions
+  Category: 8. Sécurité réseau
+  Output: Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 9.1 - Chiffrer le trafic de réplication
+  Category: 9. Réplication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
+------------------------------------------------------------------------------------------
+[MANUAL] 9.2 - SOURCE_SSL_VERIFY_SERVER_CERT = 1
+  Category: 9. Réplication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
+------------------------------------------------------------------------------------------
+[MANUAL] 9.3 - master_info_repository TABLE
+  Category: 9. Réplication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
+------------------------------------------------------------------------------------------
+[MANUAL] 9.4 - Retirer SUPER aux comptes de réplication
+  Category: 9. Réplication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';" | grep -q '[1-9]'
+------------------------------------------------------------------------------------------
+[MANUAL] 10.1 - Chiffrer le trafic Group Replication
+  Category: 10. InnoDB Cluster / Group Replication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SHOW PLUGINS;" | grep -q 'group_replication'
+------------------------------------------------------------------------------------------
+[MANUAL] 10.2 - Définir une allow-list de nœuds
+  Category: 10. InnoDB Cluster / Group Replication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SHOW PLUGINS;" | grep -q 'group_replication'
+------------------------------------------------------------------------------------------

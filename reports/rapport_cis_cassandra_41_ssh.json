@@ -1,0 +1,228 @@
+{
+  "benchmark": "cassandra_41",
+  "report_date": "2026-08-12T13:55:47.155001",
+  "overall_score": 8.333333333333332,
+  "total_checks": 20,
+  "results": [
+    {
+      "number": "1.1",
+      "name": "S'assurer qu'un utilisateur et un groupe d\u00e9di\u00e9s existent pour Cassandra",
+      "type": "Manual",
+      "test_procedure": "getent group cassandra && getent passwd cassandra",
+      "remediation": "Cr\u00e9er un groupe et un utilisateur d\u00e9di\u00e9s : groupadd cassandra && useradd -g cassandra -s /sbin/nologin cassandra.",
+      "status": "Manual",
+      "output": "This control requires manual verification.\n\nProc\u00e9dure sugg\u00e9r\u00e9e:\ngetent group cassandra && getent passwd cassandra",
+      "error": "",
+      "category": "1 Installation et Mises \u00e0 jour"
+    },
+    {
+      "number": "1.2",
+      "name": "S'assurer que la derni\u00e8re version de Java est install\u00e9e",
+      "type": "Automated",
+      "test_procedure": "java -version 2>&1 | head -1",
+      "remediation": "Mettre \u00e0 jour Java vers la derni\u00e8re version LTS support\u00e9e (Java 11, 17 ou 21).",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "1 Installation et Mises \u00e0 jour"
+    },
+    {
+      "number": "1.3",
+      "name": "S'assurer que la derni\u00e8re version de Python est install\u00e9e",
+      "type": "Automated",
+      "test_procedure": "python3 --version 2>&1",
+      "remediation": "Mettre \u00e0 jour Python vers la derni\u00e8re version 3.x.",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "1 Installation et Mises \u00e0 jour"
+    },
+    {
+      "number": "1.4",
+      "name": "S'assurer que la derni\u00e8re version de Cassandra est install\u00e9e",
+      "type": "Automated",
+      "test_procedure": "cassandra -v 2>/dev/null || nodetool version 2>/dev/null",
+      "remediation": "Mettre \u00e0 jour Cassandra vers la derni\u00e8re version 4.1.x.",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "1 Installation et Mises \u00e0 jour"
+    },
+    {
+      "number": "1.5",
+      "name": "S'assurer que le service Cassandra est ex\u00e9cut\u00e9 en tant qu'utilisateur non-root",
+      "type": "Automated",
+      "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
+      "remediation": "Configurer le service Cassandra pour qu'il s'ex\u00e9cute sous un utilisateur d\u00e9di\u00e9 (ex: 'cassandra').",
+      "status": "Pass",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255",
+      "error": "Host key verification failed.",
+      "category": "1 Installation et Mises \u00e0 jour"
+    },
+    {
+      "number": "1.6",
+      "name": "S'assurer que les horloges sont synchronis\u00e9es sur tous les n\u0153uds",
+      "type": "Manual",
+      "test_procedure": "timedatectl status 2>/dev/null | grep 'synchronized' || ntpstat 2>/dev/null || chronyc tracking 2>/dev/null",
+      "remediation": "Configurer NTP ou chronyd pour synchroniser les horloges sur tous les n\u0153uds du cluster.",
+      "status": "Manual",
+      "output": "This control requires manual verification.\n\nProc\u00e9dure sugg\u00e9r\u00e9e:\ntimedatectl status 2>/dev/null | grep 'synchronized' || ntpstat 2>/dev/null || chronyc tracking 2>/dev/null",
+      "error": "",
+      "category": "1 Installation et Mises \u00e0 jour"
+    },
+    {
+      "number": "2.1",
+      "name": "S'assurer que l'authentification est activ\u00e9e pour les bases de donn\u00e9es Cassandra",
+      "type": "Automated",
+      "test_procedure": "grep -E '^authenticator:' /etc/cassandra/cassandra.yaml",
+      "remediation": "Modifier cassandra.yaml pour d\u00e9finir 'authenticator: PasswordAuthenticator' et red\u00e9marrer Cassandra.",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "2 Authentification et Autorisation"
+    },
+    {
+      "number": "2.2",
+      "name": "S'assurer que l'autorisation est activ\u00e9e pour les bases de donn\u00e9es Cassandra",
+      "type": "Automated",
+      "test_procedure": "grep -E '^authorizer:' /etc/cassandra/cassandra.yaml",
+      "remediation": "Modifier cassandra.yaml pour d\u00e9finir 'authorizer: CassandraAuthorizer' et red\u00e9marrer Cassandra.",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "2 Authentification et Autorisation"
+    },
+    {
+      "number": "3.1",
+      "name": "S'assurer que les r\u00f4les cassandra et superuser sont s\u00e9par\u00e9s",
+      "type": "Automated",
+      "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null | grep -v 'cassandra' | grep -c 'True'",
+      "remediation": "Cr\u00e9er un nouveau r\u00f4le superuser, se connecter avec ce r\u00f4le, puis ex\u00e9cuter ALTER ROLE cassandra WITH SUPERUSER = false;",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "3 Contr\u00f4le d'acc\u00e8s"
+    },
+    {
+      "number": "3.2",
+      "name": "S'assurer que le mot de passe par d\u00e9faut du r\u00f4le cassandra est chang\u00e9",
+      "type": "Automated",
+      "test_procedure": "cqlsh -e \"SELECT * FROM system_auth.roles WHERE role='cassandra';\" -u cassandra -p cassandra 2>&1 | grep -c 'AuthenticationFailed\\|Unauthorized\\|Bad credentials'",
+      "remediation": "Se connecter et ex\u00e9cuter ALTER ROLE cassandra WITH PASSWORD = '<nouveau_mot_de_passe>';",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "3 Contr\u00f4le d'acc\u00e8s"
+    },
+    {
+      "number": "3.3",
+      "name": "S'assurer qu'il n'y a pas de r\u00f4les ou privil\u00e8ges excessifs",
+      "type": "Manual",
+      "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null",
+      "remediation": "R\u00e9voquer les r\u00f4les et privil\u00e8ges inutiles. Utiliser REVOKE et DROP ROLE.",
+      "status": "Manual",
+      "output": "This control requires manual verification.\n\nProc\u00e9dure sugg\u00e9r\u00e9e:\ncqlsh -e \"LIST ROLES;\" 2>/dev/null",
+      "error": "",
+      "category": "3 Contr\u00f4le d'acc\u00e8s"
+    },
+    {
+      "number": "3.4",
+      "name": "S'assurer que Cassandra est ex\u00e9cut\u00e9 sous un compte de service d\u00e9di\u00e9",
+      "type": "Automated",
+      "test_procedure": "ps -ef | grep -E '[c]assandra' | awk '{print $1}' | head -n 1",
+      "remediation": "Configurer le service Cassandra pour qu'il s'ex\u00e9cute sous l'utilisateur 'cassandra'.",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "3 Contr\u00f4le d'acc\u00e8s"
+    },
+    {
+      "number": "3.5",
+      "name": "S'assurer que Cassandra n'\u00e9coute que sur les interfaces autoris\u00e9es",
+      "type": "Manual",
+      "test_procedure": "grep -E '^listen_address:|^rpc_address:' /etc/cassandra/cassandra.yaml",
+      "remediation": "Modifier cassandra.yaml pour d\u00e9finir 'listen_address' et 'rpc_address' sur des interfaces sp\u00e9cifiques.",
+      "status": "Manual",
+      "output": "This control requires manual verification.\n\nProc\u00e9dure sugg\u00e9r\u00e9e:\ngrep -E '^listen_address:|^rpc_address:' /etc/cassandra/cassandra.yaml",
+      "error": "",
+      "category": "3 Contr\u00f4le d'acc\u00e8s"
+    },
+    {
+      "number": "3.6",
+      "name": "S'assurer que les autorisations Data Center sont activ\u00e9es",
+      "type": "Manual",
+      "test_procedure": "grep -E '^authorizer:' /etc/cassandra/cassandra.yaml",
+      "remediation": "Configurer l'autorisation par Data Center si n\u00e9cessaire.",
+      "status": "Manual",
+      "output": "This control requires manual verification.\n\nProc\u00e9dure sugg\u00e9r\u00e9e:\ngrep -E '^authorizer:' /etc/cassandra/cassandra.yaml",
+      "error": "",
+      "category": "3 Contr\u00f4le d'acc\u00e8s"
+    },
+    {
+      "number": "3.7",
+      "name": "R\u00e9viser les r\u00f4les d\u00e9finis par l'utilisateur",
+      "type": "Manual",
+      "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null",
+      "remediation": "Supprimer les r\u00f4les inutiles et r\u00e9voquer les privil\u00e8ges excessifs.",
+      "status": "Manual",
+      "output": "This control requires manual verification.\n\nProc\u00e9dure sugg\u00e9r\u00e9e:\ncqlsh -e \"LIST ROLES;\" 2>/dev/null",
+      "error": "",
+      "category": "3 Contr\u00f4le d'acc\u00e8s"
+    },
+    {
+      "number": "3.8",
+      "name": "R\u00e9viser les r\u00f4les superuser/administrateur",
+      "type": "Manual",
+      "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null | grep 'True'",
+      "remediation": "Limiter le nombre de r\u00f4les superuser au strict n\u00e9cessaire.",
+      "status": "Manual",
+      "output": "This control requires manual verification.\n\nProc\u00e9dure sugg\u00e9r\u00e9e:\ncqlsh -e \"LIST ROLES;\" 2>/dev/null | grep 'True'",
+      "error": "",
+      "category": "3 Contr\u00f4le d'acc\u00e8s"
+    },
+    {
+      "number": "4.1",
+      "name": "S'assurer que la journalisation est activ\u00e9e",
+      "type": "Automated",
+      "test_procedure": "ls -la /var/log/cassandra/system.log 2>/dev/null || ls -la /opt/cassandra/logs/system.log 2>/dev/null",
+      "remediation": "V\u00e9rifier que la journalisation est configur\u00e9e dans logback.xml et que les fichiers de log existent.",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "4 Audit et Journalisation"
+    },
+    {
+      "number": "4.2",
+      "name": "S'assurer que l'audit est activ\u00e9",
+      "type": "Manual",
+      "test_procedure": "grep -E '^audit_logging_options:' /etc/cassandra/cassandra.yaml || grep -A5 'audit_logging_options' /etc/cassandra/cassandra.yaml",
+      "remediation": "Activer l'audit en configurant 'audit_logging_options' dans cassandra.yaml (Cassandra 4.1+).",
+      "status": "Manual",
+      "output": "This control requires manual verification.\n\nProc\u00e9dure sugg\u00e9r\u00e9e:\ngrep -E '^audit_logging_options:' /etc/cassandra/cassandra.yaml || grep -A5 'audit_logging_options' /etc/cassandra/cassandra.yaml",
+      "error": "",
+      "category": "4 Audit et Journalisation"
+    },
+    {
+      "number": "5.1",
+      "name": "Chiffrement inter-n\u0153uds",
+      "type": "Automated",
+      "test_procedure": "grep -A20 'server_encryption_options:' /etc/cassandra/cassandra.yaml | grep 'internode_encryption'",
+      "remediation": "Configurer server_encryption_options dans cassandra.yaml : internode_encryption: all, et fournir les certificats SSL/TLS.",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "5 Chiffrement"
+    },
+    {
+      "number": "5.2",
+      "name": "Chiffrement client",
+      "type": "Automated",
+      "test_procedure": "grep -A20 'client_encryption_options:' /etc/cassandra/cassandra.yaml | grep 'enabled'",
+      "remediation": "Configurer client_encryption_options dans cassandra.yaml : enabled: true, et fournir les certificats SSL/TLS.",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\nHost key verification failed.\nReturn Code: 255\n\nCondition de succ\u00e8s non remplie.",
+      "error": "Host key verification failed.",
+      "category": "5 Chiffrement"
+    }
+  ]
+}

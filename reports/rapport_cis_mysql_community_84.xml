@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<testsuite name="mysql_community_84" tests="79" failures="3" timestamp="2026-08-12T07:19:06.680497"><testcase id="1.1" name="Placer les bases de données sur des partitions non-système" classname="1. Configuration Système d'exploitation"><error message="Control execution error">Error lors de l'obtention du chemin via:
+<testsuite name="mysql_community_84" tests="79" failures="3" timestamp="2026-08-12T15:01:50.434284"><testcase id="1.1" name="Placer les bases de données sur des partitions non-système" classname="1. Configuration Système d'exploitation"><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@datadir;"`
 Stdout:
 
 Stderr:
 ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)</error></testcase><testcase id="1.2" name="Utiliser un compte dédié et privilégié minimal pour MySQL" classname="1. Configuration Système d'exploitation" /><testcase id="1.3" name="Désactiver l'historique des commandes MySQL" classname="1. Configuration Système d'exploitation"><failure message="Control failed">Stdout:
-
+/root/.mysql_history
 Stderr:
 
 Return Code: 1

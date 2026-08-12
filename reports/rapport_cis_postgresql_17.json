@@ -1,7 +1,7 @@
 {
   "benchmark": "postgresql_17",
-  "report_date": "2026-08-11T19:35:31.424691",
-  "overall_score": 17.857142857142858,
+  "report_date": "2026-08-12T15:07:45.239301",
+  "overall_score": 78.57142857142857,
   "total_checks": 71,
   "results": [
     {
@@ -33,7 +33,7 @@
       "test_procedure": "systemctl is-enabled postgresql@17-main.service || systemctl is-enabled postgresql-17.service",
       "remediation": "systemctl enable postgresql@17-main || systemctl enable postgresql-17",
       "status": "Fail",
-      "output": "Stdout:\nnot-found\nnot-found\nStderr:\n\nReturn Code: 4\n\nCondition de succ\u00e8s non remplie.",
+      "output": "Stdout:\nlocalhost:5432 - accepting connections\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "1. Installation et correctifs"
     },
@@ -44,7 +44,7 @@
       "test_procedure": "Multiple commandes (voir Sortie)",
       "remediation": "Supprimer le r\u00e9pertoire de donn\u00e9es et relancer initdb (avec checksums si souhait\u00e9), puis d\u00e9marrer le service. Assurer les bonnes permissions sur le r\u00e9pertoire de donn\u00e9es.",
       "status": "Fail",
-      "output": "--- Command 1: systemctl is-active postgresql@17-main.service || systemctl is-active postgresql-17.service ---\nStdout:\ninactive\ninactive\nStderr:\n\nReturn Code: 4\n---\nCondition de succ\u00e8s non remplie.",
+      "output": "--- Command 1: systemctl is-active postgresql@17-main.service || systemctl is-active postgresql-17.service ---\nStdout:\nlocalhost:5432 - accepting connections\nStderr:\n\nReturn Code: 0\n---\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "1. Installation et correctifs"
     },
@@ -98,9 +98,9 @@
       "type": "Automated",
       "test_procedure": "",
       "remediation": "V\u00e9rifier que $(pg_config --sharedir)/extension appartient \u00e0 root:root et chmod 0755.\nchown root:root $(sudo -u postgres pg_config --sharedir)/extension && chmod 0755 $(sudo -u postgres pg_config --sharedir)/extension.",
-      "status": "Error",
-      "output": "--- Command pour obtenir le chemin: sudo -u postgres pg_config --sharedir ---\nStdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n---",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Not Applicable",
+      "output": "",
+      "error": "",
       "category": "2. Permissions de r\u00e9pertoires et fichiers"
     },
     {
@@ -109,8 +109,8 @@
       "type": "Automated",
       "test_procedure": "! find /home -name .psql_history -print -quit 2>/dev/null",
       "remediation": "Emp\u00eacher la cr\u00e9ation de ~/.psql_history pour limiter l\u2019exposition de donn\u00e9es sensibles.\nSupprimer le fichier .psql_history et ajouter \\set HISTFILE /dev/null dans ~/.psqlrc ou cr\u00e9er un lien symbolique vers /dev/null.",
-      "status": "Pass",
-      "output": "Stdout:\n/home/jmren/.psql_history\nStderr:\n\nReturn Code: 0",
+      "status": "Fail",
+      "output": "Stdout:\n\nStderr:\n\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "2. Permissions de r\u00e9pertoires et fichiers"
     },
@@ -131,9 +131,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_destination;'",
       "remediation": "D\u00e9finir la ou les destinations de logs (stderr, csvlog, syslog, jsonlog).\nALTER SYSTEM SET log_destination = 'csvlog'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\nstderr\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3. Journalisation et audit"
     },
     {
@@ -142,9 +142,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW logging_collector;'",
       "remediation": "Capturer stderr dans des fichiers via le d\u00e9mon collector.\nALTER SYSTEM SET logging_collector = 'on'; puis systemctl restart postgresql@17-main || systemctl restart postgresql-17.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\non\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3. Journalisation et audit"
     },
     {
@@ -164,9 +164,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_directory;'",
       "remediation": "Sp\u00e9cifier le r\u00e9pertoire de sortie des fichiers de logs (ex. /var/log/postgres).\nALTER SYSTEM SET log_directory = '/var/log/postgres'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\nlog\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -175,9 +175,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_filename;'",
       "remediation": "Choisir un motif de nom de fichier strftime (e.g. postgresql-%Y%m%d.log).\nALTER SYSTEM SET log_filename = 'postgresql-%Y%m%d.log'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\npostgresql-%Y-%m-%d_%H%M%S.log\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -186,9 +186,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_file_mode;'",
       "remediation": "Fixer les permissions des fichiers de log \u00e0 0600 (ou 0640 selon le groupe).\nALTER SYSTEM SET log_file_mode = '0600'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\n0600\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -197,9 +197,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_truncate_on_rotation;'",
       "remediation": "Tronquer les fichiers existants lors de la rotation si m\u00eame nom.\nALTER SYSTEM SET log_truncate_on_rotation = 'on'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\non\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -209,8 +209,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_rotation_age;'",
       "remediation": "Limiter la dur\u00e9e de vie des fichiers de log (ex. 1d).\nALTER SYSTEM SET log_rotation_age = '1d'; SELECT pg_reload_conf();",
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "output": "Stdout:\n1d\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -220,8 +220,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_rotation_size;'",
       "remediation": "Limiter la taille des fichiers de log (ex. 1GB).\nALTER SYSTEM SET log_rotation_size = '1GB'; SELECT pg_reload_conf();",
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "output": "Stdout:\n10MB\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -241,9 +241,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW syslog_split_messages;'",
       "remediation": "Couper les messages trop longs (>1024 octets) pour Syslog.\nALTER SYSTEM SET syslog_split_messages = 'on'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\non\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -252,9 +252,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW syslog_split_messages;'",
       "remediation": "\u00c9viter la suppression des messages volumineux dans Syslog.\nM\u00eame que 3.1.11.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\non\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -263,9 +263,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW syslog_ident;'",
       "remediation": "D\u00e9finir l\u2019identifiant de programme dans Syslog (ex. postgres).\nALTER SYSTEM SET syslog_ident = 'proddb'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\npostgres\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -296,9 +296,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_print_parse;'",
       "remediation": "Ne pas afficher les arbres d\u2019analyse SQL dans les logs (r\u00e9duction du bruit).\nALTER SYSTEM SET debug_print_parse = 'off'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\noff\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -307,9 +307,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_print_rewritten;'",
       "remediation": "Ne pas afficher les arbres r\u00e9\u00e9crits SQL dans les logs.\nALTER SYSTEM SET debug_print_rewritten = 'off'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\noff\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -318,9 +318,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_print_plan;'",
       "remediation": "Ne pas afficher les plans d\u2019ex\u00e9cution SQL dans les logs.\nALTER SYSTEM SET debug_print_plan = 'off'; SELECT pg_reload_conf();",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\noff\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -329,9 +329,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_pretty_print;'",
       "remediation": "Formater lisiblement les arbres d\u2019analyse/r\u00e9\u00e9criture dans les logs.\nALTER SYSTEM SET debug_pretty_print = 'on'; SELECT pg_reload_conf();.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\non\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -340,9 +340,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_connections;'",
       "remediation": "Enregistrer chaque nouvelle connexion \u00e0 PostgreSQL.\nALTER SYSTEM SET log_connections = 'on'; SELECT pg_reload_conf();.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\non\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -351,9 +351,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_disconnections;'",
       "remediation": "Enregistrer chaque d\u00e9connexion de PostgreSQL.\nALTER SYSTEM SET log_disconnections = 'on'; SELECT pg_reload_conf();.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\non\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -363,8 +363,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_error_verbosity;'",
       "remediation": "Contr\u00f4ler la verbosit\u00e9 des messages d\u2019erreur (DEFAULT, VERBOSE).\nALTER SYSTEM SET log_error_verbosity = 'verbose'; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "output": "Stdout:\ndefault\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -373,9 +373,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_hostname;'",
       "remediation": "Indiquer le nom d\u2019h\u00f4te ou l\u2019IP dans les logs de connexion.\nALTER SYSTEM SET log_hostname = 'off'; SELECT pg_reload_conf();.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\noff\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -385,8 +385,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_line_prefix;'",
       "remediation": "D\u00e9finir le pr\u00e9fixe de ligne (timestamp, utilisateur, base, etc.) dans chaque log.\nALTER SYSTEM SET log_line_prefix = '%m [%p] user=%u db=%d '; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "output": "Stdout:\n%m [%p] %q%u@%d\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -395,9 +395,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_statement;'",
       "remediation": "Choisir le niveau de requ\u00eates \u00e0 logger (none, ddl, mod, all).\nALTER SYSTEM SET log_statement = 'ddl'; SELECT pg_reload_conf();.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\nddl\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -406,9 +406,9 @@
       "type": "Automated",
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_timezone;'",
       "remediation": "Uniformiser le fuseau horaire des horodatages des logs (ex. UTC).\nALTER SYSTEM SET log_timezone = 'UTC'; SELECT pg_reload_conf();.",
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nsudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "sudo: unknown user postgres\nsudo: error initializing audit plugin sudoers_audit",
+      "status": "Pass",
+      "output": "Stdout:\nUTC\nStderr:\n\nReturn Code: 0",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -770,8 +770,8 @@
       "test_procedure": "sudo pgbackrest info",
       "remediation": "Utiliser pgBackRest pour des sauvegardes et restaurations robustes.\nInstaller le paquet pgbackrest et configurer au moins une stanza (pgbackrest stanza-create).",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nCommand execution timed out after 5 seconds\nReturn Code: -1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "Command execution timed out after 5 seconds",
+      "output": "Stdout:\n\nStderr:\nsudo: pgbackrest: command not found\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
+      "error": "sudo: pgbackrest: command not found",
       "category": "8. Consid\u00e9rations sp\u00e9ciales de configuration"
     },
     {

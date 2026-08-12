@@ -1,0 +1,781 @@
+==========================================================================================
+               CIS BENCHMARK AUDIT REPORT - MARIADB_1011
+==========================================================================================
+Report Date   : 2026-08-12 15:00:14
+Global Score  : 27.0%
+Total Controls: 75
+------------------------------------------------------------------------------------------
+ CATEGORY BREAKDOWN & COMPLIANCE SUMMARY TABLE
+------------------------------------------------------------------------------------------
+  ID     Category Name                                 Pass   Fail   Manual   Score   
+  ------ --------------------------------------------- ------ ------ -------- --------
+  1. Configuration Système d'exploitation 1. Configuration Système d'exploitation       0      5      1           0.0%
+  2. Installation et Planification 2. Installation et Planification              1      5      12         16.7%
+  3. Permissions Fichiers 3. Permissions Fichiers                       0      3      0           0.0%
+  4. Général 4. Général                                    3      5      1          37.5%
+  5. Permissions MariaDB 5. Permissions MariaDB                        0      0      10          0.0%
+  6. Audit & Journalisation 6. Audit & Journalisation                     1      4      0          20.0%
+  7. Authentification 7. Authentification                           3      3      1          50.0%
+  8. Sécurité réseau 8. Sécurité réseau                            0      2      1           0.0%
+  9. Réplication 9. Réplication                                0      0      3         100.0%
+==========================================================================================
+ DETAILED CONTROL RESULTS
+==========================================================================================
+
+[MANUAL] 1.1 - Placer les bases de données sur des partitions non-système
+  Category: 1. Configuration Système d'exploitation
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+------------------------------------------------------------------------------------------
+[FAIL] 1.2 - Utiliser un compte dédié et privilégié minimal pour MariaDB
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer le service MariaDB pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux.
+------------------------------------------------------------------------------------------
+[FAIL] 1.3 - Désactiver l'historique des commandes MariaDB
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.
+------------------------------------------------------------------------------------------
+[FAIL] 1.4 - Vérifier que MYSQL_PWD n'est pas utilisé
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser des méthodes d'authentification sécurisées.
+------------------------------------------------------------------------------------------
+[FAIL] 1.5 - Désactiver l'accès interactif pour l'utilisateur MySQL
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+Try `getent --help' or `getent --usage' for more information.
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+getent: wrong number of arguments
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).
+------------------------------------------------------------------------------------------
+[FAIL] 1.6 - Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs
+  Category: 1. Configuration Système d'exploitation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD.
+------------------------------------------------------------------------------------------
+[MANUAL] 1.7 - Exécuter MariaDB dans un environnement sandbox
+  Category: 1. Configuration Système d'exploitation
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.1 - Politique de sauvegarde en place
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+AUCUNE_SAUVEGARDE_PLANIFIEE
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.2 - Validation des sauvegardes
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Analyser les rapports de tests de restauration.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.3 - Sécuriser les identifiants de sauvegarde
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Inspecter les permissions des fichiers contenant les credentials de sauvegarde.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.4 - Sécuriser les fichiers de sauvegarde
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.
+------------------------------------------------------------------------------------------
+[FAIL] 2.1.5 - Point-in-Time Recovery
+  Category: 2. Installation et Planification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Activer les binlogs, configurer binlog_expire_logs_seconds dans mariadb.cnf, tester les restaurations PITR.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.6 - Plan de reprise d'activité (DR)
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Vérifier l'existence et la validité du plan DR.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.1.7 - Sauvegarde des fichiers de configuration
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+bash: -c: line 1: syntax error near unexpected token `('
+bash: -c: line 1: `/bin/bash -c Contrôler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, clés SSL, etc.).'
+Return Code: 2
+------------------------------------------------------------------------------------------
+[MANUAL] 2.2 - Dédier la machine à MariaDB
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Procédure suggérée:
+Vérifier les services actifs sur la machine.
+------------------------------------------------------------------------------------------
+[MANUAL] 2.3 - Ne pas spécifier de mots de passe en ligne de commande
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 2.4 - Ne pas réutiliser les noms d'utilisateurs
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 2.5 - S'assurer que le matériel cryptographique est unique et non par défaut
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+les: line 1: Vérifier: command not found
+Return Code: 127
+------------------------------------------------------------------------------------------
+[FAIL] 2.6 - Assurer que password_lifetime <= 365
+  Category: 2. Installation et Planification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: SET GLOBAL default_password_lifetime=365;
+------------------------------------------------------------------------------------------
+[MANUAL] 2.7 - Verrouiller les comptes inutilisés
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 2.8 - Utilisation appropriée de l'authentification Socket Peer-Credential
+  Category: 2. Installation et Planification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[PASS] 2.9 - S'assurer que MariaDB est lié à une adresse IP
+  Category: 2. Installation et Planification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[FAIL] 2.10 - Limiter les versions TLS acceptées
+  Category: 2. Installation et Planification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer tls_version=TLSv1.2,TLSv1.3 dans mariadb.cnf.
+------------------------------------------------------------------------------------------
+[FAIL] 2.11 - Exiger des certificats côté client (X.509)
+  Category: 2. Installation et Planification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: ALTER USER '<user>'@'<host>' REQUIRE X509;
+------------------------------------------------------------------------------------------
+[FAIL] 2.12 - S'assurer que seuls les chiffrement approuvés sont utilisés
+  Category: 2. Installation et Planification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer ssl_cipher avec une liste de chiffrements approuvés dans mariadb.cnf.
+------------------------------------------------------------------------------------------
+[MANUAL] 3.1 - Permissions adéquates sur 'datadir'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@datadir;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+------------------------------------------------------------------------------------------
+[MANUAL] 3.2 - Permissions sur les fichiers 'log_bin_basename'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_bin_basename;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+------------------------------------------------------------------------------------------
+[MANUAL] 3.3 - Permissions sur 'log_error'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_error;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+------------------------------------------------------------------------------------------
+[MANUAL] 3.4 - Permissions sur 'slow_query_log'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@slow_query_log_file;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+------------------------------------------------------------------------------------------
+[MANUAL] 3.5 - Permissions sur 'relay_log_basename'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@relay_log_basename;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+------------------------------------------------------------------------------------------
+[MANUAL] 3.6 - Permissions sur 'general_log_file'
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@general_log_file;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+------------------------------------------------------------------------------------------
+[FAIL] 3.7 - Permissions sur les fichiers de clés SSL
+  Category: 3. Permissions Fichiers
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123
+
+Condition de succès non remplie.
+  Remediation: Restreindre l'accès aux clés privées (ex: chmod 600) et s'assurer que le propriétaire est mysql.
+------------------------------------------------------------------------------------------
+[MANUAL] 3.8 - Permissions sur le répertoire des plugins
+  Category: 3. Permissions Fichiers
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@plugin_dir;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+------------------------------------------------------------------------------------------
+[FAIL] 3.9 - Permissions sur 'server_audit_file_path'
+  Category: 3. Permissions Fichiers
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123
+
+Condition de succès non remplie.
+  Remediation: Appliquer des permissions restrictives (ex: 640 ou 600).
+------------------------------------------------------------------------------------------
+[FAIL] 3.10 - Permissions sur les fichiers du plugin File Key Management
+  Category: 3. Permissions Fichiers
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+stat: missing operand
+Try 'stat --help' for more information.
+Return Code: 123
+
+Condition de succès non remplie.
+  Remediation: Restreindre l'accès aux fichiers de clés de chiffrement (chmod 640).
+------------------------------------------------------------------------------------------
+[MANUAL] 4.1 - S'assurer que les derniers correctifs de sécurité sont appliqués
+  Category: 4. Général
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[PASS] 4.2 - S'assurer que les bases de test ne sont pas installées en production
+  Category: 4. Général
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[PASS] 4.3 - S'assurer que 'allow-suspicious-udfs' est à 'OFF'
+  Category: 4. Général
+  Output: Stdout:
+NOT FOUND
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[FAIL] 4.4 - Renforcer l'utilisation de 'local_infile' sur les clients MariaDB
+  Category: 4. Général
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Ajouter local-infile=0 à la section [mariadbd] et [client] du fichier de configuration MariaDB.
+------------------------------------------------------------------------------------------
+[PASS] 4.5 - S'assurer que mariadb n'est pas démarré avec '--skip-grant-tables'
+  Category: 4. Général
+  Output: Stdout:
+NOT FOUND
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[FAIL] 4.6 - S'assurer que les liens symboliques sont désactivés
+  Category: 4. Général
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Ajouter skip-symbolic-links dans la section [mariadbd] du fichier mariadb.cnf.
+------------------------------------------------------------------------------------------
+[FAIL] 4.7 - S'assurer que 'secure_file_priv' est configuré correctement
+  Category: 4. Général
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer secure_file_priv sur NULL (pour désactiver) ou sur un chemin spécifique dans mariadb.cnf.
+------------------------------------------------------------------------------------------
+[FAIL] 4.8 - S'assurer que sql_mode contient STRICT_ALL_TABLES
+  Category: 4. Général
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Ajouter STRICT_ALL_TABLES au paramètre sql_mode dans mariadb.cnf.
+------------------------------------------------------------------------------------------
+[FAIL] 4.9 - Activer le chiffrement des données au repos dans MariaDB
+  Category: 4. Général
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer file_key_management plugin et innodb_encrypt_tables=ON dans mariadb.cnf.
+------------------------------------------------------------------------------------------
+[MANUAL] 5.1 - Limiter l'accès complet à mysql.* aux seuls administrateurs
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 5.2 - Retirer le droit FILE aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 5.3 - Retirer le droit PROCESS aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 5.4 - Retirer le droit SUPER aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 5.5 - Retirer le droit SHUTDOWN aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 5.6 - Retirer CREATE USER aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 5.7 - Retirer GRANT OPTION aux non-admins
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 5.8 - Limiter REPLICATION SLAVE aux comptes de réplication
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 5.9 - Limiter les droits DML/DDL à des BD/comptes précis
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 5.10 - Définir proprement DEFINER/INVOKER des SP/Functions
+  Category: 5. Permissions MariaDB
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[PASS] 6.1 - Configurer log_error correctement
+  Category: 6. Audit & Journalisation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 6.2 - Journal hors partition système
+  Category: 6. Audit & Journalisation
+  Output: Error lors de l'obtention du chemin via:
+`mysql -N -B -e "SELECT @@log_bin_basename;"`
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+------------------------------------------------------------------------------------------
+[FAIL] 6.3 - log_warnings=2
+  Category: 6. Audit & Journalisation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Ajouter log_warnings=2 dans mariadb.cnf.
+------------------------------------------------------------------------------------------
+[FAIL] 6.4 - Activer la journalisation d'audit (server_audit)
+  Category: 6. Audit & Journalisation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Installer et configurer le plugin server_audit : plugin_load_add=server_audit, server_audit_logging=ON dans mariadb.cnf.
+------------------------------------------------------------------------------------------
+[FAIL] 6.5 - Interdire le déchargement du plugin d'audit
+  Category: 6. Audit & Journalisation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Ajouter server_audit=FORCE_PLUS_PERMANENT dans mariadb.cnf.
+------------------------------------------------------------------------------------------
+[FAIL] 6.6 - Chiffrer les Binary et Relay Logs
+  Category: 6. Audit & Journalisation
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Ajouter encrypt_binlog=ON dans mariadb.cnf (nécessite un plugin de gestion de clés).
+------------------------------------------------------------------------------------------
+[FAIL] 7.1 - Désactiver mysql_old_password (old_passwords=OFF, secure_auth=ON)
+  Category: 7. Authentification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer old_passwords=0 et secure_auth=ON dans mariadb.cnf et redémarrer.
+------------------------------------------------------------------------------------------
+[FAIL] 7.2 - Aucun mot de passe dans la configuration globale
+  Category: 7. Authentification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+
+Condition de succès non remplie.
+  Remediation: Utiliser des fichiers .my.cnf privés ou mysql_config_editor avec permissions restreintes.
+------------------------------------------------------------------------------------------
+[PASS] 7.3 - Authentification forte pour tous les comptes
+  Category: 7. Authentification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[FAIL] 7.4 - Politique de complexité des mots de passe (simple_password_check)
+  Category: 7. Authentification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_password_check';
+------------------------------------------------------------------------------------------
+[PASS] 7.5 - Pas de wildcard '%' dans host
+  Category: 7. Authentification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[PASS] 7.6 - Supprimer les comptes anonymes
+  Category: 7. Authentification
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 7.7 - Empêcher la réutilisation des mots de passe (password_reuse_check)
+  Category: 7. Authentification
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[FAIL] 8.1 - Forcer SSL/TLS (require_secure_transport=ON et have_ssl=YES)
+  Category: 8. Sécurité réseau
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf.
+------------------------------------------------------------------------------------------
+[FAIL] 8.2 - Exiger TLS côté utilisateur (ssl_type)
+  Category: 8. Sécurité réseau
+  Output: Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+
+Condition de succès non remplie.
+  Remediation: ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;
+------------------------------------------------------------------------------------------
+[MANUAL] 8.3 - Limiter le nombre de connexions
+  Category: 8. Sécurité réseau
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 0
+------------------------------------------------------------------------------------------
+[MANUAL] 9.1 - Chiffrer le trafic de réplication
+  Category: 9. Réplication
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 9.2 - MASTER_SSL_VERIFY_SERVER_CERT activé
+  Category: 9. Réplication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SHOW REPLICA STATUS;" | grep -q .
+------------------------------------------------------------------------------------------
+[MANUAL] 9.3 - Pas de SUPER pour les utilisateurs de réplication
+  Category: 9. Réplication
+  Output: Check non applicable dans cet environnement (Pré-condition non remplie).
+Command de vérification: mysql -N -B -e "SELECT count(*) FROM mysql.user WHERE user LIKE '%repl%';" | grep -q '[1-9]'
+------------------------------------------------------------------------------------------
+[MANUAL] 9.4 - Chiffrement approuvé pour la réplication
+  Category: 9. Réplication
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+------------------------------------------------------------------------------------------
+[MANUAL] 9.5 - TLS mutuel activé pour la réplication
+  Category: 9. Réplication
+  Output: This control requires manual verification.
+
+Résultat de l'extraction automatique pour aide:
+Stdout:
+
+Stderr:
+Warning: Permanently added '127.0.0.1' (ED25519) to the list of known hosts.
+Return Code: 1
+------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 {
   "benchmark": "mariadb_106",
-  "report_date": "2026-08-12T07:18:00.222267",
-  "overall_score": 42.22222222222222,
+  "report_date": "2026-08-12T14:57:58.482802",
+  "overall_score": 60.0,
   "total_checks": 74,
   "results": [
     {
@@ -36,7 +36,7 @@
       "remediation": "Supprimer les fichiers d'historique, cr\u00e9er un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
+      "output": "Stdout:\n/root/.mysql_history\nStderr:\n\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
@@ -242,7 +242,7 @@
         "V\u00e9rifier que chaque nom de compte n'est utilis\u00e9 que pour un seul r\u00f4le."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n127.0.0.1\thealthcheck\tmysql_native_password\n::1\thealthcheck\tmysql_native_password\nlocalhost\thealthcheck\tmysql_native_password\nlocalhost\troot\tmysql_native_password\n%\troot\tmysql_native_password\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n127.0.0.1\thealthcheck\tmysql_native_password\n::1\thealthcheck\tmysql_native_password\nlocalhost\thealthcheck\tmysql_native_password\nlocalhost\troot\tmysql_native_password\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "2. Installation et Planification"
     },
@@ -268,8 +268,8 @@
       "test_procedure": "mysql -N -B -e \"SELECT @@default_password_lifetime;\"",
       "remediation": "SET GLOBAL default_password_lifetime=365;",
       "manual_steps": [],
-      "status": "Fail",
-      "output": "Stdout:\n0\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\n365\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "2. Installation et Planification"
     },
@@ -285,7 +285,7 @@
         "Verrouiller les comptes non utilis\u00e9s."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\nroot@%\nhealthcheck@127.0.0.1\nhealthcheck@::1\nhealthcheck@localhost\nmariadb.sys@localhost\nroot@localhost\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\nhealthcheck@127.0.0.1\nhealthcheck@::1\nhealthcheck@localhost\nmariadb.sys@localhost\nroot@localhost\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "2. Installation et Planification"
     },
@@ -336,8 +336,8 @@
       "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type NOT IN ('ANY', 'X509', 'SPECIFIED');\"",
       "remediation": "ALTER USER '<user>'@'<host>' REQUIRE X509;",
       "manual_steps": [],
-      "status": "Fail",
-      "output": "Stdout:\n1\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\n0\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "2. Installation et Planification"
     },
@@ -393,12 +393,12 @@
       "number": "3.4",
       "name": "Permissions sur 'slow_query_log'",
       "type": "Automated",
-      "test_procedure": "stat -c '%a' 2ca348f64f8c-slow.log",
+      "test_procedure": "stat -c '%a' e9bfab4b508c-slow.log",
       "remediation": "Limiter l'acc\u00e8s aux utilisateurs autoris\u00e9s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nstat: cannot statx '2ca348f64f8c-slow.log': No such file or directory\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "stat: cannot statx '2ca348f64f8c-slow.log': No such file or directory",
+      "output": "Stdout:\n\nStderr:\nstat: cannot statx 'e9bfab4b508c-slow.log': No such file or directory\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
+      "error": "stat: cannot statx 'e9bfab4b508c-slow.log': No such file or directory",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -417,12 +417,12 @@
       "number": "3.6",
       "name": "Permissions sur 'general_log_file'",
       "type": "Automated",
-      "test_procedure": "stat -c '%a' 2ca348f64f8c.log",
+      "test_procedure": "stat -c '%a' e9bfab4b508c.log",
       "remediation": "Restreindre les droits d'acc\u00e8s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\nstat: cannot statx '2ca348f64f8c.log': No such file or directory\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
-      "error": "stat: cannot statx '2ca348f64f8c.log': No such file or directory",
+      "output": "Stdout:\n\nStderr:\nstat: cannot statx 'e9bfab4b508c.log': No such file or directory\nReturn Code: 1\n\nCondition de succ\u00e8s non remplie.",
+      "error": "stat: cannot statx 'e9bfab4b508c.log': No such file or directory",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -520,8 +520,8 @@
       "test_procedure": "mysql -N -B -e \"SELECT @@local_infile;\"",
       "remediation": "Ajouter local-infile=0 \u00e0 la section [mariadbd] et [client] du fichier de configuration MariaDB.",
       "manual_steps": [],
-      "status": "Fail",
-      "output": "Stdout:\n1\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\n0\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
@@ -544,8 +544,8 @@
       "test_procedure": "mysql -N -B -e \"SELECT @@have_symlink;\"",
       "remediation": "Ajouter skip-symbolic-links dans la section [mariadbd] du fichier mariadb.cnf.",
       "manual_steps": [],
-      "status": "Fail",
-      "output": "Stdout:\nYES\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\nDISABLED\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
@@ -556,8 +556,8 @@
       "test_procedure": "mysql -N -B -e \"SHOW GLOBAL VARIABLES WHERE Variable_name = 'secure_file_priv';\" | awk '{print $2}'",
       "remediation": "Configurer secure_file_priv sur NULL (pour d\u00e9sactiver) ou sur un chemin sp\u00e9cifique dans mariadb.cnf.",
       "manual_steps": [],
-      "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\n/var/lib/mysql-files/\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
@@ -568,8 +568,8 @@
       "test_procedure": "mysql -N -B -e \"SELECT @@sql_mode;\"",
       "remediation": "Ajouter STRICT_ALL_TABLES au param\u00e8tre sql_mode dans mariadb.cnf.",
       "manual_steps": [],
-      "status": "Fail",
-      "output": "Stdout:\nSTRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\nSTRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
@@ -597,7 +597,7 @@
         "REVOKE les privil\u00e8ges excessifs."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'healthcheck'@'localhost'\tUSAGE\n'healthcheck'@'::1'\tUSAGE\n'healthcheck'@'127.0.0.1'\tUSAGE\n'mariadb.sys'@'localhost'\tUSAGE\n'root'@'localhost'\tSELECT\n'root'@'localhost'\tINSERT\n'root'@'localhost'\tUPDATE\n'root'@'localhost'\tDELETE\n'root'@'localhost'\tCREATE\n'root'@'localhost'\tDROP\n'root'@'localhost'\tRELOAD\n'root'@'localhost'\tSHUTDOWN\n'root'@'localhost'\tPROCESS\n'root'@'localhost'\tFILE\n'root'@'localhost'\tREFERENCES\n'root'@'localhost'\tINDEX\n'root'@'localhost'\tALTER\n'root'@'localhost'\tSHOW DATABASES\n'root'@'localhost'\tSUPER\n'root'@'localhost'\tCREATE TEMPORARY TABLES\n'root'@'localhost'\tLOCK TABLES\n'root'@'localhost'\tEXECUTE\n'root'@'localhost'\tREPLICATION SLAVE\n'root'@'localhost'\tBINLOG MONITOR\n'root'@'localhost'\tCREATE VIEW\n'root'@'localhost'\tSHOW VIEW\n'root'@'localhost'\tCREATE ROUTINE\n'root'@'localhost'\tALTER ROUTINE\n'root'@'localhost'\tCREATE USER\n'root'@'localhost'\tEVENT\n'root'@'localhost'\tTRIGGER\n'root'@'localhost'\tCREATE TABLESPACE\n'root'@'localhost'\tDELETE HISTORY\n'root'@'localhost'\tSET USER\n'root'@'localhost'\tFEDERATED ADMIN\n'root'@'localhost'\tCONNECTION ADMIN\n'root'@'localhost'\tREAD_ONLY ADMIN\n'root'@'localhost'\tREPLICATION SLAVE ADMIN\n'root'@'localhost'\tREPLICATION MASTER ADMIN\n'root'@'localhost'\tBINLOG ADMIN\n'root'@'localhost'\tBINLOG REPLAY\n'root'@'localhost'\tSLAVE MONITOR\n'root'@'%'\tSELECT\n'root'@'%'\tINSERT\n'root'@'%'\tUPDATE\n'root'@'%'\tDELETE\n'root'@'%'\tCREATE\n'root'@'%'\tDROP\n'root'@'%'\tRELOAD\n'root'@'%'\tSHUTDOWN\n'root'@'%'\tPROCESS\n'root'@'%'\tFILE\n'root'@'%'\tREFERENCES\n'root'@'%'\tINDEX\n'root'@'%'\tALTER\n'root'@'%'\tSHOW DATABASES\n'root'@'%'\tSUPER\n'root'@'%'\tCREATE TEMPORARY TABLES\n'root'@'%'\tLOCK TABLES\n'root'@'%'\tEXECUTE\n'root'@'%'\tREPLICATION SLAVE\n'root'@'%'\tBINLOG MONITOR\n'root'@'%'\tCREATE VIEW\n'root'@'%'\tSHOW VIEW\n'root'@'%'\tCREATE ROUTINE\n'root'@'%'\tALTER ROUTINE\n'root'@'%'\tCREATE USER\n'root'@'%'\tEVENT\n'root'@'%'\tTRIGGER\n'root'@'%'\tCREATE TABLESPACE\n'root'@'%'\tDELETE HISTORY\n'root'@'%'\tSET USER\n'root'@'%'\tFEDERATED ADMIN\n'root'@'%'\tCONNECTION ADMIN\n'root'@'%'\tREAD_ONLY ADMIN\n'root'@'%'\tREPLICATION SLAVE ADMIN\n'root'@'%'\tREPLICATION MASTER ADMIN\n'root'@'%'\tBINLOG ADMIN\n'root'@'%'\tBINLOG REPLAY\n'root'@'%'\tSLAVE MONITOR\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'healthcheck'@'localhost'\tUSAGE\n'healthcheck'@'::1'\tUSAGE\n'healthcheck'@'127.0.0.1'\tUSAGE\n'mariadb.sys'@'localhost'\tUSAGE\n'root'@'localhost'\tSELECT\n'root'@'localhost'\tINSERT\n'root'@'localhost'\tUPDATE\n'root'@'localhost'\tDELETE\n'root'@'localhost'\tCREATE\n'root'@'localhost'\tDROP\n'root'@'localhost'\tRELOAD\n'root'@'localhost'\tSHUTDOWN\n'root'@'localhost'\tPROCESS\n'root'@'localhost'\tFILE\n'root'@'localhost'\tREFERENCES\n'root'@'localhost'\tINDEX\n'root'@'localhost'\tALTER\n'root'@'localhost'\tSHOW DATABASES\n'root'@'localhost'\tSUPER\n'root'@'localhost'\tCREATE TEMPORARY TABLES\n'root'@'localhost'\tLOCK TABLES\n'root'@'localhost'\tEXECUTE\n'root'@'localhost'\tREPLICATION SLAVE\n'root'@'localhost'\tBINLOG MONITOR\n'root'@'localhost'\tCREATE VIEW\n'root'@'localhost'\tSHOW VIEW\n'root'@'localhost'\tCREATE ROUTINE\n'root'@'localhost'\tALTER ROUTINE\n'root'@'localhost'\tCREATE USER\n'root'@'localhost'\tEVENT\n'root'@'localhost'\tTRIGGER\n'root'@'localhost'\tCREATE TABLESPACE\n'root'@'localhost'\tDELETE HISTORY\n'root'@'localhost'\tSET USER\n'root'@'localhost'\tFEDERATED ADMIN\n'root'@'localhost'\tCONNECTION ADMIN\n'root'@'localhost'\tREAD_ONLY ADMIN\n'root'@'localhost'\tREPLICATION SLAVE ADMIN\n'root'@'localhost'\tREPLICATION MASTER ADMIN\n'root'@'localhost'\tBINLOG ADMIN\n'root'@'localhost'\tBINLOG REPLAY\n'root'@'localhost'\tSLAVE MONITOR\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "5. Permissions MariaDB"
     },
@@ -612,7 +612,7 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\n'root'@'%'\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "5. Permissions MariaDB"
     },
@@ -627,7 +627,7 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\n'root'@'%'\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "5. Permissions MariaDB"
     },
@@ -642,7 +642,7 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\n'root'@'%'\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "5. Permissions MariaDB"
     },
@@ -657,7 +657,7 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\n'root'@'%'\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "5. Permissions MariaDB"
     },
@@ -672,7 +672,7 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\n'root'@'%'\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "5. Permissions MariaDB"
     },
@@ -687,7 +687,7 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\n'root'@'%'\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\n'root'@'localhost'\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "5. Permissions MariaDB"
     },
@@ -702,7 +702,7 @@
         "S'assurer que seuls les comptes de r\u00e9plication l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\n'root'@'%'\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "5. Permissions MariaDB"
     },
@@ -717,7 +717,7 @@
         "S'assurer du principe du moindre privil\u00e8ge."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\tSELECT\n'root'@'localhost'\tINSERT\n'root'@'localhost'\tUPDATE\n'root'@'localhost'\tDELETE\n'root'@'localhost'\tCREATE\n'root'@'localhost'\tDROP\n'root'@'localhost'\tALTER\n'root'@'%'\tSELECT\n'root'@'%'\tINSERT\n'root'@'%'\tUPDATE\n'root'@'%'\tDELETE\n'root'@'%'\tCREATE\n'root'@'%'\tDROP\n'root'@'%'\tALTER\nStderr:\n\nReturn Code: 0",
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n'root'@'localhost'\tSELECT\n'root'@'localhost'\tINSERT\n'root'@'localhost'\tUPDATE\n'root'@'localhost'\tDELETE\n'root'@'localhost'\tCREATE\n'root'@'localhost'\tDROP\n'root'@'localhost'\tALTER\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "5. Permissions MariaDB"
     },
@@ -840,7 +840,7 @@
       "remediation": "Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\nmariadb.sys\tlocalhost\nroot\tlocalhost\nroot\t%\nhealthcheck\t127.0.0.1\nhealthcheck\t::1\nhealthcheck\tlocalhost\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "output": "Stdout:\nmariadb.sys\tlocalhost\nroot\tlocalhost\nhealthcheck\t127.0.0.1\nhealthcheck\t::1\nhealthcheck\tlocalhost\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
       "error": "",
       "category": "7. Authentification"
     },
@@ -863,8 +863,8 @@
       "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE host = '%';\"",
       "remediation": "ALTER USER '<user>'@'%' ... ou supprimer le compte.",
       "manual_steps": [],
-      "status": "Fail",
-      "output": "Stdout:\nroot\t%\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\n\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "7. Authentification"
     },
@@ -899,8 +899,8 @@
       "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE host NOT IN ('localhost', '127.0.0.1', '::1') AND ssl_type = '';\"",
       "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;",
       "manual_steps": [],
-      "status": "Fail",
-      "output": "Stdout:\n1\nStderr:\n\nReturn Code: 0\n\nCondition de succ\u00e8s non remplie.",
+      "status": "Pass",
+      "output": "Stdout:\n0\nStderr:\n\nReturn Code: 0",
       "error": "",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
