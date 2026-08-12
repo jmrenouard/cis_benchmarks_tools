@@ -1,4 +1,4 @@
-# 🛠️ CIS Benchmarks Tools - Resolved Debt & Technical Backlog (v1.7.0)
+# 🛠️ CIS Benchmarks Tools - Resolved Debt & Technical Backlog (v1.8.0)
 
 This document tracks technical debt, security considerations, and resolved architectural backlog items.
 
@@ -6,7 +6,11 @@ This document tracks technical debt, security considerations, and resolved archi
 
 ## 🔒 Resolved Architectural Backlog
 
-### 1. Externalization of Audit Rules into `rules/` Directory (Resolved in v1.7.0 ✅)
+### 1. Centralization of HTML Report Templates into `templates/` (Resolved in v1.8.0 ✅)
+- **Problem**: HTML report template strings were duplicated across all 18 Python audit scripts, making UI maintenance tedious.
+- **Resolution**: Centralized HTML report templates into common template files `templates/report_template.html` and `templates/category_report_template.html`. Implemented dynamic loader `load_html_template()` with inline PSL fallbacks across all audit scripts and `audit_cis.py`.
+
+### 2. Externalization of Audit Rules into `rules/` Directory (Resolved in v1.7.0 ✅)
 - **Problem**: Audit rule control specifications (`RECOMMENDATIONS_DATA`) were hardcoded inside Python script source files, mixing code logic with data specs.
 - **Resolution**: Created top-level `rules/` directory containing 18 clean JSON specification files (`rules/mariadb_106.json`, `rules/cassandra_40.json`, `rules/rhel_8.json`, etc.). Created dynamic rule loader `load_recommendations()` in `audit_cis_*.py` and `audit_cis.py` with inline fallback.
 
