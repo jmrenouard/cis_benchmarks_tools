@@ -3,15 +3,16 @@
     "category": "1. Configuration Système d'exploitation",
     "number": "1.1",
     "name": "Placer les bases de données sur des partitions non-système",
-    "type": "Automated",
+    "type": "Manual",
     "path_command": "mysql -N -B -e \"SELECT @@datadir;\"",
     "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'",
-    "expected_output": {
-      "type": "stdout_not_equals",
-      "value": "/"
-    },
+    "expected_output": null,
     "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service.",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "echo 'Contrôle Manuel: '",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "1. Configuration Système d'exploitation",
@@ -78,33 +79,35 @@
     "category": "1. Configuration Système d'exploitation",
     "number": "1.7",
     "name": "Exécuter MySQL dans un environnement sandbox",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "[[ -f /.dockerenv ]] || grep -qs 'docker\\|containerd' /proc/1/cgroup || systemctl is-active mysql >/dev/null 2>&1",
-    "expected_output": {
-      "type": "returncode_zero"
-    },
-    "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker."
+    "expected_output": null,
+    "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "2. Installation et Planification",
     "number": "2.1.1",
     "name": "Politique de sauvegarde en place",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "([ -f /etc/crontab ] && grep -E 'mysqldump|xtrabackup|mysqlbackup|mariadb-backup' /etc/crontab /etc/cron*/*) || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup|mariadb-backup' | grep -v grep",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
-    "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques."
+    "expected_output": null,
+    "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "2. Installation et Planification",
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "[ -d /var/backups ] && ls -la /var/backups/ | head -n 20 || ([ -d /var/lib/mysql ] && ls -la /var/lib/mysql/ | head -n 20 || echo 'NO_BACKUP_DIRECTORY')",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Planifier et documenter les tests de restauration périodiques.",
     "manual_steps": [
       "Identifier les fichiers de sauvegarde récents.",
@@ -117,11 +120,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.3",
     "name": "Sécuriser les identifiants de sauvegarde",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "for f in /etc/mysql /etc/my.cnf; do [ -e \"$f\" ] && ls -ld \"$f\"; done || echo 'NO_CONFIG_FOUND'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.",
     "manual_steps": [
       "Rechercher les scripts de sauvegarde.",
@@ -134,11 +135,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.4",
     "name": "Sécuriser les fichiers de sauvegarde",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "[ -d /var/backups ] && ls -ld /var/backups/* | head -n 10 || echo 'NO_BACKUP_FILES_FOUND'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Utiliser l'option --encrypt-password de MySQL Enterprise Backup ou une méthode de chiffrement équivalente.",
     "manual_steps": [
       "Localiser le stockage des sauvegardes.",
@@ -162,11 +161,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.6",
     "name": "Plan de reprise d'activité (DR)",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "for d in /etc/mysql /var/backups; do [ -d \"$d\" ] && ls -la \"$d\"; done || echo 'DR_DIRECTORIES_INSPECTED'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Documenter et tester un plan DR incluant réplication, backups offsite.",
     "manual_steps": [
       "Consulter la documentation technique.",
@@ -178,11 +175,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.7",
     "name": "Sauvegarde des fichiers de configuration",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "for d in /etc/mysql /etc/my.cnf; do [ -e \"$d\" ] && ls -ld \"$d\"; done || echo 'CONFIG_BACKUP_INSPECTED'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.",
     "manual_steps": [
       "Lister le contenu d'une sauvegarde complète.",
@@ -457,7 +452,11 @@
       "type": "stdout_equals",
       "value": "0"
     },
-    "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs."
+    "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -468,7 +467,11 @@
     "expected_output": {
       "type": "stdout_is_empty"
     },
-    "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';"
+    "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -479,7 +482,11 @@
     "expected_output": {
       "type": "stdout_is_empty"
     },
-    "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';"
+    "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -490,7 +497,11 @@
     "expected_output": {
       "type": "stdout_is_empty"
     },
-    "remediation": "Migrer vers les droits dynamiques (ex: BACKUP_ADMIN, REPLICATION_SLAVE_ADMIN) puis REVOKE SUPER ON *.* FROM '<user>'@'<host>';"
+    "remediation": "Migrer vers les droits dynamiques (ex: BACKUP_ADMIN, REPLICATION_SLAVE_ADMIN) puis REVOKE SUPER ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -501,7 +512,11 @@
     "expected_output": {
       "type": "stdout_is_empty"
     },
-    "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';"
+    "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -512,7 +527,11 @@
     "expected_output": {
       "type": "stdout_is_empty"
     },
-    "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';"
+    "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -523,7 +542,11 @@
     "expected_output": {
       "type": "stdout_is_empty"
     },
-    "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';"
+    "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -535,7 +558,11 @@
       "type": "stdout_equals",
       "value": "0"
     },
-    "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication."
+    "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -546,7 +573,11 @@
     "expected_output": {
       "type": "stdout_is_empty"
     },
-    "remediation": "Révoquer les droits superflus par base de données/compte."
+    "remediation": "Révoquer les droits superflus par base de données/compte.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -558,7 +589,11 @@
       "type": "stdout_equals",
       "value": "0"
     },
-    "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER."
+    "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -570,7 +605,11 @@
       "type": "stdout_equals",
       "value": "0"
     },
-    "remediation": "REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';"
+    "remediation": "REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "5. Gestion des privilèges",
@@ -582,7 +621,11 @@
       "type": "stdout_equals",
       "value": "0"
     },
-    "remediation": "REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';"
+    "remediation": "REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "6. Audit & Journalisation",
@@ -644,7 +687,11 @@
       "type": "stdout_equals",
       "value": "1"
     },
-    "remediation": "Configurer le plugin d'audit pour journaliser les succès et échecs de connexion."
+    "remediation": "Configurer le plugin d'audit pour journaliser les succès et échecs de connexion.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "6. Audit & Journalisation",
@@ -800,7 +847,11 @@
       "type": "stdout_is_numeric_less_equal",
       "value": 500
     },
-    "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins."
+    "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "9. Réplication",
@@ -865,7 +916,11 @@
       "type": "stdout_not_equals",
       "value": "DISABLED"
     },
-    "remediation": "Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf."
+    "remediation": "Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   },
   {
     "category": "10. InnoDB Cluster / Group Replication",
@@ -877,6 +932,10 @@
     "expected_output": {
       "type": "stdout_not_empty"
     },
-    "remediation": "Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés."
+    "remediation": "Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés.",
+    "manual_steps": [
+      "Consulter la configuration et les journaux du serveur.",
+      "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
+    ]
   }
 ]
