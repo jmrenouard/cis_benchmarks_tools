@@ -3,13 +3,10 @@
     "category": "1. Configuration Système d'exploitation",
     "number": "1.1",
     "name": "Placer les bases de données sur des partitions non-système",
-    "type": "Automated",
+    "type": "Manual",
     "path_command": "mysql -N -B -e \"SELECT @@datadir;\"",
     "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'",
-    "expected_output": {
-      "type": "stdout_not_equals",
-      "value": "/"
-    },
+    "expected_output": null,
     "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MariaDB, redémarrer le service.",
     "test_procedure": "echo 'Contrôle Manuel: '"
   },
@@ -78,11 +75,9 @@
     "category": "1. Configuration Système d'exploitation",
     "number": "1.7",
     "name": "Exécuter MariaDB dans un environnement sandbox",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "[[ -f /.dockerenv ]] || grep -qs 'docker\\|containerd' /proc/1/cgroup || systemctl is-active mariadb >/dev/null 2>&1",
-    "expected_output": {
-      "type": "returncode_zero"
-    },
+    "expected_output": null,
     "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MariaDB sous Docker.",
     "manual_steps": [
       "Vérifier si MariaDB utilise chroot.",
@@ -94,11 +89,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.1",
     "name": "Politique de sauvegarde en place",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "([ -f /etc/crontab ] && grep -E 'mysqldump|xtrabackup|mysqlbackup|mariadb-backup' /etc/crontab /etc/cron*/*) || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup|mariadb-backup' | grep -v grep",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques.",
     "manual_steps": [
       "Vérifier la présence d'un cron de sauvegarde.",
@@ -110,11 +103,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "[ -d /var/backups ] && ls -la /var/backups/ | head -n 20 || ([ -d /var/lib/mysql ] && ls -la /var/lib/mysql/ | head -n 20 || echo 'NO_BACKUP_DIRECTORY')",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Planifier et documenter les tests de restauration périodiques.",
     "manual_steps": [
       "Identifier les fichiers de sauvegarde récents.",
@@ -127,11 +118,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.3",
     "name": "Sécuriser les identifiants de sauvegarde",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "for f in /etc/mysql /etc/my.cnf; do [ -e \"$f\" ] && ls -ld \"$f\"; done || echo 'NO_CONFIG_FOUND'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.",
     "manual_steps": [
       "Rechercher les scripts de sauvegarde.",
@@ -143,11 +132,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.4",
     "name": "Sécuriser les fichiers de sauvegarde",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "[ -d /var/backups ] && ls -ld /var/backups/* | head -n 10 || echo 'NO_BACKUP_FILES_FOUND'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Utiliser le chiffrement des sauvegardes (mariabackup + openssl enc).",
     "manual_steps": [
       "Localiser le stockage des sauvegardes.",
@@ -171,11 +158,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.6",
     "name": "Plan de reprise d'activité (DR)",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "for d in /etc/mysql /var/backups; do [ -d \"$d\" ] && ls -la \"$d\"; done || echo 'DR_DIRECTORIES_INSPECTED'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Documenter et tester un plan DR incluant réplication Galera, backups offsite.",
     "manual_steps": [
       "Consulter la documentation technique.",
@@ -187,11 +172,9 @@
     "category": "2. Installation et Planification",
     "number": "2.1.7",
     "name": "Sauvegarde des fichiers de configuration",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "for d in /etc/mysql /etc/my.cnf; do [ -e \"$d\" ] && ls -ld \"$d\"; done || echo 'CONFIG_BACKUP_INSPECTED'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.",
     "manual_steps": [
       "Lister le contenu d'une sauvegarde complète.",
@@ -202,11 +185,9 @@
     "category": "2. Installation et Planification",
     "number": "2.2",
     "name": "Dédier la machine à MariaDB",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "ls -la /var/lib/mysql | head -n 5 || echo 'STORAGE_SECURED'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Utiliser un serveur dédié ou un conteneur pour MariaDB.",
     "manual_steps": [
       "Lister les services actifs (systemctl list-units --type=service).",
@@ -217,11 +198,9 @@
     "category": "2. Installation et Planification",
     "number": "2.3",
     "name": "Ne pas spécifier de mots de passe en ligne de commande",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "ls -la /var/lib/mysql | head -n 5 || echo 'STORAGE_SECURED'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Utiliser des fichiers d'options (.my.cnf) ou des méthodes d'authentification alternatives.",
     "manual_steps": [
       "Vérifier les processus en cours.",
@@ -233,12 +212,9 @@
     "category": "2. Installation et Planification",
     "number": "2.4",
     "name": "Ne pas réutiliser les noms d'utilisateurs",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) - COUNT(DISTINCT user) FROM mysql.user WHERE user NOT IN ('mysql.infoschema', 'mysql.session', 'mysql.sys', 'mariadb.sys');\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "Ajouter/Supprimer les utilisateurs pour que chaque compte soit dédié à un usage spécifique.",
     "manual_steps": [
       "Lister les utilisateurs MariaDB.",
@@ -249,11 +225,9 @@
     "category": "2. Installation et Planification",
     "number": "2.5",
     "name": "S'assurer que le matériel cryptographique est unique et non par défaut",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "ls -la /var/lib/mysql | head -n 5 || echo 'STORAGE_SECURED'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Générer de nouveaux certificats, clés et autre matériel cryptographique pour chaque instance.",
     "manual_steps": [
       "Examiner les certificats via openssl x509 -in server-cert.pem -subject -noout.",
@@ -276,11 +250,9 @@
     "category": "2. Installation et Planification",
     "number": "2.7",
     "name": "Verrouiller les comptes inutilisés",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT CONCAT(user, '@', host) FROM mysql.global_priv;\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "ALTER USER 'user'@'host' ACCOUNT LOCK; pour chaque compte inutilisé.",
     "manual_steps": [
       "Lister les comptes.",
@@ -292,12 +264,9 @@
     "category": "2. Installation et Planification",
     "number": "2.8",
     "name": "Utilisation appropriée de l'authentification Socket Peer-Credential",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'unix_socket';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "ACTIVE"
-    },
+    "expected_output": null,
     "remediation": "Configurer unix_socket=ON/OFF selon les besoins. ALTER USER ... IDENTIFIED VIA unix_socket.",
     "manual_steps": [
       "Vérifier si unix_socket est activé.",
