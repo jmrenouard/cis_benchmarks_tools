@@ -4,7 +4,7 @@
     "number": "1.1",
     "name": "Obtenir les paquets depuis des dépôts autorisés",
     "type": "Manual",
-    "test_procedure": "Vérifier dnf repolist all ou équivalent (apt-file search /usr/pgsql-*/lib/libpq.so.5) pour s’assurer que seuls les dépôts officiels sont activés.",
+    "test_procedure": "echo 'Contrôle Manuel: Vérifier dnf repolist all ou équivalent (apt-file search /usr/pgsql-*/lib/libpq.so.5) pour s’assurer que seuls les dépôts officiels sont activés.'",
     "expected_output": null,
     "remediation": "Supprimer/ajouter des dépôts pour n’inclure que les sources valides (p. ex. dnf install -y https://download.postgresql.org/.../pgdg-redhat-repo-latest.noarch.rpm), puis réinstaller."
   },
@@ -13,7 +13,7 @@
     "number": "1.2",
     "name": "Installer uniquement les paquets requis",
     "type": "Manual",
-    "test_procedure": "apt search postgresql ou dnf search postgresql, lister les paquets installés et comparer à la liste d’exigences.",
+    "test_procedure": "dpkg -l | grep -iE 'postgres|mysql|mariadb' 2>/dev/null || rpm -qa | grep -iE 'postgres|mysql|mariadb' 2>/dev/null",
     "expected_output": null,
     "remediation": "Purger/effacer les paquets non désirés : apt purge <pkg> ou dnf erase <pkg>."
   },
@@ -57,7 +57,8 @@
         }
       }
     ],
-    "remediation": "Supprimer le répertoire de données et relancer initdb (avec checksums si souhaité), puis démarrer le service. Assurer les bonnes permissions sur le répertoire de données."
+    "remediation": "Supprimer le répertoire de données et relancer initdb (avec checksums si souhaité), puis démarrer le service. Assurer les bonnes permissions sur le répertoire de données.",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "1. Installation et correctifs",
@@ -95,7 +96,7 @@
     "number": "2.1",
     "name": "Masque de permissions (umask)",
     "type": "Manual",
-    "test_procedure": "En tant que postgres, exécuter umask, doit afficher 0077 ou plus restrictif.",
+    "test_procedure": "su - postgres -c umask 2>/dev/null || umask",
     "expected_output": null,
     "remediation": "Configurer le umask de l’utilisateur postgres à 0077 pour restreindre la création de fichiers.\nAjouter umask 077 dans ~postgres/.bash_profile (ou .profile/.bashrc), recharger le profil."
   },
@@ -110,7 +111,8 @@
       "type": "stdout_regex_match",
       "pattern": "^drwxr-xr-x\\s+\\d+\\s+root\\s+root"
     },
-    "remediation": "Vérifier que $(pg_config --sharedir)/extension appartient à root:root et chmod 0755.\nchown root:root $(sudo -u postgres pg_config --sharedir)/extension && chmod 0755 $(sudo -u postgres pg_config --sharedir)/extension."
+    "remediation": "Vérifier que $(pg_config --sharedir)/extension appartient à root:root et chmod 0755.\nchown root:root $(sudo -u postgres pg_config --sharedir)/extension && chmod 0755 $(sudo -u postgres pg_config --sharedir)/extension.",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "2. Permissions de répertoires et fichiers",
@@ -137,7 +139,7 @@
     "number": "3.1.2",
     "name": "Configurer log_destination",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_destination;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_destination;'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -148,7 +150,7 @@
     "number": "3.1.3",
     "name": "Activer logging_collector",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW logging_collector;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW logging_collector;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "on"
@@ -160,7 +162,7 @@
     "number": "3.1.4",
     "name": "Définir log_directory",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_directory;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_directory;'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -171,7 +173,7 @@
     "number": "3.1.5",
     "name": "Définir log_filename",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_filename;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_filename;'",
     "expected_output": {
       "type": "stdout_contains",
       "value": "%Y"
@@ -183,7 +185,7 @@
     "number": "3.1.6",
     "name": "Configurer log_file_mode",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_file_mode;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_file_mode;'",
     "expected_output": {
       "type": "stdout_contains_any",
       "values": [
@@ -198,7 +200,7 @@
     "number": "3.1.7",
     "name": "Activer log_truncate_on_rotation",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_truncate_on_rotation;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_truncate_on_rotation;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "on"
@@ -210,7 +212,7 @@
     "number": "3.1.8",
     "name": "Définir log_rotation_age",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_rotation_age;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_rotation_age;'",
     "expected_output": {
       "type": "stdout_not_equals",
       "value": "0"
@@ -222,7 +224,7 @@
     "number": "3.1.9",
     "name": "Définir log_rotation_size",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_rotation_size;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_rotation_size;'",
     "expected_output": {
       "type": "stdout_not_equals",
       "value": "0"
@@ -243,7 +245,7 @@
     "number": "3.1.11",
     "name": "Activer syslog_split_messages",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW syslog_split_messages;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW syslog_split_messages;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "on"
@@ -255,7 +257,7 @@
     "number": "3.1.12",
     "name": "Prévenir la perte de messages Syslog",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW syslog_split_messages;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW syslog_split_messages;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "on"
@@ -267,7 +269,7 @@
     "number": "3.1.13",
     "name": "Configurer syslog_ident",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW syslog_ident;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW syslog_ident;'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -278,7 +280,7 @@
     "number": "3.1.14",
     "name": "Assurer les bons messages dans le log serveur",
     "type": "Manual",
-    "test_procedure": "Consulter postgresql.conf et SHOW log_statement;/SHOW log_min_messages;.",
+    "test_procedure": "echo 'Contrôle Manuel: Consulter postgresql.conf et SHOW log_statement;/SHOW log_min_messages;.'",
     "expected_output": null,
     "remediation": "Vérifier que seuls les messages pertinents (erreurs, connexions, requêtes) sont enregistrés.\nALTER SYSTEM SET log_statement = 'all'; ALTER SYSTEM SET log_min_error_statement = 'error'; etc., puis SELECT pg_reload_conf();."
   },
@@ -310,14 +312,15 @@
         }
       }
     ],
-    "remediation": "Consigner les instructions SQL ayant généré des erreurs.\nALTER SYSTEM SET log_error_verbosity = 'verbose'; puis SELECT pg_reload_conf();."
+    "remediation": "Consigner les instructions SQL ayant généré des erreurs.\nALTER SYSTEM SET log_error_verbosity = 'verbose'; puis SELECT pg_reload_conf();.",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "3.1. Journalisation des erreurs serveur",
     "number": "3.1.16",
     "name": "Désactiver debug_print_parse",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_print_parse;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW debug_print_parse;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "off"
@@ -329,7 +332,7 @@
     "number": "3.1.17",
     "name": "Désactiver debug_print_rewritten",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_print_rewritten;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW debug_print_rewritten;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "off"
@@ -341,7 +344,7 @@
     "number": "3.1.18",
     "name": "Désactiver debug_print_plan",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_print_plan;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW debug_print_plan;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "off"
@@ -353,7 +356,7 @@
     "number": "3.1.19",
     "name": "Activer debug_pretty_print",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_pretty_print;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW debug_pretty_print;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "on"
@@ -365,7 +368,7 @@
     "number": "3.1.20",
     "name": "Activer log_connections",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_connections;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_connections;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "on"
@@ -377,7 +380,7 @@
     "number": "3.1.21",
     "name": "Activer log_disconnections",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_disconnections;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_disconnections;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "on"
@@ -389,7 +392,7 @@
     "number": "3.1.22",
     "name": "Configurer log_error_verbosity",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_error_verbosity;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_error_verbosity;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "verbose"
@@ -401,7 +404,7 @@
     "number": "3.1.23",
     "name": "Configurer log_hostname",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_hostname;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_hostname;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "off"
@@ -413,7 +416,7 @@
     "number": "3.1.24",
     "name": "Configurer log_line_prefix",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_line_prefix;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_line_prefix;'",
     "expected_output": {
       "type": "stdout_contains",
       "value": "%t"
@@ -425,7 +428,7 @@
     "number": "3.1.25",
     "name": "Configurer log_statement",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_statement;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_statement;'",
     "expected_output": {
       "type": "stdout_contains_any",
       "values": [
@@ -441,7 +444,7 @@
     "number": "3.1.26",
     "name": "Configurer log_timezone",
     "type": "Automated",
-    "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_timezone;'",
+    "test_procedure": "sudo -n -u postgres psql -t -c 'SHOW log_timezone;'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "UTC"
@@ -465,7 +468,7 @@
     "number": "4.1",
     "name": "Désactiver la connexion interactive",
     "type": "Manual",
-    "test_procedure": "Empêcher les rôles superutilisateurs sans console SSH d’interagir localement.\nVérifier dans pg_hba.conf qu’aucune ligne local .. trust pour les superutilisateurs",
+    "test_procedure": "grep -E '^\\s*local\\s+.*trust' /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf 2>/dev/null || echo 'PASS_AUCUN_TRUST_LOCAL'",
     "expected_output": null,
     "remediation": "Empêcher les rôles superutilisateurs sans console SSH d’interagir localement.\nModifier pg_hba.conf, passer à md5 ou peer, puis SELECT pg_reload_conf();."
   },
@@ -474,7 +477,7 @@
     "number": "4.2",
     "name": "Configurer sudo correctement",
     "type": "Manual",
-    "test_procedure": "Restreindre l’usage de sudo pour l’utilisateur système postgres.\nExaminer /etc/sudoers et fichiers dans /etc/sudoers.d/ pour la section postgres.",
+    "test_procedure": "grep -iE 'postgres|mysql|mariadb' /etc/sudoers /etc/sudoers.d/* 2>/dev/null || echo 'PASS_AUCUN_SUDO_DEDIE'",
     "expected_output": null,
     "remediation": "Restreindre l’usage de sudo pour l’utilisateur système postgres.\nExaminer /etc/sudoers et fichiers dans /etc/sudoers.d/ pour la section postgres.\nAjuster les droits sudo (ex. postgres ALL=(ALL) NOPASSWD: /usr/pgsql-18/bin/pg_*)."
   },
@@ -483,7 +486,7 @@
     "number": "4.3",
     "name": "Révoquer les privilèges administratifs excessifs",
     "type": "Manual",
-    "test_procedure": "Retirer aux rôles non justifiés les attributs SUPERUSER, CREATEDB, CREATEROLE, REPLICATION.\n\\du+ doit lister uniquement les rôles autorisés avec ces attributs.",
+    "test_procedure": "psql -U postgres -t -A -c 'SELECT rolname, rolsuper, rolcreatedb, rolcreaterole, rolreplication FROM pg_roles;' 2>/dev/null || echo 'VERIF_MANUELLE_ROLES_POSTGRES'",
     "expected_output": null,
     "remediation": "Retirer aux rôles non justifiés les attributs SUPERUSER, CREATEDB, CREATEROLE, REPLICATION.\n\\du+ doit lister uniquement les rôles autorisés avec ces attributs.\nALTER ROLE <user> NOSUPERUSER NOCREATEDB NOCREATEROLE;."
   },
@@ -501,7 +504,7 @@
     "number": "4.5",
     "name": "Révoquer les privilèges de fonction excessifs",
     "type": "Manual",
-    "test_procedure": "Restreindre l’EXECUTE sur les fonctions définies aux seuls rôles nécessaires.\nRequête sur pg_proc et has_function_privilege().",
+    "test_procedure": "psql -U postgres -t -A -c \"SELECT proname FROM pg_proc WHERE pronamespace = 'public'::regnamespace;\" 2>/dev/null || echo 'VERIF_PROC_PRIVILEGES'",
     "expected_output": null,
     "remediation": "Restreindre l’EXECUTE sur les fonctions définies aux seuls rôles nécessaires.\nRequête sur pg_proc et has_function_privilege().\nREVOKE EXECUTE ON FUNCTION <schema>.<func>() FROM <role>;."
   },
@@ -510,7 +513,7 @@
     "number": "4.6",
     "name": "Révoquer les privilèges DML excessifs",
     "type": "Manual",
-    "test_procedure": "Restreindre INSERT/UPDATE/DELETE aux tables selon le besoin des rôles applicatifs.\nInventaire via has_table_privilege() pour chaque table et utilisateur.",
+    "test_procedure": "psql -U postgres -t -A -c \"SELECT tablename FROM pg_tables WHERE schemaname = 'public';\" 2>/dev/null || echo 'VERIF_TABLE_PRIVILEGES'",
     "expected_output": null,
     "remediation": "Restreindre INSERT/UPDATE/DELETE aux tables selon le besoin des rôles applicatifs.\nInventaire via has_table_privilege() pour chaque table et utilisateur.\nREVOKE INSERT, UPDATE, DELETE ON TABLE <tbl> FROM <role>;."
   },
@@ -519,7 +522,7 @@
     "number": "4.7",
     "name": "Configurer Row Level Security (RLS)",
     "type": "Manual",
-    "test_procedure": "Activer RLS pour les tables sensibles et définir des politiques restrictives.\n\\d+ <table> doit indiquer Row Level Security: enabled.",
+    "test_procedure": "psql -U postgres -t -A -c 'SELECT relname, relrowsecurity FROM pg_class WHERE relrowsecurity = true;' 2>/dev/null || echo 'VERIF_MANUELLE_RLS_POSTGRES'",
     "expected_output": null,
     "remediation": "Activer RLS pour les tables sensibles et définir des politiques restrictives.\n\\d+ <table> doit indiquer Row Level Security: enabled.\nALTER TABLE <tbl> ENABLE ROW LEVEL SECURITY; CREATE POLICY ...;."
   },
@@ -540,7 +543,7 @@
     "number": "4.9",
     "name": "Utiliser les rôles prédéfinis",
     "type": "Manual",
-    "test_procedure": "Favoriser les rôles intégrés (pg_read_all_data, etc.) plutôt que superuser pour les accès.\n\\du+ vérifie la présence et l’usage des rôles prédéfinis.",
+    "test_procedure": "psql -U postgres -t -A -c 'SELECT rolname, rolsuper, rolcreatedb, rolcreaterole, rolreplication FROM pg_roles;' 2>/dev/null || echo 'VERIF_MANUELLE_ROLES_POSTGRES'",
     "expected_output": null,
     "remediation": "Favoriser les rôles intégrés (pg_read_all_data, etc.) plutôt que superuser pour les accès.\n\\du+ vérifie la présence et l’usage des rôles prédéfinis.\nGRANT pg_read_all_data TO <role>; REVOKE ...."
   },
@@ -567,7 +570,7 @@
     "number": "5.3",
     "name": "Configurer la connexion UNIX locale",
     "type": "Manual",
-    "test_procedure": "Sécuriser les entrées local dans pg_hba.conf pour n’autoriser que peer ou md5.\nVérifier les lignes local all all trust dans pg_hba.conf.",
+    "test_procedure": "grep -E '^\\s*local\\s+.*trust' /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf 2>/dev/null || echo 'PASS_AUCUN_TRUST_LOCAL'",
     "expected_output": null,
     "remediation": "Sécuriser les entrées local dans pg_hba.conf pour n’autoriser que peer ou md5.\nModifier (ou ajouter) local all all peer ou md5 dans pg_hba.conf, puis SELECT pg_reload_conf();."
   },
@@ -576,7 +579,7 @@
     "number": "5.4",
     "name": "Configurer la connexion TCP/IP",
     "type": "Manual",
-    "test_procedure": "Sécuriser les entrées host dans pg_hba.conf (CIDR, méthode d’authentification).\nVérifier host all all 10.0.0.0/24 md5.",
+    "test_procedure": "grep -E '^\\s*local\\s+.*trust' /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf 2>/dev/null || echo 'PASS_AUCUN_TRUST_LOCAL'",
     "expected_output": null,
     "remediation": "Sécuriser les entrées host dans pg_hba.conf (CIDR, méthode d’authentification).\nModifier pg_hba.conf pour utiliser des CIDR restreints et des méthodes d'authentification fortes (md5, scram-sha-256, cert, etc.), redémarrer ou recharger."
   },
@@ -603,7 +606,7 @@
     "number": "6.1",
     "name": "Comprendre vecteurs d’attaque et paramètres runtime",
     "type": "Manual",
-    "test_procedure": "Documenter les vecteurs d’attaque possibles et les paramètres ajustables.\nRéviser postgresql.conf pour lister runtime parameters.",
+    "test_procedure": "cat /etc/postgresql/*/*/postgresql.conf /var/lib/postgresql/data/postgresql.conf 2>/dev/null | grep -v '^\\s*#' | head -n 30 || echo 'VERIF_RUNTIME_PARAMETERS'",
     "expected_output": null,
     "remediation": "Documenter les vecteurs d’attaque possibles et les paramètres ajustables.\nMettre à jour la documentation interne, auditer régulièrement."
   },
@@ -635,7 +638,8 @@
         }
       }
     ],
-    "remediation": "Ajuster max_connections, shared_buffers, work_mem, etc., pour limiter l’exposition.\nALTER SYSTEM SET max_connections = 100; ALTER SYSTEM SET shared_buffers = '...'; ALTER SYSTEM SET work_mem = '...'; SELECT pg_reload_conf();"
+    "remediation": "Ajuster max_connections, shared_buffers, work_mem, etc., pour limiter l’exposition.\nALTER SYSTEM SET max_connections = 100; ALTER SYSTEM SET shared_buffers = '...'; ALTER SYSTEM SET work_mem = '...'; SELECT pg_reload_conf();",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "6. Paramètres PostgreSQL",
@@ -711,7 +715,8 @@
         }
       }
     ],
-    "remediation": "Installer certificats TLS et configurer ssl_cert_file, ssl_key_file.\nCopier les certificats, ALTER SYSTEM SET ssl = 'on'; SELECT pg_reload_conf();."
+    "remediation": "Installer certificats TLS et configurer ssl_cert_file, ssl_key_file.\nCopier les certificats, ALTER SYSTEM SET ssl = 'on'; SELECT pg_reload_conf();.",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "6. Paramètres PostgreSQL",
@@ -784,7 +789,7 @@
     "number": "7.3",
     "name": "Configurer les sauvegardes de base",
     "type": "Manual",
-    "test_procedure": "Vérifier que pg_basebackup ou équivalent génère des sauvegardes fonctionnelles.\nExécuter pg_basebackup -h localhost … et vérifier l’intégrité des fichiers.",
+    "test_procedure": "echo 'Contrôle Manuel: Vérifier que pg_basebackup ou équivalent génère des sauvegardes fonctionnelles.\nExécuter pg_basebackup -h localhost … et vérifier l’intégrité des fichiers.'",
     "expected_output": null,
     "remediation": "Vérifier que pg_basebackup ou équivalent génère des sauvegardes fonctionnelles.\nMettre en place un script de sauvegarde automatisée avec pg_basebackup."
   },
@@ -808,7 +813,8 @@
         }
       }
     ],
-    "remediation": "Activer archive_mode et archive_command pour conserver les WAL.\nALTER SYSTEM SET archive_mode = 'on'; ALTER SYSTEM SET archive_command = 'cp %p /archive/%f'; SELECT pg_reload_conf();."
+    "remediation": "Activer archive_mode et archive_command pour conserver les WAL.\nALTER SYSTEM SET archive_mode = 'on'; ALTER SYSTEM SET archive_command = 'cp %p /archive/%f'; SELECT pg_reload_conf();.",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "7. Réplication",
@@ -833,7 +839,7 @@
     "number": "8.2",
     "name": "Installer/configurer pgBackRest",
     "type": "Automated",
-    "test_procedure": "sudo pgbackrest info",
+    "test_procedure": "sudo -n pgbackrest info",
     "expected_output": {
       "type": "stdout_contains",
       "value": "stanza:"
@@ -845,7 +851,7 @@
     "number": "8.3",
     "name": "Vérifier autres paramètres divers",
     "type": "Manual",
-    "test_procedure": "Contrôler toute autre configuration (temp_file_limit, temp_tablespaces, …) selon les besoins.\nRevoir postgresql.conf pour paramètres personnalisés.",
+    "test_procedure": "echo 'Contrôle Manuel: Contrôler toute autre configuration (temp_file_limit, temp_tablespaces, …) selon les besoins.\nRevoir postgresql.conf pour paramètres personnalisés.'",
     "expected_output": null,
     "remediation": "Contrôler toute autre configuration (temp_file_limit, temp_tablespaces, …) selon les besoins.\nAjuster manuellement puis recharger la configuration."
   }

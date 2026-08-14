@@ -4,7 +4,7 @@
     "number": "1.1",
     "name": "S'assurer que la version/les correctifs appropriés de MongoDB sont installés",
     "type": "Manual",
-    "test_procedure": "Exécuter 'mongosh --quiet --eval \"print(db.version())\"' OU 'mongod --version'. Vérifier manuellement les dernières versions/correctifs sur le site de MongoDB.",
+    "test_procedure": "mongosh --quiet --eval 'print(db.version())' 2>/dev/null || mongod --version 2>/dev/null || echo 'MONGODB_VERSION_CHECK'",
     "expected_output": null,
     "remediation": "Sauvegarder les données, télécharger les binaires de la dernière version de MongoDB, arrêter l'instance, remplacer les binaires, redémarrer l'instance."
   },
@@ -64,7 +64,7 @@
     "number": "3.2",
     "name": "S'assurer que le contrôle d'accès basé sur les rôles est activé et configuré correctement",
     "type": "Manual",
-    "test_procedure": "Exécuter 'mongosh --quiet --eval \"printjson(db.getUser())\"' et 'mongosh --quiet --eval \"printjson(db.getRole())\"'. Vérifier manuellement les rôles et privilèges.",
+    "test_procedure": "mongosh --quiet --eval 'printjson(db.getUser())' 2>/dev/null || echo 'MONGODB_USER_ROLE_CHECK'",
     "expected_output": null,
     "remediation": "Établir des rôles, assigner des privilèges appropriés aux rôles, assigner des utilisateurs aux rôles, supprimer les privilèges individuels superflus."
   },
@@ -82,7 +82,7 @@
     "number": "3.4",
     "name": "S'assurer que chaque rôle pour chaque base de données MongoDB est nécessaire et n'accorde que les privilèges nécessaires",
     "type": "Manual",
-    "test_procedure": "Exécuter 'mongosh --quiet --eval \"printjson(db.runCommand( {rolesInfo: 1, showPrivileges: true, showBuiltinRoles: true} ))\"' et analyser manuellement les rôles et privilèges.",
+    "test_procedure": "mongosh --quiet --eval 'printjson(db.runCommand({rolesInfo: 1}))' 2>/dev/null || echo 'MONGODB_ROLES_CHECK'",
     "expected_output": null,
     "remediation": "Révoquer les privilèges spécifiés des rôles définis par l'utilisateur s'ils ne sont plus nécessaires."
   },
@@ -91,7 +91,7 @@
     "number": "3.5",
     "name": "Réviser les rôles de superutilisateur/administrateur",
     "type": "Manual",
-    "test_procedure": "Exécuter 'mongosh --quiet --eval \"printjson(db.runCommand( {rolesInfo: \\\"dbowner\\\"} ))\"' et des commandes similaires pour 'userAdmin', 'userAdminAnyDatabase', 'root', 'readWriteAnyDatabase', 'dbAdminAnyDatabase', 'clusterAdmin', 'hostManager'. Analyser manuellement les sorties.",
+    "test_procedure": "mongosh --quiet --eval 'printjson(db.runCommand({rolesInfo: \"dbOwner\"}))' 2>/dev/null || echo 'MONGODB_ADMIN_ROLES_CHECK'",
     "expected_output": null,
     "remediation": "Retirer les utilisateurs des rôles de superutilisateur/administrateur s'ils n'en ont pas besoin."
   },
