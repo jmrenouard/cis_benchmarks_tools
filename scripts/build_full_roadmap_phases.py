@@ -1,4 +1,11 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.3.0)
+#!/usr/bin/env python3
+"""
+Regenerate ROADMAP.md with fully detailed Phase 10, Phase 11, and Phase 12 based on Sourcery AI reviews (100% PSL ONLY).
+"""
+
+import os
+
+ROADMAP_CONTENT = """# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.3.0)
 
 This document outlines the strategic roadmap, architecture principles, phase-level milestones, and task-level execution status for the CIS Benchmarks Tools suite.
 
@@ -238,3 +245,9 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Internationalisation i18n & documentation (PR #92, #94, #96)** : Traduction intégrale en anglais avec miroir français `README_fr.md` et support `--lang {en,fr}`.
 - [x] **Architecture modulaire & Graphiques SVG natifs (PR #103, #105, #108)** : Externalisation des règles JSON et moteur vectoriel 100% hors-ligne sans Chart.js.
 - [x] **Validation continue de la suite de tests** : 60/60 tests unitaires passés avec succès sous Python Standard Library uniquement (PR #131, #132).
+"""
+
+with open("ROADMAP.md", "w", encoding="utf-8") as f:
+    f.write(ROADMAP_CONTENT)
+
+print("✅ Successfully generated complete, professionally formatted ROADMAP.md with Phases 1 through 12!")
