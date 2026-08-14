@@ -26,10 +26,10 @@
     "number": "1.3",
     "name": "Activer le service systemd",
     "type": "Automated",
-    "test_procedure": "! find /home /root /var/lib/postgresql -maxdepth 3 -name .psql_history 2>/dev/null | grep -q .",
+    "test_procedure": "for h in /root /home/* /var/lib/postgresql; do [ -f \"$h/.psql_history\" ] && echo \"$h/.psql_history\"; done",
     "expected_output": {
       "type": "stdout_equals",
-      "value": "enabled"
+      "value": ""
     },
     "remediation": "systemctl enable postgresql@16-main || systemctl enable postgresql-16"
   },
@@ -140,7 +140,7 @@
     "number": "2.4",
     "name": "Ne pas stocker de mots de passe dans les fichiers de service",
     "type": "Automated",
-    "test_procedure": "find /etc/postgresql /var/lib/postgresql /home -name 'pg_service.conf' -exec grep -H password {} + 2>/dev/null || echo 'NO_PASSWORD_IN_SERVICE_CONF'",
+    "test_procedure": "find /etc/postgresql /var/lib/postgresql /home -name 'pg_service.conf' -exec grep -H password {} + || echo 'NO_PASSWORD_IN_SERVICE_CONF'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "NO_PASSWORD_IN_SERVICE_CONF"
@@ -485,7 +485,7 @@
     "number": "4.1",
     "name": "Désactiver la connexion interactive",
     "type": "Automated",
-    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'pg_hba.conf' -exec grep -E '^\\s*(local|host)\\s+.*trust' {} + 2>/dev/null || echo 'NO_TRUST_AUTH'",
+    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'pg_hba.conf' -exec grep -E '^\\s*(local|host)\\s+.*trust' {} + || echo 'NO_TRUST_AUTH'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "NO_TRUST_AUTH"
@@ -497,7 +497,7 @@
     "number": "4.2",
     "name": "Configurer sudo correctement",
     "type": "Automated",
-    "test_procedure": "grep -iE 'postgres|mysql|mariadb' /etc/sudoers /etc/sudoers.d/* 2>/dev/null || echo 'SUDO_CHECK_OK'",
+    "test_procedure": "grep -iE 'postgres|mysql|mariadb' /etc/sudoers /etc/sudoers.d/* || echo 'SUDO_CHECK_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -609,7 +609,7 @@
     "number": "5.3",
     "name": "Configurer la connexion UNIX locale",
     "type": "Automated",
-    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'pg_hba.conf' -exec grep -E '^\\s*(local|host)\\s+.*trust' {} + 2>/dev/null || echo 'NO_TRUST_AUTH'",
+    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'pg_hba.conf' -exec grep -E '^\\s*(local|host)\\s+.*trust' {} + || echo 'NO_TRUST_AUTH'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "NO_TRUST_AUTH"
@@ -621,7 +621,7 @@
     "number": "5.4",
     "name": "Configurer la connexion TCP/IP",
     "type": "Automated",
-    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'pg_hba.conf' -exec grep -E '^\\s*(local|host)\\s+.*trust' {} + 2>/dev/null || echo 'NO_TRUST_AUTH'",
+    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'pg_hba.conf' -exec grep -E '^\\s*(local|host)\\s+.*trust' {} + || echo 'NO_TRUST_AUTH'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "NO_TRUST_AUTH"
@@ -660,7 +660,7 @@
     "number": "6.1",
     "name": "Comprendre vecteurs d’attaque et paramètres runtime",
     "type": "Automated",
-    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'postgresql.conf' -exec head -n 30 {} + 2>/dev/null || echo 'POSTGRESQL_CONF_PRESENT'",
+    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'postgresql.conf' -exec head -n 30 {} + || echo 'POSTGRESQL_CONF_PRESENT'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -855,7 +855,7 @@
     "number": "7.3",
     "name": "Configurer les sauvegardes de base",
     "type": "Automated",
-    "test_procedure": "ls -la /var/lib/postgresql/data/base /var/lib/postgresql/backups 2>/dev/null || echo 'BACKUP_DIR_EXISTS'",
+    "test_procedure": "ls -la /var/lib/postgresql/data/base /var/lib/postgresql/backups || echo 'BACKUP_DIR_EXISTS'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
