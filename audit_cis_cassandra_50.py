@@ -33,7 +33,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "stdout_regex_match", "pattern": r"Python 3\.\d+"},
      "remediation": "Mettre à jour Python vers la dernière version 3.x."},
     {"category": "1 Installation et Mises à jour", "number": "1.4", "name": "S'assurer que la dernière version de Cassandra est installée", "type": "Automated",
-     "test_procedure": "cassandra -v 2>/dev/null || nodetool version 2>/dev/null",
+     "test_procedure": "cassandra -v || nodetool version",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"4\.0\.\d+"},
      "remediation": "Mettre à jour Cassandra vers la dernière version 5.0.x."},
     {"category": "1 Installation et Mises à jour", "number": "1.5", "name": "S'assurer que le service Cassandra est exécuté en tant qu'utilisateur non-root", "type": "Automated",
@@ -41,7 +41,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "stdout_not_equals", "value": "root"},
      "remediation": "Configurer le service Cassandra pour qu'il s'exécute sous un utilisateur dédié (ex: 'cassandra')."},
     {"category": "1 Installation et Mises à jour", "number": "1.6", "name": "S'assurer que les horloges sont synchronisées sur tous les nœuds", "type": "Manual",
-     "test_procedure": "timedatectl status 2>/dev/null | grep 'synchronized' || ntpstat 2>/dev/null || chronyc tracking 2>/dev/null",
+     "test_procedure": "timedatectl status | grep 'synchronized' || ntpstat || chronyc tracking",
      "expected_output": None,
      "remediation": "Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.",
      "manual_steps": ["Vérifier que NTP/chrony est installé.", "Vérifier que la synchronisation est active.", "S'assurer que tous les nœuds utilisent la même source."]},
@@ -58,7 +58,7 @@ RECOMMENDATIONS_DATA = [
 
     # Category 3: Contrôle d'accès / Politiques de mots de passe
     {"category": "3 Contrôle d'accès", "number": "3.1", "name": "S'assurer que les rôles cassandra et superuser sont séparés", "type": "Automated",
-     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" 2>/dev/null | grep -v 'cassandra' | grep -c 'True'",
+     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" | grep -v 'cassandra' | grep -c 'True'",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"[1-9]\d*"},
      "remediation": "Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH SUPERUSER = false;"},
     {"category": "3 Contrôle d'accès", "number": "3.2", "name": "S'assurer que le mot de passe par défaut du rôle cassandra est changé", "type": "Automated",
@@ -66,7 +66,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "stdout_regex_match", "pattern": r"[1-9]"},
      "remediation": "Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = '<nouveau_mot_de_passe>';"},
     {"category": "3 Contrôle d'accès", "number": "3.3", "name": "S'assurer qu'il n'y a pas de rôles ou privilèges excessifs", "type": "Manual",
-     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" 2>/dev/null",
+     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\"",
      "expected_output": None,
      "remediation": "Révoquer les rôles et privilèges inutiles. Utiliser REVOKE et DROP ROLE.",
      "manual_steps": ["Lister tous les rôles (LIST ROLES;).", "Identifier les rôles avec des privilèges excessifs.", "Révoquer les privilèges non nécessaires."]},
@@ -85,19 +85,19 @@ RECOMMENDATIONS_DATA = [
      "remediation": "Configurer l'autorisation par Data Center si nécessaire.",
      "manual_steps": ["Vérifier la configuration de l'authorizer.", "Vérifier les permissions par DC."]},
     {"category": "3 Contrôle d'accès", "number": "3.7", "name": "Réviser les rôles définis par l'utilisateur", "type": "Manual",
-     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" 2>/dev/null",
+     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\"",
      "expected_output": None,
      "remediation": "Supprimer les rôles inutiles et révoquer les privilèges excessifs.",
      "manual_steps": ["Lister les rôles avec LIST ROLES;.", "Identifier les rôles personnalisés.", "Vérifier les privilèges de chaque rôle."]},
     {"category": "3 Contrôle d'accès", "number": "3.8", "name": "Réviser les rôles superuser/administrateur", "type": "Manual",
-     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" 2>/dev/null | grep 'True'",
+     "test_procedure": f"{CQLSH_CMD} \"LIST ROLES;\" | grep 'True'",
      "expected_output": None,
      "remediation": "Limiter le nombre de rôles superuser au strict nécessaire.",
      "manual_steps": ["Lister les rôles superuser.", "Vérifier que chaque rôle superuser est justifié.", "Révoquer le privilège superuser si non nécessaire."]},
 
     # Category 4: Audit et Journalisation
     {"category": "4 Audit et Journalisation", "number": "4.1", "name": "S'assurer que la journalisation est activée", "type": "Automated",
-     "test_procedure": "ls -la /var/log/cassandra/system.log 2>/dev/null || ls -la /opt/cassandra/logs/system.log 2>/dev/null",
+     "test_procedure": "ls -la /var/log/cassandra/system.log || ls -la /opt/cassandra/logs/system.log",
      "expected_output": {"type": "stdout_not_empty"},
      "remediation": "Vérifier que la journalisation est configurée dans logback.xml et que les fichiers de log existent."},
     {"category": "4 Audit et Journalisation", "number": "4.2", "name": "S'assurer que l'audit est activé", "type": "Manual",
@@ -355,7 +355,7 @@ def detect_execution_context(mode="local", remote_host=None, docker_container=No
 
     if not active_container and product_hint:
         try:
-            cmd = "docker ps --format '{{.Names}}' 2>/dev/null"
+            cmd = "docker ps --format '{{.Names}}'"
             stdout, stderr, ret = run_command(cmd, remote_host=remote_host)
             if ret == 0 and stdout:
                 for line in stdout.splitlines():
@@ -396,7 +396,7 @@ def detect_docker_container(remote_host=None, docker_name=None):
     """Detect active Cassandra Docker container name."""
     if docker_name:
         return docker_name
-    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' 2>/dev/null | grep -iE 'cassandra' | head -n 1", remote_host=remote_host)
+    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' | grep -iE 'cassandra' | head -n 1", remote_host=remote_host)
     if ret == 0 and stdout:
         return stdout.strip()
     return None
@@ -455,7 +455,7 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
                 command = f"docker exec -i {env_flags} {docker_container} /bin/bash -c {json.dumps(command)}".replace("  ", " ")
             elif "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
                 if "cassandra" in command:
-                    command = "nodetool status 2>/dev/null || ps aux | grep -v grep | grep cassandra"
+                    command = "nodetool status || ps aux | grep -v grep | grep cassandra"
             cmd_args = ["/bin/bash", "-c", command]
         else:
             cmd_args = list(command)
