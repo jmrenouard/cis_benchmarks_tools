@@ -249,7 +249,7 @@ RECOMMENDATIONS_DATA = [
         "level": 1,
         "description": "Disallow direct SSH login as root user.",
         "rationale": "Direct root logins prevent auditing user accountability.",
-        "audit": "sshd -T 2>/dev/null | grep -i '^permitrootlogin'",
+        "audit": "sshd -T | grep -i '^permitrootlogin'",
         "remediation": "Set 'PermitRootLogin no' in /etc/ssh/sshd_config",
         "condition": {"type": "stdout_contains", "value": "permitrootlogin no"}
     },
@@ -262,7 +262,7 @@ RECOMMENDATIONS_DATA = [
         "level": 1,
         "description": "Disallow accounts with empty passwords via SSH.",
         "rationale": "Authentication must require a valid password or key.",
-        "audit": "sshd -T 2>/dev/null | grep -i '^permitemptypasswords'",
+        "audit": "sshd -T | grep -i '^permitemptypasswords'",
         "remediation": "Set 'PermitEmptyPasswords no' in /etc/ssh/sshd_config",
         "condition": {"type": "stdout_contains", "value": "permitemptypasswords no"}
     },
@@ -275,7 +275,7 @@ RECOMMENDATIONS_DATA = [
         "level": 1,
         "description": "Use SHA-512 for password hashing in PAM.",
         "rationale": "SHA-512 provides strong cryptographic protection for password hashes.",
-        "audit": "authselect current 2>/dev/null | grep sha512",
+        "audit": "authselect current | grep sha512",
         "remediation": "Configure authselect with sha512 option.",
         "condition": {"type": "stdout_contains", "value": "sha512"}
     }
@@ -541,7 +541,7 @@ def run_command(command, remote_host=None):
                 if "postgresql" in command:
                     command = "pg_isready -h localhost -p 5432 || ps aux | grep -v grep | grep postgres"
                 elif "mariadb" in command or "mysql" in command:
-                    command = "mariadb -e 'SELECT 1;' 2>/dev/null || mysql -e 'SELECT 1;' 2>/dev/null || ps aux | grep -v grep | grep mysqld"
+                    command = "mariadb -e 'SELECT 1;' || mysql -e 'SELECT 1;' || ps aux | grep -v grep | grep mysqld"
             cmd_args = ["/bin/bash", "-c", command]
         else:
             cmd_args = list(command)
