@@ -12,7 +12,7 @@ import html # Pour échapper les caractères spéciaux HTML
 # Par exemple, ajoute -u <user> -p<password> ou utilise mysql_config_editor
 # Pour l'instant, on suppose que la connexion fonctionne sans mot de passe
 # ou via un fichier de configuration (ex: /root/.my.cnf)
-MYSQL_CMD = "mysql -N -B 2>/dev/null || mariadb -N -B" # -N: skip headers, -B: batch mode (tab separated)
+MYSQL_CMD = "mysql -N -B || mariadb -N -B" # -N: skip headers, -B: batch mode (tab separated)
 
 # --- Structure des Recommandations (Adaptée pour MySQL Enterprise 8.4) ---
 # Basée sur le PDF "CIS MySQL Enterprise 8.4 Benchmark – Tableau récapitulatif complet.pdf"
@@ -20,14 +20,14 @@ RECOMMENDATIONS_DATA = [
     # Category 1: Configuration Système d'exploitation
     {"category": "1. Configuration Système d'exploitation", "number": "1.1", "name": "Placer les bases de données sur des partitions non-système", "type": "Automated", "path_command": f"{MYSQL_CMD} -e \"SELECT @@datadir;\"", "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'", "expected_output": {"type": "stdout_not_equals", "value": "/"}, "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.2", "name": "Utiliser un compte dédié et privilégié minimal pour MySQL", "type": "Automated", "test_procedure": "ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep | awk '{print $1}' | head -n 1", "expected_output": {"type": "stdout_equals", "value": "mysql"}, "remediation": "Configurer le service MySQL pour qu'il s'exécute sous un utilisateur dédié (ex: 'mysql') avec les privilèges minimaux."},
-    {"category": "1. Configuration Système d'exploitation", "number": "1.3", "name": "Désactiver l'historique des commandes MySQL", "type": "Automated", "test_procedure": "! find /home /root -name .mysql_history -print -quit 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE."},
+    {"category": "1. Configuration Système d'exploitation", "number": "1.3", "name": "Désactiver l'historique des commandes MySQL", "type": "Automated", "test_procedure": "! find /home /root -name .mysql_history -print -quit", "expected_output": {"type": "returncode_zero"}, "remediation": "Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.4", "name": "Vérifier que MYSQL_PWD n'est pas utilisé", "type": "Automated", "test_procedure": "! grep -qs MYSQL_PWD /proc/*/environ", "expected_output": {"type": "returncode_zero"}, "remediation": "Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifiée."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.5", "name": "Désactiver l'accès interactif pour l'utilisateur MySQL", "type": "Automated", "test_procedure": "getent passwd mysql | cut -d: -f7", "expected_output": {"type": "stdout_contains_any", "values": ["/bin/false", "/sbin/nologin"]}, "remediation": "Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql)."},
-    {"category": "1. Configuration Système d'exploitation", "number": "1.6", "name": "Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs", "type": "Automated", "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD."},
+    {"category": "1. Configuration Système d'exploitation", "number": "1.6", "name": "Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs", "type": "Automated", "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment", "expected_output": {"type": "returncode_zero"}, "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD."},
     {"category": "1. Configuration Système d'exploitation", "number": "1.7", "name": "Exécuter MySQL dans un environnement sandbox", "type": "Automated", "test_procedure": "[[ -f /.dockerenv ]] && echo 'DOCKER' || echo 'NOT_SANDBOX'", "expected_output": {"type": "stdout_equals", "value": "DOCKER"}, "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur spécifique, ou déployer MySQL sous Docker."},
 
     # Category 2: Installation et Planification
-    {"category": "2. Installation et Planification", "number": "2.1.1", "name": "Politique de sauvegarde en place", "type": "Automated", "test_procedure": "crontab -l 2>/dev/null | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques."},
+    {"category": "2. Installation et Planification", "number": "2.1.1", "name": "Politique de sauvegarde en place", "type": "Automated", "test_procedure": "crontab -l | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep", "expected_output": {"type": "stdout_not_empty"}, "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques."},
     {"category": "2. Installation et Planification", "number": "2.1.2", "name": "Validation des sauvegardes", "type": "Manual", "test_procedure": "Analyser les rapports de tests de restauration.", "expected_output": None, "remediation": "Planifier et documenter les tests de restauration périodiques.", "manual_steps": ["Identifier les fichiers de sauvegarde récents.", "Restaurer une base de test à partir de ces fichiers.", "Vérifier l'intégrité des données.", "Documenter la date et le résultat du test."]},
     {"category": "2. Installation et Planification", "number": "2.1.3", "name": "Sécuriser les identifiants de sauvegarde", "type": "Manual", "test_procedure": "Inspecter les permissions des fichiers contenant les credentials de sauvegarde.", "expected_output": None, "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.", "manual_steps": ["Rechercher les scripts de sauvegarde.", "Vérifier si les mots de passe sont en clair.", "S'assurer que les fichiers de config (.my.cnf) ont des droits 600.", "Utiliser mysql_config_editor."]},
     {"category": "2. Installation et Planification", "number": "2.1.4", "name": "Sécuriser les fichiers de sauvegarde", "type": "Manual", "test_procedure": "Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.", "expected_output": None, "remediation": "Utiliser l'option --encrypt-password de MySQL Enterprise Backup ou une méthode de chiffrement équivalente.", "manual_steps": ["Localiser le stockage des sauvegardes.", "Vérifier les ACLs.", "Confirmer que les fichiers sont chiffrés au repos (AES-256/GPG)."]},
@@ -85,7 +85,7 @@ RECOMMENDATIONS_DATA = [
 
     # Category 7 - Authentification
     {"category": "7. Authentification", "number": "7.1", "name": "Plugin d'authentification sûr (caching_sha2_password)", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@default_authentication_plugin;\"", "expected_output": {"type": "stdout_equals", "value": "caching_sha2_password"}, "remediation": "Définir default_authentication_plugin=caching_sha2_password dans my.cnf et migrer les comptes existants."},
-    {"category": "7. Authentification", "number": "7.2", "name": "Aucun mot de passe dans le my.cnf global", "type": "Automated", "test_procedure": "! grep -riE \"password|pwd|pass\" /etc/my.cnf /etc/mysql/ 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Utiliser mysql_config_editor ou des fichiers .my.cnf privés avec permissions restreintes."},
+    {"category": "7. Authentification", "number": "7.2", "name": "Aucun mot de passe dans le my.cnf global", "type": "Automated", "test_procedure": "! grep -riE \"password|pwd|pass\" /etc/my.cnf /etc/mysql/", "expected_output": {"type": "returncode_zero"}, "remediation": "Utiliser mysql_config_editor ou des fichiers .my.cnf privés avec permissions restreintes."},
     {"category": "7. Authentification", "number": "7.3", "name": "Tous les comptes ont un mot de passe", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT user, host FROM mysql.user WHERE authentication_string = '' OR plugin='mysql_no_login';\"", "expected_output": {"type": "stdout_is_empty"}, "remediation": "ALTER USER '<user>'@'<host>' IDENTIFIED BY '<password>'; ou utiliser mysql_secure_installation."},
     {"category": "7. Authentification", "number": "7.4", "name": "Expiration annuelle des mots de passe", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SELECT @@default_password_lifetime;\"", "expected_output": {"type": "stdout_is_numeric_less_equal", "value": 365}, "remediation": "SET PERSIST default_password_lifetime=365;"},
     {"category": "7. Authentification", "number": "7.5", "name": "Politique de complexité forte", "type": "Automated", "test_procedure": f"{MYSQL_CMD} -e \"SHOW VARIABLES LIKE 'validate_password.policy';\"", "expected_output": {"type": "stdout_regex_match", "pattern": r"(MEDIUM|STRONG)"}, "remediation": "Installer et configurer component_validate_password avec une politique forte (ex: validate_password.policy=STRONG)."},
@@ -478,7 +478,7 @@ def detect_execution_context(mode="local", remote_host=None, docker_container=No
 
     if not active_container and product_hint:
         try:
-            cmd = "docker ps --format '{{.Names}}' 2>/dev/null"
+            cmd = "docker ps --format '{{.Names}}'"
             stdout, stderr, ret = run_command(cmd, remote_host=remote_host)
             if ret == 0 and stdout:
                 for line in stdout.splitlines():
@@ -519,7 +519,7 @@ def detect_docker_container(remote_host=None, docker_name=None):
     """Detect active MySQL Docker container name."""
     if docker_name:
         return docker_name
-    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' 2>/dev/null | grep -iE 'mysql|mariadb' | head -n 1", remote_host=remote_host)
+    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' | grep -iE 'mysql|mariadb' | head -n 1", remote_host=remote_host)
     if ret == 0 and stdout:
         return stdout.strip()
     return None
@@ -578,7 +578,7 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
                 command = f"docker exec -i {env_flags} {docker_container} /bin/bash -c {json.dumps(command)}".replace("  ", " ")
             elif "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
                 if "mysql" in command or "mariadb" in command:
-                    command = "mysql -e 'SELECT 1;' 2>/dev/null || mariadb -e 'SELECT 1;' 2>/dev/null || ps aux | grep -v grep | grep mysqld"
+                    command = "mysql -e 'SELECT 1;' || mariadb -e 'SELECT 1;' || ps aux | grep -v grep | grep mysqld"
             cmd_args = ["/bin/bash", "-c", command]
         else:
             cmd_args = list(command)
@@ -726,12 +726,12 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     path_cmd = rec["path_command"]
                     path_cmd_to_run = path_cmd
                     if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
-                        path_cmd_to_run = f"{path_cmd} 2>/dev/null || mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo -n mysql -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo -n mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null"
+                        path_cmd_to_run = f"{path_cmd} || mariadb -N -B -e \"SELECT @@datadir;\" || sudo -n mysql -N -B -e \"SELECT @@datadir;\" || sudo -n mariadb -N -B -e \"SELECT @@datadir;\""
                     
                     path_stdout, path_stderr, path_returncode = run_command(path_cmd_to_run, remote_host=remote_host)
 
                     if (path_returncode != 0 or not path_stdout) and "datadir" in path_cmd:
-                        fb_stdout, fb_stderr, fb_ret = run_command("ls -d /var/lib/mariadb /var/lib/mysql 2>/dev/null | head -n 1", remote_host=remote_host)
+                        fb_stdout, fb_stderr, fb_ret = run_command("ls -d /var/lib/mariadb /var/lib/mysql | head -n 1", remote_host=remote_host)
                         if fb_ret == 0 and fb_stdout:
                             path_stdout = fb_stdout.strip()
                             path_returncode = 0
