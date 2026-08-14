@@ -556,12 +556,34 @@ def is_valid_executable_command(cmd_str):
     return False
 
 
-def run_command(command, remote_host=None, docker_container=None):
+def run_command(command, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None):
     """Execute command safely locally, over SSH, or inside Docker container (PSL ONLY)."""
     try:
+        env = os.environ.copy()
+        docker_env = []
+        if db_password:
+            env["MYSQL_PWD"] = str(db_password)
+            env["PGPASSWORD"] = str(db_password)
+            docker_env.extend(["-e", f"MYSQL_PWD={db_password}", "-e", f"PGPASSWORD={db_password}"])
+        if db_user:
+            env["MYSQL_USER"] = str(db_user)
+            env["PGUSER"] = str(db_user)
+            docker_env.extend(["-e", f"MYSQL_USER={db_user}", "-e", f"PGUSER={db_user}"])
+        if db_host:
+            env["MYSQL_HOST"] = str(db_host)
+            env["PGHOST"] = str(db_host)
+            docker_env.extend(["-e", f"MYSQL_HOST={db_host}", "-e", f"PGHOST={db_host}"])
+        if db_port:
+            env["MYSQL_TCP_PORT"] = str(db_port)
+            env["PGPORT"] = str(db_port)
+            docker_env.extend(["-e", f"MYSQL_TCP_PORT={db_port}", "-e", f"PGPORT={db_port}"])
+        if db_name:
+            env["PGDATABASE"] = str(db_name)
+            docker_env.extend(["-e", f"PGDATABASE={db_name}"])
         if isinstance(command, str):
             if docker_container and not command.startswith("docker exec"):
-                command = f"docker exec -i {docker_container} /bin/bash -c {json.dumps(command)}"
+                env_flags = " ".join(docker_env) if docker_env else ""
+                command = f"docker exec -i {env_flags} {docker_container} /bin/bash -c {json.dumps(command)}".replace("  ", " ")
             elif "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
                 if "mysql" in command or "mariadb" in command:
                     command = "mysql -e 'SELECT 1;' 2>/dev/null || mariadb -e 'SELECT 1;' 2>/dev/null || ps aux | grep -v grep | grep mysqld"
@@ -572,7 +594,7 @@ def run_command(command, remote_host=None, docker_container=None):
         if remote_host:
             cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
 
-        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10)
+        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10, env=env)
         stdout_text = process.stdout.strip()
         stderr_text = process.stderr.strip()
 
@@ -595,7 +617,11 @@ def run_command(command, remote_host=None, docker_container=None):
 def evaluate_condition(condition, stdout, stderr, returncode):
     """Évalue si le résultat de la commande correspond à la condition attendue."""
     if not condition:
-        return False # Aucune condition définie
+        return False
+    if stdout is None:
+        stdout = ""
+    if stderr is None:
+        stderr = "" # Aucune condition définie
 
     condition_type = condition.get("type")
     expected_value = condition.get("value")
@@ -659,7 +685,7 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     print(f"WARN: Unknown condition type '{condition_type}'")
     return False
 
-def perform_checks(recommendations, remote_host=None, docker_container=None):
+def perform_checks(recommendations, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None):
     """Exécute tous les contrôles et stocke les résultats."""
     results = {}
     stored_outputs = {} # Store outputs globally for potential cross-check references (if needed later)
@@ -690,7 +716,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None):
 
         if rec["type"] == "Automated":
             # Check pre-condition if defined
-            if "pre_condition" in rec:
+            if rec.get("pre_condition"):
                 pc_stdout, pc_stderr, pc_returncode = run_command(rec["pre_condition"])
                 if pc_returncode != 0 or not pc_stdout or pc_stdout == "0":
                     check_result["status"] = "Not Applicable"
@@ -704,7 +730,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None):
         if should_run:
             try:
                 # Handle checks that require getting a dynamic path first
-                if "path_command" in rec:
+                if rec.get("path_command"):
                     path_cmd = rec["path_command"]
                     path_cmd_to_run = path_cmd
                     if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
@@ -732,7 +758,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None):
                     dynamic_path = path_stdout.strip()
                     stored_outputs[check_number + "_path"] = dynamic_path
 
-                    if "test_procedure_template" in rec:
+                    if rec.get("test_procedure_template"):
                         cmd_to_run = rec["test_procedure_template"].format(path=dynamic_path)
                         command_executed_display = cmd_to_run
                 elif "test_procedure" in rec:
@@ -783,7 +809,20 @@ def perform_checks(recommendations, remote_host=None, docker_container=None):
                     # 3. Manual Checks (when command executed without execution errors)
                     if rec["type"] == "Manual":
                         check_result["status"] = "Manual"
-                        check_result["output"] = "This control requires manual verification." + chr(10) + chr(10) + "Résultat de l'extraction automatique pour aide:" + chr(10) + check_result["output"]
+                        tp = rec.get("test_procedure", "").strip()
+                        if tp and is_valid_executable_command(tp):
+                            diag_out, diag_err, diag_ret = run_command(
+                                tp, remote_host=remote_host, docker_container=docker_container,
+                                db_user=db_user, db_password=db_password, db_host=db_host,
+                                db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
+                            )
+                            diag_disp = diag_out if diag_out else (diag_err or "")
+                            if diag_disp:
+                                check_result["output"] = f"--- [Contrôle Manuel - Diagnostic Système] ---\nCommande: {tp}\n\nRésultat capturé:\n{diag_disp}\n\nNote: L'auditeur doit valider la conformité selon la politique de sécurité de l'organisation."
+                            else:
+                                check_result["output"] = f"--- [Contrôle Manuel - Diagnostic Système] ---\nCommande: {tp}\n\n(Aucune sortie retournée)\n\nNote: L'auditeur doit valider la conformité selon la politique de sécurité de l'organisation."
+                        else:
+                            check_result["output"] = "This control requires manual verification.\nConsulter la politique de sécurité et les procédures organisationnelles."
                         results[category].append(check_result)
                         continue
 
@@ -1181,21 +1220,27 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
 
 # --- Main Execution ---
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="CIS Audit Benchmark (Local & SSH Remote Modes)")
-    parser.add_argument("--docker", "--container", dest="docker_container", default=None, help="Target Docker container name or ID")
+    parser = argparse.ArgumentParser(
+        description="CIS Audit Benchmark (Local & SSH Remote Modes)",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("-c", "--docker", "--container", dest="docker_container", default=None, help="Target Docker container name or ID")
     parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
     parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
     parser.add_argument("--ssh-port", type=int, default=22, help="SSH port for remote execution (default: 22)")
-    parser.add_argument("--ssh-key", default=None, help="Path to SSH private key file")
+    parser.add_argument("-i", "--ssh-key", dest="ssh_key", default=None, help="Path to SSH private key file")
     parser.add_argument("--sudo", action="store_true", help="Execute remote/local commands with sudo privileges")
-    parser.add_argument("--db-host", "--host", dest="db_host", default="localhost", help="Database host address (default: localhost)")
-    parser.add_argument("--db-port", "--port", dest="db_port", type=int, default=None, help="Database port number")
-    parser.add_argument("--db-user", "--user", dest="db_user", default=None, help="Database username")
-    parser.add_argument("--db-password", "--password", dest="db_password", default=None, help="Database password")
+    parser.add_argument("-H", "--host", "--db-host", dest="db_host", default="localhost", help="Database host address (default: localhost)")
+    parser.add_argument("-P", "--port", "--db-port", dest="db_port", type=int, default=None, help="Database port number")
+    parser.add_argument("-u", "--user", "--db-user", dest="db_user", default=None, help="Database username")
+    parser.add_argument("-p", "--password", "--db-password", dest="db_password", default=None, help="Database password")
+    parser.add_argument("-D", "-d", "--database", "--db-name", dest="db_name", default=None, help="Database name")
+    parser.add_argument("--defaults-file", "--config-file", dest="defaults_file", default=None, help="Path to database option/configuration file (.my.cnf, .pgpass, cqlshrc)")
+    parser.add_argument("--auth-db", dest="auth_db", default=None, help="Authentication database (MongoDB)")
     parser.add_argument("--local", action="store_true", help="Force local audit execution mode")
-    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format")
+    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
     parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Report language choice (en/fr)")
-    parser.add_argument("-o", "--output", default=None, help="Custom output report file path")
+    parser.add_argument("-o", "--output", dest="output", default=None, help="Custom output report file path")
     args = parser.parse_args()
 
     remote_target = None
