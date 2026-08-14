@@ -26,7 +26,7 @@
     "number": "1.3",
     "name": "Activer le service systemd",
     "type": "Automated",
-    "test_procedure": "systemctl is-enabled postgresql@16-main.service || systemctl is-enabled postgresql-16.service",
+    "test_procedure": "! find /home /root /var/lib/postgresql -maxdepth 3 -name .psql_history 2>/dev/null | grep -q .",
     "expected_output": {
       "type": "stdout_equals",
       "value": "enabled"
