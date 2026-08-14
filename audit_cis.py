@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unified CIS Benchmark Audit Engine v2.3.2
+Unified CIS Benchmark Audit Engine v2.4.1
 Automated security audit suite for databases and Linux operating systems (Local & SSH Remote Modes).
 100% Python Standard Library (PSL ONLY).
 """
@@ -12,7 +12,7 @@ import os
 import subprocess
 import sys
 
-__version__ = "2.3.2"
+__version__ = "2.4.1"
 
 TARGET_MAP = {
     "mariadb106": ("audit_cis_mariadb_106.py", "MariaDB 10.6", 74),
@@ -46,8 +46,8 @@ def list_targets():
     print()
 
 
-def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="local", remote_host=None, ssh_port=22, ssh_key=None, db_host=None, db_port=None, db_user=None, db_password=None, use_sudo=False):
-    """Run audit for a single target in Local or SSH Remote mode."""
+def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="local", remote_host=None, ssh_port=22, ssh_key=None, docker_container=None, db_host=None, db_port=None, db_user=None, db_password=None, db_name=None, defaults_file=None, auth_db=None, use_sudo=False):
+    """Run audit for a single target in Local, SSH Remote, or Docker mode."""
     if target_key not in TARGET_MAP:
         print(f"❌ Unknown target '{target_key}'. Use --list-targets to view valid keys.", file=sys.stderr)
         return False
@@ -60,10 +60,14 @@ def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="
         return False
 
     mode_label = f"SSH Remote Mode ({remote_host})" if (mode == "ssh" or remote_host) else "Local Mode"
+    if docker_container:
+        mode_label += f" [Docker: {docker_container}]"
     print(f"\n🚀 [v{__version__}] Running CIS Audit for {label} [{mode_label}] ({count} controls, {script_file})...")
     start_time = datetime.datetime.now()
 
     cmd = [sys.executable, script_path, "--format", fmt, "--lang", lang, "--mode", mode]
+    if docker_container:
+        cmd.extend(["--docker", docker_container])
     if remote_host:
         cmd.extend(["--remote", remote_host])
     if ssh_port and int(ssh_port) != 22:
@@ -78,6 +82,12 @@ def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="
         cmd.extend(["--db-user", db_user])
     if db_password:
         cmd.extend(["--db-password", db_password])
+    if db_name:
+        cmd.extend(["--db-name", db_name])
+    if defaults_file:
+        cmd.extend(["--defaults-file", defaults_file])
+    if auth_db:
+        cmd.extend(["--auth-db", auth_db])
     if use_sudo:
         cmd.append("--sudo")
     if output_file:
@@ -125,23 +135,27 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("-t", "--target", choices=list(TARGET_MAP.keys()), help="Target database benchmark to audit")
+    parser.add_argument("-c", "--docker", "--container", dest="docker_container", default=None, help="Target Docker container name or ID")
     parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
     parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
     parser.add_argument("--ssh-port", type=int, default=22, help="SSH port for remote execution (default: 22)")
-    parser.add_argument("--ssh-key", default=None, help="Path to SSH private key file")
+    parser.add_argument("-i", "--ssh-key", dest="ssh_key", default=None, help="Path to SSH private key file")
     parser.add_argument("--sudo", action="store_true", help="Execute remote/local commands with sudo privileges")
-    parser.add_argument("--db-host", "--host", dest="db_host", default="localhost", help="Database host address (default: localhost)")
-    parser.add_argument("--db-port", "--port", dest="db_port", type=int, default=None, help="Database port number")
-    parser.add_argument("--db-user", "--user", dest="db_user", default=None, help="Database username")
-    parser.add_argument("--db-password", "--password", dest="db_password", default=None, help="Database password")
+    parser.add_argument("-H", "--host", "--db-host", dest="db_host", default="localhost", help="Database host address (default: localhost)")
+    parser.add_argument("-P", "--port", "--db-port", dest="db_port", type=int, default=None, help="Database port number")
+    parser.add_argument("-u", "--user", "--db-user", dest="db_user", default=None, help="Database username")
+    parser.add_argument("-p", "--password", "--db-password", dest="db_password", default=None, help="Database password")
+    parser.add_argument("-D", "-d", "--database", "--db-name", dest="db_name", default=None, help="Database name")
+    parser.add_argument("--defaults-file", "--config-file", dest="defaults_file", default=None, help="Path to database option/configuration file (.my.cnf, .pgpass, cqlshrc)")
+    parser.add_argument("--auth-db", dest="auth_db", default=None, help="Authentication database (MongoDB)")
     parser.add_argument("--local", action="store_true", help="Force local audit execution mode")
     parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
-    parser.add_argument("--lang", choices=["en", "fr"], default="en", help="Language for report and CLI output (en/fr)")
-    parser.add_argument("-l", "--list-targets", action="store_true", help="List all supported database targets")
-    parser.add_argument("-a", "--all", action="store_true", help="Run CIS audits for ALL targets sequentially")
-    parser.add_argument("-d", "--auto-detect", action="store_true", help="Auto-detect running database containers and execute audits")
-    parser.add_argument("-o", "--output-html", help="Path to save custom report")
+    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Language for report and CLI output (en/fr)")
+    parser.add_argument("-o", "--output", dest="output", default=None, help="Path to save report output")
     parser.add_argument("-j", "--output-json", help="Path to save JSON summary report")
+    parser.add_argument("--list-targets", action="store_true", help="List all supported database targets")
+    parser.add_argument("-a", "--all", action="store_true", help="Run CIS audits for ALL targets sequentially")
+    parser.add_argument("--auto-detect", action="store_true", help="Auto-detect running database containers and execute audits")
     parser.add_argument("-v", "--version", action="version", version=f"CIS Benchmarks Suite v{__version__}")
 
     args = parser.parse_args()
@@ -160,15 +174,15 @@ def main():
         print(f"🌟 [v{__version__}] Executing CIS Audit for ALL targets [Mode: {exec_mode}]...")
         success_count = 0
         for target_key in TARGET_MAP:
-            if run_single_audit(target_key, fmt=args.format, lang=args.lang, mode=exec_mode, remote_host=args.remote_host, ssh_port=args.ssh_port, ssh_key=args.ssh_key, db_host=args.db_host, db_port=args.db_port, db_user=args.db_user, db_password=args.db_password, use_sudo=args.sudo):
+            if run_single_audit(target_key, fmt=args.format, lang=args.lang, mode=exec_mode, remote_host=args.remote_host, ssh_port=args.ssh_port, ssh_key=args.ssh_key, docker_container=args.docker_container, db_host=args.db_host, db_port=args.db_port, db_user=args.db_user, db_password=args.db_password, db_name=args.db_name, defaults_file=args.defaults_file, auth_db=args.auth_db, use_sudo=args.sudo):
                 success_count += 1
         print(f"\n🎉 Completed: {success_count}/{len(TARGET_MAP)} CIS audits succeeded.")
         sys.exit(0 if success_count == len(TARGET_MAP) else 1)
 
     if args.target:
-        out = args.output_html or args.output_json
-        fmt = "json" if args.output_json and not args.output_html else args.format
-        success = run_single_audit(args.target, output_file=out, fmt=fmt, lang=args.lang, mode=exec_mode, remote_host=args.remote_host, ssh_port=args.ssh_port, ssh_key=args.ssh_key, db_host=args.db_host, db_port=args.db_port, db_user=args.db_user, db_password=args.db_password, use_sudo=args.sudo)
+        out = args.output or args.output_json
+        fmt = "json" if args.output_json and not args.output else args.format
+        success = run_single_audit(args.target, output_file=out, fmt=fmt, lang=args.lang, mode=exec_mode, remote_host=args.remote_host, ssh_port=args.ssh_port, ssh_key=args.ssh_key, docker_container=args.docker_container, db_host=args.db_host, db_port=args.db_port, db_user=args.db_user, db_password=args.db_password, db_name=args.db_name, defaults_file=args.defaults_file, auth_db=args.auth_db, use_sudo=args.sudo)
         sys.exit(0 if success else 1)
 
     parser.print_help()
