@@ -549,7 +549,7 @@ def run_command(command, remote_host=None):
         if remote_host:
             cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
 
-        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10)
+        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10, env=env)
         stdout_text = process.stdout.strip()
         stderr_text = process.stderr.strip()
 
@@ -603,6 +603,10 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     """Evaluate audit command output against condition rules."""
     if not condition:
         return False
+    if stdout is None:
+        stdout = ""
+    if stderr is None:
+        stderr = ""
 
     c_type = condition.get("type")
     val = condition.get("value")
@@ -889,20 +893,27 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="CIS Audit Benchmark (Local & SSH Remote Modes)")
+    parser = argparse.ArgumentParser(
+        description="CIS Audit Benchmark (Local & SSH Remote Modes)",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("-c", "--docker", "--container", dest="docker_container", default=None, help="Target Docker container name or ID")
     parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
     parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
     parser.add_argument("--ssh-port", type=int, default=22, help="SSH port for remote execution (default: 22)")
-    parser.add_argument("--ssh-key", default=None, help="Path to SSH private key file")
+    parser.add_argument("-i", "--ssh-key", dest="ssh_key", default=None, help="Path to SSH private key file")
     parser.add_argument("--sudo", action="store_true", help="Execute remote/local commands with sudo privileges")
-    parser.add_argument("--db-host", "--host", dest="db_host", default="localhost", help="Database host address (default: localhost)")
-    parser.add_argument("--db-port", "--port", dest="db_port", type=int, default=None, help="Database port number")
-    parser.add_argument("--db-user", "--user", dest="db_user", default=None, help="Database username")
-    parser.add_argument("--db-password", "--password", dest="db_password", default=None, help="Database password")
+    parser.add_argument("-H", "--host", "--db-host", dest="db_host", default="localhost", help="Database host address (default: localhost)")
+    parser.add_argument("-P", "--port", "--db-port", dest="db_port", type=int, default=None, help="Database port number")
+    parser.add_argument("-u", "--user", "--db-user", dest="db_user", default=None, help="Database username")
+    parser.add_argument("-p", "--password", "--db-password", dest="db_password", default=None, help="Database password")
+    parser.add_argument("-D", "-d", "--database", "--db-name", dest="db_name", default=None, help="Database name")
+    parser.add_argument("--defaults-file", "--config-file", dest="defaults_file", default=None, help="Path to database option/configuration file (.my.cnf, .pgpass, cqlshrc)")
+    parser.add_argument("--auth-db", dest="auth_db", default=None, help="Authentication database (MongoDB)")
     parser.add_argument("--local", action="store_true", help="Force local audit execution mode")
-    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format")
+    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
     parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Report language choice (en/fr)")
-    parser.add_argument("-o", "--output", default=None, help="Custom output report file path")
+    parser.add_argument("-o", "--output", dest="output", default=None, help="Custom output report file path")
     args = parser.parse_args()
 
     remote_target = None
