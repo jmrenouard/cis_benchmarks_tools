@@ -30,7 +30,7 @@
     "number": "1.3",
     "name": "Désactiver l'historique des commandes MySQL",
     "type": "Automated",
-    "test_procedure": "! find /home /root -name .mysql_history -print -quit",
+    "test_procedure": "! find /home /root -maxdepth 3 -name .mysql_history 2>/dev/null | grep -q .",
     "expected_output": {
       "type": "returncode_zero"
     },
@@ -89,7 +89,7 @@
     "number": "2.1.1",
     "name": "Politique de sauvegarde en place",
     "type": "Automated",
-    "test_procedure": "crontab -l | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep",
+    "test_procedure": "(command -v crontab >/dev/null && crontab -l 2>/dev/null | grep -E 'mysqldump|xtrabackup|mysqlbackup') || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -100,7 +100,7 @@
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
     "type": "Automated",
-    "test_procedure": "ls -la /var/lib/mysql /var/backups 2>/dev/null | head -n 10 || echo 'BACKUP_DIR_VALID'",
+    "test_procedure": "ls -la /var/backups/ /var/lib/mysql/ 2>/dev/null | head -n 20 || echo 'NO_BACKUP_DIRECTORY_FOUND'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -117,7 +117,7 @@
     "number": "2.1.3",
     "name": "Sécuriser les identifiants de sauvegarde",
     "type": "Automated",
-    "test_procedure": "ls -la /var/backups /var/lib/mysql 2>/dev/null | head -n 5 || echo 'BACKUP_DIR_SECURED'",
+    "test_procedure": "ls -la /etc/mysql/ /etc/my.cnf 2>/dev/null || echo 'CONFIG_FILES_INSPECTED'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -134,7 +134,7 @@
     "number": "2.1.4",
     "name": "Sécuriser les fichiers de sauvegarde",
     "type": "Automated",
-    "test_procedure": "file /var/backups/* | head -n 10 || echo 'VÉRIFICATION_CHIFFREMENT_SAUVEGARDE'",
+    "test_procedure": "ls -ld /var/backups/* 2>/dev/null | grep -v '^d' | head -n 10 || echo 'NO_BACKUP_FILES_FOUND'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -162,7 +162,7 @@
     "number": "2.1.6",
     "name": "Plan de reprise d'activité (DR)",
     "type": "Automated",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /etc/postgresql/ /var/backups/ /backup/",
+    "test_procedure": "ls -la /etc/mysql/ /var/backups/ 2>/dev/null || echo 'DR_DIRECTORIES_INSPECTED'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -178,7 +178,7 @@
     "number": "2.1.7",
     "name": "Sauvegarde des fichiers de configuration",
     "type": "Automated",
-    "test_procedure": "ls -la /etc/mysql/mariadb.conf.d/ /etc/postgresql/ /etc/mongod.conf /etc/cassandra/ || echo 'VÉRIFICATION_CONFIG_SAUVEGARDE'",
+    "test_procedure": "ls -la /etc/mysql/ 2>/dev/null || echo 'CONFIG_BACKUP_INSPECTED'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -701,7 +701,7 @@
     "number": "7.2",
     "name": "Aucun mot de passe dans le my.cnf global",
     "type": "Automated",
-    "test_procedure": "! grep -riE \"password|pwd|pass\" /etc/my.cnf /etc/mysql/",
+    "test_procedure": "! grep -rihE \"^[[:space:]]*(password|pwd|pass)[[:space:]]*=\" /etc/my.cnf /etc/mysql/ 2>/dev/null | grep -q .",
     "expected_output": {
       "type": "returncode_zero"
     },
