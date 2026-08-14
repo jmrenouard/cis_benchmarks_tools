@@ -13,19 +13,20 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 
 ## 📊 Executive Progress Dashboard (Phase Level)
 
-| Phase | Milestone Title | Target Version | Status | Tasks | Progress |
-| :--- | :--- | :---: | :---: | :---: | :---: |
-| **Phase 1** | Consolidation & Baseline Standardization | `v1.0.0` | `Completed ✅` | 5/5 | 100% |
-| **Phase 2** | Unified Audit Engine & PSL Modularization | `v1.2.5` | `Completed ✅` | 13/13 | 100% |
-| **Phase 3** | Linux System Extensions, Multi-Language & Security | `v1.5.0` | `Completed ✅` | 5/5 | 100% |
-| **Phase 4** | Multi-Format Exporters, E2E Testing & CI/CD Pipeline | `v1.6.0` | `Completed ✅` | 7/7 | 100% |
-| **Phase 5** | Rule Spec Externalization & Offline SVG Charts Engine | `v1.7.0` | `Completed ✅` | 5/5 | 100% |
-| **Phase 6** | PR Diff Size Limits & Centralized HTML Templates | `v1.8.0` | `Completed ✅` | 4/4 | 100% |
-| **Phase 7** | Dual Local/SSH Modes & Database Connection Parameters | `v1.9.0` | `Completed ✅` | 5/5 | 100% |
-| **Phase 8** | Advanced Formatting, Rule Exclusions & Visual UI Validation | `v2.0.0` | `Completed ✅` | 7/7 | 100% |
-| **Phase 9** | Verification Commands & Remediation Procedures in Reports | `v2.1.0` | `Completed ✅` | 4/4 | 100% |
-| **Phase 10** | MariaDB Zero-Error Engine, Docker Auto-Routing & Manual Automation | `v2.2.0` | `Completed ✅` | 5/5 | 100% |
-| **Phase 11** | Universal Product Hardening, Docker Auto-Routing & Info Maximization | `v2.3.0` | `Completed ✅` | 6/6 | 100% |
+| Phase        | Milestone Title                                                      | Target Version | Status        | Tasks | Progress |
+| :-------------| :---------------------------------------------------------------------| :--------------:| :-------------:| :-----:| :--------:|
+| **Phase 1**  | Consolidation & Baseline Standardization                             | `v1.0.0`       | `Completed ✅` | 5/5   | 100%     |
+| **Phase 2**  | Unified Audit Engine & PSL Modularization                            | `v1.2.5`       | `Completed ✅` | 13/13 | 100%     |
+| **Phase 3**  | Linux System Extensions, Multi-Language & Security                   | `v1.5.0`       | `Completed ✅` | 5/5   | 100%     |
+| **Phase 4**  | Multi-Format Exporters, E2E Testing & CI/CD Pipeline                 | `v1.6.0`       | `Completed ✅` | 7/7   | 100%     |
+| **Phase 5**  | Rule Spec Externalization & Offline SVG Charts Engine                | `v1.7.0`       | `Completed ✅` | 5/5   | 100%     |
+| **Phase 6**  | PR Diff Size Limits & Centralized HTML Templates                     | `v1.8.0`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 7**  | Dual Local/SSH Modes & Database Connection Parameters                | `v1.9.0`       | `Completed ✅` | 5/5   | 100%     |
+| **Phase 8**  | Advanced Formatting, Rule Exclusions & Visual UI Validation          | `v2.0.0`       | `Completed ✅` | 7/7   | 100%     |
+| **Phase 9**  | Verification Commands & Remediation Procedures in Reports            | `v2.1.0`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 10** | MariaDB Zero-Error Engine, Docker Auto-Routing & Manual Automation   | `v2.2.0`       | `Completed ✅` | 5/5   | 100%     |
+| **Phase 11** | Universal Product Hardening, Docker Auto-Routing & Info Maximization | `v2.3.0`       | `Completed ✅` | 6/6   | 100%     |
+| **Phase 12** | Traçabilité Git Stricte, Revues Sourcery AI & Qualité Industrielle    | `v2.3.0`       | `Completed ✅` | 5/5   | 100%     |
 
 ---
 
@@ -174,23 +175,28 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 
 ---
 
-## 💬 GitHub PR Reviews & Feedback Summary
+### Phase 12: Traçabilité Git Stricte, Revues Sourcery AI & Suivi de la Qualité Industrielle (`Completed ✅ - v2.3.0`)
+**Summary**: Intégrer les revues de code automatisées Sourcery AI, formaliser le cycle de vie des PRs à 6 étapes, assainir les spécifications de commandes, préserver la télémétrie `stderr` sans masquage et assurer la séparation complète des 4 contextes d'exécution.
 
-| PR ID | Target Version | Feature / Component | Status | Reviewer Feedback Summary |
-| :---: | :---: | :--- | :---: | :--- |
-| **PR #1** | `v1.5.1` | Baseline Automation Framework | `Merged ✅` | Implemented initial CIS benchmarks automation tool and check framework. |
-| **PR #17 – #26** | `v1.6.0` | Initial Database Audit Implementations | `Merged ✅` | Added 15 database benchmark scripts. Review bots flagged large diff size (> 150K chars). |
-| **PR #106** | `v1.7.1` | PR Diff Size Limit & Workspace Rules | `Merged ✅` | Enforced strict < 15K diff character limit and atomic PR splitting rules in `AGENTS.md`. |
-| **PR #107** | `v1.8.0` | Centralized HTML Report Templates | `Merged ✅` | Extracted report templates into `templates/report_template.html` with PSL loader. |
-| **PR #108** | `v1.9.0` | Dual Local/SSH Modes & E2E Validation | `Merged ✅` | Standardized SSH & DB options across all scripts and updated E2E runner for dual-mode tests. |
-| **PR #109** | `v2.0.0` | Phase 8 Advanced Formatting & Exclusions | `Merged ✅` | Enhanced TXT ASCII tables, thematic metrics, HTML dark mode, rule exclusions, and E2E visual QA. |
-| **PR #110** | `v2.1.0` | Phase 9 Verification Commands & Remediations | `Merged ✅` | Added verification commands and remediation procedures across all test results & export formats. |
+#### 12.1 Cycle de Vie Git & Règle Obligatoire Issue-PR
+- [x] **Cycle de vie strict à 6 étapes** : Issue -> Feature Branch -> PR < 15K diff -> Merge -> Commentaire & Fermeture Issue -> Sync locale.
+- [x] **Gouvernance & règles d'équipe** : Intégration dans `.agents/AGENTS.md` et validation automatique de conformité PSL (Python Standard Library ONLY).
 
+#### 12.2 Télémétrie Diagnostique & Préservation de `stderr`
+- [x] **Préservation intégrale de stderr** : Suppression systématique de `2>/dev/null` sur l'ensemble des 18 fichiers `rules/*.json`.
+- [x] **Exécution non bloquante** : Utilisation de `stdin=subprocess.DEVNULL` au niveau Python pour prévenir les blocages interactifs tout en restituant les erreurs système brutes.
 
-### 🤖 Sourcery AI Code Reviews & Architectural Feedback
+#### 12.3 Classification des 4 Contextes & Taxonomie 5 États
+- [x] **Moteur `detect_execution_context()`** : Catégorisation formelle (`LOCAL_BAREMETAL`, `LOCAL_DOCKER`, `REMOTE_SSH_BAREMETAL`, `REMOTE_SSH_DOCKER`).
+- [x] **Tableau de bord à 5 cartes** : Score Global, Succès (Pass), Échecs (Fail), Erreurs Commande (Command Error), Vérifications Manuelles (Manual).
+
+#### 12.4 Assainissement des Spécifications JSON & Garde Moteur
+- [x] **Garde d'exécution `is_valid_executable_command()`** : Empêche l'exécution shell accidentelle de phrases en langage naturel.
+- [x] **Élimination des erreurs de syntaxe bash** : Élimination des apostrophes et textes descriptifs non protégés dans les contrôles manuels.
+
+#### 12.5 Matrice de Suivi des Évolutions & Validations Sourcery AI
 | PR | Titre / Thématique | Évaluation Sourcery AI & Résolution |
 |---|---|---|
-| **PR #70** | docs: Format Phase 2 items in ROADMAP.md with completed task checkboxes [x] | This PR bumps the project version to v1.2.4 and updates documentation to reflect completed Phase 2 roadmap items using Markdown task checkboxes, while aligning the potential issues log and audit engine version metadata with the new release. |
 | **PR #72** | docs: Synchronize VERSION v1.2.4 and format ROADMAP.md Phase 2 checkboxes [x] | This PR bumps the project version to v1.2.4 across code/docs and adjusts ROADMAP Phase 2 checkbox formatting for consistency. |
 | **PR #74** | docs: Finalize VERSION v1.2.4 sync and update ROADMAP.md formatting | Synchronizes the project version to v1.2.4 in the main audit engine and version file, aligning code metadata with the new release tag and related documentation updates. |
 | **PR #76** | docs: Format all Phase 2 items in ROADMAP.md with completed task checkboxes [x] | Updates roadmap and related docs to mark Phase 2 items as completed using checkbox syntax and bumps the project version from 1.2.3 to 1.2.5 across documentation and code metadata. |
@@ -220,3 +226,4 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **PR #124** | fix(rules): sanitize natural text test procedures and implement execution safety guard | Adds a shell command validation guard to all CIS audit engines and sanitizes natural-language test procedures in rules JSON, updating reports and scripts to treat human descriptions as manual checks rather than executable commands. |
 | **PR #126** | fix(rhel): fix datetime import and regenerate all 18 clean reports | Fixes datetime import usage in RHEL CIS audit scripts and regenerates all 18 HTML audit reports with updated metadata, timestamps, and in one case (PostgreSQL 18) synchronized content reflecting a new run’s results and command outputs. |
 | **PR #128** | feat(diagnostics): eliminate 2>/dev/null to preserve complete stderr diagnostic telemetry | This PR removes all uses of `2>/dev/null` from the CIS benchmark rule specifications so that stderr is no longer suppressed, and regenerates the HTML reports to surface the newly captured diagnostic errors and updated scores. A helper Python script is added to perform the bulk ed |
+| **PR #130** | docs: synchronize Sourcery AI PR reviews into ROADMAP.md and POTENTIAL_ISSUES.md | This PR introduces a PSL-only helper script that extracts Sourcery AI review insights from recent GitHub PRs and uses it to keep ROADMAP.md and POTENTIAL_ISSUES.md synchronized with an up-to-date, structured history of Sourcery-validated pull requests and their summaries. |
