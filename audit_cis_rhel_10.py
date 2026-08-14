@@ -724,7 +724,7 @@ def export_results(results, overall_score, categories_scores, target_name, filen
 
 
 
-def generate_html_report(results, overall_score, categories_scores, filename=None, lang="en"):
+def generate_html_report(results, overall_score, categories_scores, filename=None, lang="en", execution_context=None):
     """Generate modern unified responsive HTML audit report for RHEL."""
     target_name = "RHEL"
     if filename:
