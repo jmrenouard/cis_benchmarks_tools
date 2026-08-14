@@ -10,7 +10,8 @@
       "type": "stdout_not_equals",
       "value": "/"
     },
-    "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service."
+    "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service.",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "1. Configuration Système d'exploitation",
@@ -114,7 +115,7 @@
     "number": "2.1.3",
     "name": "Sécuriser les identifiants de sauvegarde",
     "type": "Manual",
-    "test_procedure": "Inspecter les permissions des fichiers contenant les credentials de sauvegarde.",
+    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /root/.my.cnf /etc/my.cnf /var/lib/mysql/ 2>/dev/null || echo 'VERIF_CREDENTIALS_BACKUP'",
     "expected_output": null,
     "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.",
     "manual_steps": [
@@ -155,7 +156,7 @@
     "number": "2.1.6",
     "name": "Plan de reprise d'activité (DR)",
     "type": "Manual",
-    "test_procedure": "Vérifier l'existence et la validité du plan DR.",
+    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /etc/postgresql/ /var/backups/ /backup/ 2>/dev/null || echo 'MANUAL_DR_POLICY_REVIEW'",
     "expected_output": null,
     "remediation": "Documenter et tester un plan DR incluant réplication, backups offsite.",
     "manual_steps": [
@@ -188,7 +189,8 @@
       "type": "stdout_regex_match",
       "pattern": "^mysql:mysql\\s+7[05][05]$"
     },
-    "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>"
+    "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -201,7 +203,8 @@
       "type": "stdout_regex_match",
       "pattern": "^-rw-------$"
     },
-    "remediation": "Appliquer chmod 600 sur les fichiers binaires."
+    "remediation": "Appliquer chmod 600 sur les fichiers binaires.",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -214,7 +217,8 @@
       "type": "stdout_regex_match",
       "pattern": "^6[04]0$"
     },
-    "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."
+    "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -227,7 +231,8 @@
       "type": "stdout_regex_match",
       "pattern": "^6[04]0$"
     },
-    "remediation": "Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600)."
+    "remediation": "Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600).",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -240,7 +245,8 @@
       "type": "stdout_regex_match",
       "pattern": "^-rw-------$"
     },
-    "remediation": "Appliquer chmod 600."
+    "remediation": "Appliquer chmod 600.",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -253,7 +259,8 @@
       "type": "stdout_regex_match",
       "pattern": "^6[04]0$"
     },
-    "remediation": "Restreindre les droits d'accès (ex: 640 ou 600)."
+    "remediation": "Restreindre les droits d'accès (ex: 640 ou 600).",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -278,7 +285,8 @@
       "type": "stdout_regex_match",
       "pattern": "^mysql:mysql\\s+755$"
     },
-    "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>"
+    "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -291,7 +299,8 @@
       "type": "stdout_regex_match",
       "pattern": "^6[04]0$"
     },
-    "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."
+    "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -585,7 +594,8 @@
       "type": "stdout_not_equals",
       "value": "/"
     },
-    "remediation": "Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système."
+    "remediation": "Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système.",
+    "test_procedure": "echo 'Contrôle Manuel: '"
   },
   {
     "category": "6. Audit & Journalisation",

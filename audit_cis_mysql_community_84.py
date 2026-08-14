@@ -533,6 +533,29 @@ def detect_docker_container(remote_host=None, docker_name=None):
     return None
 
 
+def is_valid_executable_command(cmd_str):
+    """Check if command string is a valid shell executable command rather than descriptive human text."""
+    if not cmd_str or not isinstance(cmd_str, str):
+        return False
+    s = cmd_str.strip()
+    if not s:
+        return False
+    if s.startswith("!") or s.startswith("[") or s.startswith("(") or s.startswith("/") or s.startswith("."):
+        return True
+    first_word = s.split()[0].lower()
+    known_commands = {
+        "cat", "ls", "grep", "egrep", "fgrep", "find", "ps", "awk", "cut", "sed", "head", "tail",
+        "echo", "getent", "crontab", "df", "stat", "test", "dpkg", "rpm", "systemctl", "service",
+        "mysql", "mariadb", "psql", "cqlsh", "mongo", "mongosh", "python3", "python", "bash", "sh",
+        "docker", "curl", "wget", "sshd", "which", "id", "whoami", "uname", "chmod", "chown"
+    }
+    if first_word in known_commands:
+        return True
+    if any(token in s for token in ["|", "&&", ";", ">", "||", "$"]):
+        return True
+    return False
+
+
 def run_command(command, remote_host=None, docker_container=None):
     """Execute command safely locally, over SSH, or inside Docker container (PSL ONLY)."""
     try:
@@ -717,6 +740,12 @@ def perform_checks(recommendations, remote_host=None, docker_container=None):
                     command_executed_display = cmd_to_run
 
                 if cmd_to_run:
+                    if not is_valid_executable_command(cmd_to_run):
+                        check_result["status"] = "Manual"
+                        check_result["output"] = "This control requires manual verification." + chr(10) + chr(10) + "Guide procédural: " + cmd_to_run
+                        check_result["test_procedure"] = command_executed_display
+                        results[category].append(check_result)
+                        continue
                     stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host, docker_container=docker_container) if 'docker_container' in locals() else run_command(cmd_to_run, remote_host=remote_host)
                     check_result["output"] = "Stdout:" + chr(10) + stdout + chr(10) + "Stderr:" + chr(10) + stderr + chr(10) + f"Return Code: {returncode}"
                     check_result["error"] = stderr

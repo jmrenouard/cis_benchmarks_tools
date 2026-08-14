@@ -511,6 +511,29 @@ def load_html_template():
 
 
 
+def is_valid_executable_command(cmd_str):
+    """Check if command string is a valid shell executable command rather than descriptive human text."""
+    if not cmd_str or not isinstance(cmd_str, str):
+        return False
+    s = cmd_str.strip()
+    if not s:
+        return False
+    if s.startswith("!") or s.startswith("[") or s.startswith("(") or s.startswith("/") or s.startswith("."):
+        return True
+    first_word = s.split()[0].lower()
+    known_commands = {
+        "cat", "ls", "grep", "egrep", "fgrep", "find", "ps", "awk", "cut", "sed", "head", "tail",
+        "echo", "getent", "crontab", "df", "stat", "test", "dpkg", "rpm", "systemctl", "service",
+        "mysql", "mariadb", "psql", "cqlsh", "mongo", "mongosh", "python3", "python", "bash", "sh",
+        "docker", "curl", "wget", "sshd", "which", "id", "whoami", "uname", "chmod", "chown"
+    }
+    if first_word in known_commands:
+        return True
+    if any(token in s for token in ["|", "&&", ";", ">", "||", "$"]):
+        return True
+    return False
+
+
 def run_command(command, remote_host=None):
     """Execute command safely with timeout=10, stdin=DEVNULL, and clean SSH noise (PSL ONLY)."""
     try:
