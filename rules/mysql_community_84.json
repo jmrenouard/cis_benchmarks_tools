@@ -30,7 +30,7 @@
     "number": "1.3",
     "name": "Désactiver l'historique des commandes MySQL",
     "type": "Automated",
-    "test_procedure": "! find /home /root -name .mysql_history -print -quit 2>/dev/null",
+    "test_procedure": "! find /home /root -name .mysql_history -print -quit",
     "expected_output": {
       "type": "returncode_zero"
     },
@@ -67,7 +67,7 @@
     "number": "1.6",
     "name": "Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs",
     "type": "Automated",
-    "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null",
+    "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment",
     "expected_output": {
       "type": "returncode_zero"
     },
@@ -89,7 +89,7 @@
     "number": "2.1.1",
     "name": "Politique de sauvegarde en place",
     "type": "Automated",
-    "test_procedure": "crontab -l 2>/dev/null | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep",
+    "test_procedure": "crontab -l | grep -E 'mysqldump|xtrabackup|mysqlbackup' || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup' | grep -v grep",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -100,7 +100,7 @@
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
     "type": "Manual",
-    "test_procedure": "ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ /var/lib/pgsql/ 2>/dev/null | head -n 20 || echo 'VÉRIFICATION_MANUELLE_REQUIS'",
+    "test_procedure": "ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ /var/lib/pgsql/ | head -n 20 || echo 'VÉRIFICATION_MANUELLE_REQUIS'",
     "expected_output": null,
     "remediation": "Planifier et documenter les tests de restauration périodiques.",
     "manual_steps": [
@@ -115,7 +115,7 @@
     "number": "2.1.3",
     "name": "Sécuriser les identifiants de sauvegarde",
     "type": "Manual",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /root/.my.cnf /etc/my.cnf /var/lib/mysql/ 2>/dev/null || echo 'VERIF_CREDENTIALS_BACKUP'",
+    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /root/.my.cnf /etc/my.cnf /var/lib/mysql/",
     "expected_output": null,
     "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.",
     "manual_steps": [
@@ -142,7 +142,7 @@
     "number": "2.1.5",
     "name": "Plan de reprise d'activité (DR)",
     "type": "Manual",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /etc/postgresql/ /var/backups/ /backup/ 2>/dev/null || echo 'MANUAL_DR_POLICY_REVIEW'",
+    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /etc/postgresql/ /var/backups/ /backup/",
     "expected_output": null,
     "remediation": "Documenter et tester un plan DR incluant réplication, backups offsite.",
     "manual_steps": [
@@ -815,7 +815,7 @@
     "number": "7.2",
     "name": "Aucun mot de passe dans le my.cnf global",
     "type": "Automated",
-    "test_procedure": "! grep -riE \"password|pwd|pass\" /etc/my.cnf /etc/mysql/ 2>/dev/null",
+    "test_procedure": "! grep -riE \"password|pwd|pass\" /etc/my.cnf /etc/mysql/",
     "expected_output": {
       "type": "returncode_zero"
     },

@@ -42,7 +42,7 @@
     "number": "1.4",
     "name": "S'assurer que la dernière version de Cassandra est installée",
     "type": "Automated",
-    "test_procedure": "cassandra -v 2>/dev/null || nodetool version 2>/dev/null",
+    "test_procedure": "cassandra -v || nodetool version",
     "expected_output": {
       "type": "stdout_regex_match",
       "pattern": "4\\.0\\.\\d+"
@@ -66,7 +66,7 @@
     "number": "1.6",
     "name": "S'assurer que les horloges sont synchronisées sur tous les nœuds",
     "type": "Manual",
-    "test_procedure": "timedatectl status 2>/dev/null | grep 'synchronized' || ntpstat 2>/dev/null || chronyc tracking 2>/dev/null",
+    "test_procedure": "timedatectl status | grep 'synchronized' || ntpstat || chronyc tracking",
     "expected_output": null,
     "remediation": "Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.",
     "manual_steps": [
@@ -104,7 +104,7 @@
     "number": "3.1",
     "name": "S'assurer que les rôles cassandra et superuser sont séparés",
     "type": "Automated",
-    "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null | grep -v 'cassandra' | grep -c 'True'",
+    "test_procedure": "cqlsh -e \"LIST ROLES;\" | grep -v 'cassandra' | grep -c 'True'",
     "expected_output": {
       "type": "stdout_regex_match",
       "pattern": "[1-9]\\d*"
@@ -128,7 +128,7 @@
     "number": "3.3",
     "name": "S'assurer qu'il n'y a pas de rôles ou privilèges excessifs",
     "type": "Manual",
-    "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null",
+    "test_procedure": "cqlsh -e \"LIST ROLES;\"",
     "expected_output": null,
     "remediation": "Révoquer les rôles et privilèges inutiles. Utiliser REVOKE et DROP ROLE.",
     "manual_steps": [
@@ -181,7 +181,7 @@
     "number": "3.7",
     "name": "Réviser les rôles définis par l'utilisateur",
     "type": "Manual",
-    "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null",
+    "test_procedure": "cqlsh -e \"LIST ROLES;\"",
     "expected_output": null,
     "remediation": "Supprimer les rôles inutiles et révoquer les privilèges excessifs.",
     "manual_steps": [
@@ -195,7 +195,7 @@
     "number": "3.8",
     "name": "Réviser les rôles superuser/administrateur",
     "type": "Manual",
-    "test_procedure": "cqlsh -e \"LIST ROLES;\" 2>/dev/null | grep 'True'",
+    "test_procedure": "cqlsh -e \"LIST ROLES;\" | grep 'True'",
     "expected_output": null,
     "remediation": "Limiter le nombre de rôles superuser au strict nécessaire.",
     "manual_steps": [
@@ -209,7 +209,7 @@
     "number": "4.1",
     "name": "S'assurer que la journalisation est activée",
     "type": "Automated",
-    "test_procedure": "ls -la /var/log/cassandra/system.log 2>/dev/null || ls -la /opt/cassandra/logs/system.log 2>/dev/null",
+    "test_procedure": "ls -la /var/log/cassandra/system.log || ls -la /opt/cassandra/logs/system.log",
     "expected_output": {
       "type": "stdout_not_empty"
     },
