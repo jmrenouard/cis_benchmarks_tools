@@ -1,34 +1,47 @@
-# 🛡️ Suite d'Outils CIS Benchmarks (v1.7.0)
+# 🛡️ Suite CIS Benchmarks Tools (v2.3.1)
 
-> **Moteur d'Audit Automatisé de Conformité de Sécurité pour Bases de Données et Systèmes Linux (100% Python Standard Library - PSL ONLY).**
+> **Moteur d'Audit de Conformité et de Sécurité Automatisé pour Bases de Données et Systèmes Linux (100% Python Standard Library - PSL ONLY).**
 
-[![Licence: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Conformité PSL](https://img.shields.io/badge/Dépendances-Zéro%20Externe%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
+[![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
+[![Release](https://img.shields.io/badge/Release-v2.3.1-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
 
 ---
 
-## 📋 Vue d'Ensemble
+## 📋 Présentation Générale
 
-**CIS Benchmarks Tools** est une suite d'audit de sécurité automatisée, légère et sans dépendance externe, conçue pour évaluer la configuration des systèmes et des bases de données par rapport aux recommandations officielles **CIS (Center for Internet Security) Benchmarks** et aux guides **DISA STIG**.
+**CIS Benchmarks Tools** est une suite d'audit de sécurité automatisée, ultra-légère et sans dépendance externe, conçue pour évaluer la configuration des bases de données et des systèmes Linux selon les référentiels officiels **CIS (Center for Internet Security) Benchmarks** et les guides **DISA STIG**.
 
-### Points Forts
-- 🔒 **100% Python Standard Library (PSL ONLY)** : Aucune dépendance `pip`. S'exécute de manière autonome sur toute installation standard de Python 3.
-- 📁 **Spécifications de Règles Découplées (`rules/*.json`)** : Les règles de contrôles d'audit sont externalisées dans un répertoire dédié `rules/` au format JSON pour une gestion, édition et maintenance facilitées.
-- 📊 **Moteur de Graphiques 100% Offline en SVG Inline Pure** : Graphiques Donut et diagrammes en barres empilées générés nativement en SVG Python PSL, sans aucune bibliothèque JavaScript ou CDN.
-- 💻 **Modes d'Exécution Doubles (Local & SSH Distant)** : Auditez des machines/conteneurs locaux (`--mode local` / `--local`) ou des serveurs distants via SSH (`--mode ssh` / `--remote user@hostname` / `--ssh user@hostname`) de manière native sans Paramiko ou Ansible.
-- 🗄️ **18 Cibles d'Audit & 887 Contrôles** : Prise en charge de MariaDB, MySQL, PostgreSQL, MongoDB, Apache Cassandra et Red Hat Enterprise Linux (RHEL 8 / 9 / 10).
-- ⚡ **CLI d'Exécution Unifiée (`audit_cis.py`)** : Exécutez des audits individuels, l'ensemble des benchmarks ou l'auto-détection des cibles via une interface unique en ligne de commande.
-- 🌐 **Support Multi-Langues (i18n)** : Rapports et CLI disponibles en Anglais (`--lang en`) et Français (`--lang fr`).
-- 📄 **Exportateurs Multi-Formats (`--format html|json|xml|txt`)** : Génération de rapports visuels HTML, JSON (SIEM/DevSecOps), XML (JUnit/STIG) et TXT clair.
+### Points Clés & Innovations
+- 🔒 **100% Python Standard Library (PSL ONLY)** : Zéro dépendance `pip`. S'exécute de manière autonome sur toute installation Python 3 standard, y compris en environnement cloisonné (Air-Gapped).
+- 🎯 **Moteur d'Exécution à 4 Contextes Découplés** :
+  1. **Machine Locale** (`--mode local` / `--local`)
+  2. **Serveur Distant SSH** (`--mode ssh` / `--remote user@host` / `--ssh user@host`)
+  3. **Conteneur Docker Local** (`--docker <nom_conteneur>`)
+  4. **Conteneur Docker Distant via SSH** (`--remote user@host --docker <nom_conteneur>`)
+- 📊 **Taxonomie de Conformité à 5 États Distincts** :
+  - `Pass` : Contrôle conforme validé avec succès.
+  - `Fail` : Non-conformité de sécurité avérée.
+  - `Error` : Erreur d'exécution technique (distincte des échecs de sécurité).
+  - `Manual` : Contrôle procédural avec guide opérationnel et commande diagnostique intégrée.
+  - `Not Applicable (N/A)` : Variable ou composant non applicable dans l'environnement cible.
+- 🔑 **Gestion des Identifiants & Authentification Base de Données** :
+  - Support complet des arguments `--db-user`, `--db-password`, `--db-host`, `--db-port`, `--db-name`, `--defaults-file`, `--auth-db` et des variables d'environnement (`MYSQL_PWD`, `PGPASSWORD`, etc.).
+  - Masquage automatique des mots de passe (`***MASKED***`) dans les flux et rapports HTML.
+- 🩺 **Garantie Zéro Erreur Commande & Télémétrie `stderr` Intégrale** : Préservation complète sans `2>/dev/null`.
+- 📈 **Graphiques SVG 100% Hors-Ligne** : Donut charts et barres de catégories générés nativement sans JavaScript ni CDN.
+- 🗄️ **18 Référentiels & 887 Contrôles** : Couverture complète (MariaDB, MySQL, PostgreSQL, MongoDB, Cassandra, RHEL).
+- 🌐 **Support Bilingue (i18n)** : Français (`--lang fr`) et Anglais (`--lang en`).
+- 📄 **Export Multi-Formats (`--format html|json|xml|txt`)** : HTML Tailwind, JSON (SIEM), XML (JUnit/STIG), TXT.
 
 ---
 
-## 🗄️ Cibles d'Audit Supportées (18 Benchmarks / 887 Contrôles)
+## 🗄️ Cibles Supportées (18 Référentiels / 887 Contrôles)
 
-### Moteurs de Bases de Données (15 Benchmarks)
+### Moteurs de Bases de Données (15 Référentiels)
 
-| Identifiant | Moteur de BD | Version / Profil | CIS Benchmark | Contrôles | Script | Spécification de Règle |
+| Clé Cible | Moteur SGBD | Version / Profil | Benchmark CIS | Contrôles | Script d'Audit | Spécification JSON |
 |---|---|---|---|:---:|---|---|
 | `mariadb106` | MariaDB | 10.6 | v1.3.0 | 74 | [`audit_cis_mariadb_106.py`](audit_cis_mariadb_106.py) | [`rules/mariadb_106.json`](rules/mariadb_106.json) |
 | `mariadb1011` | MariaDB | 10.11 | v1.0.0 | 75 | [`audit_cis_mariadb_1011.py`](audit_cis_mariadb_1011.py) | [`rules/mariadb_1011.json`](rules/mariadb_1011.json) |
@@ -46,9 +59,9 @@
 | `cassandra41` | Apache Cassandra | 4.1 | v1.0.0 | 20 | [`audit_cis_cassandra_41.py`](audit_cis_cassandra_41.py) | [`rules/cassandra_41.json`](rules/cassandra_41.json) |
 | `cassandra50` | Apache Cassandra | 5.0 | v1.1.0 | 20 | [`audit_cis_cassandra_50.py`](audit_cis_cassandra_50.py) | [`rules/cassandra_50.json`](rules/cassandra_50.json) |
 
-### Systèmes d'Exploitation Linux & STIG (3 Benchmarks)
+### Systèmes d'Exploitation Linux & STIG (3 Référentiels)
 
-| Identifiant | Système d'Exploitation | Profil / STIG | CIS Benchmark | Contrôles | Script | Spécification de Règle |
+| Clé Cible | Système d'Exploitation | Profil / STIG | Benchmark CIS | Contrôles | Script d'Audit | Spécification JSON |
 |---|---|---|---|:---:|---|---|
 | `rhel8` | Red Hat Enterprise Linux | RHEL 8 CIS & STIG | v4.0.0 / v2.0.0 | 20 | [`audit_cis_rhel_8.py`](audit_cis_rhel_8.py) | [`rules/rhel_8.json`](rules/rhel_8.json) |
 | `rhel9` | Red Hat Enterprise Linux | RHEL 9 CIS & STIG | v2.0.0 / v1.0.0 | 20 | [`audit_cis_rhel_9.py`](audit_cis_rhel_9.py) | [`rules/rhel_9.json`](rules/rhel_9.json) |
@@ -56,109 +69,54 @@
 
 ---
 
-## 🚀 Démarrage Rapide
+## 🚀 Guide d'Utilisation & Exemples
 
-### Prérequis
-- **Python 3.8+** (Installation standard)
-- **Docker** (Optionnel, pour les environnements de test)
-
-### 1. Lister les Cibles d'Audit Disponibles
+### 1. Lister les Référentiels
 ```bash
 python3 audit_cis.py --list-targets
 ```
 
-### 2. Exécuter un Audit en Mode Local (`--mode local` / `--local`)
+### 2. Audit en Mode Local (`--mode local` / `--local`)
 ```bash
-# Audit local PostgreSQL 16 au format HTML en français
-python3 audit_cis.py --target postgresql16 --mode local --format html --lang fr
-
-# Audit local Système RHEL 9 au format JSON pour SIEM
+python3 audit_cis.py --target postgresql16 --local --format html
 python3 audit_cis.py --target rhel9 --local --format json -o reports/audit_rhel9.json
 ```
 
-### 3. Exécuter un Audit en Mode SSH Distant (`--mode ssh` / `--remote user@host`)
+### 3. Audit de Conteneur Docker (`--docker <nom_conteneur>`)
 ```bash
-# Exécuter l'audit CIS/STIG RHEL 8 à distance via SSH
-python3 audit_cis.py --target rhel8 --mode ssh --remote root@192.168.1.50 -f txt
-
-# Exécuter l'audit PostgreSQL 18 à distance via SSH
-python3 audit_cis_postgresql_18.py --ssh admin@db-server.domain.com --format json
+python3 audit_cis_mysql_80.py --docker mysql80-test
+python3 audit_cis.py --target mariadb106 --docker mariadb106-container --format html
 ```
 
-### 4. Exécuter Tous les Audits / Auto-Détection
+### 4. Audit Distant par SSH (`--mode ssh` / `--remote user@host`)
 ```bash
-# Auto-détecter les conteneurs de bases de données actifs et exécuter les audits
-python3 audit_cis.py --auto-detect
+python3 audit_cis.py --target postgresql17 --ssh admin@192.168.1.50 --format html
+python3 audit_cis.py --target mysql80 --ssh admin@192.168.1.50 --docker prod-mysql-container
+```
 
-# Exécuter les audits des 18 cibles de manière séquentielle
+### 5. Audit avec Identifiants Base de Données
+```bash
+python3 audit_cis_mysql_80.py --db-user root --db-password 'SecretPass123!' --db-host 127.0.0.1 --db-port 3306
+python3 audit_cis_mysql_80.py --defaults-file /root/.my.cnf
+```
+
+### 6. Détection Automatique & Exécution Globale
+```bash
+python3 audit_cis.py --auto-detect
 python3 audit_cis.py --all
 ```
 
 ---
 
-## 📁 Structure du Projet
+## 🏗️ Architecture & Règles de Conception
 
-```
-cis_benchmarks_tools/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                     # Pipeline CI/CD GitHub Actions (Python 3.8-3.12)
-├── README.md                          # Documentation Principale (Anglais)
-├── README_fr.md                       # Documentation Synchronisée (Français)
-├── audit_cis.py                       # Moteur d'Audit Centralisé (v1.7.0)
-├── audit_cis_mariadb_106.py           # Script d'Audit MariaDB 10.6
-├── audit_cis_mariadb_1011.py          # Script d'Audit MariaDB 10.11
-├── audit_cis_mysql_80.py              # Script d'Audit MySQL Enterprise 8.0
-├── audit_cis_mysql_community_84.py    # Script d'Audit MySQL Community 8.4
-├── audit_cis_mysql_enterprise_84.py   # Script d'Audit MySQL Enterprise 8.4
-├── audit_cis_mysql_community_97.py    # Script d'Audit MySQL Community 9.7
-├── audit_cis_mysql_enterprise_97.py   # Script d'Audit MySQL Enterprise 9.7
-├── audit_cis_postgresql_16.py         # Script d'Audit PostgreSQL 16
-├── audit_cis_postgresql_17.py         # Script d'Audit PostgreSQL 17
-├── audit_cis_postgresql_18.py         # Script d'Audit PostgreSQL 18
-├── audit_cis_mongodb_7.py             # Script d'Audit MongoDB 7
-├── audit_cis_mongodb_8.py             # Script d'Audit MongoDB 8
-├── audit_cis_cassandra_40.py          # Script d'Audit Cassandra 4.0
-├── audit_cis_cassandra_41.py          # Script d'Audit Cassandra 4.1
-├── audit_cis_cassandra_50.py          # Script d'Audit Cassandra 5.0
-├── audit_cis_rhel_8.py                # Script d'Audit RHEL 8 CIS/STIG
-├── audit_cis_rhel_9.py                # Script d'Audit RHEL 9 CIS/STIG
-├── audit_cis_rhel_10.py               # Script d'Audit RHEL 10 CIS
-├── rules/                             # 18 Spécifications de Règles JSON Externalisées (rules/*.json)
-├── reports/                           # Rapports Générés (HTML, JSON, XML, TXT)
-├── docker/                            # Dockerfiles de Test (16 cibles)
-├── tests/
-│   └── test_evaluate_condition.py     # Suite de Tests Unitaires automatisés (unittest)
-├── scripts/
-│   ├── bundle_audit_cis.py            # Assembler Automatique de Code Python
-│   ├── pre_commit_checks.py           # Contrôle de Qualité Pre-Commit (8 étapes)
-│   ├── run_e2e_tests.py               # Moteur d'Analyse et de Tests E2E Automatisés
-│   └── start_*.sh                     # Scripts de Démarrage des Conteneurs
-├── CIS_DATA/                          # 22 Spécifications Markdown de Référence
-├── VERSION                            # Version Courante du Produit (v1.7.0)
-├── ROADMAP.md                         # Feuille de Route et Jalons Réalisés
-└── POTENTIAL_ISSUES.md                # Backlog et Dette Technique Résolue
-```
+1. **100% Python Standard Library (PSL ONLY)** : Aucun recours aux bibliothèques tierces (`pip`, `requests`, `jinja2`, etc.).
+2. **Découplage des Règles (`rules/*.json`)** : Contrôles, pré-conditions, regex et remédiations externalisés.
+3. **Préservation de la Télémétrie** : Sorties d'erreur `stderr` conservées sans `2>/dev/null`.
+4. **Indépendance Réseau (Offline First)** : Rapports HTML complets sans CDN externe.
 
 ---
 
-## 🔒 Normes de Sécurité & d'Architecture
+## 📜 Licence
 
-- **Conformité PSL** : Utilisation exclusive des modules standards Python 3 (`subprocess`, `os`, `sys`, `json`, `ast`, `re`, `html`, `xml`, `unittest`). Aucun paquet tierce partie autorisé (`pip`, `jinja2`, `yaml`).
-- **Prévention d'Injection de Commandes** : Exécution stricte avec liste de paramètres (`shell=False`) sur tous les appels système (`python.lang.security.audit.subprocess-shell-true`).
-- **Assurance Qualité** : Routine de validation pre-commit automatique en 8 étapes :
-  ```bash
-  make pre-commit
-  ```
-
----
-
-## 📄 Licence
-
-Ce produit est distribué sous licence **MIT**. Consulter le fichier `LICENSE` pour plus de détails.
-
-## 📚 Références
-
-- [Site Officiel CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks)
-- [Guides de Sécurité Red Hat Enterprise Linux](https://access.redhat.com/documentation/fr-fr/red_hat_enterprise_linux/)
-- [Directives DISA STIG](https://public.cyber.mil/stigs/)
+Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE).
