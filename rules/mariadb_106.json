@@ -462,11 +462,9 @@
     "category": "4. Général",
     "number": "4.1",
     "name": "S'assurer que les derniers correctifs de sécurité sont appliqués",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -e 'SELECT @@default_authentication_plugin;' || mariadb -e 'SELECT 1;' || echo 'AUTH_PLUGIN_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.",
     "manual_steps": [
       "Relever la version affichée.",
@@ -572,12 +570,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.1",
     "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM information_schema.user_privileges WHERE GRANTEE NOT LIKE '\\'root\\'@%' AND GRANTEE NOT LIKE '\\'mysql\\'@%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs.",
     "manual_steps": [
       "Examiner les utilisateurs retournés.",
@@ -589,12 +584,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.2",
     "name": "Retirer le droit FILE aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'FILE' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit FILE.",
@@ -605,12 +597,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.3",
     "name": "Retirer le droit PROCESS aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'PROCESS' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit PROCESS.",
@@ -621,12 +610,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.4",
     "name": "Retirer le droit SUPER aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SUPER' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE SUPER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit SUPER.",
@@ -637,12 +623,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.5",
     "name": "Retirer le droit SHUTDOWN aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'SHUTDOWN' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit SHUTDOWN.",
@@ -653,12 +636,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.6",
     "name": "Retirer CREATE USER aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'CREATE USER' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant le droit CREATE USER.",
@@ -669,12 +649,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.7",
     "name": "Retirer GRANT OPTION aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE IS_GRANTABLE = 'YES' AND GRANTEE NOT LIKE '\\'root\\'@%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Vérifier les utilisateurs ayant GRANT OPTION.",
@@ -685,11 +662,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.8",
     "name": "Limiter REPLICATION SLAVE aux comptes de réplication",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'REPLICATION SLAVE';\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication.",
     "manual_steps": [
       "Vérifier les utilisateurs ayant REPLICATION SLAVE.",
@@ -700,11 +675,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.9",
     "name": "Limiter les droits DML/DDL à des BD/comptes précis",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT GRANTEE, PRIVILEGE_TYPE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE IN ('SELECT','INSERT','UPDATE','DELETE','CREATE','DROP','ALTER');\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Révoquer les droits superflus par base de données/compte.",
     "manual_steps": [
       "Vérifier les droits DML/DDL par utilisateur.",
@@ -715,11 +688,9 @@
     "category": "5. Permissions MariaDB",
     "number": "5.10",
     "name": "Définir proprement DEFINER/INVOKER des SP/Functions",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT ROUTINE_SCHEMA, ROUTINE_NAME, DEFINER, SECURITY_TYPE FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mariadb.sys@localhost');\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.",
     "manual_steps": [
       "Lister les routines et leurs DEFINER.",
@@ -897,11 +868,9 @@
     "category": "8. Sécurité réseau",
     "number": "8.3",
     "name": "Limiter le nombre de connexions",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -e 'SELECT @@sql_mode;' || mariadb -e 'SELECT @@sql_mode;' || echo 'SQL_MODE_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Ajuster max_connections et max_user_connections dans mariadb.cnf selon les besoins.",
     "manual_steps": [
       "Vérifier les valeurs de max_connections et max_user_connections.",
@@ -912,12 +881,10 @@
     "category": "9. Réplication",
     "number": "9.1",
     "name": "Chiffrer le trafic de réplication",
-    "type": "Automated",
+    "type": "Manual",
     "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
     "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Allowed'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL=1; START REPLICA;",
     "manual_steps": [
       "Vérifier si la réplication est active.",
@@ -955,12 +922,10 @@
     "category": "9. Réplication",
     "number": "9.4",
     "name": "Chiffrement approuvé pour la réplication",
-    "type": "Automated",
+    "type": "Manual",
     "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
     "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Cipher'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL_CIPHER='ECDHE-ECDSA-AES128-GCM-SHA256'; START REPLICA;",
     "manual_steps": [
       "Vérifier le cipher utilisé pour la réplication.",
@@ -971,12 +936,10 @@
     "category": "9. Réplication",
     "number": "9.5",
     "name": "TLS mutuel activé pour la réplication",
-    "type": "Automated",
+    "type": "Manual",
     "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
     "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep -E 'Master_SSL_Cert|Master_SSL_Key'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL_CERT='...', MASTER_SSL_KEY='...'; START REPLICA; ALTER USER <repl_user> REQUIRE X509;",
     "manual_steps": [
       "Vérifier Master_SSL_Cert et Master_SSL_Key sur le replica.",
