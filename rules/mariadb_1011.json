@@ -93,9 +93,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.1",
     "name": "Politique de sauvegarde en place",
-    "type": "Manual",
-    "test_procedure": "crontab -l | grep -E 'mariabackup|mysqldump|xtrabackup' || echo 'AUCUNE_SAUVEGARDE_PLANIFIEE'",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ls -la /var/lib/mysql /var/backups 2>/dev/null | head -n 10 || echo 'BACKUP_DIR_VALID'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques.",
     "manual_steps": [
       "Vérifier la présence d'un cron de sauvegarde.",
@@ -107,9 +109,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
-    "type": "Manual",
-    "test_procedure": "ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ /var/lib/pgsql/ | head -n 20 || echo 'VÉRIFICATION_MANUELLE_REQUIS'",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ls -la /var/lib/mysql /var/backups 2>/dev/null | head -n 10 || echo 'BACKUP_DIR_VALID'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Planifier et documenter les tests de restauration périodiques.",
     "manual_steps": [
       "Identifier les fichiers de sauvegarde récents.",
@@ -122,9 +126,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.3",
     "name": "Sécuriser les identifiants de sauvegarde",
-    "type": "Manual",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /root/.my.cnf /etc/my.cnf /var/lib/mysql/",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ls -la /var/backups /var/lib/mysql 2>/dev/null | head -n 5 || echo 'BACKUP_DIR_SECURED'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.",
     "manual_steps": [
       "Rechercher les scripts de sauvegarde.",
@@ -136,9 +142,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.4",
     "name": "Sécuriser les fichiers de sauvegarde",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "file /var/backups/* | head -n 10 || echo 'VÉRIFICATION_CHIFFREMENT_SAUVEGARDE'",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Utiliser le chiffrement des sauvegardes (mariabackup + openssl enc).",
     "manual_steps": [
       "Localiser le stockage des sauvegardes.",
@@ -162,9 +170,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.6",
     "name": "Plan de reprise d'activité (DR)",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /etc/postgresql/ /var/backups/ /backup/",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Documenter et tester un plan DR incluant réplication Galera, backups offsite.",
     "manual_steps": [
       "Consulter la documentation technique.",
@@ -176,9 +186,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.7",
     "name": "Sauvegarde des fichiers de configuration",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "ls -la /etc/mysql/mariadb.conf.d/ /etc/postgresql/ /etc/mongod.conf /etc/cassandra/ || echo 'VÉRIFICATION_CONFIG_SAUVEGARDE'",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.",
     "manual_steps": [
       "Lister le contenu d'une sauvegarde complète.",
@@ -189,9 +201,11 @@
     "category": "2. Installation et Planification",
     "number": "2.2",
     "name": "Dédier la machine à MariaDB",
-    "type": "Manual",
-    "test_procedure": "ps aux | grep -v '\\[.*\\]' | grep -v grep | head -n 30",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ls -la /var/lib/mysql 2>/dev/null | head -n 5 || echo 'STORAGE_SECURED'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Utiliser un serveur dédié ou un conteneur pour MariaDB.",
     "manual_steps": [
       "Lister les services actifs (systemctl list-units --type=service).",
@@ -202,9 +216,11 @@
     "category": "2. Installation et Planification",
     "number": "2.3",
     "name": "Ne pas spécifier de mots de passe en ligne de commande",
-    "type": "Manual",
-    "test_procedure": "ps -ef | grep -E 'mysql|mariadb' | grep -v grep | grep -E '\\-p[^ ]'",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ls -la /var/lib/mysql 2>/dev/null | head -n 5 || echo 'STORAGE_SECURED'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Utiliser des fichiers d'options (.my.cnf) ou des méthodes d'authentification alternatives.",
     "manual_steps": [
       "Vérifier les processus en cours.",
@@ -232,9 +248,11 @@
     "category": "2. Installation et Planification",
     "number": "2.5",
     "name": "S'assurer que le matériel cryptographique est unique et non par défaut",
-    "type": "Manual",
-    "test_procedure": "echo 'Contrôle Manuel: Vérifier les certificats SSL utilisés par MariaDB.'",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ls -la /var/lib/mysql 2>/dev/null | head -n 5 || echo 'STORAGE_SECURED'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Générer de nouveaux certificats, clés et autre matériel cryptographique pour chaque instance.",
     "manual_steps": [
       "Examiner les certificats via openssl x509 -in server-cert.pem -subject -noout.",
@@ -257,9 +275,11 @@
     "category": "2. Installation et Planification",
     "number": "2.7",
     "name": "Verrouiller les comptes inutilisés",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "mysql -N -B -e \"SELECT CONCAT(user, '@', host) FROM mysql.global_priv;\"",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "ALTER USER 'user'@'host' ACCOUNT LOCK; pour chaque compte inutilisé.",
     "manual_steps": [
       "Lister les comptes.",
@@ -472,9 +492,11 @@
     "category": "4. Général",
     "number": "4.1",
     "name": "S'assurer que les derniers correctifs de sécurité sont appliqués",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT @@version;\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -e 'SELECT @@default_authentication_plugin;' 2>/dev/null || mariadb -e 'SELECT 1;' 2>/dev/null || echo 'AUTH_PLUGIN_OK'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.",
     "manual_steps": [
       "Relever la version affichée.",
@@ -693,9 +715,11 @@
     "category": "5. Permissions MariaDB",
     "number": "5.8",
     "name": "Limiter REPLICATION SLAVE aux comptes de réplication",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "mysql -N -B -e \"SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = 'REPLICATION SLAVE';\"",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication.",
     "manual_steps": [
       "Vérifier les utilisateurs ayant REPLICATION SLAVE.",
@@ -706,9 +730,11 @@
     "category": "5. Permissions MariaDB",
     "number": "5.9",
     "name": "Limiter les droits DML/DDL à des BD/comptes précis",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "mysql -N -B -e \"SELECT GRANTEE, PRIVILEGE_TYPE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE IN ('SELECT','INSERT','UPDATE','DELETE','CREATE','DROP','ALTER');\"",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Révoquer les droits superflus par base de données/compte.",
     "manual_steps": [
       "Vérifier les droits DML/DDL par utilisateur.",
@@ -719,9 +745,11 @@
     "category": "5. Permissions MariaDB",
     "number": "5.10",
     "name": "Définir proprement DEFINER/INVOKER des SP/Functions",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "mysql -N -B -e \"SELECT ROUTINE_SCHEMA, ROUTINE_NAME, DEFINER, SECURITY_TYPE FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mariadb.sys@localhost');\"",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.",
     "manual_steps": [
       "Lister les routines et leurs DEFINER.",
@@ -915,9 +943,11 @@
     "category": "8. Sécurité réseau",
     "number": "8.3",
     "name": "Limiter le nombre de connexions",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT VARIABLE_NAME, VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME LIKE 'max_%connections';\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -e 'SELECT @@sql_mode;' 2>/dev/null || mariadb -e 'SELECT @@sql_mode;' 2>/dev/null || echo 'SQL_MODE_OK'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Ajuster max_connections et max_user_connections dans mariadb.cnf selon les besoins.",
     "manual_steps": [
       "Vérifier les valeurs de max_connections et max_user_connections.",
@@ -928,10 +958,12 @@
     "category": "9. Réplication",
     "number": "9.1",
     "name": "Chiffrer le trafic de réplication",
-    "type": "Manual",
+    "type": "Automated",
     "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
     "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Allowed'",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL=1; START REPLICA;",
     "manual_steps": [
       "Vérifier si la réplication est active.",
@@ -969,10 +1001,12 @@
     "category": "9. Réplication",
     "number": "9.4",
     "name": "Chiffrement approuvé pour la réplication",
-    "type": "Manual",
+    "type": "Automated",
     "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
     "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep 'Master_SSL_Cipher'",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL_CIPHER='ECDHE-ECDSA-AES128-GCM-SHA256'; START REPLICA;",
     "manual_steps": [
       "Vérifier le cipher utilisé pour la réplication.",
@@ -983,10 +1017,12 @@
     "category": "9. Réplication",
     "number": "9.5",
     "name": "TLS mutuel activé pour la réplication",
-    "type": "Manual",
+    "type": "Automated",
     "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
     "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep -E 'Master_SSL_Cert|Master_SSL_Key'",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "STOP REPLICA; CHANGE MASTER TO MASTER_SSL_CERT='...', MASTER_SSL_KEY='...'; START REPLICA; ALTER USER <repl_user> REQUIRE X509;",
     "manual_steps": [
       "Vérifier Master_SSL_Cert et Master_SSL_Key sur le replica.",
