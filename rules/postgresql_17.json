@@ -15,7 +15,7 @@
     "type": "Manual",
     "test_procedure": "sh -c \"if command -v dpkg >/dev/null 2>&1; then dpkg -l | grep -iE 'postgres|mysql|mariadb|mongo|cassandra'; elif command -v rpm >/dev/null 2>&1; then rpm -qa | grep -iE 'postgres|mysql|mariadb|mongo|cassandra'; elif command -v apk >/dev/null 2>&1; then apk list -I | grep -iE 'postgres|mysql|mariadb|mongo|cassandra'; else echo 'Package manager not available'; fi || true\"",
     "expected_output": null,
-    "remediation": "Purger/effacer les paquets non désirés : apt purge <pkg> ou dnf erase <pkg>."
+    "remediation": "Purger/désinstaller les paquets non requis selon la distribution : apt purge <pkg> (Debian/Ubuntu), dnf erase <pkg> (RHEL/Rocky/CentOS) ou apk del <pkg> (Alpine)."
   },
   {
     "category": "1. Installation et correctifs",
@@ -65,9 +65,9 @@
     "number": "1.5",
     "name": "Appliquer les derniers correctifs de sécurité",
     "type": "Manual",
-    "test_procedure": "psql -c 'SHOW server_version' et comparer à la liste des versions disponibles sur la page de news PostgreSQL.",
+    "test_procedure": "psql -t -A -c 'SHOW server_version'",
     "expected_output": null,
-    "remediation": "sudo apt update && sudo apt upgrade postgresql-17*"
+    "remediation": "Mettre à jour PostgreSQL vers la dernière version mineure supportée selon la distribution (ex: apt update && apt upgrade postgresql-17* sur Debian/Ubuntu, dnf update postgresql-server sur RHEL/Rocky, ou apk upgrade postgresql sur Alpine)."
   },
   {
     "category": "1. Installation et correctifs",
