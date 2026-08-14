@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.4.1)
+# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.4.2)
 
 This document outlines the strategic roadmap, architecture principles, phase-level milestones, and task-level execution status for the CIS Benchmarks Tools suite.
 
@@ -29,6 +29,8 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 12** | Traçabilité Git Stricte, Revues Sourcery AI & Qualité Industrielle    | `v2.3.0`       | `Completed ✅` | 5/5   | 100%     |
 | **Phase 13** | Universal Credential Injection, Multi-Distro Packages & Rule 1.5 Sync| `v2.4.0`       | `Completed ✅` | 5/5   | 100%     |
 | **Phase 14** | 100% Deterministic Rule Automation & Expanded Test Suite Coverage    | `v2.4.1`       | `Completed ✅` | 6/6   | 100%     |
+| **Phase 15** | Error Masking Elimination (`2>/dev/null`) & Engine Resilience        | `v2.4.2`       | `Completed ✅` | 6/6   | 100%     |
+
 
 ---
 
@@ -273,4 +275,19 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Truthy Path Command Handling**: Replace `"path_command" in rec` with `rec.get("path_command")` to eliminate `NoneType` iterable errors.
 - [x] **Expanded Test Suite (PR #158)**: 70 unit and E2E tests covering credential injection, package queries, rule syntax, AST PSL conformity, and Docker audits.
 - [x] **Zero Command Error Guarantee**: 0 command errors (`Status Error: 0`) and 0 manual controls across all 18 targets in Docker mode.
+
+---
+
+### Phase 15: Error Masking Elimination (`2>/dev/null`), POSIX Conditions & Multi-Engine Resilience (`Completed ✅ - v2.4.2`)
+**Summary**: Completely eliminate the `2>/dev/null` anti-pattern across all 18 rule JSON specifications and Python engine audit scripts, replacing silent error suppression with robust POSIX conditionals (`test -f`, `test -d`, `for` loops) and transparent exit-code/stderr diagnostics.
+
+#### 15.1 Rule Specification Sanitization (PR #224-#244)
+- [x] **MySQL & MariaDB Rule Sanitization (PR #224, #226, #232, #234, #236)**: Replace `2>/dev/null` error-masking with explicit file/directory conditional checks across MySQL 8.0, 8.4, 9.7 and MariaDB 10.6, 10.11.
+- [x] **PostgreSQL, MongoDB & Cassandra Rule Sanitization (PR #228, #238, #240, #242)**: Replace `2>/dev/null` with POSIX conditionals across PostgreSQL 16/17/18, MongoDB 7/8, and Cassandra 4.0/4.1/5.0.
+- [x] **RHEL OS Rule Sanitization (PR #244)**: Eliminate `2>/dev/null` across RHEL 8, 9, and 10 benchmarks.
+
+#### 15.2 Audit Engine Refactoring & E2E Validation (PR #230, #246-#274)
+- [x] **MySQL & MariaDB Engine Refactoring (PR #246, #248, #250, #252, #254, #256, #258, #260, #262, #264, #266)**: Remove `2>/dev/null` and deduplicate context detection in MySQL and MariaDB engines.
+- [x] **PostgreSQL, MongoDB, Cassandra & RHEL Engine Refactoring (PR #268, #270, #272, #274)**: Remove `2>/dev/null` error suppression across all database and OS audit scripts.
+- [x] **Continuous Zero-Error Verification (PR #230)**: Automated test asserting 0 manual and 0 error controls across all 18 targets with 71 passing tests.
 
