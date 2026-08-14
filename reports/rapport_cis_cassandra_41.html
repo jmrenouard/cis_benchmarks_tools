@@ -50,7 +50,7 @@
         <header class="bg-white border-b border-gray-200 p-6 flex flex-wrap justify-between items-center gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Rapport d'Audit CIS - Cassandra 4.1</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : 14/08/2026 12:07:39</p>
+                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : 14/08/2026 12:16:48</p>
             </div>
             <div class="flex items-center flex-wrap gap-2.5">
                 <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
@@ -75,7 +75,7 @@
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
                         <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Score Global</span>
                         <div class="relative flex items-center justify-center">
-                            <span class="text-3xl font-black text-gray-900">27.3%</span>
+                            <span class="text-3xl font-black text-gray-900">30.0%</span>
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-green-500">
@@ -85,12 +85,12 @@
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-red-500">
                         <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Échecs</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">8</div>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">7</div>
                         <p class="text-xs text-gray-500 mt-1">Non-conformités détectées</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-orange-500">
                         <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">Erreurs Commande</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">1</div>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">2</div>
                         <p class="text-xs text-gray-500 mt-1">Échecs d'exécution technique</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
@@ -146,19 +146,19 @@
         <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
           <path stroke-dasharray="100 100" stroke="#e5e7eb" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
           <path stroke-dasharray="0.0 100" stroke-dashoffset="-75.0" stroke="#9ca3af" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path stroke-dasharray="8.3 100" stroke-dashoffset="-66.7" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path stroke-dasharray="66.7 100" stroke-dashoffset="0.0" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="16.7 100" stroke-dashoffset="-58.3" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="58.3 100" stroke-dashoffset="0.0" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
           <path stroke-dasharray="25.0 100" stroke-dashoffset="25.0" stroke="#10b981" stroke-width="3.8" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
         </svg>
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <span style="font-size: 24px; font-weight: 800; color: #111827;">27.3%</span>
+          <span style="font-size: 24px; font-weight: 800; color: #111827;">30.0%</span>
           <span style="font-size: 11px; color: #6b7280; font-weight: 600;">Score Global</span>
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
         <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> <strong>Réussi (PASS) :</strong> 3</div>
-        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> <strong>Échoué (FAIL) :</strong> 8</div>
-        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> 1</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> <strong>Échoué (FAIL) :</strong> 7</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> 2</div>
         <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> <strong>Non Applicable (N/A) :</strong> 0</div>
       </div>
     </div>
@@ -204,7 +204,7 @@
             <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/3)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 100.0%; background: #ef4444;" title="Échoué: 3"></div>
+            <div style="width: 66.7%; background: #ef4444;" title="Échoué: 2"></div><div style="width: 33.3%; background: #6b7280;" title="Error: 1"></div>
           </div>
         </div>
         
@@ -303,13 +303,14 @@ Return Code: 0</pre></td>
                         <td class="py-3 px-4 text-left align-top">1.4</td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la dernière version de Cassandra est installée</td>
                         <td class="py-3 px-4 text-left align-top">Automated</td>
-                        <td class="py-3 px-4 text-left align-top"><code>cassandra -v 2&gt;/dev/null || nodetool version 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>cassandra -v || nodetool version</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-error font-semibold">❓ Error</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Error: Command not found.
 Stdout:
 
 Stderr:
-
+/bin/bash: line 1: cassandra: command not found
+/bin/bash: line 1: nodetool: command not found
 Return Code: 127</pre></td>
                         <td class="py-3 px-4 text-left align-top">Mettre à jour Cassandra vers la dernière version 4.1.x.</td>
                     </tr>
@@ -332,12 +333,12 @@ Return Code: 0</pre></td>
                         <td class="py-3 px-4 text-left align-top">1.6</td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les horloges sont synchronisées sur tous les nœuds</td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
-                        <td class="py-3 px-4 text-left align-top"><code>timedatectl status 2&gt;/dev/null | grep &#x27;synchronized&#x27; || ntpstat 2&gt;/dev/null || chronyc tracking 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>timedatectl status | grep &#x27;synchronized&#x27; || ntpstat || chronyc tracking</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
-timedatectl status 2&gt;/dev/null | grep &#x27;synchronized&#x27; || ntpstat 2&gt;/dev/null || chronyc tracking 2&gt;/dev/null</pre></td>
+timedatectl status | grep &#x27;synchronized&#x27; || ntpstat || chronyc tracking</pre></td>
                         <td class="py-3 px-4 text-left align-top">Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.</td>
                     </tr>
 
@@ -406,9 +407,9 @@ Condition de succès non remplie.</pre></td>
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">3 Contrôle d&#x27;accès</h2>
             <p class="text-lg font-bold text-red-600">0.00%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/3 vérifiés).</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/2 vérifiés).</p>
             <p class="text-gray-700">5 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 controls encountered an execution error.</p>
+            <p class="text-gray-700">1 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
@@ -429,15 +430,14 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">3.1</td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que les rôles cassandra et superuser sont séparés</td>
                         <td class="py-3 px-4 text-left align-top">Automated</td>
-                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep -v &#x27;cassandra&#x27; | grep -c &#x27;True&#x27;</code></td>
-                        <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
-                        <td class="py-3 px-4 text-left align-top"><pre>Stdout:
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; | grep -v &#x27;cassandra&#x27; | grep -c &#x27;True&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><span class="status-error font-semibold">❓ Error</span></td>
+                        <td class="py-3 px-4 text-left align-top"><pre>Error: Command not found (détecté dans stderr).
+Stdout:
 0
 Stderr:
-
-Return Code: 1
-
-Condition de succès non remplie.</pre></td>
+/bin/bash: line 1: cqlsh: command not found
+Return Code: 1</pre></td>
                         <td class="py-3 px-4 text-left align-top">Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH SUPERUSER = false;</td>
                     </tr>
 
@@ -461,12 +461,12 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-4 text-left align-top">3.3</td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer qu&#x27;il n&#x27;y a pas de rôles ou privilèges excessifs</td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
-                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
-cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</pre></td>
+cqlsh -e &quot;LIST ROLES;&quot;</pre></td>
                         <td class="py-3 px-4 text-left align-top">Révoquer les rôles et privilèges inutiles. Utiliser REVOKE et DROP ROLE.</td>
                     </tr>
 
@@ -516,12 +516,12 @@ grep -E &#x27;^authorizer:&#x27; /etc/cassandra/cassandra.yaml</pre></td>
                         <td class="py-3 px-4 text-left align-top">3.7</td>
                         <td class="py-3 px-4 text-left align-top">Réviser les rôles définis par l&#x27;utilisateur</td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
-                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
-cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</pre></td>
+cqlsh -e &quot;LIST ROLES;&quot;</pre></td>
                         <td class="py-3 px-4 text-left align-top">Supprimer les rôles inutiles et révoquer les privilèges excessifs.</td>
                     </tr>
 
@@ -529,12 +529,12 @@ cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null</pre></td>
                         <td class="py-3 px-4 text-left align-top">3.8</td>
                         <td class="py-3 px-4 text-left align-top">Réviser les rôles superuser/administrateur</td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
-                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep &#x27;True&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>cqlsh -e &quot;LIST ROLES;&quot; | grep &#x27;True&#x27;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
-cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep &#x27;True&#x27;</pre></td>
+cqlsh -e &quot;LIST ROLES;&quot; | grep &#x27;True&#x27;</pre></td>
                         <td class="py-3 px-4 text-left align-top">Limiter le nombre de rôles superuser au strict nécessaire.</td>
                     </tr>
 
@@ -568,12 +568,13 @@ cqlsh -e &quot;LIST ROLES;&quot; 2&gt;/dev/null | grep &#x27;True&#x27;</pre></t
                         <td class="py-3 px-4 text-left align-top">4.1</td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la journalisation est activée</td>
                         <td class="py-3 px-4 text-left align-top">Automated</td>
-                        <td class="py-3 px-4 text-left align-top"><code>ls -la /var/log/cassandra/system.log 2&gt;/dev/null || ls -la /opt/cassandra/logs/system.log 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>ls -la /var/log/cassandra/system.log || ls -la /opt/cassandra/logs/system.log</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-fail font-semibold">❌ Échoué</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>Stdout:
 
 Stderr:
-
+ls: cannot access &#x27;/var/log/cassandra/system.log&#x27;: No such file or directory
+ls: cannot access &#x27;/opt/cassandra/logs/system.log&#x27;: No such file or directory
 Return Code: 2
 
 Condition de succès non remplie.</pre></td>

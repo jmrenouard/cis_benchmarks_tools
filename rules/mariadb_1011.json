@@ -30,7 +30,7 @@
     "number": "1.3",
     "name": "Désactiver l'historique des commandes MariaDB",
     "type": "Automated",
-    "test_procedure": "! find /home /root -name .mysql_history -print -quit 2>/dev/null",
+    "test_procedure": "! find /home /root -name .mysql_history -print -quit",
     "expected_output": {
       "type": "returncode_zero"
     },
@@ -67,7 +67,7 @@
     "number": "1.6",
     "name": "Vérifier que MYSQL_PWD n'est pas dans les profils utilisateurs",
     "type": "Automated",
-    "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null",
+    "test_procedure": "! grep -qs MYSQL_PWD /home/*/.{bashrc,profile,bash_profile} /root/.{bashrc,profile,bash_profile} /etc/environment",
     "expected_output": {
       "type": "returncode_zero"
     },
@@ -94,7 +94,7 @@
     "number": "2.1.1",
     "name": "Politique de sauvegarde en place",
     "type": "Manual",
-    "test_procedure": "crontab -l 2>/dev/null | grep -E 'mariabackup|mysqldump|xtrabackup' || echo 'AUCUNE_SAUVEGARDE_PLANIFIEE'",
+    "test_procedure": "crontab -l | grep -E 'mariabackup|mysqldump|xtrabackup' || echo 'AUCUNE_SAUVEGARDE_PLANIFIEE'",
     "expected_output": null,
     "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques.",
     "manual_steps": [
@@ -108,7 +108,7 @@
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
     "type": "Manual",
-    "test_procedure": "ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ /var/lib/pgsql/ 2>/dev/null | head -n 20 || echo 'VÉRIFICATION_MANUELLE_REQUIS'",
+    "test_procedure": "ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ /var/lib/pgsql/ | head -n 20 || echo 'VÉRIFICATION_MANUELLE_REQUIS'",
     "expected_output": null,
     "remediation": "Planifier et documenter les tests de restauration périodiques.",
     "manual_steps": [
@@ -123,7 +123,7 @@
     "number": "2.1.3",
     "name": "Sécuriser les identifiants de sauvegarde",
     "type": "Manual",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /root/.my.cnf /etc/my.cnf /var/lib/mysql/ 2>/dev/null || echo 'VERIF_CREDENTIALS_BACKUP'",
+    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /root/.my.cnf /etc/my.cnf /var/lib/mysql/",
     "expected_output": null,
     "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.",
     "manual_steps": [
@@ -137,7 +137,7 @@
     "number": "2.1.4",
     "name": "Sécuriser les fichiers de sauvegarde",
     "type": "Manual",
-    "test_procedure": "file /var/backups/* 2>/dev/null | head -n 10 || echo 'VÉRIFICATION_CHIFFREMENT_SAUVEGARDE'",
+    "test_procedure": "file /var/backups/* | head -n 10 || echo 'VÉRIFICATION_CHIFFREMENT_SAUVEGARDE'",
     "expected_output": null,
     "remediation": "Utiliser le chiffrement des sauvegardes (mariabackup + openssl enc).",
     "manual_steps": [
@@ -163,7 +163,7 @@
     "number": "2.1.6",
     "name": "Plan de reprise d'activité (DR)",
     "type": "Manual",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /etc/postgresql/ /var/backups/ /backup/ 2>/dev/null || echo 'MANUAL_DR_POLICY_REVIEW'",
+    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /etc/postgresql/ /var/backups/ /backup/",
     "expected_output": null,
     "remediation": "Documenter et tester un plan DR incluant réplication Galera, backups offsite.",
     "manual_steps": [
@@ -177,7 +177,7 @@
     "number": "2.1.7",
     "name": "Sauvegarde des fichiers de configuration",
     "type": "Manual",
-    "test_procedure": "ls -la /etc/mysql/mariadb.conf.d/ /etc/postgresql/ /etc/mongod.conf /etc/cassandra/ 2>/dev/null || echo 'VÉRIFICATION_CONFIG_SAUVEGARDE'",
+    "test_procedure": "ls -la /etc/mysql/mariadb.conf.d/ /etc/postgresql/ /etc/mongod.conf /etc/cassandra/ || echo 'VÉRIFICATION_CONFIG_SAUVEGARDE'",
     "expected_output": null,
     "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.",
     "manual_steps": [
@@ -498,7 +498,7 @@
     "number": "4.3",
     "name": "S'assurer que 'allow-suspicious-udfs' est à 'OFF'",
     "type": "Automated",
-    "test_procedure": "my_print_defaults mysqld 2>/dev/null | grep -q 'allow-suspicious-udfs' && echo 'FOUND' || echo 'NOT FOUND'",
+    "test_procedure": "my_print_defaults mysqld | grep -q 'allow-suspicious-udfs' && echo 'FOUND' || echo 'NOT FOUND'",
     "expected_output": {
       "type": "stdout_equals",
       "value": "NOT FOUND"
@@ -819,7 +819,7 @@
     "number": "7.2",
     "name": "Aucun mot de passe dans la configuration globale",
     "type": "Automated",
-    "test_procedure": "! grep -riE 'password|pwd|pass' /etc/mysql/ /etc/my.cnf 2>/dev/null | grep -v '#' | grep -v 'password_lifetime' | grep -v 'password_check' | grep -v 'validate_password' | grep -v 'strict_password' | grep -v 'old_passwords' | grep -v 'default_password_lifetime' | grep -v 'password_last_changed'",
+    "test_procedure": "! grep -riE 'password|pwd|pass' /etc/mysql/ /etc/my.cnf | grep -v '#' | grep -v 'password_lifetime' | grep -v 'password_check' | grep -v 'validate_password' | grep -v 'strict_password' | grep -v 'old_passwords' | grep -v 'default_password_lifetime' | grep -v 'password_last_changed'",
     "expected_output": {
       "type": "returncode_zero"
     },
