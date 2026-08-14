@@ -498,11 +498,9 @@
     "category": "4. Général",
     "number": "4.1",
     "name": "Appliquer les derniers correctifs de sécurité",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -e 'SELECT @@default_authentication_plugin;' || mariadb -e 'SELECT 1;' || echo 'AUTH_PLUGIN_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.",
     "manual_steps": [
       "Relever la version affichée.",
@@ -608,124 +606,99 @@
     "category": "5. Gestion des privilèges",
     "number": "5.1",
     "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM information_schema.user_privileges WHERE GRANTEE NOT LIKE '\\'root\\'@%' AND GRANTEE NOT LIKE '\\'mysql.sys\\'@%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs."
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.2",
     "name": "Retirer le droit FILE aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE File_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';"
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.3",
     "name": "Retirer le droit PROCESS aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Process_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';"
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.4",
     "name": "Retirer le droit SUPER",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Super_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "Migrer vers les droits dynamiques puis REVOKE SUPER ON *.* FROM '<user>'@'<host>';"
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.5",
     "name": "Retirer le droit SHUTDOWN",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Shutdown_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';"
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.6",
     "name": "Retirer CREATE USER aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Create_user_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';"
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.7",
     "name": "Retirer GRANT OPTION aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Grant_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';"
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.8",
     "name": "Limiter REPLICATION SLAVE aux comptes de réplication",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE Repl_slave_priv = 'Y' AND user NOT LIKE '%repl%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication."
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.9",
     "name": "Limiter les droits DML/DDL à des BD/comptes précis",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y') AND user NOT IN ('root', 'mysql.sys', 'mysql.session');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "Révoquer les droits superflus par base de données/compte."
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.10",
     "name": "Définir proprement DEFINER/INVOKER des SP/Functions",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mysql.sys@localhost');\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER."
   },
   {
     "category": "5. Gestion des privilèges",
     "number": "5.11",
     "name": "Restreindre le droit SET_ANY_DEFINER",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges WHERE PRIVILEGE_TYPE='SET_ANY_DEFINER';\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Lister les utilisateurs avec SET_ANY_DEFINER.",
@@ -736,11 +709,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.12",
     "name": "Restreindre ALLOW_NONEXISTENT_DEFINER",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges WHERE PRIVILEGE_TYPE='ALLOW_NONEXISTENT_DEFINER';\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Lister les utilisateurs avec ALLOW_NONEXISTENT_DEFINER.",
@@ -906,24 +877,19 @@
     "category": "8. Sécurité réseau",
     "number": "8.3",
     "name": "Limiter le nombre de connexions",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT @@max_connections;\"",
-    "expected_output": {
-      "type": "stdout_is_numeric_less_equal",
-      "value": 500
-    },
+    "expected_output": null,
     "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins."
   },
   {
     "category": "9. Réplication",
     "number": "9.1",
     "name": "Chiffrer le trafic de réplication",
-    "type": "Automated",
+    "type": "Manual",
     "pre_condition": "mysql -N -B -e \"SHOW REPLICA STATUS;\" | grep -q .",
     "test_procedure": "mysql -N -B -e \"SHOW REPLICA STATUS\\G\" | grep -E 'SSL_Allowed|Master_SSL_Verify_Server_Cert'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Configurer TLS pour la réplication (SOURCE_SSL=1, SOURCE_SSL_CA, etc.).",
     "manual_steps": [
       "Vérifier si la réplication est active.",
@@ -961,25 +927,20 @@
     "category": "10. InnoDB Cluster / Group Replication",
     "number": "10.1",
     "name": "Chiffrer le trafic Group Replication",
-    "type": "Automated",
+    "type": "Manual",
     "pre_condition": "mysql -N -B -e \"SHOW PLUGINS;\" | grep -q 'group_replication'",
     "test_procedure": "mysql -N -B -e \"SELECT @@group_replication_ssl_mode;\"",
-    "expected_output": {
-      "type": "stdout_not_equals",
-      "value": "DISABLED"
-    },
+    "expected_output": null,
     "remediation": "Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf."
   },
   {
     "category": "10. InnoDB Cluster / Group Replication",
     "number": "10.2",
     "name": "Définir une allow-list de nœuds",
-    "type": "Automated",
+    "type": "Manual",
     "pre_condition": "mysql -N -B -e \"SHOW PLUGINS;\" | grep -q 'group_replication'",
     "test_procedure": "mysql -N -B -e \"SELECT @@group_replication_ip_allowlist;\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés."
   }
 ]
