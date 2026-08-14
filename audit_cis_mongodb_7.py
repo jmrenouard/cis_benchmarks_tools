@@ -368,7 +368,7 @@ def detect_execution_context(mode="local", remote_host=None, docker_container=No
 
     if not active_container and product_hint:
         try:
-            cmd = "docker ps --format '{{.Names}}' 2>/dev/null"
+            cmd = "docker ps --format '{{.Names}}'"
             stdout, stderr, ret = run_command(cmd, remote_host=remote_host)
             if ret == 0 and stdout:
                 for line in stdout.splitlines():
@@ -409,7 +409,7 @@ def detect_docker_container(remote_host=None, docker_name=None):
     """Detect active MongoDB Docker container name."""
     if docker_name:
         return docker_name
-    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' 2>/dev/null | grep -iE 'mongo|mongodb' | head -n 1", remote_host=remote_host)
+    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' | grep -iE 'mongo|mongodb' | head -n 1", remote_host=remote_host)
     if ret == 0 and stdout:
         return stdout.strip()
     return None
@@ -468,7 +468,7 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
                 command = f"docker exec -i {env_flags} {docker_container} /bin/bash -c {json.dumps(command)}".replace("  ", " ")
             elif "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
                 if "mongod" in command or "mongodb" in command:
-                    command = "mongosh --eval 'db.adminCommand({ping: 1})' 2>/dev/null || mongo --eval 'db.adminCommand({ping: 1})' 2>/dev/null || ps aux | grep -v grep | grep mongod"
+                    command = "mongosh --eval 'db.adminCommand({ping: 1})' || mongo --eval 'db.adminCommand({ping: 1})' || ps aux | grep -v grep | grep mongod"
             cmd_args = ["/bin/bash", "-c", command]
         else:
             cmd_args = list(command)
