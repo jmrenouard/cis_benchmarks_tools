@@ -4,7 +4,7 @@
     "number": "1.1",
     "name": "S'assurer que la version/les correctifs appropriés de MongoDB sont installés",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -57,7 +57,7 @@
     "number": "3.1",
     "name": "S'assurer du moindre privilège pour les comptes de base de données",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -68,7 +68,7 @@
     "number": "3.2",
     "name": "S'assurer que le contrôle d'accès basé sur les rôles est activé et configuré correctement",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -79,7 +79,7 @@
     "number": "3.3",
     "name": "S'assurer que MongoDB est exécuté en utilisant un compte de service dédié et non privilégié",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -90,7 +90,7 @@
     "number": "3.4",
     "name": "S'assurer que chaque rôle pour chaque base de données MongoDB est nécessaire et n'accorde que les privilèges nécessaires",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -101,7 +101,7 @@
     "number": "3.5",
     "name": "Réviser les rôles de superutilisateur/administrateur",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -160,7 +160,7 @@
     "number": "4.5",
     "name": "S'assurer du chiffrement des données au repos",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -183,7 +183,7 @@
     "number": "5.2",
     "name": "S'assurer que les filtres d'audit sont configurés correctement",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -230,7 +230,7 @@
     "number": "6.2",
     "name": "S'assurer que les limites de ressources du système d'exploitation sont définies pour MongoDB",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -241,7 +241,7 @@
     "number": "6.3",
     "name": "S'assurer que le script côté serveur est désactivé si non nécessaire",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -252,7 +252,7 @@
     "number": "7.1",
     "name": "S'assurer que les permissions appropriées du fichier de clés sont définies",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -263,7 +263,7 @@
     "number": "7.2",
     "name": "S'assurer que les permissions appropriées du fichier de base de données sont définies",
     "type": "Automated",
-    "test_procedure": "mongosh --eval 'db.version()' 2>/dev/null || mongo --eval 'db.version()' 2>/dev/null || cat /etc/mongod.conf 2>/dev/null || echo 'MONGODB_AUDIT_OK'",
+    "test_procedure": "mongosh --eval 'db.version()' || mongo --eval 'db.version()' || cat /etc/mongod.conf || echo 'MONGODB_AUDIT_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
