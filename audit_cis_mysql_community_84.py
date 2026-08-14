@@ -673,61 +673,61 @@ def perform_checks(recommendations, remote_host=None, docker_container=None):
                     command_executed_display = cmd_to_run
 
                 if cmd_to_run:
-                    # Execute the command
-                    stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host)
-                    check_result["output"] = f"Stdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}"
+                    stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host, docker_container=docker_container) if 'docker_container' in locals() else run_command(cmd_to_run, remote_host=remote_host)
+                    check_result["output"] = "Stdout:" + chr(10) + stdout + chr(10) + "Stderr:" + chr(10) + stderr + chr(10) + f"Return Code: {returncode}"
                     check_result["error"] = stderr
                     check_result["test_procedure"] = command_executed_display
 
-                    # --- Identification des cas "Not Applicable" (variables/plugins manquants) ---
+                    # 1. Not Applicable (variable/plugin missing)
                     if "Unknown system variable" in stderr or "Unknown command" in stderr or "ERROR 1193" in stderr:
-                         check_result["status"] = "Not Applicable"
-                         check_result["output"] = f"Variable ou plugin non installé/activé.\n{check_result['output']}"
-                         results[category].append(check_result)
-                         continue
+                        check_result["status"] = "Not Applicable"
+                        check_result["output"] = "Variable ou plugin non installé/activé." + chr(10) + check_result['output']
+                        results[category].append(check_result)
+                        continue
 
-                    # --- Evaluation ---
-                    condition = rec.get("expected_output")
+                    # 2. Command Execution Errors (take precedence over Manual/Pass/Fail)
+                    if returncode == 127 or ("command not found" in stderr.lower() and not cmd_to_run.strip().startswith('!')):
+                        check_result["status"] = "Error"
+                        check_result["output"] = "Error: Command not found." + chr(10) + check_result['output']
+                        results[category].append(check_result)
+                        continue
+                    elif returncode == 124:
+                        check_result["status"] = "Error"
+                        check_result["output"] = "Error: Timeout." + chr(10) + check_result['output']
+                        results[category].append(check_result)
+                        continue
+                    elif "ERROR 1045 (28000): Access denied" in stderr:
+                        check_result["status"] = "Error"
+                        check_result["output"] = "Error: Accès refusé (vérifier les identifiants/privilèges)." + chr(10) + check_result['output']
+                        results[category].append(check_result)
+                        continue
+                    elif "ERROR 2002 (HY000): Can't connect" in stderr:
+                        check_result["status"] = "Error"
+                        check_result["output"] = "Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket)." + chr(10) + check_result['output']
+                        results[category].append(check_result)
+                        continue
 
+                    # 3. Manual Checks (when command executed without execution errors)
                     if rec["type"] == "Manual":
                         check_result["status"] = "Manual"
-                        check_result["output"] = "This control requires manual verification.\n\nRésultat de l'extraction automatique pour aide:\n" + check_result["output"]
-                    elif returncode == 127: # Command not found
-                        check_result["status"] = "Error"
-                        check_result["output"] = f"Error: Command not found.\n{check_result['output']}"
-                    elif returncode == 124: # Timeout
-                        check_result["status"] = "Error"
-                        check_result["output"] = f"Error: Timeout.\n{check_result['output']}"
-                    elif "command not found" in stderr.lower() and not cmd_to_run.strip().startswith('!'):
-                         check_result["status"] = "Error"
-                         check_result["output"] = f"Error: Command not found (détecté dans stderr).\n{check_result['output']}"
-                    elif "ERROR 1045 (28000): Access denied" in stderr:
-                         check_result["status"] = "Error"
-                         check_result["output"] = f"Error: Accès refusé. Vérifiez les identifiants/privilèges MySQL.\n{check_result['output']}"
-                    elif "ERROR 2002 (HY000): Can't connect" in stderr:
-                         check_result["status"] = "Error"
-                         check_result["output"] = f"Error: Impossible de se connecter à MySQL (serveur arrêté ou mauvais socket).\n{check_result['output']}"
-                    elif condition:
+                        check_result["output"] = "This control requires manual verification." + chr(10) + chr(10) + "Résultat de l'extraction automatique pour aide:" + chr(10) + check_result["output"]
+                        results[category].append(check_result)
+                        continue
+
+                    # 4. Automated Evaluation
+                    condition = rec.get("expected_output")
+                    if condition:
                         is_pass = evaluate_condition(condition, stdout, stderr, returncode)
-                        # Fix false positive when command fails but condition (like stdout_is_empty) is met
                         if is_pass and returncode != 0 and condition.get("type") not in ["returncode_zero", "returncode_equals"] and not cmd_to_run.strip().startswith('!'):
-                             is_pass = False
-                             check_result["output"] += f"\n\nÉchec car la commande a retourné une erreur (code {returncode})."
+                            is_pass = False
+                            check_result["output"] += chr(10) + chr(10) + f"Échec car la commande a retourné une erreur (code {returncode})."
                         
                         if is_pass:
                             check_result["status"] = "Pass"
                         else:
                             check_result["status"] = "Fail"
-                            check_result["output"] += "\n\nCondition de succès non remplie."
-                    elif returncode == 0:
-                         check_result["status"] = "Pass"
-                         check_result["output"] += "\n\nNote: Command exécutée avec succès."
                     else:
-                         check_result["status"] = "Fail"
-                         check_result["output"] += f"\n\nLa commande a échoué (code {returncode})."
-                else:
-                     check_result["status"] = "Error"
-                     check_result["output"] = f"Configuration d'audit invalid pour {check_number}."
+                        check_result["status"] = "Manual"
 
             except Exception as e:
                  check_result["status"] = "Error"
