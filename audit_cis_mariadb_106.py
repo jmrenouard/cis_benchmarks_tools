@@ -481,7 +481,7 @@ def detect_execution_context(mode="local", remote_host=None, docker_container=No
 
     if not active_container and product_hint:
         try:
-            cmd = "docker ps --format '{{.Names}}' 2>/dev/null"
+            cmd = "docker ps --format '{{.Names}}'"
             stdout, stderr, ret = run_command(cmd, remote_host=remote_host)
             if ret == 0 and stdout:
                 for line in stdout.splitlines():
@@ -522,7 +522,7 @@ def detect_docker_container(remote_host=None, docker_name=None):
     """Detect active MariaDB / MySQL Docker container name."""
     if docker_name:
         return docker_name
-    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' 2>/dev/null | grep -iE 'mariadb|mysql' | head -n 1", remote_host=remote_host)
+    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' | grep -iE 'mariadb|mysql' | head -n 1", remote_host=remote_host)
     if ret == 0 and stdout:
         return stdout.strip()
     return None
@@ -583,7 +583,7 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
                 command = f"docker exec -i {env_flags} {docker_container} /bin/bash -c {json.dumps(command)}".replace("  ", " ")
             elif "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
                 if "mariadb" in command or "mysql" in command:
-                    command = "mariadb -e 'SELECT 1;' 2>/dev/null || mysql -e 'SELECT 1;' 2>/dev/null || ps aux | grep -v grep | grep mysqld"
+                    command = "mariadb -e 'SELECT 1;' || mysql -e 'SELECT 1;' || ps aux | grep -v grep | grep mysqld"
             cmd_args = ["/bin/bash", "-c", command]
         else:
             cmd_args = list(command)
@@ -723,12 +723,12 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     path_cmd = rec["path_command"]
                     path_cmd_to_run = path_cmd
                     if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
-                        path_cmd_to_run = f"{path_cmd} 2>/dev/null || mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo -n mysql -N -B -e \"SELECT @@datadir;\" 2>/dev/null || sudo -n mariadb -N -B -e \"SELECT @@datadir;\" 2>/dev/null"
+                        path_cmd_to_run = f"{path_cmd} || mariadb -N -B -e \"SELECT @@datadir;\" || sudo -n mysql -N -B -e \"SELECT @@datadir;\" || sudo -n mariadb -N -B -e \"SELECT @@datadir;\""
                     
                     path_stdout, path_stderr, path_returncode = run_command(path_cmd_to_run, remote_host=remote_host, docker_container=docker_container)
 
                     if (path_returncode != 0 or not path_stdout) and "datadir" in path_cmd:
-                        fb_stdout, fb_stderr, fb_ret = run_command("ls -d /var/lib/mariadb /var/lib/mysql 2>/dev/null | head -n 1", remote_host=remote_host)
+                        fb_stdout, fb_stderr, fb_ret = run_command("ls -d /var/lib/mariadb /var/lib/mysql | head -n 1", remote_host=remote_host)
                         if fb_ret == 0 and fb_stdout:
                             path_stdout = fb_stdout.strip()
                             path_returncode = 0
