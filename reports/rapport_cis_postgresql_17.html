@@ -50,7 +50,7 @@
         <header class="bg-white border-b border-gray-200 p-6 flex flex-wrap justify-between items-center gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Rapport d'Audit CIS - PostgreSQL 17</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : 14/08/2026 12:07:10</p>
+                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : 14/08/2026 12:17:25</p>
             </div>
             <div class="flex items-center flex-wrap gap-2.5">
                 <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
@@ -312,7 +312,7 @@
                         <td class="py-3 px-6 text-left align-top">1.2</td>
                         <td class="py-3 px-6 text-left align-top">Installer uniquement les paquets requis</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>dpkg -l | grep -iE &#x27;postgres|mysql|mariadb&#x27; 2&gt;/dev/null || rpm -qa | grep -iE &#x27;postgres|mysql|mariadb&#x27; 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>dpkg -l | grep -iE &#x27;postgres|mysql|mariadb&#x27; || rpm -qa | grep -iE &#x27;postgres|mysql|mariadb&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Purger/effacer les paquets non désirés : apt purge &lt;pkg&gt; ou dnf erase &lt;pkg&gt;.</td>
@@ -367,12 +367,12 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">1.6</td>
                         <td class="py-3 px-6 text-left align-top">Vérifier que PGPASSWORD n&#x27;est pas défini dans les profils</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>! grep -q PGPASSWORD /home/*/.{bashrc,profile,bash_profile} /etc/environment 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>! grep -q PGPASSWORD /home/*/.{bashrc,profile,bash_profile} /etc/environment</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-
+grep: /home/*/.bash_profile: No such file or directory
 Return Code: 0</pre></td>
                         <td class="py-3 px-6 text-left align-top">Empêcher le stockage en clair du mot de passe via la variable d’environnement PGPASSWORD.
 Supprimer toute définition de PGPASSWORD dans les scripts de connexion, utiliser ~/.pgpass ou une méthode sécurisée. </td>
@@ -425,7 +425,7 @@ Identifier et modifier les scripts/processus pour ne plus utiliser PGPASSWORD.</
                         <td class="py-3 px-6 text-left align-top">2.1</td>
                         <td class="py-3 px-6 text-left align-top">Masque de permissions (umask)</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>su - postgres -c umask 2&gt;/dev/null || umask</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>su - postgres -c umask || umask</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Configurer le umask de l’utilisateur postgres à 0077 pour restreindre la création de fichiers.
@@ -454,12 +454,74 @@ chown root:root $(sudo -u postgres pg_config --sharedir)/extension &amp;&amp; ch
                         <td class="py-3 px-6 text-left align-top">2.3</td>
                         <td class="py-3 px-6 text-left align-top">Désactiver l’historique des commandes psql</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>! find /home -name .psql_history -print -quit 2&gt;/dev/null</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>! find /home -name .psql_history -print -quit</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 /home/jmren/.psql_history
 Stderr:
-
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_03/test_galera_db’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_03/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_03/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_03/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_02/test_galera_db’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_02/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_02/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_02/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_01/test_galera_db’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_01/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_01/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/dbscripts/MariaDB/docker/mariadb/gdatadir_01/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_01/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_01/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_01/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_02/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_02/#binlog_cache_files’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_02/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_02/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_03/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_03/#binlog_cache_files’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_03/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/datadir_03/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_03/employees’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_03/test_galera_db’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_03/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_03/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_03/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_02/employees’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_02/test_galera_db’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_02/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_02/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_02/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_01/employees’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_01/test_galera_db’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_01/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_01/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/multi-db-docker-env/gdatadir_01/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_01/employees’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_01/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_01/#binlog_cache_files’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_01/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_01/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_02/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_02/#binlog_cache_files’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_02/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_02/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_03/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_03/#binlog_cache_files’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_03/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/datadir_03/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_03/employees’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_03/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_03/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_03/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_02/employees’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_02/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_02/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_02/sys’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_01/employees’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_01/performance_schema’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_01/mysql’: Permission denied
+find: ‘/home/jmren/GIT_REPOS/MySQLTuner-perl/vendor/multi-db-docker-env/gdatadir_01/sys’: Permission denied
 Return Code: 0</pre></td>
                         <td class="py-3 px-6 text-left align-top">Empêcher la création de ~/.psql_history pour limiter l’exposition de données sensibles.
 Supprimer le fichier .psql_history et ajouter \set HISTFILE /dev/null dans ~/.psqlrc ou créer un lien symbolique vers /dev/null.</td>
@@ -1007,7 +1069,7 @@ ALTER SYSTEM SET log_timezone = &#x27;UTC&#x27;; SELECT pg_reload_conf();.</td>
                         <td class="py-3 px-6 text-left align-top">4.1</td>
                         <td class="py-3 px-6 text-left align-top">Désactiver la connexion interactive</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>grep -E &#x27;^\s*local\s+.*trust&#x27; /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf 2&gt;/dev/null || echo &#x27;PASS_AUCUN_TRUST_LOCAL&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>grep -E &#x27;^\s*local\s+.*trust&#x27; /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Empêcher les rôles superutilisateurs sans console SSH d’interagir localement.
@@ -1018,7 +1080,7 @@ Modifier pg_hba.conf, passer à md5 ou peer, puis SELECT pg_reload_conf();.</td>
                         <td class="py-3 px-6 text-left align-top">4.2</td>
                         <td class="py-3 px-6 text-left align-top">Configurer sudo correctement</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>grep -iE &#x27;postgres|mysql|mariadb&#x27; /etc/sudoers /etc/sudoers.d/* 2&gt;/dev/null || echo &#x27;PASS_AUCUN_SUDO_DEDIE&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>grep -iE &#x27;postgres|mysql|mariadb&#x27; /etc/sudoers /etc/sudoers.d/*</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Restreindre l’usage de sudo pour l’utilisateur système postgres.
@@ -1030,7 +1092,7 @@ Ajuster les droits sudo (ex. postgres ALL=(ALL) NOPASSWD: /usr/pgsql-17/bin/pg_*
                         <td class="py-3 px-6 text-left align-top">4.3</td>
                         <td class="py-3 px-6 text-left align-top">Révoquer les privilèges administratifs excessifs</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &#x27;SELECT rolname, rolsuper, rolcreatedb, rolcreaterole, rolreplication FROM pg_roles;&#x27; 2&gt;/dev/null || echo &#x27;VERIF_MANUELLE_ROLES_POSTGRES&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &#x27;SELECT rolname, rolsuper, rolcreatedb, rolcreaterole, rolreplication FROM pg_roles;&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Retirer aux rôles non justifiés les attributs SUPERUSER, CREATEDB, CREATEROLE, REPLICATION.
@@ -1055,7 +1117,7 @@ ALTER ROLE &lt;user&gt; NOLOGIN; ou définir VALID UNTIL à une date passée.</t
                         <td class="py-3 px-6 text-left align-top">4.5</td>
                         <td class="py-3 px-6 text-left align-top">Révoquer les privilèges de fonction excessifs</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &quot;SELECT proname FROM pg_proc WHERE pronamespace = &#x27;public&#x27;::regnamespace;&quot; 2&gt;/dev/null || echo &#x27;VERIF_PROC_PRIVILEGES&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &quot;SELECT proname FROM pg_proc WHERE pronamespace = &#x27;public&#x27;::regnamespace;&quot;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Restreindre l’EXECUTE sur les fonctions définies aux seuls rôles nécessaires.
@@ -1067,7 +1129,7 @@ REVOKE EXECUTE ON FUNCTION &lt;schema&gt;.&lt;func&gt;() FROM &lt;role&gt;;.</td
                         <td class="py-3 px-6 text-left align-top">4.6</td>
                         <td class="py-3 px-6 text-left align-top">Révoquer les privilèges DML excessifs</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &quot;SELECT tablename FROM pg_tables WHERE schemaname = &#x27;public&#x27;;&quot; 2&gt;/dev/null || echo &#x27;VERIF_TABLE_PRIVILEGES&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &quot;SELECT tablename FROM pg_tables WHERE schemaname = &#x27;public&#x27;;&quot;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Restreindre INSERT/UPDATE/DELETE aux tables selon le besoin des rôles applicatifs.
@@ -1079,7 +1141,7 @@ REVOKE INSERT, UPDATE, DELETE ON TABLE &lt;tbl&gt; FROM &lt;role&gt;;.</td>
                         <td class="py-3 px-6 text-left align-top">4.7</td>
                         <td class="py-3 px-6 text-left align-top">Configurer Row Level Security (RLS)</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &#x27;SELECT relname, relrowsecurity FROM pg_class WHERE relrowsecurity = true;&#x27; 2&gt;/dev/null || echo &#x27;VERIF_MANUELLE_RLS_POSTGRES&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &#x27;SELECT relname, relrowsecurity FROM pg_class WHERE relrowsecurity = true;&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Activer RLS pour les tables sensibles et définir des politiques restrictives.
@@ -1111,7 +1173,7 @@ CREATE EXTENSION set_user;</td>
                         <td class="py-3 px-6 text-left align-top">4.9</td>
                         <td class="py-3 px-6 text-left align-top">Utiliser les rôles prédéfinis</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &#x27;SELECT rolname, rolsuper, rolcreatedb, rolcreaterole, rolreplication FROM pg_roles;&#x27; 2&gt;/dev/null || echo &#x27;VERIF_MANUELLE_ROLES_POSTGRES&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &#x27;SELECT rolname, rolsuper, rolcreatedb, rolcreaterole, rolreplication FROM pg_roles;&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Favoriser les rôles intégrés (pg_read_all_data, etc.) plutôt que superuser pour les accès.
@@ -1172,7 +1234,7 @@ Modifier postgresql.conf (listen_addresses = &#x27;192.0.2.1&#x27; ou &#x27;*&#x
                         <td class="py-3 px-6 text-left align-top">5.3</td>
                         <td class="py-3 px-6 text-left align-top">Configurer la connexion UNIX locale</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>grep -E &#x27;^\s*local\s+.*trust&#x27; /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf 2&gt;/dev/null || echo &#x27;PASS_AUCUN_TRUST_LOCAL&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>grep -E &#x27;^\s*local\s+.*trust&#x27; /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Sécuriser les entrées local dans pg_hba.conf pour n’autoriser que peer ou md5.
@@ -1183,7 +1245,7 @@ Modifier (ou ajouter) local all all peer ou md5 dans pg_hba.conf, puis SELECT pg
                         <td class="py-3 px-6 text-left align-top">5.4</td>
                         <td class="py-3 px-6 text-left align-top">Configurer la connexion TCP/IP</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>grep -E &#x27;^\s*local\s+.*trust&#x27; /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf 2&gt;/dev/null || echo &#x27;PASS_AUCUN_TRUST_LOCAL&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>grep -E &#x27;^\s*local\s+.*trust&#x27; /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Sécuriser les entrées host dans pg_hba.conf (CIDR, méthode d’authentification).
@@ -1243,7 +1305,7 @@ Installer/configurer passwordcheck ou pam, définir password_encryption = &#x27;
                         <td class="py-3 px-6 text-left align-top">6.1</td>
                         <td class="py-3 px-6 text-left align-top">Comprendre vecteurs d’attaque et paramètres runtime</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>cat /etc/postgresql/*/*/postgresql.conf /var/lib/postgresql/data/postgresql.conf 2&gt;/dev/null | grep -v &#x27;^\s*#&#x27; | head -n 30 || echo &#x27;VERIF_RUNTIME_PARAMETERS&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>cat /etc/postgresql/*/*/postgresql.conf /var/lib/postgresql/data/postgresql.conf | grep -v &#x27;^\s*#&#x27; | head -n 30</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Documenter les vecteurs d’attaque possibles et les paramètres ajustables.
