@@ -20,13 +20,16 @@ class TestMariaDBAuditEngine(unittest.TestCase):
             self.rules_106 = json.load(f)
 
     def test_rules_structure_and_types(self):
-        """Validate JSON rules structure and automated rule conversion."""
+        """Validate JSON rules structure and authentic CIS rule types."""
         for rule in self.rules_1011:
             self.assertIn("number", rule)
             self.assertIn("name", rule)
             self.assertIn("type", rule)
-            if rule["number"] in ["1.7", "2.4", "2.8", "5.1", "5.2", "5.3", "5.4", "5.5", "5.6", "5.7", "7.7"]:
+            self.assertIn(rule["type"], ["Automated", "Manual"])
+            if rule["number"] in ["1.2", "1.3", "1.4", "1.5", "1.6"]:
                 self.assertEqual(rule["type"], "Automated", f"Rule {rule['number']} should be Automated")
+            if rule["number"] in ["1.1", "1.7", "2.4", "5.1", "5.2", "5.3"]:
+                self.assertEqual(rule["type"], "Manual", f"Rule {rule['number']} should be Manual per CIS spec")
 
     @patch("audit_cis_mariadb_1011.run_command")
     def test_detect_docker_container_active(self, mock_run):
