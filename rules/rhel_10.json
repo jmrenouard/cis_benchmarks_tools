@@ -297,7 +297,7 @@
     "level": 1,
     "description": "Disallow direct SSH login as root user.",
     "rationale": "Direct root logins prevent auditing user accountability.",
-    "audit": "sshd -T 2>/dev/null | grep -i '^permitrootlogin'",
+    "audit": "sshd -T | grep -i '^permitrootlogin'",
     "remediation": "Set 'PermitRootLogin no' in /etc/ssh/sshd_config",
     "condition": {
       "type": "stdout_contains",
@@ -314,7 +314,7 @@
     "level": 1,
     "description": "Disallow accounts with empty passwords via SSH.",
     "rationale": "Authentication must require a valid password or key.",
-    "audit": "sshd -T 2>/dev/null | grep -i '^permitemptypasswords'",
+    "audit": "sshd -T | grep -i '^permitemptypasswords'",
     "remediation": "Set 'PermitEmptyPasswords no' in /etc/ssh/sshd_config",
     "condition": {
       "type": "stdout_contains",
