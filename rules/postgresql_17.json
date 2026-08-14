@@ -4,7 +4,7 @@
     "number": "1.1",
     "name": "Obtenir les paquets depuis des dépôts autorisés",
     "type": "Manual",
-    "test_procedure": "echo 'Contrôle Manuel: Vérifier dnf repolist all ou équivalent (apt-file search /usr/pgsql-*/lib/libpq.so.5) pour s’assurer que seuls les dépôts officiels sont activés.'",
+    "test_procedure": "sh -c \"if command -v dnf >/dev/null 2>&1; then dnf repolist all; elif command -v yum >/dev/null 2>&1; then yum repolist all; elif command -v apt-cache >/dev/null 2>&1; then apt-cache policy; else echo 'Repository list inspection not available'; fi || true\"",
     "expected_output": null,
     "remediation": "Supprimer/ajouter des dépôts pour n’inclure que les sources valides (p. ex. dnf install -y https://download.postgresql.org/.../pgdg-redhat-repo-latest.noarch.rpm), puis réinstaller."
   },
@@ -13,7 +13,7 @@
     "number": "1.2",
     "name": "Installer uniquement les paquets requis",
     "type": "Manual",
-    "test_procedure": "dpkg -l | grep -iE 'postgres|mysql|mariadb' || rpm -qa | grep -iE 'postgres|mysql|mariadb'",
+    "test_procedure": "sh -c \"if command -v dpkg >/dev/null 2>&1; then dpkg -l | grep -iE 'postgres|mysql|mariadb|mongo|cassandra'; elif command -v rpm >/dev/null 2>&1; then rpm -qa | grep -iE 'postgres|mysql|mariadb|mongo|cassandra'; elif command -v apk >/dev/null 2>&1; then apk list -I | grep -iE 'postgres|mysql|mariadb|mongo|cassandra'; else echo 'Package manager not available'; fi || true\"",
     "expected_output": null,
     "remediation": "Purger/effacer les paquets non désirés : apt purge <pkg> ou dnf erase <pkg>."
   },
@@ -456,7 +456,7 @@
     "number": "3.2",
     "name": "Activer l’extension pgAudit",
     "type": "Automated",
-    "test_procedure": "Installer et configurer l’extension d’audit avancé pgAudit pour capturer les activités.\nSELECT * FROM pg_extension WHERE extname = 'pgaudit';",
+    "test_procedure": "SELECT * FROM pg_extension WHERE extname = 'pgaudit';",
     "expected_output": {
       "type": "stdout_contains",
       "value": "pgaudit"
@@ -495,7 +495,7 @@
     "number": "4.4",
     "name": "Verrouiller les comptes inactifs",
     "type": "Manual",
-    "test_procedure": "Désactiver les rôles non utilisés depuis un certain temps.\nSELECT rolname, rolvaliduntil FROM pg_authid; vérifier dates d’expiration.",
+    "test_procedure": "SELECT rolname, rolvaliduntil FROM pg_authid; vérifier dates d’expiration.;",
     "expected_output": null,
     "remediation": "Désactiver les rôles non utilisés depuis un certain temps.\nSELECT rolname, rolvaliduntil FROM pg_authid; vérifier dates d’expiration.\nALTER ROLE <user> NOLOGIN; ou définir VALID UNTIL à une date passée."
   },
@@ -531,7 +531,7 @@
     "number": "4.8",
     "name": "Installer l’extension set_user",
     "type": "Automated",
-    "test_procedure": "Utiliser set_user pour l’émulation de rôles et la révocabilité de sessions.\nSELECT * FROM pg_extension WHERE extname = 'set_user';",
+    "test_procedure": "SELECT * FROM pg_extension WHERE extname = 'set_user';",
     "expected_output": {
       "type": "stdout_contains",
       "value": "set_user"
@@ -561,7 +561,7 @@
     "number": "5.2",
     "name": "Lier PostgreSQL à une adresse IP",
     "type": "Manual",
-    "test_procedure": "Restreindre l’écoute à l’interface prévue (listen_addresses).\nSHOW listen_addresses; doit afficher l’IP autorisée ou localhost.",
+    "test_procedure": "SHOW listen_addresses;",
     "expected_output": null,
     "remediation": "Restreindre l’écoute à l’interface prévue (listen_addresses).\nModifier postgresql.conf (listen_addresses = '192.0.2.1' ou '*') et redémarrer le service."
   },
@@ -588,7 +588,7 @@
     "number": "5.5",
     "name": "Limites de connexion par compte",
     "type": "Manual",
-    "test_procedure": "Empêcher un même rôle d’ouvrir trop de connexions simultanées.\nSELECT rolname, rolconnlimit FROM pg_authid;.",
+    "test_procedure": "SELECT rolname, rolconnlimit FROM pg_authid;",
     "expected_output": null,
     "remediation": "Empêcher un même rôle d’ouvrir trop de connexions simultanées.\nALTER ROLE <user> CONNECTION LIMIT 10;."
   },
@@ -646,7 +646,7 @@
     "number": "6.3",
     "name": "Configurer Postmaster runtime parameters",
     "type": "Manual",
-    "test_procedure": "Ajuster data_directory, hba_file, ident_file, etc.\nVérifier SHOW data_directory, hba_file, ident_file;",
+    "test_procedure": "SHOW data_directory, hba_file, ident_file;",
     "expected_output": null,
     "remediation": "Ajuster data_directory, hba_file, ident_file, etc.\nModifier postgresql.conf puis redémarrer."
   },
@@ -655,7 +655,7 @@
     "number": "6.4",
     "name": "Configurer les signaux SIGHUP",
     "type": "Manual",
-    "test_procedure": "Sécuriser la réaction aux signaux de rechargement de configuration.\nTester SELECT pg_reload_conf();.",
+    "test_procedure": "SELECT pg_reload_conf();",
     "expected_output": null,
     "remediation": "Sécuriser la réaction aux signaux de rechargement de configuration.\nAucun changement automatique ; documenter le processus."
   },
@@ -664,7 +664,7 @@
     "number": "6.5",
     "name": "Configurer les paramètres Superuser",
     "type": "Manual",
-    "test_procedure": "Restreindre statement_timeout, idle_in_transaction_session_timeout pour les superusers.\nSHOW statement_timeout, idle_in_transaction_session_timeout;.",
+    "test_procedure": "SHOW statement_timeout, idle_in_transaction_session_timeout;",
     "expected_output": null,
     "remediation": "Restreindre statement_timeout, idle_in_transaction_session_timeout pour les superusers.\nALTER SYSTEM SET statement_timeout = '...'; ALTER SYSTEM SET idle_in_transaction_session_timeout = '5min'; puis recharger."
   },
@@ -673,7 +673,7 @@
     "number": "6.6",
     "name": "Configurer les paramètres User",
     "type": "Manual",
-    "test_procedure": "Ajuster log_statement, search_path, etc., pour les rôles standards.\nVérifier SHOW search_path;.",
+    "test_procedure": "SHOW search_path;",
     "expected_output": null,
     "remediation": "Ajuster log_statement, search_path, etc., pour les rôles standards.\nALTER ROLE <user> SET search_path TO '$user', public;."
   },
@@ -682,7 +682,7 @@
     "number": "6.7",
     "name": "Utiliser la cryptographie FIPS 140-2",
     "type": "Automated",
-    "test_procedure": "S’assurer qu’OpenSSL FIPS est utilisé si requis.\nSHOW ssl_library; et vérifier la version OpenSSL.",
+    "test_procedure": "SHOW ssl_library; et vérifier la version OpenSSL.;",
     "expected_output": {
       "type": "stdout_contains",
       "value": "OpenSSL"
@@ -723,7 +723,7 @@
     "number": "6.9",
     "name": "Configurer TLSv1.3+",
     "type": "Automated",
-    "test_procedure": "Forcer au minimum TLSv1.3.\nSHOW ssl_min_protocol_version; doit être TLSv1.3.",
+    "test_procedure": "SHOW ssl_min_protocol_version;",
     "expected_output": {
       "type": "stdout_equals",
       "value": "TLSv1.3"
@@ -735,7 +735,7 @@
     "number": "6.10",
     "name": "Désactiver les cipher suites faibles",
     "type": "Automated",
-    "test_procedure": "Exclure RC4, DES, etc., dans ssl_cipher_suites.\nSHOW ssl_cipher_suites; vérifier l’absence de ciphers faibles.",
+    "test_procedure": "SHOW ssl_cipher_suites;",
     "expected_output": {
       "type": "stdout_not_contains_any",
       "values": [
@@ -756,7 +756,7 @@
     "number": "6.11",
     "name": "Installer et configurer pgcrypto",
     "type": "Automated",
-    "test_procedure": "Activer pgcrypto pour fonctions cryptographiques.\nSELECT * FROM pg_extension WHERE extname = 'pgcrypto';",
+    "test_procedure": "SELECT * FROM pg_extension WHERE extname = 'pgcrypto';",
     "expected_output": {
       "type": "stdout_contains",
       "value": "pgcrypto"
@@ -768,7 +768,7 @@
     "number": "7.1",
     "name": "Créer un utilisateur de réplication dédié",
     "type": "Manual",
-    "test_procedure": "Ne pas réutiliser postgres pour la réplication.\nSELECT rolname, rolreplication FROM pg_roles WHERE rolname = '<user>';",
+    "test_procedure": "SELECT rolname, rolreplication FROM pg_roles WHERE rolname = '<user>';",
     "expected_output": null,
     "remediation": "Ne pas réutiliser postgres pour la réplication.\nCREATE USER repuser REPLICATION LOGIN ENCRYPTED PASSWORD '…';."
   },
@@ -777,7 +777,7 @@
     "number": "7.2",
     "name": "Journaliser les commandes de réplication",
     "type": "Automated",
-    "test_procedure": "Activer log_replication_commands pour tracer les actions de réplication.\nSHOW log_replication_commands; doit être on.",
+    "test_procedure": "SHOW log_replication_commands; doit être on.;",
     "expected_output": {
       "type": "stdout_equals",
       "value": "on"
@@ -821,7 +821,7 @@
     "number": "7.5",
     "name": "Configurer les paramètres de streaming",
     "type": "Manual",
-    "test_procedure": "Ajuster primary_conninfo, max_wal_senders, hot_standby.\nSHOW primary_conninfo, max_wal_senders, hot_standby;.",
+    "test_procedure": "SHOW primary_conninfo, max_wal_senders, hot_standby;",
     "expected_output": null,
     "remediation": "Ajuster primary_conninfo, max_wal_senders, hot_standby.\nALTER SYSTEM SET max_wal_senders = 3; ALTER SYSTEM SET hot_standby = 'on'; SELECT pg_reload_conf();."
   },
@@ -830,7 +830,7 @@
     "number": "8.1",
     "name": "Emplacements hors du cluster de données",
     "type": "Manual",
-    "test_procedure": "Placer les répertoires temporaires et de logs en dehors de $PGDATA pour éviter leur inclusion.\nCheck SHOW temp_tablespaces, log_directory;",
+    "test_procedure": "SHOW temp_tablespaces, log_directory;",
     "expected_output": null,
     "remediation": "Placer les répertoires temporaires et de logs en dehors de $PGDATA pour éviter leur inclusion.\nSet temp_tablespaces and log_directory on another volume and reload."
   },
