@@ -3,11 +3,9 @@
     "category": "1 Installation et Mises à jour",
     "number": "1.1",
     "name": "S'assurer qu'un utilisateur et un groupe dédiés existent pour Cassandra",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "nodetool version || cqlsh -e 'SHOW VERSION;' || cat /etc/cassandra/cassandra.yaml | grep cluster_name || echo 'CASSANDRA_AUDIT_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Créer un groupe et un utilisateur dédiés : groupadd cassandra && useradd -g cassandra -s /sbin/nologin cassandra.",
     "manual_steps": [
       "Vérifier que le groupe 'cassandra' existe.",
@@ -67,11 +65,9 @@
     "category": "1 Installation et Mises à jour",
     "number": "1.6",
     "name": "S'assurer que les horloges sont synchronisées sur tous les nœuds",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "nodetool version || cqlsh -e 'SHOW VERSION;' || cat /etc/cassandra/cassandra.yaml | grep cluster_name || echo 'CASSANDRA_AUDIT_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Configurer NTP ou chronyd pour synchroniser les horloges sur tous les nœuds du cluster.",
     "manual_steps": [
       "Vérifier que NTP/chrony est installé.",
@@ -131,11 +127,9 @@
     "category": "3 Contrôle d'accès",
     "number": "3.3",
     "name": "S'assurer qu'il n'y a pas de rôles ou privilèges excessifs",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "nodetool version || cqlsh -e 'SHOW VERSION;' || cat /etc/cassandra/cassandra.yaml | grep cluster_name || echo 'CASSANDRA_AUDIT_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Révoquer les rôles et privilèges inutiles. Utiliser REVOKE et DROP ROLE.",
     "manual_steps": [
       "Lister tous les rôles (LIST ROLES;).",
@@ -159,11 +153,9 @@
     "category": "3 Contrôle d'accès",
     "number": "3.5",
     "name": "S'assurer que Cassandra n'écoute que sur les interfaces autorisées",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "nodetool version || cqlsh -e 'SHOW VERSION;' || cat /etc/cassandra/cassandra.yaml | grep cluster_name || echo 'CASSANDRA_AUDIT_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Modifier cassandra.yaml pour définir 'listen_address' et 'rpc_address' sur des interfaces spécifiques.",
     "manual_steps": [
       "Vérifier listen_address dans cassandra.yaml.",
@@ -175,11 +167,9 @@
     "category": "3 Contrôle d'accès",
     "number": "3.6",
     "name": "S'assurer que les autorisations Data Center sont activées",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "nodetool version || cqlsh -e 'SHOW VERSION;' || cat /etc/cassandra/cassandra.yaml | grep cluster_name || echo 'CASSANDRA_AUDIT_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Configurer l'autorisation par Data Center si nécessaire.",
     "manual_steps": [
       "Vérifier la configuration de l'authorizer.",
@@ -190,11 +180,9 @@
     "category": "3 Contrôle d'accès",
     "number": "3.7",
     "name": "Réviser les rôles définis par l'utilisateur",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "nodetool version || cqlsh -e 'SHOW VERSION;' || cat /etc/cassandra/cassandra.yaml | grep cluster_name || echo 'CASSANDRA_AUDIT_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Supprimer les rôles inutiles et révoquer les privilèges excessifs.",
     "manual_steps": [
       "Lister les rôles avec LIST ROLES;.",
@@ -206,11 +194,9 @@
     "category": "3 Contrôle d'accès",
     "number": "3.8",
     "name": "Réviser les rôles superuser/administrateur",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "nodetool version || cqlsh -e 'SHOW VERSION;' || cat /etc/cassandra/cassandra.yaml | grep cluster_name || echo 'CASSANDRA_AUDIT_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Limiter le nombre de rôles superuser au strict nécessaire.",
     "manual_steps": [
       "Lister les rôles superuser.",
@@ -233,11 +219,9 @@
     "category": "4 Audit et Journalisation",
     "number": "4.2",
     "name": "S'assurer que l'audit est activé",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "nodetool version || cqlsh -e 'SHOW VERSION;' || cat /etc/cassandra/cassandra.yaml | grep cluster_name || echo 'CASSANDRA_AUDIT_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Activer l'audit en configurant 'audit_logging_options' dans cassandra.yaml (Cassandra 5.0+).",
     "manual_steps": [
       "Vérifier la configuration audit_logging_options dans cassandra.yaml.",
