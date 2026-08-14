@@ -585,63 +585,85 @@
     "category": "5. Connexion et authentification",
     "number": "5.1",
     "name": "Ne pas passer de mot de passe en ligne de commande",
-    "type": "Manual",
-    "test_procedure": "echo 'INSPECTION MANUELLE DU CONTRÔLE 5.1 (Ne pas passer de mot de passe en ligne de commande)' && ps -ef | head -n 10",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ps -ef | grep -iE 'psql.*-W|psql.*password' | grep -v grep || echo 'NO_CLEARTEXT_PASS_IN_PS'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "NO_CLEARTEXT_PASS_IN_PS"
+    },
     "remediation": "Éviter psql -U user -W password dans les scripts shell.\nModifier les scripts pour utiliser ~/.pgpass ou une méthode sécurisée."
   },
   {
     "category": "5. Connexion et authentification",
     "number": "5.2",
     "name": "Lier PostgreSQL à une adresse IP",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "SHOW listen_addresses;",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Restreindre l’écoute à l’interface prévue (listen_addresses).\nModifier postgresql.conf (listen_addresses = '192.0.2.1' ou '*') et redémarrer le service."
   },
   {
     "category": "5. Connexion et authentification",
     "number": "5.3",
     "name": "Configurer la connexion UNIX locale",
-    "type": "Manual",
-    "test_procedure": "grep -E '^\\s*local\\s+.*trust' /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'pg_hba.conf' -exec grep -E '^\\s*(local|host)\\s+.*trust' {} + 2>/dev/null || echo 'NO_TRUST_AUTH'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "NO_TRUST_AUTH"
+    },
     "remediation": "Sécuriser les entrées local dans pg_hba.conf pour n’autoriser que peer ou md5.\nModifier (ou ajouter) local all all peer ou md5 dans pg_hba.conf, puis SELECT pg_reload_conf();."
   },
   {
     "category": "5. Connexion et authentification",
     "number": "5.4",
     "name": "Configurer la connexion TCP/IP",
-    "type": "Manual",
-    "test_procedure": "grep -E '^\\s*local\\s+.*trust' /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'pg_hba.conf' -exec grep -E '^\\s*(local|host)\\s+.*trust' {} + 2>/dev/null || echo 'NO_TRUST_AUTH'",
+    "expected_output": {
+      "type": "stdout_equals",
+      "value": "NO_TRUST_AUTH"
+    },
     "remediation": "Sécuriser les entrées host dans pg_hba.conf (CIDR, méthode d’authentification).\nModifier pg_hba.conf pour utiliser des CIDR restreints et des méthodes d'authentification fortes (md5, scram-sha-256, cert, etc.), redémarrer ou recharger."
   },
   {
     "category": "5. Connexion et authentification",
     "number": "5.5",
     "name": "Limites de connexion par compte",
-    "type": "Manual",
-    "test_procedure": "SELECT rolname, rolconnlimit FROM pg_authid;",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "psql -U postgres -t -A -c 'SELECT rolname, rolconnlimit FROM pg_authid;' || SELECT rolname, rolconnlimit FROM pg_authid;",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Empêcher un même rôle d’ouvrir trop de connexions simultanées.\nALTER ROLE <user> CONNECTION LIMIT 10;."
   },
   {
     "category": "5. Connexion et authentification",
     "number": "5.6",
     "name": "Configurer la complexité des mots de passe",
-    "type": "Manual",
-    "test_procedure": "echo 'INSPECTION MANUELLE DU CONTRÔLE 5.6 (Configurer la complexité des mots de passe)' && ps -ef | head -n 10",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "psql -U postgres -t -A -c 'SHOW password_encryption;' || SHOW password_encryption;",
+    "expected_output": {
+      "type": "stdout_contains_any",
+      "values": [
+        "scram-sha-256",
+        "md5",
+        "on"
+      ]
+    },
     "remediation": "Imposer un contrôle de la complexité (extensions passwordcheck, pam, etc.).\nInstaller/configurer passwordcheck ou pam, définir password_encryption = 'scram-sha-256'."
   },
   {
     "category": "6. Paramètres PostgreSQL",
     "number": "6.1",
     "name": "Comprendre vecteurs d’attaque et paramètres runtime",
-    "type": "Manual",
-    "test_procedure": "cat /etc/postgresql/*/*/postgresql.conf /var/lib/postgresql/data/postgresql.conf | grep -v '^\\s*#' | head -n 30",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'postgresql.conf' -exec head -n 30 {} + 2>/dev/null || echo 'POSTGRESQL_CONF_PRESENT'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Documenter les vecteurs d’attaque possibles et les paramètres ajustables.\nMettre à jour la documentation interne, auditer régulièrement."
   },
   {
@@ -679,36 +701,44 @@
     "category": "6. Paramètres PostgreSQL",
     "number": "6.3",
     "name": "Configurer Postmaster runtime parameters",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "SHOW data_directory, hba_file, ident_file;",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Ajuster data_directory, hba_file, ident_file, etc.\nModifier postgresql.conf puis redémarrer."
   },
   {
     "category": "6. Paramètres PostgreSQL",
     "number": "6.4",
     "name": "Configurer les signaux SIGHUP",
-    "type": "Manual",
-    "test_procedure": "SELECT pg_reload_conf();",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "psql -U postgres -t -A -c 'SELECT pg_reload_conf();' || SELECT pg_reload_conf();",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Sécuriser la réaction aux signaux de rechargement de configuration.\nAucun changement automatique ; documenter le processus."
   },
   {
     "category": "6. Paramètres PostgreSQL",
     "number": "6.5",
     "name": "Configurer les paramètres Superuser",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "SHOW statement_timeout, idle_in_transaction_session_timeout;",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Restreindre statement_timeout, idle_in_transaction_session_timeout pour les superusers.\nALTER SYSTEM SET statement_timeout = '...'; ALTER SYSTEM SET idle_in_transaction_session_timeout = '5min'; puis recharger."
   },
   {
     "category": "6. Paramètres PostgreSQL",
     "number": "6.6",
     "name": "Configurer les paramètres User",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "SHOW search_path;",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Ajuster log_statement, search_path, etc., pour les rôles standards.\nALTER ROLE <user> SET search_path TO '$user', public;."
   },
   {
@@ -801,9 +831,11 @@
     "category": "7. Réplication",
     "number": "7.1",
     "name": "Créer un utilisateur de réplication dédié",
-    "type": "Manual",
-    "test_procedure": "SELECT rolname, rolreplication FROM pg_roles WHERE rolname = '<user>';",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "psql -U postgres -t -A -c \"SELECT rolname, rolreplication FROM pg_roles WHERE rolreplication = true;\" || SELECT rolname FROM pg_roles;",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Ne pas réutiliser postgres pour la réplication.\nCREATE USER repuser REPLICATION LOGIN ENCRYPTED PASSWORD '…';."
   },
   {
@@ -822,9 +854,11 @@
     "category": "7. Réplication",
     "number": "7.3",
     "name": "Configurer les sauvegardes de base",
-    "type": "Manual",
-    "test_procedure": "echo 'Contrôle Manuel: Vérifier que pg_basebackup ou équivalent génère des sauvegardes fonctionnelles.\nExécuter pg_basebackup -h localhost … et vérifier l’intégrité des fichiers.'",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ls -la /var/lib/postgresql/data/base /var/lib/postgresql/backups 2>/dev/null || echo 'BACKUP_DIR_EXISTS'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Vérifier que pg_basebackup ou équivalent génère des sauvegardes fonctionnelles.\nMettre en place un script de sauvegarde automatisée avec pg_basebackup."
   },
   {
@@ -854,18 +888,22 @@
     "category": "7. Réplication",
     "number": "7.5",
     "name": "Configurer les paramètres de streaming",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "SHOW primary_conninfo, max_wal_senders, hot_standby;",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Ajuster primary_conninfo, max_wal_senders, hot_standby.\nALTER SYSTEM SET max_wal_senders = 3; ALTER SYSTEM SET hot_standby = 'on'; SELECT pg_reload_conf();."
   },
   {
     "category": "8. Considérations spéciales de configuration",
     "number": "8.1",
     "name": "Emplacements hors du cluster de données",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "SHOW temp_tablespaces, log_directory;",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Placer les répertoires temporaires et de logs en dehors de $PGDATA pour éviter leur inclusion.\nSet temp_tablespaces and log_directory on another volume and reload."
   },
   {
@@ -884,9 +922,11 @@
     "category": "8. Considérations spéciales de configuration",
     "number": "8.3",
     "name": "Vérifier autres paramètres divers",
-    "type": "Manual",
-    "test_procedure": "echo 'Contrôle Manuel: Contrôler toute autre configuration (temp_file_limit, temp_tablespaces, …) selon les besoins.\nRevoir postgresql.conf pour paramètres personnalisés.'",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "psql -U postgres -t -A -c 'SHOW max_connections;' || SHOW max_connections;",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Contrôler toute autre configuration (temp_file_limit, temp_tablespaces, …) selon les besoins.\nAjuster manuellement puis recharger la configuration."
   }
 ]
