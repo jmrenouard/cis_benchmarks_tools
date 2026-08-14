@@ -41,7 +41,9 @@ For EVERY modification (code change, script edit, refactoring, documentation upd
 5. **Pull Request & Diff Size Verification**:
    - Verify PR diff size: `git diff main...HEAD | wc -c` MUST be **< 15,000 characters**.
    - Create Pull Request via `gh pr create` pointing to `main` with detailed summary and referencing `closes #<IssueID>`.
-6. **Merge & Sync**:
+6. **Merge, Comment Issue & Sync**:
    - Merge PR via `gh pr merge <PR_ID> --merge --delete-branch`.
+   - Post detailed resolution summary comment on the GitHub Issue (`gh issue comment <IssueID> --body "..."`).
+   - Close the GitHub Issue (`gh issue close <IssueID>`).
    - Sync local `main` via `git checkout main && git pull origin main`.
    - Provide complete summary to user with issue/PR links and validation status.
