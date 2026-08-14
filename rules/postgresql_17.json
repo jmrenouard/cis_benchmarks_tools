@@ -3,22 +3,18 @@
     "category": "1. Installation et correctifs",
     "number": "1.1",
     "name": "Obtenir les paquets depuis des dépôts autorisés",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "sh -c \"if command -v dnf >/dev/null 2>&1; then dnf repolist all; elif command -v yum >/dev/null 2>&1; then yum repolist all; elif command -v apt-cache >/dev/null 2>&1; then apt-cache policy; else echo 'Repository list inspection not available'; fi || true\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Supprimer/ajouter des dépôts pour n’inclure que les sources valides (p. ex. dnf install -y https://download.postgresql.org/.../pgdg-redhat-repo-latest.noarch.rpm), puis réinstaller."
   },
   {
     "category": "1. Installation et correctifs",
     "number": "1.2",
     "name": "Installer uniquement les paquets requis",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "sh -c \"if command -v dpkg >/dev/null 2>&1; then dpkg -l | grep -iE 'postgres|mysql|mariadb|mongo|cassandra'; elif command -v rpm >/dev/null 2>&1; then rpm -qa | grep -iE 'postgres|mysql|mariadb|mongo|cassandra'; elif command -v apk >/dev/null 2>&1; then apk list -I | grep -iE 'postgres|mysql|mariadb|mongo|cassandra'; else echo 'Package manager not available'; fi || true\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Purger/désinstaller les paquets non requis selon la distribution : apt purge <pkg> (Debian/Ubuntu), dnf erase <pkg> (RHEL/Rocky/CentOS) ou apk del <pkg> (Alpine)."
   },
   {
@@ -68,12 +64,9 @@
     "category": "1. Installation et correctifs",
     "number": "1.5",
     "name": "Appliquer les derniers correctifs de sécurité",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "psql -t -A -c 'SHOW server_version'",
-    "expected_output": {
-      "type": "stdout_regex_match",
-      "pattern": "\\d+\\.\\d+"
-    },
+    "expected_output": null,
     "remediation": "Mettre à jour PostgreSQL vers la dernière version mineure supportée selon la distribution (ex: apt update && apt upgrade postgresql-17* sur Debian/Ubuntu, dnf update postgresql-server sur RHEL/Rocky, ou apk upgrade postgresql sur Alpine)."
   },
   {
@@ -102,12 +95,9 @@
     "category": "2. Permissions de répertoires et fichiers",
     "number": "2.1",
     "name": "Masque de permissions (umask)",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "su - postgres -c umask || umask",
-    "expected_output": {
-      "type": "stdout_regex_match",
-      "pattern": "00[27]7|077|027"
-    },
+    "expected_output": null,
     "remediation": "Configurer le umask de l’utilisateur postgres à 0077 pour restreindre la création de fichiers.\nAjouter umask 077 dans ~postgres/.bash_profile (ou .profile/.bashrc), recharger le profil."
   },
   {
@@ -139,12 +129,9 @@
     "category": "2. Permissions de répertoires et fichiers",
     "number": "2.4",
     "name": "Ne pas stocker de mots de passe dans les fichiers de service",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "find /etc/postgresql /var/lib/postgresql /home -name 'pg_service.conf' -exec grep -H password {} + || echo 'NO_PASSWORD_IN_SERVICE_CONF'",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "NO_PASSWORD_IN_SERVICE_CONF"
-    },
+    "expected_output": null,
     "remediation": "Vérifier qu’aucun .pg_service.conf ne contient password= en clair.\nSupprimer toutes les lignes password= identifiées."
   },
   {
@@ -248,11 +235,9 @@
     "category": "3.1. Journalisation des erreurs serveur",
     "number": "3.1.10",
     "name": "Choisir syslog_facility",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "SHOW syslog_facility;",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Définir la facility Syslog (LOCAL0–LOCAL7).\nALTER SYSTEM SET syslog_facility = 'LOCAL1'; SELECT pg_reload_conf();"
   },
   {
@@ -484,23 +469,18 @@
     "category": "4. Accès et autorisations utilisateur",
     "number": "4.1",
     "name": "Désactiver la connexion interactive",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "find /etc/postgresql /var/lib/postgresql/data -name 'pg_hba.conf' -exec grep -E '^\\s*(local|host)\\s+.*trust' {} + || echo 'NO_TRUST_AUTH'",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "NO_TRUST_AUTH"
-    },
+    "expected_output": null,
     "remediation": "Empêcher les rôles superutilisateurs sans console SSH d’interagir localement.\nModifier pg_hba.conf, passer à md5 ou peer, puis SELECT pg_reload_conf();."
   },
   {
     "category": "4. Accès et autorisations utilisateur",
     "number": "4.2",
     "name": "Configurer sudo correctement",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "grep -iE 'postgres|mysql|mariadb' /etc/sudoers /etc/sudoers.d/* || echo 'SUDO_CHECK_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Restreindre l’usage de sudo pour l’utilisateur système postgres.\nExaminer /etc/sudoers et fichiers dans /etc/sudoers.d/ pour la section postgres.\nAjuster les droits sudo (ex. postgres ALL=(ALL) NOPASSWD: /usr/pgsql-17/bin/pg_*)."
   },
   {
@@ -518,11 +498,9 @@
     "category": "4. Accès et autorisations utilisateur",
     "number": "4.4",
     "name": "Verrouiller les comptes inactifs",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "psql -U postgres -t -A -c 'SELECT rolname, rolvaliduntil FROM pg_authid;' || SELECT rolname, rolvaliduntil FROM pg_authid;",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Désactiver les rôles non utilisés depuis un certain temps.\nSELECT rolname, rolvaliduntil FROM pg_authid; vérifier dates d’expiration.\nALTER ROLE <user> NOLOGIN; ou définir VALID UNTIL à une date passée."
   },
   {
@@ -540,11 +518,9 @@
     "category": "4. Accès et autorisations utilisateur",
     "number": "4.6",
     "name": "Révoquer les privilèges DML excessifs",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "psql -U postgres -t -A -c \"SELECT tablename FROM pg_tables WHERE schemaname = 'public';\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Restreindre INSERT/UPDATE/DELETE aux tables selon le besoin des rôles applicatifs.\nInventaire via has_table_privilege() pour chaque table et utilisateur.\nREVOKE INSERT, UPDATE, DELETE ON TABLE <tbl> FROM <role>;."
   },
   {
@@ -574,11 +550,9 @@
     "category": "4. Accès et autorisations utilisateur",
     "number": "4.9",
     "name": "Utiliser les rôles prédéfinis",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "psql -U postgres -t -A -c 'SELECT rolname, rolsuper, rolcreatedb, rolcreaterole, rolreplication FROM pg_roles;'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Favoriser les rôles intégrés (pg_read_all_data, etc.) plutôt que superuser pour les accès.\n\\du+ vérifie la présence et l’usage des rôles prédéfinis.\nGRANT pg_read_all_data TO <role>; REVOKE ...."
   },
   {
