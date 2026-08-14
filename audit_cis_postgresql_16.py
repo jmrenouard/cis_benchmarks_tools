@@ -24,13 +24,13 @@ RECOMMENDATIONS_DATA = [
         {"test_procedure_template": "ls -ld {datadir}", "expected_output": {"type": "stdout_regex_match", "pattern": r"^drwx------\s+\d+\s+postgres\s+postgres"}}, # Check ownership and permissions (drwx------ postgres postgres)
     ], "remediation": "Supprimer le répertoire de données et relancer initdb (avec checksums si souhaité), puis démarrer le service. Assurer les bonnes permissions sur le répertoire de données."},
     {"category": "1. Installation et correctifs", "number": "1.5", "name": "Appliquer les derniers correctifs de sécurité", "type": "Manual", "test_procedure": "psql -c 'SHOW server_version' et comparer à la liste des versions disponibles sur la page de news PostgreSQL.", "expected_output": None, "remediation": "sudo apt update && sudo apt upgrade postgresql-16*"}, # Adapted remediation for Ubuntu/apt
-    {"category": "1. Installation et correctifs", "number": "1.6", "name": "Vérifier que PGPASSWORD n'est pas défini dans les profils", "type": "Automated", "test_procedure": "! grep -q PGPASSWORD /home/*/.{bashrc,profile,bash_profile} /etc/environment 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Empêcher le stockage en clair du mot de passe via la variable d’environnement PGPASSWORD.\nSupprimer toute définition de PGPASSWORD dans les scripts de connexion, utiliser ~/.pgpass ou une méthode sécurisée. "}, # Use bash features for grep -q and negation, added description
-    {"category": "1. Installation et correctifs", "number": "1.7", "name": "Vérifier que PGPASSWORD n'est pas utilisé par un processus", "type": "Automated", "test_procedure": "! pgrep -a PGPASSWORD 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "S’assurer qu’aucun processus n’utilise la variable PGPASSWORD.\nIdentifier et modifier les scripts/processus pour ne plus utiliser PGPASSWORD."}, # Use pgrep for active processes, added description
+    {"category": "1. Installation et correctifs", "number": "1.6", "name": "Vérifier que PGPASSWORD n'est pas défini dans les profils", "type": "Automated", "test_procedure": "! grep -q PGPASSWORD /home/*/.{bashrc,profile,bash_profile} /etc/environment", "expected_output": {"type": "returncode_zero"}, "remediation": "Empêcher le stockage en clair du mot de passe via la variable d’environnement PGPASSWORD.\nSupprimer toute définition de PGPASSWORD dans les scripts de connexion, utiliser ~/.pgpass ou une méthode sécurisée. "}, # Use bash features for grep -q and negation, added description
+    {"category": "1. Installation et correctifs", "number": "1.7", "name": "Vérifier que PGPASSWORD n'est pas utilisé par un processus", "type": "Automated", "test_procedure": "! pgrep -a PGPASSWORD", "expected_output": {"type": "returncode_zero"}, "remediation": "S’assurer qu’aucun processus n’utilise la variable PGPASSWORD.\nIdentifier et modifier les scripts/processus pour ne plus utiliser PGPASSWORD."}, # Use pgrep for active processes, added description
 
     # 2. Permissions de répertoires et fichiers
     {"category": "2. Permissions de répertoires et fichiers", "number": "2.1", "name": "Masque de permissions (umask)", "type": "Manual", "test_procedure": "En tant que postgres, exécuter umask, doit afficher 0077 ou plus restrictif.", "expected_output": None, "remediation": "Configurer le umask de l’utilisateur postgres à 0077 pour restreindre la création de fichiers.\nAjouter umask 077 dans ~postgres/.bash_profile (ou .profile/.bashrc), recharger le profil."}, # Added description
     {"category": "2. Permissions de répertoires et fichiers", "number": "2.2", "name": "Propriétaire et permissions du répertoire d’extensions", "type": "Automated", "path_command": "sudo -u postgres pg_config --sharedir", "test_procedure_template": "ls -ld {path}/extension", "expected_output": {"type": "stdout_regex_match", "pattern": r"^drwxr-xr-x\s+\d+\s+root\s+root"}, "remediation": "Vérifier que $(pg_config --sharedir)/extension appartient à root:root et chmod 0755.\nchown root:root $(sudo -u postgres pg_config --sharedir)/extension && chmod 0755 $(sudo -u postgres pg_config --sharedir)/extension."}, # Corrected remediation command, added description
-    {"category": "2. Permissions de répertoires et fichiers", "number": "2.3", "name": "Désactiver l’historique des commandes psql", "type": "Automated", "test_procedure": "! find /home -name .psql_history -print -quit 2>/dev/null", "expected_output": {"type": "returncode_zero"}, "remediation": "Empêcher la création de ~/.psql_history pour limiter l’exposition de données sensibles.\nSupprimer le fichier .psql_history et ajouter \\set HISTFILE /dev/null dans ~/.psqlrc ou créer un lien symbolique vers /dev/null."}, # Find will return 0 if found, 1 if not found. We want return code 1 (not found) to pass, thus negate., added description
+    {"category": "2. Permissions de répertoires et fichiers", "number": "2.3", "name": "Désactiver l’historique des commandes psql", "type": "Automated", "test_procedure": "! find /home -name .psql_history -print -quit", "expected_output": {"type": "returncode_zero"}, "remediation": "Empêcher la création de ~/.psql_history pour limiter l’exposition de données sensibles.\nSupprimer le fichier .psql_history et ajouter \\set HISTFILE /dev/null dans ~/.psqlrc ou créer un lien symbolique vers /dev/null."}, # Find will return 0 if found, 1 if not found. We want return code 1 (not found) to pass, thus negate., added description
     {"category": "2. Permissions de répertoires et fichiers", "number": "2.4", "name": "Ne pas stocker de mots de passe dans les fichiers de service", "type": "Manual", "test_procedure": "grep -H password /etc/postgresql/.../pg_service.conf et dans les home utilisateurs", "expected_output": None, "remediation": "Vérifier qu’aucun .pg_service.conf ne contient password= en clair.\nSupprimer toutes les lignes password= identifiées."}, # Added description
 
     # 3. Journalisation et audit
@@ -464,7 +464,7 @@ def detect_execution_context(mode="local", remote_host=None, docker_container=No
 
     if not active_container and product_hint:
         try:
-            cmd = "docker ps --format '{{.Names}}' 2>/dev/null"
+            cmd = "docker ps --format '{{.Names}}'"
             stdout, stderr, ret = run_command(cmd, remote_host=remote_host)
             if ret == 0 and stdout:
                 for line in stdout.splitlines():
@@ -505,7 +505,7 @@ def detect_docker_container(remote_host=None, docker_name=None):
     """Detect active PostgreSQL Docker container name."""
     if docker_name:
         return docker_name
-    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' 2>/dev/null | grep -iE 'postgres|pg' | head -n 1", remote_host=remote_host)
+    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' | grep -iE 'postgres|pg' | head -n 1", remote_host=remote_host)
     if ret == 0 and stdout:
         return stdout.strip()
     return None
