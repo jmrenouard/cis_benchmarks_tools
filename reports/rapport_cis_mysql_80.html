@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIS Benchmark Audit Report - CIS Benchmark</title>
+    <title>CIS Benchmark Audit Report - MySQL 8.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -32,8 +32,8 @@
     <!-- Sidebar -->
     <aside class="w-64 h-screen bg-white border-r border-gray-200 sticky top-0 overflow-y-auto hidden lg:block">
         <div class="p-6">
-            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>CIS Benchmark</h2>
-            <p class="text-xs text-gray-500 mt-1">Audit Security Report v2.0.0</p>
+            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>MySQL 8.0</h2>
+            <p class="text-xs text-gray-500 mt-1">Audit CIS Benchmarks</p>
         </div>
         <nav class="px-4 pb-6">
             <a href="#summary" class="sidebar-link flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-1">
@@ -47,17 +47,24 @@
     <!-- Main Content -->
     <main class="flex-1 min-w-0">
         <!-- Header -->
-        <header class="bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+        <header class="bg-white border-b border-gray-200 p-6 flex flex-wrap justify-between items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS CIS Benchmark</h1>
-                <p class="text-sm text-gray-500">Date du rapport: 14/08/2026 11:46:56</p>
+                <h1 class="text-2xl font-bold text-gray-900">Rapport d'Audit CIS - MySQL 8.0</h1>
+                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : 14/08/2026 11:58:38</p>
             </div>
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center flex-wrap gap-2.5">
                 <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
                     <i class="fas fa-moon"></i> Mode Sombre
                 </button>
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">2.0.0</span>
-                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-200">v2.0.0</span>
+                <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium border border-purple-200 flex items-center gap-1.5">
+                    <i class="fas fa-server"></i> Local Bare-Metal
+                </span>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium border border-blue-200 flex items-center gap-1.5">
+                    <i class="fas fa-bullseye"></i> CIS Benchmark v1.4.0
+                </span>
+                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-300 flex items-center gap-1.5">
+                    <i class="fas fa-code-branch"></i> v2.3.0
+                </span>
             </div>
         </header>
 
@@ -2165,15 +2172,15 @@ Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
 INSPECTION MANUELLE DU CONTRÔLE 6.6 (Filtre &lt;&lt; tout journaliser &gt;&gt;)
 UID          PID    PPID  C STIME TTY          TIME CMD
-root           1       0  0 09:32 ?        00:00:00 /sbin/init
-root           2       1  0 09:32 hvc0     00:00:00 /init
-root           6       2  0 09:32 hvc0     00:00:00 plan9 --control-socket 7 --log-level 4 --server-fd 8 --pipe-fd 10 --log-truncate
-root          52       1  0 09:32 ?        00:00:01 /usr/lib/systemd/systemd-journald
-root         101       1  0 09:32 ?        00:00:00 /usr/lib/systemd/systemd-udevd
-root         114       1  0 09:32 ?        00:00:00 snapfuse /var/lib/snapd/snaps/core22_2411.snap /snap/core22/2411 -o ro,nodev,allow_other,suid
-root         119       1  0 09:32 ?        00:00:00 snapfuse /var/lib/snapd/snaps/core24_1587.snap /snap/core24/1587 -o ro,nodev,allow_other,suid
-root         124       1  0 09:32 ?        00:00:04 snapfuse /var/lib/snapd/snaps/core24_1643.snap /snap/core24/1643 -o ro,nodev,allow_other,suid
-root         126       1  0 09:32 ?        00:00:00 snapfuse /var/lib/snapd/snaps/docker_3505.snap /snap/docker/3505 -o ro,nodev,allow_other,suid
+root           1       0  0 09:31 ?        00:00:00 /sbin/init
+root           2       1  0 09:31 hvc0     00:00:00 /init
+root           6       2  0 09:31 hvc0     00:00:00 plan9 --control-socket 7 --log-level 4 --server-fd 8 --pipe-fd 10 --log-truncate
+root          52       1  0 09:31 ?        00:00:01 /usr/lib/systemd/systemd-journald
+root         101       1  0 09:31 ?        00:00:00 /usr/lib/systemd/systemd-udevd
+root         114       1  0 09:31 ?        00:00:00 snapfuse /var/lib/snapd/snaps/core22_2411.snap /snap/core22/2411 -o ro,nodev,allow_other,suid
+root         119       1  0 09:31 ?        00:00:00 snapfuse /var/lib/snapd/snaps/core24_1587.snap /snap/core24/1587 -o ro,nodev,allow_other,suid
+root         124       1  0 09:31 ?        00:00:04 snapfuse /var/lib/snapd/snaps/core24_1643.snap /snap/core24/1643 -o ro,nodev,allow_other,suid
+root         126       1  0 09:31 ?        00:00:00 snapfuse /var/lib/snapd/snaps/docker_3505.snap /snap/docker/3505 -o ro,nodev,allow_other,suid
 Stderr:
 
 Return Code: 0</pre>
@@ -2877,7 +2884,7 @@ Command de vérification: mysql -N -B -e &quot;SHOW PLUGINS;&quot; | grep -q &#x
         </div>
 
         <footer class="bg-white border-t border-gray-200 p-8 mt-12 text-center">
-            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS Benchmarks Suite v2.0.0.</p>
+            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS Benchmarks Suite v2.3.0.</p>
             <p class="text-xs text-gray-400 mt-2">100% Python Standard Library (PSL ONLY) Engine.</p>
         </footer>
     </main>

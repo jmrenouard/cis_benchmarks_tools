@@ -866,7 +866,7 @@ def export_results(results, overall_score, categories_scores, target_name, filen
 
 
 
-def generate_html_report(results, overall_score, categories_scores, filename=None, lang="en"):
+def generate_html_report(results, overall_score, categories_scores, filename=None, lang="en", execution_context=None):
     if not filename:
         filename = "reports/rapport_cis_cassandra_40.html"
 
@@ -960,12 +960,15 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
         def __missing__(self, key):
             return f"{{{key}}}"
 
+    ctx_label = execution_context if execution_context else "Local Bare-Metal"
     html_output = load_html_template().format_map(SafeDict(
-        benchmark_title=target_name if 'target_name' in locals() else "CIS Benchmark",
+        product_title="Cassandra 4.0",
+        benchmark_title="Cassandra 4.0",
+        benchmark_version="1.0.0",
+        suite_version="2.3.0",
+        execution_context=ctx_label,
         lang=lang if 'lang' in locals() else "en",
         report_date=report_date,
-        suite_version="2.0.0",
-        target_version="2.0.0",
         overall_score=overall_score,
         overall_score_class=overall_score_class,
         passed_automated_count=passed_auto_count if 'passed_auto_count' in locals() else 0,

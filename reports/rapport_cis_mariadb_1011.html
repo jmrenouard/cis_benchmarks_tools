@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIS Benchmark Audit Report - CIS Benchmark</title>
+    <title>CIS Benchmark Audit Report - MariaDB 10.11</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -32,8 +32,8 @@
     <!-- Sidebar -->
     <aside class="w-64 h-screen bg-white border-r border-gray-200 sticky top-0 overflow-y-auto hidden lg:block">
         <div class="p-6">
-            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>CIS Benchmark</h2>
-            <p class="text-xs text-gray-500 mt-1">Audit Security Report v2.0.0</p>
+            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>MariaDB 10.11</h2>
+            <p class="text-xs text-gray-500 mt-1">Audit CIS Benchmarks</p>
         </div>
         <nav class="px-4 pb-6">
             <a href="#summary" class="sidebar-link flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-1">
@@ -47,33 +47,40 @@
     <!-- Main Content -->
     <main class="flex-1 min-w-0">
         <!-- Header -->
-        <header class="bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+        <header class="bg-white border-b border-gray-200 p-6 flex flex-wrap justify-between items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS CIS Benchmark</h1>
-                <p class="text-sm text-gray-500">Date du rapport: 12/08/2026 20:49:23</p>
+                <h1 class="text-2xl font-bold text-gray-900">Rapport d'Audit CIS - MariaDB 10.11</h1>
+                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : 14/08/2026 11:58:33</p>
             </div>
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center flex-wrap gap-2.5">
                 <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
                     <i class="fas fa-moon"></i> Mode Sombre
                 </button>
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">2.0.0</span>
-                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-200">v2.0.0</span>
+                <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium border border-purple-200 flex items-center gap-1.5">
+                    <i class="fas fa-server"></i> Local Bare-Metal
+                </span>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium border border-blue-200 flex items-center gap-1.5">
+                    <i class="fas fa-bullseye"></i> CIS Benchmark v1.1.0
+                </span>
+                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-300 flex items-center gap-1.5">
+                    <i class="fas fa-code-branch"></i> v2.3.0
+                </span>
             </div>
         </header>
 
         <div class="p-8 max-w-7xl mx-auto">
             <!-- Summary Dashboard -->
             <section id="summary" class="mb-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
                         <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Score Global</span>
                         <div class="relative flex items-center justify-center">
-                            <span class="text-3xl font-black text-gray-900">70.0%</span>
+                            <span class="text-3xl font-black text-gray-900">72.7%</span>
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-green-500">
                         <span class="text-xs font-bold text-green-600 uppercase tracking-widest">Succès</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">5</div>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">6</div>
                         <p class="text-xs text-gray-500 mt-1">Vérifications conformes</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-red-500">
@@ -81,9 +88,14 @@
                         <div class="text-3xl font-bold text-gray-900 mt-1">3</div>
                         <p class="text-xs text-gray-500 mt-1">Non-conformités détectées</p>
                     </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-orange-500">
+                        <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">Erreurs Commande</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">58</div>
+                        <p class="text-xs text-gray-500 mt-1">Échecs d'exécution technique</p>
+                    </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
                         <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Manuels</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">29</div>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">6</div>
                         <p class="text-xs text-gray-500 mt-1">À vérifier manuellement</p>
                     </div>
                 </div>
@@ -134,19 +146,19 @@
         <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
           <path stroke-dasharray="100 100" stroke="#e5e7eb" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
           <path stroke-dasharray="0.0 100" stroke-dashoffset="-75.0" stroke="#9ca3af" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path stroke-dasharray="81.8 100" stroke-dashoffset="6.8" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path stroke-dasharray="6.8 100" stroke-dashoffset="13.6" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path stroke-dasharray="11.4 100" stroke-dashoffset="25.0" stroke="#10b981" stroke-width="3.8" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="86.6 100" stroke-dashoffset="11.6" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="4.5 100" stroke-dashoffset="16.0" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="9.0 100" stroke-dashoffset="25.0" stroke="#10b981" stroke-width="3.8" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
         </svg>
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <span style="font-size: 24px; font-weight: 800; color: #111827;">70.0%</span>
+          <span style="font-size: 24px; font-weight: 800; color: #111827;">72.7%</span>
           <span style="font-size: 11px; color: #6b7280; font-weight: 600;">Score Global</span>
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
-        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> <strong>Réussi (PASS) :</strong> 5</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> <strong>Réussi (PASS) :</strong> 6</div>
         <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> <strong>Échoué (FAIL) :</strong> 3</div>
-        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> 36</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> 58</div>
         <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> <strong>Non Applicable (N/A) :</strong> 0</div>
       </div>
     </div>
@@ -169,20 +181,20 @@
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">1. Configuration Système d'exploitation</span>
-            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">40.0% (2/6)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #f59e0b;">50.0% (3/7)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 33.3%; background: #10b981;" title="Réussi: 2"></div><div style="width: 50.0%; background: #ef4444;" title="Échoué: 3"></div><div style="width: 16.7%; background: #6b7280;" title="Error: 1"></div>
+            <div style="width: 42.9%; background: #10b981;" title="Réussi: 3"></div><div style="width: 42.9%; background: #ef4444;" title="Échoué: 3"></div><div style="width: 14.3%; background: #6b7280;" title="Error: 1"></div>
           </div>
         </div>
         
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">2. Installation et Planification</span>
-            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/6)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/8)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 100.0%; background: #6b7280;" title="Error: 6"></div>
+            <div style="width: 100.0%; background: #6b7280;" title="Error: 8"></div>
           </div>
         </div>
         
@@ -209,10 +221,10 @@
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">5. Permissions MariaDB</span>
-            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/0)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/7)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 100%; background: #e5e7eb;" title="Aucun contrôle"></div>
+            <div style="width: 100.0%; background: #6b7280;" title="Error: 7"></div>
           </div>
         </div>
         
@@ -229,10 +241,10 @@
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">7. Authentification</span>
-            <span style="font-weight: 700; font-size: 13px; color: #10b981;">100.0% (1/6)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #10b981;">100.0% (1/7)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 16.7%; background: #10b981;" title="Réussi: 1"></div><div style="width: 83.3%; background: #6b7280;" title="Error: 5"></div>
+            <div style="width: 14.3%; background: #10b981;" title="Réussi: 1"></div><div style="width: 85.7%; background: #6b7280;" title="Error: 6"></div>
           </div>
         </div>
         
@@ -272,13 +284,13 @@
                             <p class="text-sm text-gray-500 mt-1">Détails des recommandations et résultats pour cette section.</p>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-pass bg-opacity-20 border border-green-200"><i class="fas fa-check-circle mr-1.5"></i>2 Pass</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-pass bg-opacity-20 border border-green-200"><i class="fas fa-check-circle mr-1.5"></i>3 Pass</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-fail bg-opacity-20 border border-red-200"><i class="fas fa-times-circle mr-1.5"></i>3 Fail</span>
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>1 Manuel</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>0 Manuel</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200"><i class="fas fa-exclamation-triangle mr-1.5"></i>1 Error</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100"><i class="fas fa-minus-circle mr-1.5"></i>0 N/A</span>
                             <div class="ml-2 pl-4 border-l border-gray-200 flex items-center">
-                                <span class="text-lg font-black text-red-600">40%</span>
+                                <span class="text-lg font-black text-yellow-600">50%</span>
                             </div>
                         </div>
                     </div>
@@ -313,10 +325,8 @@
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Error lors de l&#x27;obtention du chemin via:
 `mysql -N -B -e &quot;SELECT @@datadir;&quot;`
-Stdout:
-
-Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+Output:
+Impossible d&#x27;exécuter la commande client MariaDB/MySQL (vérifier si le service est démarré ou conteneur Docker actif). [Erreur d&#x27;Exécution de Commande - Non-conformité de sécurité non évaluée]</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -346,9 +356,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
 
 Stderr:
 
-Return Code: 0
-
-Condition de succès non remplie.</pre>
+Return Code: 0</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -365,8 +373,8 @@ Condition de succès non remplie.</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">! find /home /root -name .mysql_history -print -quit 2&gt;/dev/null</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-fail">
-                                        ❌ Fail
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-pass">
+                                        ✅ Pass
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -375,12 +383,10 @@ Condition de succès non remplie.</pre>
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Stdout:
-
+/home/jmren/.mysql_history
 Stderr:
-Command execution timed out after 10 seconds
-Return Code: -1
 
-Condition de succès non remplie.</pre>
+Return Code: 0</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -440,9 +446,7 @@ Return Code: 0</pre>
 
 Stderr:
 
-Return Code: 0
-
-Condition de succès non remplie.</pre>
+Return Code: 0</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -486,11 +490,11 @@ Return Code: 0</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">1.7</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Exécuter MariaDB dans un environnement sandbox</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">[[ -f /.dockerenv ]] &amp;&amp; echo &#x27;DOCKER&#x27; || echo &#x27;NOT_SANDBOX&#x27;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">[[ -f /.dockerenv ]] || grep -qs &#x27;docker\|containerd&#x27; /proc/1/cgroup || systemctl is-active mariadb &gt;/dev/null 2&gt;&amp;1</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-fail">
+                                        ❌ Fail
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -505,10 +509,11 @@ Return Code: 0</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
+                                            <pre class="overflow-x-auto">Stdout:
 
-Procédure suggérée:
-[[ -f /.dockerenv ]] &amp;&amp; echo &#x27;DOCKER&#x27; || echo &#x27;NOT_SANDBOX&#x27;</pre>
+Stderr:
+
+Return Code: 4</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -534,8 +539,8 @@ Procédure suggérée:
                         <div class="flex flex-wrap gap-2">
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-pass bg-opacity-20 border border-green-200"><i class="fas fa-check-circle mr-1.5"></i>0 Pass</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-fail bg-opacity-20 border border-red-200"><i class="fas fa-times-circle mr-1.5"></i>0 Fail</span>
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>12 Manuel</span>
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200"><i class="fas fa-exclamation-triangle mr-1.5"></i>6 Error</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>10 Manuel</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200"><i class="fas fa-exclamation-triangle mr-1.5"></i>8 Error</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100"><i class="fas fa-minus-circle mr-1.5"></i>0 N/A</span>
                             <div class="ml-2 pl-4 border-l border-gray-200 flex items-center">
                                 <span class="text-lg font-black text-red-600">0%</span>
@@ -599,7 +604,7 @@ Return Code: 0</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">2.1.2</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Validation des sauvegardes</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">Analyser les rapports de tests de restauration.</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ /var/lib/pgsql/ 2&gt;/dev/null | head -n 20 || echo &#x27;VÉRIFICATION_MANUELLE_REQUIS&#x27;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
@@ -620,8 +625,31 @@ Return Code: 0</pre>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">This control requires manual verification.
 
-Procédure suggérée:
-Analyser les rapports de tests de restauration.</pre>
+Résultat de l&#x27;extraction automatique pour aide:
+Stdout:
+/var/backups/:
+total 3500
+drwxr-xr-x  2 root root    4096 Aug 13 00:00 .
+drwxr-xr-x 13 root root    4096 Nov 25  2025 ..
+-rw-r--r--  1 root root   92160 Aug 13 00:00 alternatives.tar.0
+-rw-r--r--  1 root root    6150 Aug  8 00:00 alternatives.tar.1.gz
+-rw-r--r--  1 root root    6151 Aug  4 00:00 alternatives.tar.2.gz
+-rw-r--r--  1 root root    6158 Jul 28 00:00 alternatives.tar.3.gz
+-rw-r--r--  1 root root    6146 Jul 27 11:00 alternatives.tar.4.gz
+-rw-r--r--  1 root root    6139 Jul 18 09:07 alternatives.tar.5.gz
+-rw-r--r--  1 root root    6149 Jul 10 00:00 alternatives.tar.6.gz
+-rw-r--r--  1 root root   67271 May 19 22:01 apt.extended_states.0
+-rw-r--r--  1 root root    7265 Apr 20 00:10 apt.extended_states.1.gz
+-rw-r--r--  1 root root    7241 Mar 29 23:38 apt.extended_states.2.gz
+-rw-r--r--  1 root root    7228 Mar 11 17:40 apt.extended_states.3.gz
+-rw-r--r--  1 root root    7258 Feb 26 19:38 apt.extended_states.4.gz
+-rw-r--r--  1 root root    7275 Feb  9  2026 apt.extended_states.5.gz
+-rw-r--r--  1 root root    7237 Jan 21  2026 apt.extended_states.6.gz
+-rw-r--r--  1 root root       0 Aug 13 00:00 dpkg.arch.0
+-rw-r--r--  1 root root      32 Aug  8 00:00 dpkg.arch.1.gz
+Stderr:
+
+Return Code: 0</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -638,8 +666,8 @@ Analyser les rapports de tests de restauration.</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">Inspecter les permissions des fichiers contenant les credentials de sauvegarde.</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -654,10 +682,12 @@ Analyser les rapports de tests de restauration.</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
+                                            <pre class="overflow-x-auto">Error: Command not found.
+Stdout:
 
-Procédure suggérée:
-Inspecter les permissions des fichiers contenant les credentials de sauvegarde.</pre>
+Stderr:
+/bin/bash: line 1: Inspecter: command not found
+Return Code: 127</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -671,7 +701,7 @@ Inspecter les permissions des fichiers contenant les credentials de sauvegarde.<
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">2.1.4</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Sécuriser les fichiers de sauvegarde</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">file /var/backups/* 2&gt;/dev/null | head -n 10 || echo &#x27;VÉRIFICATION_CHIFFREMENT_SAUVEGARDE&#x27;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
@@ -692,8 +722,21 @@ Inspecter les permissions des fichiers contenant les credentials de sauvegarde.<
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">This control requires manual verification.
 
-Procédure suggérée:
-Examiner les permissions et la présence de chiffrement sur les fichiers de sauvegarde.</pre>
+Résultat de l&#x27;extraction automatique pour aide:
+Stdout:
+/var/backups/alternatives.tar.0:       POSIX tar archive (GNU)
+/var/backups/alternatives.tar.1.gz:    gzip compressed data, was &quot;alternatives.tar.0&quot;, last modified: Fri Aug  7 22:00:00 2026, max compression, from Unix, original size modulo 2^32 92160
+/var/backups/alternatives.tar.2.gz:    gzip compressed data, was &quot;alternatives.tar.0&quot;, last modified: Mon Aug  3 22:00:01 2026, max compression, from Unix, original size modulo 2^32 92160
+/var/backups/alternatives.tar.3.gz:    gzip compressed data, was &quot;alternatives.tar.0&quot;, last modified: Mon Jul 27 22:00:02 2026, max compression, from Unix, original size modulo 2^32 92160
+/var/backups/alternatives.tar.4.gz:    gzip compressed data, was &quot;alternatives.tar.0&quot;, last modified: Mon Jul 27 09:00:12 2026, max compression, from Unix, original size modulo 2^32 92160
+/var/backups/alternatives.tar.5.gz:    gzip compressed data, was &quot;alternatives.tar.0&quot;, last modified: Sat Jul 18 07:07:30 2026, max compression, from Unix, original size modulo 2^32 92160
+/var/backups/alternatives.tar.6.gz:    gzip compressed data, was &quot;alternatives.tar.0&quot;, last modified: Thu Jul  9 22:00:35 2026, max compression, from Unix, original size modulo 2^32 92160
+/var/backups/apt.extended_states.0:    ASCII text
+/var/backups/apt.extended_states.1.gz: gzip compressed data, was &quot;apt.extended_states.0&quot;, last modified: Sun Apr 19 22:10:31 2026, max compression, from Unix, original size modulo 2^32 67389
+/var/backups/apt.extended_states.2.gz: gzip compressed data, was &quot;apt.extended_states.0&quot;, last modified: Sun Mar 29 21:38:32 2026, max compression, from Unix, original size modulo 2^32 67192
+Stderr:
+
+Return Code: 0</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -719,7 +762,7 @@ Examiner les permissions et la présence de chiffrement sur les fichiers de sauv
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -759,8 +802,12 @@ Return Code: 1</pre>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">This control requires manual verification.
 
-Procédure suggérée:
-Vérifier l&#x27;existence et la validité du plan DR.</pre>
+Résultat de l&#x27;extraction automatique pour aide:
+Stdout:
+
+Stderr:
+/bin/bash: -c: line 1: unexpected EOF while looking for matching `&#x27;&#x27;
+Return Code: 2</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -774,7 +821,7 @@ Vérifier l&#x27;existence et la validité du plan DR.</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">2.1.7</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Sauvegarde des fichiers de configuration</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">Contrôler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, clés SSL, etc.).</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">ls -la /etc/mysql/mariadb.conf.d/ /etc/postgresql/ /etc/mongod.conf /etc/cassandra/ 2&gt;/dev/null || echo &#x27;VÉRIFICATION_CONFIG_SAUVEGARDE&#x27;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
@@ -797,11 +844,17 @@ Vérifier l&#x27;existence et la validité du plan DR.</pre>
 
 Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
-
+/etc/mysql/mariadb.conf.d/:
+total 20
+drwxr-xr-x 2 root root 4096 Jan 24  2026 .
+drwxr-xr-x 4 root root 4096 Jan 24  2026 ..
+-rw-r--r-- 1 root root  575 May 24  2025 50-client.cnf
+-rw-r--r-- 1 root root  231 May 24  2025 50-mysql-clients.cnf
+-rw-r--r-- 1 root root  570 May 24  2025 60-galera.cnf
+VÉRIFICATION_CONFIG_SAUVEGARDE
 Stderr:
-/bin/bash: -c: line 1: syntax error near unexpected token `(&#x27;
-/bin/bash: -c: line 1: `Contrôler la liste des fichiers inclus dans la sauvegarde (mariadb.cnf, clés SSL, etc.).&#x27;
-Return Code: 2</pre>
+
+Return Code: 0</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -818,8 +871,8 @@ Return Code: 2</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">Vérifier les services actifs sur la machine.</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -834,10 +887,12 @@ Return Code: 2</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
+                                            <pre class="overflow-x-auto">Error: Command not found.
+Stdout:
 
-Procédure suggérée:
-Vérifier les services actifs sur la machine.</pre>
+Stderr:
+/bin/bash: line 1: Vérifier: command not found
+Return Code: 127</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -874,10 +929,10 @@ Vérifier les services actifs sur la machine.</pre>
 
 Résultat de l&#x27;extraction automatique pour aide:
 Stdout:
-jmren       5119     560 32 20:49 pts/2    00:00:03 find /home /root -name .mysql_history -print -quit
+
 Stderr:
 
-Return Code: 0</pre>
+Return Code: 1</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -891,11 +946,11 @@ Return Code: 0</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">2.4</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Ne pas réutiliser les noms d&#x27;utilisateurs</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT host, user, plugin FROM mysql.user WHERE user NOT IN (&#x27;mysql.infoschema&#x27;, &#x27;mysql.session&#x27;, &#x27;mysql.sys&#x27;, &#x27;mariadb.sys&#x27;) ORDER BY user;&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT COUNT(*) - COUNT(DISTINCT user) FROM mysql.user WHERE user NOT IN (&#x27;mysql.infoschema&#x27;, &#x27;mysql.session&#x27;, &#x27;mysql.sys&#x27;, &#x27;mariadb.sys&#x27;);&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -910,9 +965,7 @@ Return Code: 0</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -934,8 +987,8 @@ Return Code: 1</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">Vérifier les certificats SSL utilisés par MariaDB.</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -950,9 +1003,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Command not found.
 Stdout:
 
 Stderr:
@@ -983,7 +1034,7 @@ Return Code: 127</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1005,8 +1056,8 @@ Return Code: 1</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT CONCAT(user, &#x27;@&#x27;, host) FROM mysql.global_priv;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -1021,9 +1072,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1042,11 +1091,11 @@ Return Code: 1</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">2.8</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Utilisation appropriée de l&#x27;authentification Socket Peer-Credential</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT PLUGIN_NAME, PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = &#x27;unix_socket&#x27;;&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = &#x27;unix_socket&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -1061,9 +1110,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1094,7 +1141,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1125,7 +1172,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1156,7 +1203,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1187,7 +1234,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1257,10 +1304,8 @@ Return Code: 1</pre>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Error lors de l&#x27;obtention du chemin via:
 `mysql -N -B -e &quot;SELECT @@datadir;&quot;`
-Stdout:
-
-Stderr:
-ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
+Output:
+Impossible d&#x27;exécuter la commande client MariaDB/MySQL (vérifier si le service est démarré ou conteneur Docker actif). [Erreur d&#x27;Exécution de Commande - Non-conformité de sécurité non évaluée]</pre>
                                         </div>
                                     </div>
                                     <div class="p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -1288,9 +1333,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Error lors de l&#x27;obtention du chemin via:
 `mysql -N -B -e &quot;SELECT @@log_bin_basename;&quot;`
-Stdout:
-
-Stderr:
+Output:
 ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
                                         </div>
                                     </div>
@@ -1319,9 +1362,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Error lors de l&#x27;obtention du chemin via:
 `mysql -N -B -e &quot;SELECT @@log_error;&quot;`
-Stdout:
-
-Stderr:
+Output:
 ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
                                         </div>
                                     </div>
@@ -1350,9 +1391,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Error lors de l&#x27;obtention du chemin via:
 `mysql -N -B -e &quot;SELECT @@slow_query_log_file;&quot;`
-Stdout:
-
-Stderr:
+Output:
 ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
                                         </div>
                                     </div>
@@ -1381,9 +1420,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Error lors de l&#x27;obtention du chemin via:
 `mysql -N -B -e &quot;SELECT @@relay_log_basename;&quot;`
-Stdout:
-
-Stderr:
+Output:
 ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
                                         </div>
                                     </div>
@@ -1412,9 +1449,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Error lors de l&#x27;obtention du chemin via:
 `mysql -N -B -e &quot;SELECT @@general_log_file;&quot;`
-Stdout:
-
-Stderr:
+Output:
 ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
                                         </div>
                                     </div>
@@ -1441,7 +1476,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1476,9 +1511,7 @@ Return Code: 123</pre>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Error lors de l&#x27;obtention du chemin via:
 `mysql -N -B -e &quot;SELECT @@plugin_dir;&quot;`
-Stdout:
-
-Stderr:
+Output:
 ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
                                         </div>
                                     </div>
@@ -1505,7 +1538,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1538,7 +1571,7 @@ Return Code: 123</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1599,8 +1632,8 @@ Return Code: 123</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT @@version;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -1615,9 +1648,7 @@ Return Code: 123</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1648,7 +1679,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1709,7 +1740,7 @@ Return Code: 0</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1770,7 +1801,7 @@ Return Code: 0</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1801,7 +1832,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1832,7 +1863,7 @@ Return Code: 0</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1863,7 +1894,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1894,8 +1925,8 @@ Return Code: 1</pre>
                         <div class="flex flex-wrap gap-2">
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-pass bg-opacity-20 border border-green-200"><i class="fas fa-check-circle mr-1.5"></i>0 Pass</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-fail bg-opacity-20 border border-red-200"><i class="fas fa-times-circle mr-1.5"></i>0 Fail</span>
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>10 Manuel</span>
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200"><i class="fas fa-exclamation-triangle mr-1.5"></i>0 Error</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>3 Manuel</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200"><i class="fas fa-exclamation-triangle mr-1.5"></i>7 Error</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100"><i class="fas fa-minus-circle mr-1.5"></i>0 N/A</span>
                             <div class="ml-2 pl-4 border-l border-gray-200 flex items-center">
                                 <span class="text-lg font-black text-red-600">0%</span>
@@ -1919,11 +1950,11 @@ Return Code: 1</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">5.1</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Limiter l&#x27;accès complet à mysql.* aux seuls administrateurs</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges WHERE grantee NOT LIKE (&#x27;\\&#x27;mysql.%localhost\\&#x27;&#x27;);&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT COUNT(*) FROM information_schema.user_privileges WHERE GRANTEE NOT LIKE &#x27;\&#x27;root\&#x27;@%&#x27; AND GRANTEE NOT LIKE &#x27;\&#x27;mysql\&#x27;@%&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -1938,9 +1969,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1959,11 +1988,11 @@ Return Code: 1</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">5.2</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Retirer le droit FILE aux non-admins</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;FILE&#x27;;&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;FILE&#x27; AND GRANTEE NOT LIKE &#x27;\&#x27;root\&#x27;@%&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -1978,9 +2007,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -1999,11 +2026,11 @@ Return Code: 1</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">5.3</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Retirer le droit PROCESS aux non-admins</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;PROCESS&#x27;;&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;PROCESS&#x27; AND GRANTEE NOT LIKE &#x27;\&#x27;root\&#x27;@%&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2018,9 +2045,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2039,11 +2064,11 @@ Return Code: 1</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">5.4</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Retirer le droit SUPER aux non-admins</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;SUPER&#x27;;&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;SUPER&#x27; AND GRANTEE NOT LIKE &#x27;\&#x27;root\&#x27;@%&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2058,9 +2083,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2079,11 +2102,11 @@ Return Code: 1</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">5.5</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Retirer le droit SHUTDOWN aux non-admins</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;SHUTDOWN&#x27;;&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;SHUTDOWN&#x27; AND GRANTEE NOT LIKE &#x27;\&#x27;root\&#x27;@%&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2098,9 +2121,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2119,11 +2140,11 @@ Return Code: 1</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">5.6</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Retirer CREATE USER aux non-admins</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;CREATE USER&#x27;;&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;CREATE USER&#x27; AND GRANTEE NOT LIKE &#x27;\&#x27;root\&#x27;@%&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2138,9 +2159,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2159,11 +2178,11 @@ Return Code: 1</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">5.7</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Retirer GRANT OPTION aux non-admins</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE IS_GRANTABLE = &#x27;YES&#x27;;&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT COUNT(*) FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE IS_GRANTABLE = &#x27;YES&#x27; AND GRANTEE NOT LIKE &#x27;\&#x27;root\&#x27;@%&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2178,9 +2197,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2202,8 +2219,8 @@ Return Code: 1</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT GRANTEE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE = &#x27;REPLICATION SLAVE&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2218,9 +2235,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2242,8 +2257,8 @@ Return Code: 1</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT GRANTEE, PRIVILEGE_TYPE FROM INFORMATION_SCHEMA.USER_PRIVILEGES WHERE PRIVILEGE_TYPE IN (&#x27;SELECT&#x27;,&#x27;INSERT&#x27;,&#x27;UPDATE&#x27;,&#x27;DELETE&#x27;,&#x27;CREATE&#x27;,&#x27;DROP&#x27;,&#x27;ALTER&#x27;);&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2258,9 +2273,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2282,8 +2295,8 @@ Return Code: 1</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT ROUTINE_SCHEMA, ROUTINE_NAME, DEFINER, SECURITY_TYPE FROM information_schema.ROUTINES WHERE DEFINER NOT IN (&#x27;root@localhost&#x27;, &#x27;mariadb.sys@localhost&#x27;);&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2298,9 +2311,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2368,7 +2379,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2401,9 +2412,7 @@ Return Code: 0</pre>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
                                             <pre class="overflow-x-auto">Error lors de l&#x27;obtention du chemin via:
 `mysql -N -B -e &quot;SELECT @@log_bin_basename;&quot;`
-Stdout:
-
-Stderr:
+Output:
 ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run/mysqld/mysqld.sock&#x27; (2)</pre>
                                         </div>
                                     </div>
@@ -2430,7 +2439,7 @@ ERROR 2002 (HY000): Can&#x27;t connect to local server through socket &#x27;/run
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2461,7 +2470,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2492,7 +2501,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2523,7 +2532,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2554,8 +2563,8 @@ Return Code: 1</pre>
                         <div class="flex flex-wrap gap-2">
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-pass bg-opacity-20 border border-green-200"><i class="fas fa-check-circle mr-1.5"></i>1 Pass</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-fail bg-opacity-20 border border-red-200"><i class="fas fa-times-circle mr-1.5"></i>0 Fail</span>
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>1 Manuel</span>
-                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200"><i class="fas fa-exclamation-triangle mr-1.5"></i>5 Error</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold status-manual bg-opacity-20 border border-amber-200"><i class="fas fa-hand-paper mr-1.5"></i>0 Manuel</span>
+                            <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-200"><i class="fas fa-exclamation-triangle mr-1.5"></i>6 Error</span>
                             <span class="flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-400 border border-gray-100"><i class="fas fa-minus-circle mr-1.5"></i>0 N/A</span>
                             <div class="ml-2 pl-4 border-l border-gray-200 flex items-center">
                                 <span class="text-lg font-black text-green-600">100%</span>
@@ -2591,7 +2600,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2652,7 +2661,7 @@ Return Code: 0</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2683,7 +2692,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2714,7 +2723,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2745,7 +2754,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2764,11 +2773,11 @@ Return Code: 1</pre>
                                 <td class="py-4 px-4 text-sm font-medium text-gray-400 align-top">7.7</td>
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-sm font-bold text-gray-900 mb-1">Empêcher la réutilisation des mots de passe (password_reuse_check)</div>
-                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT plugin_status, load_option FROM information_schema.plugins WHERE PLUGIN_NAME=&#x27;password_reuse_check&#x27;;&quot;</div>
+                                    <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = &#x27;password_reuse_check&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2783,9 +2792,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2857,7 +2864,7 @@ Puis redémarrer MariaDB.</div>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2888,7 +2895,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">Error: Impossible de se connecter à MariaDB (serveur arrêté ou mauvais socket).
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2910,8 +2917,8 @@ Return Code: 1</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SELECT VARIABLE_NAME, VARIABLE_VALUE FROM information_schema.global_variables WHERE VARIABLE_NAME LIKE &#x27;max_%connections&#x27;;&quot;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -2926,9 +2933,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -2987,8 +2992,8 @@ Return Code: 1</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SHOW REPLICA STATUS\G&quot; | grep &#x27;Master_SSL_Allowed&#x27;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -3003,9 +3008,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -3081,8 +3084,8 @@ Command de vérification: mysql -N -B -e &quot;SELECT count(*) FROM mysql.user W
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SHOW REPLICA STATUS\G&quot; | grep &#x27;Master_SSL_Cipher&#x27;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -3097,9 +3100,7 @@ Command de vérification: mysql -N -B -e &quot;SELECT count(*) FROM mysql.user W
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -3121,8 +3122,8 @@ Return Code: 1</pre>
                                     <div class="text-xs text-gray-500 italic font-mono bg-gray-100 p-1 rounded inline-block truncate max-w-xs">mysql -N -B -e &quot;SHOW REPLICA STATUS\G&quot; | grep -E &#x27;Master_SSL_Cert|Master_SSL_Key&#x27;</div>
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-manual">
-                                        ⚠️ Manuel
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider status-error">
+                                        ❓ Error
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-sm align-top">
@@ -3137,9 +3138,7 @@ Return Code: 1</pre>
                                     <div class="mb-3">
                                         <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Résultat de l'audit:</div>
                                         <div class="bg-gray-900 text-gray-100 p-3 rounded-lg border border-gray-700">
-                                            <pre class="overflow-x-auto">This control requires manual verification.
-
-Résultat de l&#x27;extraction automatique pour aide:
+                                            <pre class="overflow-x-auto">Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket).
 Stdout:
 
 Stderr:
@@ -3164,7 +3163,7 @@ Return Code: 1</pre>
         </div>
 
         <footer class="bg-white border-t border-gray-200 p-8 mt-12 text-center">
-            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS Benchmarks Suite v2.0.0.</p>
+            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS Benchmarks Suite v2.3.0.</p>
             <p class="text-xs text-gray-400 mt-2">100% Python Standard Library (PSL ONLY) Engine.</p>
         </footer>
     </main>
