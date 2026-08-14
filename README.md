@@ -1,26 +1,39 @@
-# 🛡️ CIS Benchmarks Tools Suite (v1.7.0)
+# 🛡️ CIS Benchmarks Tools Suite (v2.3.1)
 
-> **Automated Security Compliance Audit Engine for Databases and Linux Systems (100% Python Standard Library - PSL ONLY).**
+> **Enterprise-Grade Automated Security Compliance Audit Engine for Databases and Linux Systems (100% Python Standard Library - PSL ONLY).**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
+[![Release](https://img.shields.io/badge/Release-v2.3.1-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
 
 ---
 
 ## 📋 Overview
 
-**CIS Benchmarks Tools** is a lightweight, zero-dependency automated security audit suite designed to evaluate system and database configurations against official **CIS (Center for Internet Security) Benchmarks** and **DISA STIG** guidelines.
+**CIS Benchmarks Tools** is a lightweight, zero-dependency automated security audit suite designed to evaluate system and database configurations against official **CIS (Center for Internet Security) Benchmarks** and **DISA STIG** security guidelines.
 
 ### Key Highlights
-- 🔒 **100% Python Standard Library (PSL ONLY)**: Zero `pip` dependencies. Runs standalone on any standard Python 3 installation.
-- 📁 **Decoupled Rule Specifications (`rules/*.json`)**: Audit control specifications are externalized into dedicated JSON rule files under `rules/` for easy editing, customization, and maintenance.
-- 📊 **100% Offline Pure Inline SVG Charts Engine**: Self-contained SVG Donut Charts and Category Stacked Bar Charts generated natively in Python PSL without external JavaScript libraries or CDN dependencies.
-- 💻 **Dual Execution Modes (Local & SSH Remote)**: Audit local machines/containers (`--mode local` / `--local`) or remote servers over SSH (`--mode ssh` / `--remote user@hostname` / `--ssh user@hostname`) natively without Paramiko or Ansible.
+- 🔒 **100% Python Standard Library (PSL ONLY)**: Zero `pip` dependencies. Runs standalone on any standard Python 3 installation without installing external packages.
+- 🎯 **4-Tier Execution Context Engine**: Seamless auto-detection and execution across 4 distinct deployment topologies:
+  1. **Local Machine** (`--mode local` / `--local`)
+  2. **Remote SSH** (`--mode ssh` / `--remote user@host` / `--ssh user@host`)
+  3. **Docker Container (Local)** (`--docker <container_name>`)
+  4. **Docker Container (Remote SSH)** (`--remote user@host --docker <container_name>`)
+- 📊 **5-State Compliance Taxonomy**:
+  - `Pass`: Verified compliant check.
+  - `Fail`: Security non-compliance detected.
+  - `Error`: Command or environment execution error (guaranteed distinct from security failures).
+  - `Manual`: Procedural manual check with structured operational guides and diagnostic commands.
+  - `Not Applicable (N/A)`: Variable, plugin, or feature not applicable in the evaluated environment.
+- 🔑 **Database Authentication & Credentials Injection**:
+  - Full support for `--db-user`, `--db-password`, `--db-host`, `--db-port`, `--db-name`, `--defaults-file`, `--auth-db`, and standard environment variables (`MYSQL_PWD`, `PGPASSWORD`, etc.).
+  - Automatic password masking (`***MASKED***`) in audit output logs and HTML reports.
+- 🩺 **Zero Command Error & Full Diagnostic Telemetry**: Complete preservation of `stderr` diagnostics without destructive `2>/dev/null` redirection.
+- 📈 **100% Offline Pure Inline SVG Charts**: Donut charts and category progress bars generated natively in Python PSL without CDN or external JavaScript dependencies.
 - 🗄️ **18 Audit Targets & 887 Controls**: Comprehensive coverage for MariaDB, MySQL, PostgreSQL, MongoDB, Apache Cassandra, and Red Hat Enterprise Linux (RHEL 8 / 9 / 10).
-- ⚡ **Unified Execution CLI (`audit_cis.py`)**: Execute single audits, full benchmark suites, or auto-detect active targets via a single command-line interface.
-- 🌐 **Multi-Language Support (i18n)**: English (`--lang en`) and French (`--lang fr`) CLI messages and HTML reports.
-- 📄 **Multi-Format Exporters (`--format html|json|xml|txt`)**: Compliance output in HTML, JSON (SIEM/DevSecOps), XML (JUnit/STIG), and TXT text formats.
+- 🌐 **Multi-Language Support (i18n)**: English (`--lang en`) and French (`--lang fr`) CLI and HTML reports.
+- 📄 **Multi-Format Exporters (`--format html|json|xml|txt`)**: HTML, JSON (SIEM/DevSecOps), XML (JUnit/STIG), and TXT text reports.
 
 ---
 
@@ -56,109 +69,78 @@
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Usage & Execution Examples
 
 ### Requirements
-- **Python 3.8+** (Standard Installation)
-- **Docker** (Optional, for containerized test environments)
+- **Python 3.8+** (Standard Installation, PSL only)
+- **Docker** (Optional, for containerized audit targets)
 
-### 1. List All Available Audit Targets
+### 1. List Available Targets
 ```bash
 python3 audit_cis.py --list-targets
 ```
 
-### 2. Run Audit in Local Mode (`--mode local` / `--local`)
+### 2. Local Machine Audit (`--mode local` / `--local`)
 ```bash
-# Local PostgreSQL 16 Audit in HTML format
-python3 audit_cis.py --target postgresql16 --mode local --format html
+# PostgreSQL 16 local audit generating an HTML report
+python3 audit_cis.py --target postgresql16 --local --format html
 
-# Local RHEL 9 System Audit in JSON format
+# RHEL 9 local audit exporting to JSON for SIEM ingestion
 python3 audit_cis.py --target rhel9 --local --format json -o reports/audit_rhel9.json
 ```
 
-### 3. Run Audit in Remote SSH Mode (`--mode ssh` / `--remote user@host`)
+### 3. Docker Container Audit (`--docker <container_name>`)
 ```bash
-# Execute RHEL 8 CIS/STIG Audit on a remote server via SSH
-python3 audit_cis.py --target rhel8 --mode ssh --remote root@192.168.1.50 -f txt
+# Audit a running local MySQL 8.0 container directly
+python3 audit_cis_mysql_80.py --docker mysql80-test
 
-# Execute PostgreSQL 18 Audit remotely over SSH
-python3 audit_cis_postgresql_18.py --ssh admin@db-server.domain.com --format json
+# Audit a MariaDB container using the unified entrypoint
+python3 audit_cis.py --target mariadb106 --docker mariadb106-container --format html
 ```
 
-### 4. Run All Audits / Auto-Detect
+### 4. Remote SSH Audit (`--mode ssh` / `--remote user@host`)
 ```bash
-# Auto-detect running database services and execute corresponding audits
+# Remote PostgreSQL 17 audit over SSH
+python3 audit_cis.py --target postgresql17 --ssh admin@192.168.1.50 --format html
+
+# Remote Docker audit over SSH (container running on a remote server)
+python3 audit_cis.py --target mysql80 --ssh admin@192.168.1.50 --docker prod-mysql-container
+```
+
+### 5. Auditing with Database Credentials
+```bash
+# Provide credentials directly via CLI flags
+python3 audit_cis_mysql_80.py --db-user root --db-password 'SecretPass123!' --db-host 127.0.0.1 --db-port 3306
+
+# Pass options file for MySQL / PostgreSQL
+python3 audit_cis_mysql_80.py --defaults-file /root/.my.cnf
+```
+
+### 6. Auto-Detection & Sequential Suite Execution
+```bash
+# Automatically detect active database services and audit them
 python3 audit_cis.py --auto-detect
 
-# Execute all 18 benchmark audits sequentially
+# Execute all 18 benchmarks sequentially
 python3 audit_cis.py --all
 ```
 
 ---
 
-## 📁 Repository Structure
+## 🏗️ Architecture & Strict Design Principles
 
-```
-cis_benchmarks_tools/
-├── .github/
-│   └── workflows/
-│       └── ci.yml                     # GitHub Actions CI/CD Pipeline (Python 3.8-3.12)
-├── README.md                          # Main Documentation (English)
-├── README_fr.md                       # Synchronized Documentation (French)
-├── audit_cis.py                       # Unified CLI Audit Engine (v1.7.0)
-├── audit_cis_mariadb_106.py           # MariaDB 10.6 Audit Script
-├── audit_cis_mariadb_1011.py          # MariaDB 10.11 Audit Script
-├── audit_cis_mysql_80.py              # MySQL Enterprise 8.0 Audit Script
-├── audit_cis_mysql_community_84.py    # MySQL Community 8.4 Audit Script
-├── audit_cis_mysql_enterprise_84.py   # MySQL Enterprise 8.4 Audit Script
-├── audit_cis_mysql_community_97.py    # MySQL Community 9.7 Audit Script
-├── audit_cis_mysql_enterprise_97.py   # MySQL Enterprise 9.7 Audit Script
-├── audit_cis_postgresql_16.py         # PostgreSQL 16 Audit Script
-├── audit_cis_postgresql_17.py         # PostgreSQL 17 Audit Script
-├── audit_cis_postgresql_18.py         # PostgreSQL 18 Audit Script
-├── audit_cis_mongodb_7.py             # MongoDB 7 Audit Script
-├── audit_cis_mongodb_8.py             # MongoDB 8 Audit Script
-├── audit_cis_cassandra_40.py          # Cassandra 4.0 Audit Script
-├── audit_cis_cassandra_41.py          # Cassandra 4.1 Audit Script
-├── audit_cis_cassandra_50.py          # Cassandra 5.0 Audit Script
-├── audit_cis_rhel_8.py                # RHEL 8 CIS/STIG Audit Script
-├── audit_cis_rhel_9.py                # RHEL 9 CIS/STIG Audit Script
-├── audit_cis_rhel_10.py               # RHEL 10 CIS Audit Script
-├── rules/                             # 18 External JSON Rule Specifications (rules/*.json)
-├── reports/                           # Generated Audit Reports (HTML, JSON, XML, TXT)
-├── docker/                            # Test Container Dockerfiles (16 targets)
-├── tests/
-│   └── test_evaluate_condition.py     # Automated PSL Unit Test Suite (unittest)
-├── scripts/
-│   ├── bundle_audit_cis.py            # Automatic Script Bundler
-│   ├── pre_commit_checks.py           # 8-Step Quality & Security Pre-Commit Checker
-│   ├── run_e2e_tests.py               # Automated E2E Test & Quality Analysis Engine
-│   └── start_*.sh                     # Database Container Startup Scripts
-├── CIS_DATA/                          # 22 Reference Markdown Specifications
-├── VERSION                            # Current Release Version (v1.7.0)
-├── ROADMAP.md                         # Strategic Roadmap & Completed Milestones
-└── POTENTIAL_ISSUES.md                # Technical Debt & Resolved Backlog
-```
+1. **Python Standard Library (PSL ONLY)**:
+   - Absolutely no third-party package dependencies (`requests`, `jinja2`, `yaml`, `paramiko`, etc.).
+   - Guaranteed to execute seamlessly in air-gapped, hardened, or restricted enterprise environments.
+2. **Decoupled Architecture (`rules/*.json`)**:
+   - Every benchmark's check definitions, preconditions, regexes, and remediation steps are stored in standalone JSON files under `rules/`.
+3. **Diagnostic Telemetry Integrity**:
+   - `stderr` streams are systematically preserved without destructive `2>/dev/null` masking.
+4. **Offline First**:
+   - Complete visual reports without requiring Internet access or external CDNs.
 
 ---
 
-## 🔒 Security & Architecture Standards
+## 📜 License
 
-- **PSL Compliance**: Strictly enforces Python 3 Standard Library modules ONLY (`subprocess`, `os`, `sys`, `json`, `ast`, `re`, `html`, `xml`, `unittest`). External packages (`pip`, `jinja2`, `yaml`, `requests`) are prohibited and blocked by pre-commit AST checks.
-- **Command Injection Prevention**: All system command executions rely on strict parameter list arguments (`shell=False`) to eliminate command injection vulnerabilities (`python.lang.security.audit.subprocess-shell-true`).
-- **Quality Assurance**: Automated 8-step pre-commit validation routine:
-  ```bash
-  make pre-commit
-  ```
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**. See the `LICENSE` file for details.
-
-## 📚 References
-
-- [CIS Benchmarks Official Site](https://www.cisecurity.org/cis-benchmarks)
-- [Red Hat Enterprise Linux Security Guides](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/)
-- [DISA STIG Directives](https://public.cyber.mil/stigs/)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
