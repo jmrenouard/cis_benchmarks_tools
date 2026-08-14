@@ -1157,6 +1157,7 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
         total_automated=(passed_auto_count + failed_auto_count) if 'passed_auto_count' in locals() else 0,
         manual_checks=total_manual if 'total_manual' in locals() else 0,
         error_checks=total_errors if 'total_errors' in locals() else 0,
+        error_count=total_errors if 'total_errors' in locals() else 0,
         na_checks=total_na if 'total_na' in locals() else 0,
         sidebar_links=sidebar_links_html if 'sidebar_links_html' in locals() else "",
         categories_reports=categories_html,
