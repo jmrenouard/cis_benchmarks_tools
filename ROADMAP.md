@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.3.1)
+# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.4.1)
 
 This document outlines the strategic roadmap, architecture principles, phase-level milestones, and task-level execution status for the CIS Benchmarks Tools suite.
 
@@ -27,6 +27,8 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 10** | MariaDB Zero-Error Engine, Docker Auto-Routing & Manual Automation   | `v2.2.0`       | `Completed ✅` | 5/5   | 100%     |
 | **Phase 11** | Universal Product Hardening, Docker Auto-Routing & Info Maximization | `v2.3.0`       | `Completed ✅` | 6/6   | 100%     |
 | **Phase 12** | Traçabilité Git Stricte, Revues Sourcery AI & Qualité Industrielle    | `v2.3.0`       | `Completed ✅` | 5/5   | 100%     |
+| **Phase 13** | Universal Credential Injection, Multi-Distro Packages & Rule 1.5 Sync| `v2.4.0`       | `Completed ✅` | 5/5   | 100%     |
+| **Phase 14** | 100% Deterministic Rule Automation & Expanded Test Suite Coverage    | `v2.4.1`       | `Completed ✅` | 6/6   | 100%     |
 
 ---
 
@@ -238,3 +240,37 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Internationalisation i18n & documentation (PR #92, #94, #96)** : Traduction intégrale en anglais avec miroir français `README_fr.md` et support `--lang {en,fr}`.
 - [x] **Architecture modulaire & Graphiques SVG natifs (PR #103, #105, #108)** : Externalisation des règles JSON et moteur vectoriel 100% hors-ligne sans Chart.js.
 - [x] **Validation continue de la suite de tests** : 60/60 tests unitaires passés avec succès sous Python Standard Library uniquement (PR #131, #132).
+
+---
+
+### Phase 13: Universal Credential Injection, Multi-Distro Packages & Rule 1.5 Sync (`Completed ✅ - v2.4.0`)
+**Summary**: Normalize command-line parameter options, inject database credentials into runtime environments, adapt package query commands across Linux distributions (`apt`, `dnf`/`yum`, `apk`), and standardize executable version checks for Rule 1.5.
+
+#### 13.1 CLI Standardization & Database Credential Injection (PR #144, #146, #152)
+- [x] **Normalized CLI Parameters**: Unify `--db-user`, `--db-password`, `--db-host`, `--db-port`, and `--db-name` across all 18 database target engines.
+- [x] **Target Engine Environment Injection**: Map credentials directly to native database client variables (`MYSQL_PWD`, `PGPASSWORD`, `CQLSH_HOST`, etc.) in `run_command` and Docker execution.
+- [x] **Unified CLI Parsing**: Support both short (`-u`, `-p`, `-H`, `-P`, `-d`) and long option flags uniformly.
+
+#### 13.2 Multi-Distribution Package Detection & Remediation (PR #148, #156)
+- [x] **Cross-Distro Package Inquiries**: Reconcile Rule 1.2 package verification for Debian (`dpkg`), RHEL/Fedora (`rpm`), and Alpine (`apk`).
+- [x] **Executable Rule 1.5 Version Check**: Standardize SQL-based `SHOW server_version` queries replacing natural language.
+- [x] **Distribution-Agnostic Remediation Guidance**: Recommend appropriate package management commands in audit reports (`apt purge`, `dnf erase`, `apk del`).
+
+---
+
+### Phase 14: 100% Deterministic Rule Automation & Expanded Test Suite Coverage (`Completed ✅ - v2.4.1`)
+**Summary**: Convert all remaining manual controls across all database benchmark rule files into deterministic automated controls, sanitize NoneType stderr evaluation and truthy path handling, and expand automated test suite to 70 tests.
+
+#### 14.1 Complete Rule Automation Across All Targets (PR #168-#196)
+- [x] **Cassandra 4.0, 4.1 & 5.0 Automation (PR #168, #170)**: 100% automated controls with deterministic CQL queries.
+- [x] **MongoDB 7 & 8 Automation (PR #172, #174)**: 100% automated controls with deterministic `mongosh` queries.
+- [x] **MariaDB 10.6 & 10.11 Automation (PR #176, #178)**: 100% automated controls with deterministic SQL queries.
+- [x] **PostgreSQL 16, 17 & 18 Automation (PR #180, #182, #184, #186, #188, #190)**: 100% automated controls across all categories.
+- [x] **MySQL 8.0, 8.4 & 9.7 Automation (PR #192, #194, #196)**: 100% automated controls with zero command errors.
+
+#### 14.2 Engine Resilience & Test Suite Expansion (PR #158, #198-#218)
+- [x] **NoneType-Safe Evaluation**: Guard `evaluate_condition` against `None` values for `stdout` and `stderr`.
+- [x] **Truthy Path Command Handling**: Replace `"path_command" in rec` with `rec.get("path_command")` to eliminate `NoneType` iterable errors.
+- [x] **Expanded Test Suite (PR #158)**: 70 unit and E2E tests covering credential injection, package queries, rule syntax, AST PSL conformity, and Docker audits.
+- [x] **Zero Command Error Guarantee**: 0 command errors (`Status Error: 0`) and 0 manual controls across all 18 targets in Docker mode.
+
