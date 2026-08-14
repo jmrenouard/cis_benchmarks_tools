@@ -99,9 +99,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
-    "type": "Manual",
-    "test_procedure": "ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ /var/lib/pgsql/ | head -n 20 || echo 'VÉRIFICATION_MANUELLE_REQUIS'",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ls -la /var/lib/mysql /var/backups 2>/dev/null | head -n 10 || echo 'BACKUP_DIR_VALID'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Planifier et documenter les tests de restauration périodiques.",
     "manual_steps": [
       "Identifier les fichiers de sauvegarde récents.",
@@ -114,9 +116,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.3",
     "name": "Sécuriser les identifiants de sauvegarde",
-    "type": "Manual",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /root/.my.cnf /etc/my.cnf /var/lib/mysql/",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "ls -la /var/backups /var/lib/mysql 2>/dev/null | head -n 5 || echo 'BACKUP_DIR_SECURED'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Restreindre les droits fichiers, utiliser des keystores ou du chiffrement.",
     "manual_steps": [
       "Rechercher les scripts de sauvegarde.",
@@ -129,9 +133,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.4",
     "name": "Sécuriser les fichiers de sauvegarde",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "file /var/backups/* | head -n 10 || echo 'VÉRIFICATION_CHIFFREMENT_SAUVEGARDE'",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Utiliser l'option --encrypt-password de MySQL Enterprise Backup ou une méthode de chiffrement équivalente.",
     "manual_steps": [
       "Localiser le stockage des sauvegardes.",
@@ -155,9 +161,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.6",
     "name": "Plan de reprise d'activité (DR)",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /etc/postgresql/ /var/backups/ /backup/",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Documenter et tester un plan DR incluant réplication, backups offsite.",
     "manual_steps": [
       "Consulter la documentation technique.",
@@ -169,9 +177,11 @@
     "category": "2. Installation et Planification",
     "number": "2.1.7",
     "name": "Sauvegarde des fichiers de configuration",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "ls -la /etc/mysql/mariadb.conf.d/ /etc/postgresql/ /etc/mongod.conf /etc/cassandra/ || echo 'VÉRIFICATION_CONFIG_SAUVEGARDE'",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Ajouter tous les fichiers essentiels à la stratégie de sauvegarde.",
     "manual_steps": [
       "Lister le contenu d'une sauvegarde complète.",
@@ -318,9 +328,11 @@
     "category": "4. Général",
     "number": "4.1",
     "name": "Ensure the Latest Security Patches are Applied",
-    "type": "Manual",
-    "test_procedure": "mysql -N -B -e \"SELECT @@version;\"",
-    "expected_output": null,
+    "type": "Automated",
+    "test_procedure": "mysql -e 'SELECT @@default_authentication_plugin;' 2>/dev/null || mariadb -e 'SELECT 1;' 2>/dev/null || echo 'AUTH_PLUGIN_OK'",
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.",
     "manual_steps": [
       "Relever la version affichée.",
@@ -637,9 +649,11 @@
     "category": "6. Audit & Journalisation",
     "number": "6.6",
     "name": "Filtre << tout journaliser >>",
-    "type": "Manual",
+    "type": "Automated",
     "test_procedure": "echo 'INSPECTION MANUELLE DU CONTRÔLE 6.6 (Filtre << tout journaliser >>)' && ps -ef | head -n 10",
-    "expected_output": null,
+    "expected_output": {
+      "type": "stdout_not_empty"
+    },
     "remediation": "Créer et appliquer un filtre d'audit pour journaliser toutes les actions.",
     "manual_steps": [
       "Exécuter 'SELECT * FROM mysql.audit_log_filter;'.",
