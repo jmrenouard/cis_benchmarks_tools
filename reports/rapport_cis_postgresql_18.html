@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIS Benchmark Audit Report - CIS Benchmark</title>
+    <title>CIS Benchmark Audit Report - PostgreSQL 18</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -32,8 +32,8 @@
     <!-- Sidebar -->
     <aside class="w-64 h-screen bg-white border-r border-gray-200 sticky top-0 overflow-y-auto hidden lg:block">
         <div class="p-6">
-            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>CIS Benchmark</h2>
-            <p class="text-xs text-gray-500 mt-1">Audit Security Report v2.0.0</p>
+            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>PostgreSQL 18</h2>
+            <p class="text-xs text-gray-500 mt-1">Audit CIS Benchmarks</p>
         </div>
         <nav class="px-4 pb-6">
             <a href="#summary" class="sidebar-link flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-1">
@@ -47,39 +47,51 @@
     <!-- Main Content -->
     <main class="flex-1 min-w-0">
         <!-- Header -->
-        <header class="bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+        <header class="bg-white border-b border-gray-200 p-6 flex flex-wrap justify-between items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS CIS Benchmark</h1>
-                <p class="text-sm text-gray-500">Date du rapport: 12/08/2026 15:08:36</p>
+                <h1 class="text-2xl font-bold text-gray-900">Rapport d'Audit CIS - PostgreSQL 18</h1>
+                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : 14/08/2026 12:07:12</p>
             </div>
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center flex-wrap gap-2.5">
                 <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
                     <i class="fas fa-moon"></i> Mode Sombre
                 </button>
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">2.0.0</span>
-                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-200">v2.0.0</span>
+                <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium border border-purple-200 flex items-center gap-1.5">
+                    <i class="fas fa-server"></i> Local Bare-Metal
+                </span>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium border border-blue-200 flex items-center gap-1.5">
+                    <i class="fas fa-bullseye"></i> CIS Benchmark v1.0.0
+                </span>
+                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-300 flex items-center gap-1.5">
+                    <i class="fas fa-code-branch"></i> v2.3.0
+                </span>
             </div>
         </header>
 
         <div class="p-8 max-w-7xl mx-auto">
             <!-- Summary Dashboard -->
             <section id="summary" class="mb-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
                         <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Score Global</span>
                         <div class="relative flex items-center justify-center">
-                            <span class="text-3xl font-black text-gray-900">78.6%</span>
+                            <span class="text-3xl font-black text-gray-900">14.3%</span>
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-green-500">
                         <span class="text-xs font-bold text-green-600 uppercase tracking-widest">Succès</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">22</div>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">4</div>
                         <p class="text-xs text-gray-500 mt-1">Vérifications conformes</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-red-500">
                         <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Échecs</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">6</div>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">24</div>
                         <p class="text-xs text-gray-500 mt-1">Non-conformités détectées</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-orange-500">
+                        <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">Erreurs Commande</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">8</div>
+                        <p class="text-xs text-gray-500 mt-1">Échecs d'exécution technique</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
                         <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Manuels</span>
@@ -134,19 +146,19 @@
         <svg viewBox="0 0 36 36" style="width: 100%; height: 100%; transform: rotate(-90deg);">
           <path stroke-dasharray="100 100" stroke="#e5e7eb" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
           <path stroke-dasharray="0.0 100" stroke-dashoffset="-75.0" stroke="#9ca3af" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path stroke-dasharray="20.0 100" stroke-dashoffset="-55.0" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path stroke-dasharray="17.1 100" stroke-dashoffset="-37.9" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-          <path stroke-dasharray="62.9 100" stroke-dashoffset="25.0" stroke="#10b981" stroke-width="3.8" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="22.2 100" stroke-dashoffset="-52.8" stroke="#6b7280" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="66.7 100" stroke-dashoffset="13.9" stroke="#ef4444" stroke-width="3.8" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          <path stroke-dasharray="11.1 100" stroke-dashoffset="25.0" stroke="#10b981" stroke-width="3.8" stroke-linecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
         </svg>
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <span style="font-size: 24px; font-weight: 800; color: #111827;">78.6%</span>
+          <span style="font-size: 24px; font-weight: 800; color: #111827;">14.3%</span>
           <span style="font-size: 11px; color: #6b7280; font-weight: 600;">Score Global</span>
         </div>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
-        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> <strong>Réussi (PASS) :</strong> 22</div>
-        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> <strong>Échoué (FAIL) :</strong> 6</div>
-        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> 7</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #10b981; display: inline-block;"></span> <strong>Réussi (PASS) :</strong> 4</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #ef4444; display: inline-block;"></span> <strong>Échoué (FAIL) :</strong> 24</div>
+        <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6b7280; display: inline-block;"></span> <strong>Erreur (Error) :</strong> 8</div>
         <div style="display: flex; align-items: center; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #9ca3af; display: inline-block;"></span> <strong>Non Applicable (N/A) :</strong> 0</div>
       </div>
     </div>
@@ -169,40 +181,40 @@
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">1. Installation et correctifs</span>
-            <span style="font-weight: 700; font-size: 13px; color: #f59e0b;">50.0% (2/4)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">25.0% (1/4)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 50.0%; background: #10b981;" title="Réussi: 2"></div><div style="width: 50.0%; background: #ef4444;" title="Échoué: 2"></div>
+            <div style="width: 25.0%; background: #10b981;" title="Réussi: 1"></div><div style="width: 75.0%; background: #ef4444;" title="Échoué: 3"></div>
           </div>
         </div>
         
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">2. Permissions de répertoires et fichiers</span>
-            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/2)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #10b981;">100.0% (1/2)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 50.0%; background: #ef4444;" title="Échoué: 1"></div><div style="width: 50.0%; background: #9ca3af;" title="N/A: 1"></div>
+            <div style="width: 50.0%; background: #10b981;" title="Réussi: 1"></div><div style="width: 50.0%; background: #6b7280;" title="Error: 1"></div>
           </div>
         </div>
         
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">3. Journalisation et audit</span>
-            <span style="font-weight: 700; font-size: 13px; color: #10b981;">100.0% (2/3)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">0.0% (0/3)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 66.7%; background: #10b981;" title="Réussi: 2"></div><div style="width: 33.3%; background: #6b7280;" title="Error: 1"></div>
+            <div style="width: 66.7%; background: #ef4444;" title="Échoué: 2"></div><div style="width: 33.3%; background: #6b7280;" title="Error: 1"></div>
           </div>
         </div>
         
         <div style="margin-bottom: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <span style="font-weight: 600; font-size: 14px; color: #374151;">3.1. Journalisation des erreurs serveur</span>
-            <span style="font-weight: 700; font-size: 13px; color: #10b981;">90.0% (18/21)</span>
+            <span style="font-weight: 700; font-size: 13px; color: #ef4444;">10.0% (2/21)</span>
           </div>
           <div style="display: flex; height: 16px; width: 100%; border-radius: 8px; overflow: hidden; background: #f3f4f6; border: 1px solid #e5e7eb;">
-            <div style="width: 85.7%; background: #10b981;" title="Réussi: 18"></div><div style="width: 9.5%; background: #ef4444;" title="Échoué: 2"></div><div style="width: 4.8%; background: #9ca3af;" title="N/A: 1"></div>
+            <div style="width: 9.5%; background: #10b981;" title="Réussi: 2"></div><div style="width: 85.7%; background: #ef4444;" title="Échoué: 18"></div><div style="width: 4.8%; background: #9ca3af;" title="N/A: 1"></div>
           </div>
         </div>
         
@@ -266,8 +278,8 @@
                 
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">1. Installation et correctifs</h2>
-            <p class="text-lg font-bold text-yellow-600">50.00%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (2/4 vérifiés).</p>
+            <p class="text-lg font-bold text-red-600">25.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/4 vérifiés).</p>
             <p class="text-gray-700">3 contrôles nécessitent une vérification manuelle.</p>
             <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
@@ -290,7 +302,7 @@
                         <td class="py-3 px-6 text-left align-top">1.1</td>
                         <td class="py-3 px-6 text-left align-top">Obtenir les paquets depuis des dépôts autorisés</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Vérifier dnf repolist all ou équivalent (apt-file search /usr/pgsql-*/lib/libpq.so.5) pour s’assurer que seuls les dépôts officiels sont activés.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;Contrôle Manuel: Vérifier dnf repolist all ou équivalent (apt-file search /usr/pgsql-*/lib/libpq.so.5) pour s’assurer que seuls les dépôts officiels sont activés.&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Supprimer/ajouter des dépôts pour n’inclure que les sources valides (p. ex. dnf install -y https://download.postgresql.org/.../pgdg-redhat-repo-latest.noarch.rpm), puis réinstaller.</td>
@@ -300,7 +312,7 @@
                         <td class="py-3 px-6 text-left align-top">1.2</td>
                         <td class="py-3 px-6 text-left align-top">Installer uniquement les paquets requis</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>apt search postgresql ou dnf search postgresql, lister les paquets installés et comparer à la liste d’exigences.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>dpkg -l | grep -iE &#x27;postgres|mysql|mariadb&#x27; 2&gt;/dev/null || rpm -qa | grep -iE &#x27;postgres|mysql|mariadb&#x27; 2&gt;/dev/null</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Purger/effacer les paquets non désirés : apt purge &lt;pkg&gt; ou dnf erase &lt;pkg&gt;.</td>
@@ -313,10 +325,11 @@
                         <td class="py-3 px-6 text-left align-top"><code>systemctl is-enabled postgresql@18-main.service || systemctl is-enabled postgresql-18.service</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-localhost:5432 - accepting connections
+not-found
+not-found
 Stderr:
 
-Return Code: 0
+Return Code: 4
 
 Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">systemctl enable postgresql@18-main || systemctl enable postgresql-18</td>
@@ -330,10 +343,11 @@ Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>--- Command 1: systemctl is-active postgresql@18-main.service || systemctl is-active postgresql-18.service ---
 Stdout:
-localhost:5432 - accepting connections
+inactive
+inactive
 Stderr:
 
-Return Code: 0
+Return Code: 4
 ---
 Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Supprimer le répertoire de données et relancer initdb (avec checksums si souhaité), puis démarrer le service. Assurer les bonnes permissions sur le répertoire de données.</td>
@@ -368,13 +382,15 @@ Supprimer toute définition de PGPASSWORD dans les scripts de connexion, utilise
                         <td class="py-3 px-6 text-left align-top">1.7</td>
                         <td class="py-3 px-6 text-left align-top">Vérifier que PGPASSWORD n&#x27;est pas utilisé par un processus</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>! pgrep -a PGPASSWORD 2&gt;/dev/null</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>[[ -f /.dockerenv ]] || grep -qs &#x27;docker\|containerd&#x27; /proc/1/cgroup || systemctl is-active postgresql &gt;/dev/null 2&gt;&amp;1</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
 
-Return Code: 0</pre></td>
+Return Code: 4
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">S’assurer qu’aucun processus n’utilise la variable PGPASSWORD.
 Identifier et modifier les scripts/processus pour ne plus utiliser PGPASSWORD.</td>
                     </tr>
@@ -385,11 +401,11 @@ Identifier et modifier les scripts/processus pour ne plus utiliser PGPASSWORD.</
 
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">2. Permissions de répertoires et fichiers</h2>
-            <p class="text-lg font-bold text-red-600">0.00%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/1 vérifiés).</p>
+            <p class="text-lg font-bold text-green-600">100.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (1/1 vérifiés).</p>
             <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">0 controls encountered an execution error.</p>
-            <p class="text-gray-700">1 contrôles ne sont pas applicables.</p>
+            <p class="text-gray-700">1 controls encountered an execution error.</p>
+            <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
 
             <table class="min-w-full border border-gray-300 divide-y divide-gray-300 mt-6">
                 <thead>
@@ -409,7 +425,7 @@ Identifier et modifier les scripts/processus pour ne plus utiliser PGPASSWORD.</
                         <td class="py-3 px-6 text-left align-top">2.1</td>
                         <td class="py-3 px-6 text-left align-top">Masque de permissions (umask)</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>En tant que postgres, exécuter umask, doit afficher 0077 ou plus restrictif.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>su - postgres -c umask 2&gt;/dev/null || umask</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Configurer le umask de l’utilisateur postgres à 0077 pour restreindre la création de fichiers.
@@ -420,9 +436,16 @@ Ajouter umask 077 dans ~postgres/.bash_profile (ou .profile/.bashrc), recharger 
                         <td class="py-3 px-6 text-left align-top">2.2</td>
                         <td class="py-3 px-6 text-left align-top">Propriétaire et permissions du répertoire d’extensions</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code></code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-na">➖ N/A</span></td>
-                        <td class="py-3 px-6 text-left align-top"><pre></pre></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;Contrôle Manuel: &#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-error">❓ Error</span></td>
+                        <td class="py-3 px-6 text-left align-top"><pre>--- Command pour obtenir le chemin: sudo -u postgres pg_config --sharedir ---
+Stdout:
+
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+---</pre></td>
                         <td class="py-3 px-6 text-left align-top">Vérifier que $(pg_config --sharedir)/extension appartient à root:root et chmod 0755.
 chown root:root $(sudo -u postgres pg_config --sharedir)/extension &amp;&amp; chmod 0755 $(sudo -u postgres pg_config --sharedir)/extension.</td>
                     </tr>
@@ -432,14 +455,12 @@ chown root:root $(sudo -u postgres pg_config --sharedir)/extension &amp;&amp; ch
                         <td class="py-3 px-6 text-left align-top">Désactiver l’historique des commandes psql</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
                         <td class="py-3 px-6 text-left align-top"><code>! find /home -name .psql_history -print -quit 2&gt;/dev/null</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-
+/home/jmren/.psql_history
 Stderr:
 
-Return Code: 1
-
-Condition de succès non remplie.</pre></td>
+Return Code: 0</pre></td>
                         <td class="py-3 px-6 text-left align-top">Empêcher la création de ~/.psql_history pour limiter l’exposition de données sensibles.
 Supprimer le fichier .psql_history et ajouter \set HISTFILE /dev/null dans ~/.psqlrc ou créer un lien symbolique vers /dev/null.</td>
                     </tr>
@@ -461,8 +482,8 @@ Supprimer toutes les lignes password= identifiées.</td>
 
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">3. Journalisation et audit</h2>
-            <p class="text-lg font-bold text-green-600">100.00%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (2/2 vérifiés).</p>
+            <p class="text-lg font-bold text-red-600">0.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (0/2 vérifiés).</p>
             <p class="text-gray-700">0 contrôles nécessitent une vérification manuelle.</p>
             <p class="text-gray-700">1 controls encountered an execution error.</p>
             <p class="text-gray-700">0 contrôles ne sont pas applicables.</p>
@@ -485,13 +506,16 @@ Supprimer toutes les lignes password= identifiées.</td>
                         <td class="py-3 px-6 text-left align-top">3.1.2</td>
                         <td class="py-3 px-6 text-left align-top">Configurer log_destination</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_destination;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_destination;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-stderr
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Définir la ou les destinations de logs (stderr, csvlog, syslog, jsonlog).
 ALTER SYSTEM SET log_destination = &#x27;csvlog&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -500,13 +524,16 @@ ALTER SYSTEM SET log_destination = &#x27;csvlog&#x27;; SELECT pg_reload_conf();<
                         <td class="py-3 px-6 text-left align-top">3.1.3</td>
                         <td class="py-3 px-6 text-left align-top">Activer logging_collector</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW logging_collector;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW logging_collector;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-on
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Capturer stderr dans des fichiers via le démon collector.
 ALTER SYSTEM SET logging_collector = &#x27;on&#x27;; puis systemctl restart postgresql@18-main || systemctl restart postgresql-18.</td>
                     </tr>
@@ -537,8 +564,8 @@ CREATE EXTENSION pgaudit; ALTER SYSTEM SET pgaudit.log = &#x27;all&#x27;; SELECT
 
         <div class="mb-10 p-4 bg-gray-50 rounded-md border border-gray-200">
             <h2 class="text-2xl font-semibold mb-3 text-gray-800">3.1. Journalisation des erreurs serveur</h2>
-            <p class="text-lg font-bold text-green-600">90.00%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (18/20 vérifiés).</p>
+            <p class="text-lg font-bold text-red-600">10.00%</p>
+            <p class="text-gray-700">des contrôles automatisés réussis dans cette catégorie (2/20 vérifiés).</p>
             <p class="text-gray-700">2 contrôles nécessitent une vérification manuelle.</p>
             <p class="text-gray-700">0 controls encountered an execution error.</p>
             <p class="text-gray-700">1 contrôles ne sont pas applicables.</p>
@@ -561,13 +588,16 @@ CREATE EXTENSION pgaudit; ALTER SYSTEM SET pgaudit.log = &#x27;all&#x27;; SELECT
                         <td class="py-3 px-6 text-left align-top">3.1.4</td>
                         <td class="py-3 px-6 text-left align-top">Définir log_directory</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_directory;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_directory;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-log
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Spécifier le répertoire de sortie des fichiers de logs (ex. /var/log/postgres).
 ALTER SYSTEM SET log_directory = &#x27;/var/log/postgres&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -576,13 +606,16 @@ ALTER SYSTEM SET log_directory = &#x27;/var/log/postgres&#x27;; SELECT pg_reload
                         <td class="py-3 px-6 text-left align-top">3.1.5</td>
                         <td class="py-3 px-6 text-left align-top">Définir log_filename</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_filename;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_filename;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-postgresql-%Y-%m-%d_%H%M%S.log
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Choisir un motif de nom de fichier strftime (e.g. postgresql-%Y%m%d.log).
 ALTER SYSTEM SET log_filename = &#x27;postgresql-%Y%m%d.log&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -591,13 +624,16 @@ ALTER SYSTEM SET log_filename = &#x27;postgresql-%Y%m%d.log&#x27;; SELECT pg_rel
                         <td class="py-3 px-6 text-left align-top">3.1.6</td>
                         <td class="py-3 px-6 text-left align-top">Configurer log_file_mode</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_file_mode;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_file_mode;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-0600
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Fixer les permissions des fichiers de log à 0600 (ou 0640 selon le groupe).
 ALTER SYSTEM SET log_file_mode = &#x27;0600&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -606,13 +642,16 @@ ALTER SYSTEM SET log_file_mode = &#x27;0600&#x27;; SELECT pg_reload_conf();</td>
                         <td class="py-3 px-6 text-left align-top">3.1.7</td>
                         <td class="py-3 px-6 text-left align-top">Activer log_truncate_on_rotation</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_truncate_on_rotation;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_truncate_on_rotation;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-on
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Tronquer les fichiers existants lors de la rotation si même nom.
 ALTER SYSTEM SET log_truncate_on_rotation = &#x27;on&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -621,13 +660,14 @@ ALTER SYSTEM SET log_truncate_on_rotation = &#x27;on&#x27;; SELECT pg_reload_con
                         <td class="py-3 px-6 text-left align-top">3.1.8</td>
                         <td class="py-3 px-6 text-left align-top">Définir log_rotation_age</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_rotation_age;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_rotation_age;&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-1d
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1</pre></td>
                         <td class="py-3 px-6 text-left align-top">Limiter la durée de vie des fichiers de log (ex. 1d).
 ALTER SYSTEM SET log_rotation_age = &#x27;1d&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -636,13 +676,14 @@ ALTER SYSTEM SET log_rotation_age = &#x27;1d&#x27;; SELECT pg_reload_conf();</td
                         <td class="py-3 px-6 text-left align-top">3.1.9</td>
                         <td class="py-3 px-6 text-left align-top">Définir log_rotation_size</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_rotation_size;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_rotation_size;&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-10MB
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1</pre></td>
                         <td class="py-3 px-6 text-left align-top">Limiter la taille des fichiers de log (ex. 1GB).
 ALTER SYSTEM SET log_rotation_size = &#x27;1GB&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -662,13 +703,16 @@ ALTER SYSTEM SET syslog_facility = &#x27;LOCAL1&#x27;; SELECT pg_reload_conf();<
                         <td class="py-3 px-6 text-left align-top">3.1.11</td>
                         <td class="py-3 px-6 text-left align-top">Activer syslog_split_messages</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW syslog_split_messages;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW syslog_split_messages;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-on
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Couper les messages trop longs (&gt;1024 octets) pour Syslog.
 ALTER SYSTEM SET syslog_split_messages = &#x27;on&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -677,13 +721,16 @@ ALTER SYSTEM SET syslog_split_messages = &#x27;on&#x27;; SELECT pg_reload_conf()
                         <td class="py-3 px-6 text-left align-top">3.1.12</td>
                         <td class="py-3 px-6 text-left align-top">Prévenir la perte de messages Syslog</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW syslog_split_messages;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW syslog_split_messages;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-on
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Éviter la suppression des messages volumineux dans Syslog.
 Même que 3.1.11.</td>
                     </tr>
@@ -692,13 +739,16 @@ Même que 3.1.11.</td>
                         <td class="py-3 px-6 text-left align-top">3.1.13</td>
                         <td class="py-3 px-6 text-left align-top">Configurer syslog_ident</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW syslog_ident;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW syslog_ident;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-postgres
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Définir l’identifiant de programme dans Syslog (ex. postgres).
 ALTER SYSTEM SET syslog_ident = &#x27;proddb&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -707,7 +757,7 @@ ALTER SYSTEM SET syslog_ident = &#x27;proddb&#x27;; SELECT pg_reload_conf();</td
                         <td class="py-3 px-6 text-left align-top">3.1.14</td>
                         <td class="py-3 px-6 text-left align-top">Assurer les bons messages dans le log serveur</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Consulter postgresql.conf et SHOW log_statement;/SHOW log_min_messages;.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;Contrôle Manuel: Consulter postgresql.conf et SHOW log_statement;/SHOW log_min_messages;.&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Vérifier que seuls les messages pertinents (erreurs, connexions, requêtes) sont enregistrés.
@@ -718,10 +768,10 @@ ALTER SYSTEM SET log_statement = &#x27;all&#x27;; ALTER SYSTEM SET log_min_error
                         <td class="py-3 px-6 text-left align-top">3.1.15</td>
                         <td class="py-3 px-6 text-left align-top">Enregistrer les SQL en erreur</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code></code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;Contrôle Manuel: &#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-na">➖ N/A</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-
+Contrôle Manuel:
 Stderr:
 
 Return Code: 0</pre></td>
@@ -733,13 +783,16 @@ ALTER SYSTEM SET log_error_verbosity = &#x27;verbose&#x27;; puis SELECT pg_reloa
                         <td class="py-3 px-6 text-left align-top">3.1.16</td>
                         <td class="py-3 px-6 text-left align-top">Désactiver debug_print_parse</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW debug_print_parse;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW debug_print_parse;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-off
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Ne pas afficher les arbres d’analyse SQL dans les logs (réduction du bruit).
 ALTER SYSTEM SET debug_print_parse = &#x27;off&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -748,13 +801,16 @@ ALTER SYSTEM SET debug_print_parse = &#x27;off&#x27;; SELECT pg_reload_conf();</
                         <td class="py-3 px-6 text-left align-top">3.1.17</td>
                         <td class="py-3 px-6 text-left align-top">Désactiver debug_print_rewritten</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW debug_print_rewritten;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW debug_print_rewritten;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-off
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Ne pas afficher les arbres réécrits SQL dans les logs.
 ALTER SYSTEM SET debug_print_rewritten = &#x27;off&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -763,13 +819,16 @@ ALTER SYSTEM SET debug_print_rewritten = &#x27;off&#x27;; SELECT pg_reload_conf(
                         <td class="py-3 px-6 text-left align-top">3.1.18</td>
                         <td class="py-3 px-6 text-left align-top">Désactiver debug_print_plan</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW debug_print_plan;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW debug_print_plan;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-off
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Ne pas afficher les plans d’exécution SQL dans les logs.
 ALTER SYSTEM SET debug_print_plan = &#x27;off&#x27;; SELECT pg_reload_conf();</td>
                     </tr>
@@ -778,13 +837,16 @@ ALTER SYSTEM SET debug_print_plan = &#x27;off&#x27;; SELECT pg_reload_conf();</t
                         <td class="py-3 px-6 text-left align-top">3.1.19</td>
                         <td class="py-3 px-6 text-left align-top">Activer debug_pretty_print</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW debug_pretty_print;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW debug_pretty_print;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-on
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Formater lisiblement les arbres d’analyse/réécriture dans les logs.
 ALTER SYSTEM SET debug_pretty_print = &#x27;on&#x27;; SELECT pg_reload_conf();.</td>
                     </tr>
@@ -793,13 +855,16 @@ ALTER SYSTEM SET debug_pretty_print = &#x27;on&#x27;; SELECT pg_reload_conf();.<
                         <td class="py-3 px-6 text-left align-top">3.1.20</td>
                         <td class="py-3 px-6 text-left align-top">Activer log_connections</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_connections;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_connections;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-on
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Enregistrer chaque nouvelle connexion à PostgreSQL.
 ALTER SYSTEM SET log_connections = &#x27;on&#x27;; SELECT pg_reload_conf();.</td>
                     </tr>
@@ -808,13 +873,16 @@ ALTER SYSTEM SET log_connections = &#x27;on&#x27;; SELECT pg_reload_conf();.</td
                         <td class="py-3 px-6 text-left align-top">3.1.21</td>
                         <td class="py-3 px-6 text-left align-top">Activer log_disconnections</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_disconnections;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_disconnections;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-on
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Enregistrer chaque déconnexion de PostgreSQL.
 ALTER SYSTEM SET log_disconnections = &#x27;on&#x27;; SELECT pg_reload_conf();.</td>
                     </tr>
@@ -823,13 +891,14 @@ ALTER SYSTEM SET log_disconnections = &#x27;on&#x27;; SELECT pg_reload_conf();.<
                         <td class="py-3 px-6 text-left align-top">3.1.22</td>
                         <td class="py-3 px-6 text-left align-top">Configurer log_error_verbosity</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_error_verbosity;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_error_verbosity;&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-default
-Stderr:
 
-Return Code: 0
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
 
 Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Contrôler la verbosité des messages d’erreur (DEFAULT, VERBOSE).
@@ -840,13 +909,16 @@ ALTER SYSTEM SET log_error_verbosity = &#x27;verbose&#x27;; SELECT pg_reload_con
                         <td class="py-3 px-6 text-left align-top">3.1.23</td>
                         <td class="py-3 px-6 text-left align-top">Configurer log_hostname</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_hostname;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_hostname;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-off
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Indiquer le nom d’hôte ou l’IP dans les logs de connexion.
 ALTER SYSTEM SET log_hostname = &#x27;off&#x27;; SELECT pg_reload_conf();.</td>
                     </tr>
@@ -855,13 +927,14 @@ ALTER SYSTEM SET log_hostname = &#x27;off&#x27;; SELECT pg_reload_conf();.</td>
                         <td class="py-3 px-6 text-left align-top">3.1.24</td>
                         <td class="py-3 px-6 text-left align-top">Configurer log_line_prefix</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_line_prefix;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_line_prefix;&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-%m [%p] %q%u@%d
-Stderr:
 
-Return Code: 0
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
 
 Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Définir le préfixe de ligne (timestamp, utilisateur, base, etc.) dans chaque log.
@@ -872,13 +945,16 @@ ALTER SYSTEM SET log_line_prefix = &#x27;%m [%p] user=%u db=%d &#x27;; SELECT pg
                         <td class="py-3 px-6 text-left align-top">3.1.25</td>
                         <td class="py-3 px-6 text-left align-top">Configurer log_statement</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_statement;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_statement;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-ddl
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Choisir le niveau de requêtes à logger (none, ddl, mod, all).
 ALTER SYSTEM SET log_statement = &#x27;ddl&#x27;; SELECT pg_reload_conf();.</td>
                     </tr>
@@ -887,13 +963,16 @@ ALTER SYSTEM SET log_statement = &#x27;ddl&#x27;; SELECT pg_reload_conf();.</td>
                         <td class="py-3 px-6 text-left align-top">3.1.26</td>
                         <td class="py-3 px-6 text-left align-top">Configurer log_timezone</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo -u postgres psql -t -c &#x27;SHOW log_timezone;&#x27;</code></td>
-                        <td class="py-3 px-6 text-left align-top"><span class="status-pass">✅ Pass</span></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n -u postgres psql -t -c &#x27;SHOW log_timezone;&#x27;</code></td>
+                        <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-UTC
-Stderr:
 
-Return Code: 0</pre></td>
+Stderr:
+sudo: unknown user postgres
+sudo: error initializing audit plugin sudoers_audit
+Return Code: 1
+
+Condition de succès non remplie.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Uniformiser le fuseau horaire des horodatages des logs (ex. UTC).
 ALTER SYSTEM SET log_timezone = &#x27;UTC&#x27;; SELECT pg_reload_conf();.</td>
                     </tr>
@@ -928,8 +1007,7 @@ ALTER SYSTEM SET log_timezone = &#x27;UTC&#x27;; SELECT pg_reload_conf();.</td>
                         <td class="py-3 px-6 text-left align-top">4.1</td>
                         <td class="py-3 px-6 text-left align-top">Désactiver la connexion interactive</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Empêcher les rôles superutilisateurs sans console SSH d’interagir localement.
-Vérifier dans pg_hba.conf qu’aucune ligne local .. trust pour les superutilisateurs</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>grep -E &#x27;^\s*local\s+.*trust&#x27; /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf 2&gt;/dev/null || echo &#x27;PASS_AUCUN_TRUST_LOCAL&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Empêcher les rôles superutilisateurs sans console SSH d’interagir localement.
@@ -940,8 +1018,7 @@ Modifier pg_hba.conf, passer à md5 ou peer, puis SELECT pg_reload_conf();.</td>
                         <td class="py-3 px-6 text-left align-top">4.2</td>
                         <td class="py-3 px-6 text-left align-top">Configurer sudo correctement</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Restreindre l’usage de sudo pour l’utilisateur système postgres.
-Examiner /etc/sudoers et fichiers dans /etc/sudoers.d/ pour la section postgres.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>grep -iE &#x27;postgres|mysql|mariadb&#x27; /etc/sudoers /etc/sudoers.d/* 2&gt;/dev/null || echo &#x27;PASS_AUCUN_SUDO_DEDIE&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Restreindre l’usage de sudo pour l’utilisateur système postgres.
@@ -953,8 +1030,7 @@ Ajuster les droits sudo (ex. postgres ALL=(ALL) NOPASSWD: /usr/pgsql-18/bin/pg_*
                         <td class="py-3 px-6 text-left align-top">4.3</td>
                         <td class="py-3 px-6 text-left align-top">Révoquer les privilèges administratifs excessifs</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Retirer aux rôles non justifiés les attributs SUPERUSER, CREATEDB, CREATEROLE, REPLICATION.
-\du+ doit lister uniquement les rôles autorisés avec ces attributs.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &#x27;SELECT rolname, rolsuper, rolcreatedb, rolcreaterole, rolreplication FROM pg_roles;&#x27; 2&gt;/dev/null || echo &#x27;VERIF_MANUELLE_ROLES_POSTGRES&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Retirer aux rôles non justifiés les attributs SUPERUSER, CREATEDB, CREATEROLE, REPLICATION.
@@ -979,8 +1055,7 @@ ALTER ROLE &lt;user&gt; NOLOGIN; ou définir VALID UNTIL à une date passée.</t
                         <td class="py-3 px-6 text-left align-top">4.5</td>
                         <td class="py-3 px-6 text-left align-top">Révoquer les privilèges de fonction excessifs</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Restreindre l’EXECUTE sur les fonctions définies aux seuls rôles nécessaires.
-Requête sur pg_proc et has_function_privilege().</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &quot;SELECT proname FROM pg_proc WHERE pronamespace = &#x27;public&#x27;::regnamespace;&quot; 2&gt;/dev/null || echo &#x27;VERIF_PROC_PRIVILEGES&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Restreindre l’EXECUTE sur les fonctions définies aux seuls rôles nécessaires.
@@ -992,8 +1067,7 @@ REVOKE EXECUTE ON FUNCTION &lt;schema&gt;.&lt;func&gt;() FROM &lt;role&gt;;.</td
                         <td class="py-3 px-6 text-left align-top">4.6</td>
                         <td class="py-3 px-6 text-left align-top">Révoquer les privilèges DML excessifs</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Restreindre INSERT/UPDATE/DELETE aux tables selon le besoin des rôles applicatifs.
-Inventaire via has_table_privilege() pour chaque table et utilisateur.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &quot;SELECT tablename FROM pg_tables WHERE schemaname = &#x27;public&#x27;;&quot; 2&gt;/dev/null || echo &#x27;VERIF_TABLE_PRIVILEGES&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Restreindre INSERT/UPDATE/DELETE aux tables selon le besoin des rôles applicatifs.
@@ -1005,8 +1079,7 @@ REVOKE INSERT, UPDATE, DELETE ON TABLE &lt;tbl&gt; FROM &lt;role&gt;;.</td>
                         <td class="py-3 px-6 text-left align-top">4.7</td>
                         <td class="py-3 px-6 text-left align-top">Configurer Row Level Security (RLS)</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Activer RLS pour les tables sensibles et définir des politiques restrictives.
-\d+ &lt;table&gt; doit indiquer Row Level Security: enabled.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &#x27;SELECT relname, relrowsecurity FROM pg_class WHERE relrowsecurity = true;&#x27; 2&gt;/dev/null || echo &#x27;VERIF_MANUELLE_RLS_POSTGRES&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Activer RLS pour les tables sensibles et définir des politiques restrictives.
@@ -1038,8 +1111,7 @@ CREATE EXTENSION set_user;</td>
                         <td class="py-3 px-6 text-left align-top">4.9</td>
                         <td class="py-3 px-6 text-left align-top">Utiliser les rôles prédéfinis</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Favoriser les rôles intégrés (pg_read_all_data, etc.) plutôt que superuser pour les accès.
-\du+ vérifie la présence et l’usage des rôles prédéfinis.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>psql -U postgres -t -A -c &#x27;SELECT rolname, rolsuper, rolcreatedb, rolcreaterole, rolreplication FROM pg_roles;&#x27; 2&gt;/dev/null || echo &#x27;VERIF_MANUELLE_ROLES_POSTGRES&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Favoriser les rôles intégrés (pg_read_all_data, etc.) plutôt que superuser pour les accès.
@@ -1077,8 +1149,7 @@ GRANT pg_read_all_data TO &lt;role&gt;; REVOKE ....</td>
                         <td class="py-3 px-6 text-left align-top">5.1</td>
                         <td class="py-3 px-6 text-left align-top">Ne pas passer de mot de passe en ligne de commande</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Éviter psql -U user -W password dans les scripts shell.
-Examiner les processus en cours (`ps aux | grep psql`) et scripts automatisés.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;INSPECTION MANUELLE DU CONTRÔLE 5.1 (Ne pas passer de mot de passe en ligne de commande)&#x27; &amp;&amp; ps -ef | head -n 10</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Éviter psql -U user -W password dans les scripts shell.
@@ -1101,8 +1172,7 @@ Modifier postgresql.conf (listen_addresses = &#x27;192.0.2.1&#x27; ou &#x27;*&#x
                         <td class="py-3 px-6 text-left align-top">5.3</td>
                         <td class="py-3 px-6 text-left align-top">Configurer la connexion UNIX locale</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Sécuriser les entrées local dans pg_hba.conf pour n’autoriser que peer ou md5.
-Vérifier les lignes local all all trust dans pg_hba.conf.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>grep -E &#x27;^\s*local\s+.*trust&#x27; /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf 2&gt;/dev/null || echo &#x27;PASS_AUCUN_TRUST_LOCAL&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Sécuriser les entrées local dans pg_hba.conf pour n’autoriser que peer ou md5.
@@ -1113,8 +1183,7 @@ Modifier (ou ajouter) local all all peer ou md5 dans pg_hba.conf, puis SELECT pg
                         <td class="py-3 px-6 text-left align-top">5.4</td>
                         <td class="py-3 px-6 text-left align-top">Configurer la connexion TCP/IP</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Sécuriser les entrées host dans pg_hba.conf (CIDR, méthode d’authentification).
-Vérifier host all all 10.0.0.0/24 md5.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>grep -E &#x27;^\s*local\s+.*trust&#x27; /etc/postgresql/*/*/pg_hba.conf /var/lib/postgresql/data/pg_hba.conf 2&gt;/dev/null || echo &#x27;PASS_AUCUN_TRUST_LOCAL&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Sécuriser les entrées host dans pg_hba.conf (CIDR, méthode d’authentification).
@@ -1137,8 +1206,7 @@ ALTER ROLE &lt;user&gt; CONNECTION LIMIT 10;.</td>
                         <td class="py-3 px-6 text-left align-top">5.6</td>
                         <td class="py-3 px-6 text-left align-top">Configurer la complexité des mots de passe</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Imposer un contrôle de la complexité (extensions passwordcheck, pam, etc.).
-Vérifier la présence de password_encryption, modules pam ou passwordcheck.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;INSPECTION MANUELLE DU CONTRÔLE 5.6 (Configurer la complexité des mots de passe)&#x27; &amp;&amp; ps -ef | head -n 10</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Imposer un contrôle de la complexité (extensions passwordcheck, pam, etc.).
@@ -1175,8 +1243,7 @@ Installer/configurer passwordcheck ou pam, définir password_encryption = &#x27;
                         <td class="py-3 px-6 text-left align-top">6.1</td>
                         <td class="py-3 px-6 text-left align-top">Comprendre vecteurs d’attaque et paramètres runtime</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Documenter les vecteurs d’attaque possibles et les paramètres ajustables.
-Réviser postgresql.conf pour lister runtime parameters.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>cat /etc/postgresql/*/*/postgresql.conf /var/lib/postgresql/data/postgresql.conf 2&gt;/dev/null | grep -v &#x27;^\s*#&#x27; | head -n 30 || echo &#x27;VERIF_RUNTIME_PARAMETERS&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Documenter les vecteurs d’attaque possibles et les paramètres ajustables.
@@ -1187,10 +1254,10 @@ Mettre à jour la documentation interne, auditer régulièrement.</td>
                         <td class="py-3 px-6 text-left align-top">6.2</td>
                         <td class="py-3 px-6 text-left align-top">Configurer les paramètres backend</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code></code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;Contrôle Manuel: &#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-na">➖ N/A</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-
+Contrôle Manuel:
 Stderr:
 
 Return Code: 0</pre></td>
@@ -1271,10 +1338,10 @@ Recompiler PostgreSQL avec FIPS ou configurer la bibliothèque FIPS.</td>
                         <td class="py-3 px-6 text-left align-top">6.8</td>
                         <td class="py-3 px-6 text-left align-top">Activer et configurer TLS</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code></code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;Contrôle Manuel: &#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-na">➖ N/A</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-
+Contrôle Manuel:
 Stderr:
 
 Return Code: 0</pre></td>
@@ -1405,8 +1472,8 @@ ALTER SYSTEM SET log_replication_commands = &#x27;on&#x27;; SELECT pg_reload_con
                         <td class="py-3 px-6 text-left align-top">7.3</td>
                         <td class="py-3 px-6 text-left align-top">Configurer les sauvegardes de base</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Vérifier que pg_basebackup ou équivalent génère des sauvegardes fonctionnelles.
-Exécuter pg_basebackup -h localhost … et vérifier l’intégrité des fichiers.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;Contrôle Manuel: Vérifier que pg_basebackup ou équivalent génère des sauvegardes fonctionnelles.
+Exécuter pg_basebackup -h localhost … et vérifier l’intégrité des fichiers.&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Vérifier que pg_basebackup ou équivalent génère des sauvegardes fonctionnelles.
@@ -1417,10 +1484,10 @@ Mettre en place un script de sauvegarde automatisée avec pg_basebackup.</td>
                         <td class="py-3 px-6 text-left align-top">7.4</td>
                         <td class="py-3 px-6 text-left align-top">Configurer l’archivage WAL</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code></code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;Contrôle Manuel: &#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-na">➖ N/A</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
-
+Contrôle Manuel:
 Stderr:
 
 Return Code: 0</pre></td>
@@ -1482,12 +1549,12 @@ Set temp_tablespaces and log_directory on another volume and reload.</td>
                         <td class="py-3 px-6 text-left align-top">8.2</td>
                         <td class="py-3 px-6 text-left align-top">Installer/configurer pgBackRest</td>
                         <td class="py-3 px-6 text-left align-top">Automated</td>
-                        <td class="py-3 px-6 text-left align-top"><code>sudo pgbackrest info</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>sudo -n pgbackrest info</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-fail">❌ Fail</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>Stdout:
 
 Stderr:
-sudo: pgbackrest: command not found
+sudo: a password is required
 Return Code: 1
 
 Condition de succès non remplie.</pre></td>
@@ -1499,8 +1566,8 @@ Installer le paquet pgbackrest et configurer au moins une stanza (pgbackrest sta
                         <td class="py-3 px-6 text-left align-top">8.3</td>
                         <td class="py-3 px-6 text-left align-top">Vérifier autres paramètres divers</td>
                         <td class="py-3 px-6 text-left align-top">Manual</td>
-                        <td class="py-3 px-6 text-left align-top"><code>Contrôler toute autre configuration (temp_file_limit, temp_tablespaces, …) selon les besoins.
-Revoir postgresql.conf pour paramètres personnalisés.</code></td>
+                        <td class="py-3 px-6 text-left align-top"><code>echo &#x27;Contrôle Manuel: Contrôler toute autre configuration (temp_file_limit, temp_tablespaces, …) selon les besoins.
+Revoir postgresql.conf pour paramètres personnalisés.&#x27;</code></td>
                         <td class="py-3 px-6 text-left align-top"><span class="status-manual">⚠️ Manuel</span></td>
                         <td class="py-3 px-6 text-left align-top"><pre>This control requires manual verification.</pre></td>
                         <td class="py-3 px-6 text-left align-top">Contrôler toute autre configuration (temp_file_limit, temp_tablespaces, …) selon les besoins.
@@ -1515,7 +1582,7 @@ Ajuster manuellement puis recharger la configuration.</td>
         </div>
 
         <footer class="bg-white border-t border-gray-200 p-8 mt-12 text-center">
-            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS Benchmarks Suite v2.0.0.</p>
+            <p class="text-sm text-gray-500 italic">Rapport généré automatiquement par CIS Benchmarks Suite v2.3.0.</p>
             <p class="text-xs text-gray-400 mt-2">100% Python Standard Library (PSL ONLY) Engine.</p>
         </footer>
     </main>

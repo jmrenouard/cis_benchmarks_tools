@@ -10,7 +10,7 @@ Zero external dependencies: uses only Python Standard Library (argparse, json, s
 """
 
 import argparse
-import datetime
+from datetime import datetime
 import html
 import json
 import os
