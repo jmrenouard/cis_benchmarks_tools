@@ -50,7 +50,7 @@
         <header class="bg-white border-b border-gray-200 p-6 flex flex-wrap justify-between items-center gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Rapport d'Audit CIS - MongoDB 8</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : 14/08/2026 12:07:44</p>
+                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : 14/08/2026 12:17:08</p>
             </div>
             <div class="flex items-center flex-wrap gap-2.5">
                 <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
@@ -282,12 +282,12 @@
                         <td class="py-3 px-4 text-left align-top">1.1</td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que la version/les correctifs appropriés de MongoDB sont installés</td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
-                        <td class="py-3 px-4 text-left align-top"><code>mongosh --quiet --eval &#x27;print(db.version())&#x27; 2&gt;/dev/null || mongod --version 2&gt;/dev/null || echo &#x27;MONGODB_VERSION_CHECK&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>mongosh --quiet --eval &#x27;print(db.version())&#x27; || mongod --version || echo &#x27;MONGODB_VERSION_CHECK&#x27;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
-mongosh --quiet --eval &#x27;print(db.version())&#x27; 2&gt;/dev/null || mongod --version 2&gt;/dev/null || echo &#x27;MONGODB_VERSION_CHECK&#x27;</pre></td>
+mongosh --quiet --eval &#x27;print(db.version())&#x27; || mongod --version || echo &#x27;MONGODB_VERSION_CHECK&#x27;</pre></td>
                         <td class="py-3 px-4 text-left align-top">Sauvegarder les données, télécharger les binaires de la dernière version de MongoDB, arrêter l&#x27;instance, remplacer les binaires, redémarrer l&#x27;instance.</td>
                     </tr>
 
@@ -408,12 +408,12 @@ Exécuter &#x27;mongosh --quiet --eval &quot;printjson(db.system.users.find({\&q
                         <td class="py-3 px-4 text-left align-top">3.2</td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que le contrôle d&#x27;accès basé sur les rôles est activé et configuré correctement</td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
-                        <td class="py-3 px-4 text-left align-top"><code>mongosh --quiet --eval &#x27;printjson(db.getUser())&#x27; 2&gt;/dev/null || echo &#x27;MONGODB_USER_ROLE_CHECK&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>mongosh --quiet --eval &#x27;printjson(db.getUser())&#x27; || echo &#x27;MONGODB_USER_ROLE_CHECK&#x27;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
-mongosh --quiet --eval &#x27;printjson(db.getUser())&#x27; 2&gt;/dev/null || echo &#x27;MONGODB_USER_ROLE_CHECK&#x27;</pre></td>
+mongosh --quiet --eval &#x27;printjson(db.getUser())&#x27; || echo &#x27;MONGODB_USER_ROLE_CHECK&#x27;</pre></td>
                         <td class="py-3 px-4 text-left align-top">Établir des rôles, assigner des privilèges appropriés aux rôles, assigner des utilisateurs aux rôles, supprimer les privilèges individuels superflus.</td>
                     </tr>
 
@@ -434,12 +434,12 @@ Exécuter &#x27;ps -ef | grep -E &quot;mongos | mongod&quot;&#x27; et vérifier 
                         <td class="py-3 px-4 text-left align-top">3.4</td>
                         <td class="py-3 px-4 text-left align-top">S&#x27;assurer que chaque rôle pour chaque base de données MongoDB est nécessaire et n&#x27;accorde que les privilèges nécessaires</td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
-                        <td class="py-3 px-4 text-left align-top"><code>mongosh --quiet --eval &#x27;printjson(db.runCommand({rolesInfo: 1}))&#x27; 2&gt;/dev/null || echo &#x27;MONGODB_ROLES_CHECK&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>mongosh --quiet --eval &#x27;printjson(db.runCommand({rolesInfo: 1}))&#x27; || echo &#x27;MONGODB_ROLES_CHECK&#x27;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
-mongosh --quiet --eval &#x27;printjson(db.runCommand({rolesInfo: 1}))&#x27; 2&gt;/dev/null || echo &#x27;MONGODB_ROLES_CHECK&#x27;</pre></td>
+mongosh --quiet --eval &#x27;printjson(db.runCommand({rolesInfo: 1}))&#x27; || echo &#x27;MONGODB_ROLES_CHECK&#x27;</pre></td>
                         <td class="py-3 px-4 text-left align-top">Révoquer les privilèges spécifiés des rôles définis par l&#x27;utilisateur s&#x27;ils ne sont plus nécessaires.</td>
                     </tr>
 
@@ -447,12 +447,12 @@ mongosh --quiet --eval &#x27;printjson(db.runCommand({rolesInfo: 1}))&#x27; 2&gt
                         <td class="py-3 px-4 text-left align-top">3.5</td>
                         <td class="py-3 px-4 text-left align-top">Réviser les rôles de superutilisateur/administrateur</td>
                         <td class="py-3 px-4 text-left align-top">Manual</td>
-                        <td class="py-3 px-4 text-left align-top"><code>mongosh --quiet --eval &#x27;printjson(db.runCommand({rolesInfo: &quot;dbOwner&quot;}))&#x27; 2&gt;/dev/null || echo &#x27;MONGODB_ADMIN_ROLES_CHECK&#x27;</code></td>
+                        <td class="py-3 px-4 text-left align-top"><code>mongosh --quiet --eval &#x27;printjson(db.runCommand({rolesInfo: &quot;dbOwner&quot;}))&#x27; || echo &#x27;MONGODB_ADMIN_ROLES_CHECK&#x27;</code></td>
                         <td class="py-3 px-4 text-left align-top"><span class="status-manual font-semibold">⚠️ Manuel</span></td>
                         <td class="py-3 px-4 text-left align-top"><pre>This control requires manual verification.
 
 Procédure suggérée:
-mongosh --quiet --eval &#x27;printjson(db.runCommand({rolesInfo: &quot;dbOwner&quot;}))&#x27; 2&gt;/dev/null || echo &#x27;MONGODB_ADMIN_ROLES_CHECK&#x27;</pre></td>
+mongosh --quiet --eval &#x27;printjson(db.runCommand({rolesInfo: &quot;dbOwner&quot;}))&#x27; || echo &#x27;MONGODB_ADMIN_ROLES_CHECK&#x27;</pre></td>
                         <td class="py-3 px-4 text-left align-top">Retirer les utilisateurs des rôles de superutilisateur/administrateur s&#x27;ils n&#x27;en ont pas besoin.</td>
                     </tr>
 
