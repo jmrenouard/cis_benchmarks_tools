@@ -30,9 +30,10 @@
     "number": "1.3",
     "name": "Désactiver l'historique des commandes MariaDB",
     "type": "Automated",
-    "test_procedure": "! find /home /root -maxdepth 3 -name .mysql_history 2>/dev/null | grep -q .",
+    "test_procedure": "for h in /root /home/*; do [ -f \"$h/.mysql_history\" ] && echo \"$h/.mysql_history\"; done",
     "expected_output": {
-      "type": "returncode_zero"
+      "type": "stdout_equals",
+      "value": ""
     },
     "remediation": "Supprimer les fichiers d'historique, créer un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE."
   },
@@ -94,7 +95,7 @@
     "number": "2.1.1",
     "name": "Politique de sauvegarde en place",
     "type": "Automated",
-    "test_procedure": "(command -v crontab >/dev/null && crontab -l 2>/dev/null | grep -E 'mariadb-dump|mariadb-backup|mysqldump|mariabackup') || ps -ef | grep -E 'mariadb-dump|mariadb-backup|mysqldump|mariabackup' | grep -v grep",
+    "test_procedure": "([ -f /etc/crontab ] && grep -E 'mysqldump|xtrabackup|mysqlbackup|mariadb-backup' /etc/crontab /etc/cron*/*) || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup|mariadb-backup' | grep -v grep",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -110,7 +111,7 @@
     "number": "2.1.2",
     "name": "Validation des sauvegardes",
     "type": "Automated",
-    "test_procedure": "ls -la /var/backups/ /var/lib/mariadb/ /var/lib/mysql/ 2>/dev/null | head -n 20 || echo 'NO_BACKUP_DIRECTORY_FOUND'",
+    "test_procedure": "[ -d /var/backups ] && ls -la /var/backups/ | head -n 20 || ([ -d /var/lib/mysql ] && ls -la /var/lib/mysql/ | head -n 20 || echo 'NO_BACKUP_DIRECTORY')",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -127,7 +128,7 @@
     "number": "2.1.3",
     "name": "Sécuriser les identifiants de sauvegarde",
     "type": "Automated",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /etc/my.cnf 2>/dev/null || echo 'CONFIG_FILES_INSPECTED'",
+    "test_procedure": "for f in /etc/mysql /etc/my.cnf; do [ -e \"$f\" ] && ls -ld \"$f\"; done || echo 'NO_CONFIG_FOUND'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -143,7 +144,7 @@
     "number": "2.1.4",
     "name": "Sécuriser les fichiers de sauvegarde",
     "type": "Automated",
-    "test_procedure": "ls -ld /var/backups/* 2>/dev/null | grep -v '^d' | head -n 10 || echo 'NO_BACKUP_FILES_FOUND'",
+    "test_procedure": "[ -d /var/backups ] && ls -ld /var/backups/* | head -n 10 || echo 'NO_BACKUP_FILES_FOUND'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -171,7 +172,7 @@
     "number": "2.1.6",
     "name": "Plan de reprise d'activité (DR)",
     "type": "Automated",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ /var/backups/ 2>/dev/null || echo 'DR_DIRECTORIES_INSPECTED'",
+    "test_procedure": "for d in /etc/mysql /var/backups; do [ -d \"$d\" ] && ls -la \"$d\"; done || echo 'DR_DIRECTORIES_INSPECTED'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -187,7 +188,7 @@
     "number": "2.1.7",
     "name": "Sauvegarde des fichiers de configuration",
     "type": "Automated",
-    "test_procedure": "ls -la /etc/mysql/ /etc/mariadb/ 2>/dev/null || echo 'CONFIG_BACKUP_INSPECTED'",
+    "test_procedure": "for d in /etc/mysql /etc/my.cnf; do [ -e \"$d\" ] && ls -ld \"$d\"; done || echo 'CONFIG_BACKUP_INSPECTED'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -202,7 +203,7 @@
     "number": "2.2",
     "name": "Dédier la machine à MariaDB",
     "type": "Automated",
-    "test_procedure": "ls -la /var/lib/mysql 2>/dev/null | head -n 5 || echo 'STORAGE_SECURED'",
+    "test_procedure": "ls -la /var/lib/mysql | head -n 5 || echo 'STORAGE_SECURED'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -217,7 +218,7 @@
     "number": "2.3",
     "name": "Ne pas spécifier de mots de passe en ligne de commande",
     "type": "Automated",
-    "test_procedure": "ls -la /var/lib/mysql 2>/dev/null | head -n 5 || echo 'STORAGE_SECURED'",
+    "test_procedure": "ls -la /var/lib/mysql | head -n 5 || echo 'STORAGE_SECURED'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -249,7 +250,7 @@
     "number": "2.5",
     "name": "S'assurer que le matériel cryptographique est unique et non par défaut",
     "type": "Automated",
-    "test_procedure": "ls -la /var/lib/mysql 2>/dev/null | head -n 5 || echo 'STORAGE_SECURED'",
+    "test_procedure": "ls -la /var/lib/mysql | head -n 5 || echo 'STORAGE_SECURED'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -493,7 +494,7 @@
     "number": "4.1",
     "name": "S'assurer que les derniers correctifs de sécurité sont appliqués",
     "type": "Automated",
-    "test_procedure": "mysql -e 'SELECT @@default_authentication_plugin;' 2>/dev/null || mariadb -e 'SELECT 1;' 2>/dev/null || echo 'AUTH_PLUGIN_OK'",
+    "test_procedure": "mysql -e 'SELECT @@default_authentication_plugin;' || mariadb -e 'SELECT 1;' || echo 'AUTH_PLUGIN_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -847,9 +848,10 @@
     "number": "7.2",
     "name": "Aucun mot de passe dans la configuration globale",
     "type": "Automated",
-    "test_procedure": "! grep -rihE \"^[[:space:]]*(password|pwd|pass)[[:space:]]*=\" /etc/my.cnf /etc/mysql/ /etc/mariadb/ 2>/dev/null | grep -q .",
+    "test_procedure": "for f in /etc/my.cnf /etc/mysql/my.cnf /etc/mysql/conf.d/*.cnf /etc/mysql/mariadb.conf.d/*.cnf; do [ -f \"$f\" ] && grep -nHE \"^[[:space:]]*(password|pwd|pass)[[:space:]]*=\" \"$f\"; done",
     "expected_output": {
-      "type": "returncode_zero"
+      "type": "stdout_equals",
+      "value": ""
     },
     "remediation": "Utiliser des fichiers .my.cnf privés ou mysql_config_editor avec permissions restreintes."
   },
@@ -944,7 +946,7 @@
     "number": "8.3",
     "name": "Limiter le nombre de connexions",
     "type": "Automated",
-    "test_procedure": "mysql -e 'SELECT @@sql_mode;' 2>/dev/null || mariadb -e 'SELECT @@sql_mode;' 2>/dev/null || echo 'SQL_MODE_OK'",
+    "test_procedure": "mysql -e 'SELECT @@sql_mode;' || mariadb -e 'SELECT @@sql_mode;' || echo 'SQL_MODE_OK'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
