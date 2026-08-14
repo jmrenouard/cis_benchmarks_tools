@@ -451,7 +451,6 @@ def load_html_template():
                     <i class="fas fa-moon"></i> Mode Sombre
                 </button>
                 <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">{target_version}</span>
-                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium border border-gray-200">v{suite_version}</span>
             </div>
         </header>
         <div class="p-8 max-w-7xl mx-auto">
