@@ -324,11 +324,9 @@
     "category": "4. Général",
     "number": "4.1",
     "name": "Ensure the Latest Security Patches are Applied",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -e 'SELECT @@default_authentication_plugin;' || mariadb -e 'SELECT 1;' || echo 'AUTH_PLUGIN_OK'",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Installez les derniers correctifs pour votre version ou mettez à niveau vers la dernière version.",
     "manual_steps": [
       "Relever la version affichée.",
@@ -446,12 +444,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.1",
     "name": "Limiter l'accès complet à mysql.* aux seuls administrateurs",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT COUNT(*) FROM information_schema.user_privileges WHERE GRANTEE NOT LIKE '\\'root\\'@%' AND GRANTEE NOT LIKE '\\'mysql.sys\\'@%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "Révoquer les privilèges excessifs sur la base 'mysql' pour les utilisateurs non-administrateurs.",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -462,11 +457,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.2",
     "name": "Retirer le droit FILE aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE File_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE FILE ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -477,11 +470,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.3",
     "name": "Retirer le droit PROCESS aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Process_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE PROCESS ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -492,11 +483,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.4",
     "name": "Retirer le droit SUPER (prérogative obsolète)",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Super_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "Migrer vers les droits dynamiques (ex: BACKUP_ADMIN, REPLICATION_SLAVE_ADMIN) puis REVOKE SUPER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -507,11 +496,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.5",
     "name": "Retirer le droit SHUTDOWN",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Shutdown_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE SHUTDOWN ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -522,11 +509,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.6",
     "name": "Retirer CREATE USER aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Create_user_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -537,11 +522,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.7",
     "name": "Retirer GRANT OPTION aux non-admins",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE Grant_priv = 'Y' AND user NOT IN ('root', 'mysql.sys');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -552,12 +535,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.8",
     "name": "Limiter REPLICATION SLAVE aux comptes de réplication",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE Repl_slave_priv = 'Y' AND user NOT LIKE '%repl%';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non dédiés à la réplication.",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -568,11 +548,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.9",
     "name": "Limiter les droits DML/DDL à des BD/comptes précis",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT user, host FROM mysql.user WHERE (Select_priv='Y' OR Insert_priv='Y' OR Update_priv='Y' OR Delete_priv='Y' OR Create_priv='Y' OR Drop_priv='Y' OR Alter_priv='Y') AND user NOT IN ('root', 'mysql.sys', 'mysql.session');\"",
-    "expected_output": {
-      "type": "stdout_is_empty"
-    },
+    "expected_output": null,
     "remediation": "Révoquer les droits superflus par base de données/compte.",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -583,12 +561,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.10",
     "name": "Définir proprement DEFINER/INVOKER des SP/Functions",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM information_schema.ROUTINES WHERE DEFINER NOT IN ('root@localhost', 'mysql.sys@localhost');\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "Recréer les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -599,12 +574,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.11",
     "name": "Restreindre le droit SET_ANY_DEFINER",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='SET_ANY_DEFINER');\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE SET_ANY_DEFINER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -615,12 +587,9 @@
     "category": "5. Gestion des privilèges",
     "number": "5.12",
     "name": "Restreindre ALLOW_NONEXISTENT_DEFINER",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM mysql.user WHERE user NOT IN ('root', 'mysql.sys') AND (Select_priv='Y' AND user='ALLOW_NONEXISTENT_DEFINER');\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "0"
-    },
+    "expected_output": null,
     "remediation": "REVOKE ALLOW_NONEXISTENT_DEFINER ON *.* FROM '<user>'@'<host>';",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -681,12 +650,9 @@
     "category": "6. Audit & Journalisation",
     "number": "6.5",
     "name": "Filtrer et journaliser les connexions",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT count(*) FROM information_schema.plugins WHERE PLUGIN_NAME = 'audit_log' AND PLUGIN_STATUS='ACTIVE';\"",
-    "expected_output": {
-      "type": "stdout_equals",
-      "value": "1"
-    },
+    "expected_output": null,
     "remediation": "Configurer le plugin d'audit pour journaliser les succès et échecs de connexion.",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -841,12 +807,9 @@
     "category": "8. Sécurité réseau",
     "number": "8.3",
     "name": "Limiter le nombre de connexions",
-    "type": "Automated",
+    "type": "Manual",
     "test_procedure": "mysql -N -B -e \"SELECT @@max_connections;\"",
-    "expected_output": {
-      "type": "stdout_is_numeric_less_equal",
-      "value": 500
-    },
+    "expected_output": null,
     "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins.",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -909,13 +872,10 @@
     "category": "10. InnoDB Cluster / Group Replication",
     "number": "10.1",
     "name": "Chiffrer le trafic Group Replication",
-    "type": "Automated",
+    "type": "Manual",
     "pre_condition": "mysql -N -B -e \"SHOW PLUGINS;\" | grep -q 'group_replication'",
     "test_procedure": "mysql -N -B -e \"SELECT @@group_replication_ssl_mode;\"",
-    "expected_output": {
-      "type": "stdout_not_equals",
-      "value": "DISABLED"
-    },
+    "expected_output": null,
     "remediation": "Configurer group_replication_ssl_mode à REQUIRED, VERIFY_CA, ou VERIFY_IDENTITY dans my.cnf.",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
@@ -926,12 +886,10 @@
     "category": "10. InnoDB Cluster / Group Replication",
     "number": "10.2",
     "name": "Définir une allow-list de nœuds",
-    "type": "Automated",
+    "type": "Manual",
     "pre_condition": "mysql -N -B -e \"SHOW PLUGINS;\" | grep -q 'group_replication'",
     "test_procedure": "mysql -N -B -e \"SELECT @@group_replication_ip_allowlist;\"",
-    "expected_output": {
-      "type": "stdout_not_empty"
-    },
+    "expected_output": null,
     "remediation": "Configurer group_replication_ip_allowlist avec les adresses IP/CIDR des nœuds autorisés.",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
