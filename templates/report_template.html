@@ -64,7 +64,7 @@
         <div class="p-8 max-w-7xl mx-auto">
             <!-- Summary Dashboard -->
             <section id="summary" class="mb-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
                         <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Score Global</span>
                         <div class="relative flex items-center justify-center">
@@ -80,6 +80,11 @@
                         <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Échecs</span>
                         <div class="text-3xl font-bold text-gray-900 mt-1">{failed_automated_count}</div>
                         <p class="text-xs text-gray-500 mt-1">Non-conformités détectées</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-orange-500">
+                        <span class="text-xs font-bold text-orange-600 uppercase tracking-widest">Erreurs Commande</span>
+                        <div class="text-3xl font-bold text-gray-900 mt-1">{error_count}</div>
+                        <p class="text-xs text-gray-500 mt-1">Échecs d'exécution technique</p>
                     </div>
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
                         <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Manuels</span>

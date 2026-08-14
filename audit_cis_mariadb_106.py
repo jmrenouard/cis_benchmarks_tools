@@ -741,7 +741,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None):
                              check_result["output"] = "Variable/Plugin non disponible (N/A)." + chr(10) + "Stderr:" + chr(10) + path_stderr
                         else:
                              check_result["status"] = "Error"
-                             err_detail = path_stderr if path_stderr else "Impossible d'exécuter la commande client MariaDB/MySQL (vérifier si le service est démarré)."
+                             err_detail = path_stderr if path_stderr else "Impossible d'exécuter la commande client MariaDB/MySQL (vérifier si le service est démarré ou conteneur Docker actif). [Erreur d'Exécution de Commande - Non-conformité de sécurité non évaluée]"
                              check_result["output"] = "Error lors de l'obtention du chemin via:" + chr(10) + f"`{path_cmd}`" + chr(10) + "Output:" + chr(10) + err_detail
                              check_result["error"] = err_detail
                         results[category].append(check_result)
