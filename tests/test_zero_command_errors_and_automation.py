@@ -60,6 +60,61 @@ class TestZeroCommandErrorsAndAutomation(unittest.TestCase):
                     except KeyError as e:
                         self.fail(f"Unescaped curly braces in {fname} [{r.get('number')}]: {tmpl} -> KeyError {e}")
 
+    def test_all_18_engines_zero_manual_and_zero_errors_in_docker(self):
+        """Simulate and verify that all 18 target engines return 0 manual checks and 0 command errors under Docker mode."""
+        import importlib
+        import inspect
+        from unittest.mock import patch
+
+        audit_modules = [
+            ("audit_cis_mysql_80", "mysql_80"),
+            ("audit_cis_mysql_community_84", "mysql_community_84"),
+            ("audit_cis_mysql_enterprise_84", "mysql_enterprise_84"),
+            ("audit_cis_mysql_community_97", "mysql_community_97"),
+            ("audit_cis_mysql_enterprise_97", "mysql_enterprise_97"),
+            ("audit_cis_mariadb_106", "mariadb_106"),
+            ("audit_cis_mariadb_1011", "mariadb_1011"),
+            ("audit_cis_postgresql_16", "postgresql_16"),
+            ("audit_cis_postgresql_17", "postgresql_17"),
+            ("audit_cis_postgresql_18", "postgresql_18"),
+            ("audit_cis_mongodb_7", "mongodb_7"),
+            ("audit_cis_mongodb_8", "mongodb_8"),
+            ("audit_cis_cassandra_40", "cassandra_40"),
+            ("audit_cis_cassandra_41", "cassandra_41"),
+            ("audit_cis_cassandra_50", "cassandra_50"),
+            ("audit_cis_rhel_8", "rhel_8"),
+            ("audit_cis_rhel_9", "rhel_9"),
+            ("audit_cis_rhel_10", "rhel_10"),
+        ]
+
+        def mock_run_cmd(cmd, remote_host=None, docker_container=None, **kwargs):
+            return ("1", "", 0)
+
+        for mod_name, target_key in audit_modules:
+            mod = importlib.import_module(mod_name)
+            rules = mod.load_recommendations(target_key)
+
+            with patch.object(mod, "run_command", side_effect=mock_run_cmd):
+                sig = inspect.signature(mod.perform_checks)
+                if "docker_container" in sig.parameters:
+                    results = mod.perform_checks(rules, docker_container="simulated-container")
+                else:
+                    results = mod.perform_checks(rules)
+
+                flat_checks = []
+                if isinstance(results, dict):
+                    for cat_list in results.values():
+                        flat_checks.extend(cat_list)
+                elif isinstance(results, list):
+                    flat_checks = results
+
+                manuals = [r for r in flat_checks if r.get("status") == "Manual"]
+                errors = [r for r in flat_checks if r.get("status") == "Error"]
+
+                self.assertEqual(len(manuals), 0, f"Found manual checks in {mod_name}: {[m.get('number') for m in manuals]}")
+                self.assertEqual(len(errors), 0, f"Found error checks in {mod_name}: {[e.get('number') for e in errors]}")
+
 
 if __name__ == "__main__":
     unittest.main()
+
