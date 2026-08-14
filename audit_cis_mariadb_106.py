@@ -666,6 +666,10 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     """Évalue si le résultat de la commande correspond à la condition attendue."""
     if not condition:
         return False
+    if stdout is None:
+        stdout = ""
+    if stderr is None:
+        stderr = ""
 
     condition_type = condition.get("type")
     expected_value = condition.get("value")
@@ -753,7 +757,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
         command_executed_display = "N/A"
 
         if rec["type"] == "Automated":
-            if "pre_condition" in rec:
+            if rec.get("pre_condition"):
                 pc_stdout, pc_stderr, pc_returncode = run_command(rec["pre_condition"])
                 if pc_returncode != 0 or not pc_stdout or pc_stdout == "0":
                     check_result["status"] = "Not Applicable"
@@ -766,7 +770,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
 
         if should_run:
             try:
-                if "path_command" in rec:
+                if rec.get("path_command"):
                     path_cmd = rec["path_command"]
                     path_cmd_to_run = path_cmd
                     if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
@@ -794,7 +798,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     dynamic_path = path_stdout.strip()
                     stored_outputs[check_number + "_path"] = dynamic_path
 
-                    if "test_procedure_template" in rec:
+                    if rec.get("test_procedure_template"):
                         cmd_to_run = rec["test_procedure_template"].format(path=dynamic_path)
                         command_executed_display = cmd_to_run
                 elif "test_procedure" in rec:
