@@ -34,7 +34,8 @@ RUN echo 'root:rootpass' | chpasswd && \
   echo -e "[mysqld]\nskip-symbolic-links=1\nsecure_file_priv=/var/lib/mysql-files\nsql_mode=STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION\nlocal_infile=0" > /etc/mysql/conf.d/cis_hardened.cnf && \
   sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
   sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
-  ssh-keygen -A
+  ssh-keygen -A && \
+  (usermod -s /sbin/nologin mysql || usermod -s /bin/false mysql || true)
 
 # ⚙️ Configuration
 # Copying the MySQL startup script

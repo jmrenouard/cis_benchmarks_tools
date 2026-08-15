@@ -7,6 +7,7 @@ set -e
 # History symlink hardening
 ln -sf /dev/null /root/.mysql_history 2>/dev/null || true
 ln -sf /dev/null /root/.bash_history 2>/dev/null || true
+usermod -s /sbin/nologin mysql 2>/dev/null || true
 
 # Set up client configuration for seamless root CLI auditing
 cat << 'EOF' > /root/.my.cnf
