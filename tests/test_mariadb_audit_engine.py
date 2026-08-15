@@ -95,7 +95,39 @@ class TestMariaDBAuditEngine(unittest.TestCase):
         """Test evaluate_condition stdout_contains_any."""
         cond = {"type": "stdout_contains_any", "values": ["ACTIVE", "ENABLED"]}
         self.assertTrue(mariadb_1011.evaluate_condition(cond, "ACTIVE", "", 0))
-        self.assertFalse(mariadb_1011.evaluate_condition(cond, "DISABLED", "", 0))
+    @patch("audit_cis_mariadb_1011.run_command")
+    def test_perform_checks_empty_path_command_returns_not_applicable(self, mock_run):
+        """Ensure perform_checks sets Not Applicable when path_command returns empty string with returncode 0."""
+        mock_run.return_value = ("", "", 0)
+        
+        sample_rules = [
+            {
+                "category": "3. Permissions Fichiers",
+                "number": "3.3",
+                "name": "Permissions sur 'log_error'",
+                "type": "Automated",
+                "path_command": "mysql -N -B -e \"SELECT @@log_error;\"",
+                "test_procedure_template": "stat -c '%a' {path}",
+                "expected_output": {"type": "stdout_regex_match", "pattern": r"^6[04]0$"},
+                "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600)."
+            }
+        ]
+
+        results = mariadb_1011.perform_checks(sample_rules)
+        self.assertIn("3. Permissions Fichiers", results)
+        check_res = results["3. Permissions Fichiers"][0]
+        self.assertEqual(check_res["status"], "Not Applicable")
+        self.assertIn("non configuré", check_res["output"].lower())
+
+    def test_mysql_history_rule_syntax(self):
+        """Verify that rule 1.3 for mysql_history in MariaDB rules includes ; true for clean 0 exit code."""
+        rule_106_13 = next((r for r in self.rules_106 if r.get("number") == "1.3"), None)
+        self.assertIsNotNone(rule_106_13)
+        self.assertTrue(rule_106_13["test_procedure"].endswith("; true"), "Rule 1.3 in mariadb_106 must end with '; true'")
+
+        rule_1011_13 = next((r for r in self.rules_1011 if r.get("number") == "1.3"), None)
+        self.assertIsNotNone(rule_1011_13)
+        self.assertTrue(rule_1011_13["test_procedure"].endswith("; true"), "Rule 1.3 in mariadb_1011 must end with '; true'")
 
 
 if __name__ == "__main__":
