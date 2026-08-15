@@ -132,7 +132,7 @@ run-mariadb106:
 	sleep 30
 
 audit-mariadb106:
-	docker exec $(MARIADB106_CONTAINER) python3 /datas/$(MARIADB106_SCRIPT)
+	docker exec $(MARIADB106_CONTAINER) python3 /datas/$(MARIADB106_SCRIPT) -o /datas/$(MARIADB106_REPORT)
 
 report-mariadb106:
 	docker cp $(MARIADB106_CONTAINER):/datas/$(MARIADB106_REPORT) reports/
@@ -154,7 +154,7 @@ run-mariadb1011:
 	sleep 30
 
 audit-mariadb1011:
-	docker exec $(MARIADB1011_CONTAINER) python3 /datas/$(MARIADB1011_SCRIPT)
+	docker exec $(MARIADB1011_CONTAINER) python3 /datas/$(MARIADB1011_SCRIPT) -o /datas/$(MARIADB1011_REPORT)
 
 report-mariadb1011:
 	docker cp $(MARIADB1011_CONTAINER):/datas/$(MARIADB1011_REPORT) reports/
@@ -176,7 +176,7 @@ run-mysql80:
 	sleep 15
 
 audit-mysql80:
-	docker exec $(MYSQL80_CONTAINER) python3 /datas/$(MYSQL80_SCRIPT)
+	docker exec $(MYSQL80_CONTAINER) python3 /datas/$(MYSQL80_SCRIPT) -o /datas/$(MYSQL80_REPORT)
 
 report-mysql80:
 	docker cp $(MYSQL80_CONTAINER):/datas/$(MYSQL80_REPORT) reports/
@@ -198,7 +198,7 @@ run-mysql-community84:
 	sleep 45
 
 audit-mysql-community84:
-	docker exec $(MYSQL_COMMUNITY84_CONTAINER) python3 /datas/$(MYSQL_COMMUNITY84_SCRIPT)
+	docker exec $(MYSQL_COMMUNITY84_CONTAINER) python3 /datas/$(MYSQL_COMMUNITY84_SCRIPT) -o /datas/$(MYSQL_COMMUNITY84_REPORT)
 
 report-mysql-community84:
 	docker cp $(MYSQL_COMMUNITY84_CONTAINER):/datas/$(MYSQL_COMMUNITY84_REPORT) reports/
@@ -220,7 +220,7 @@ run-mysql-enterprise84:
 	sleep 45
 
 audit-mysql-enterprise84:
-	docker exec $(MYSQL_ENTERPRISE84_CONTAINER) python3 /datas/$(MYSQL_ENTERPRISE84_SCRIPT)
+	docker exec $(MYSQL_ENTERPRISE84_CONTAINER) python3 /datas/$(MYSQL_ENTERPRISE84_SCRIPT) -o /datas/$(MYSQL_ENTERPRISE84_REPORT)
 
 report-mysql-enterprise84:
 	docker cp $(MYSQL_ENTERPRISE84_CONTAINER):/datas/$(MYSQL_ENTERPRISE84_REPORT) reports/
@@ -242,7 +242,7 @@ run-mysql-community97:
 	sleep 45
 
 audit-mysql-community97:
-	docker exec $(MYSQL_COMMUNITY97_CONTAINER) python3 /datas/$(MYSQL_COMMUNITY97_SCRIPT)
+	docker exec $(MYSQL_COMMUNITY97_CONTAINER) python3 /datas/$(MYSQL_COMMUNITY97_SCRIPT) -o /datas/$(MYSQL_COMMUNITY97_REPORT)
 
 report-mysql-community97:
 	docker cp $(MYSQL_COMMUNITY97_CONTAINER):/datas/$(MYSQL_COMMUNITY97_REPORT) reports/
@@ -264,7 +264,7 @@ run-mysql-enterprise97:
 	sleep 45
 
 audit-mysql-enterprise97:
-	docker exec $(MYSQL_ENTERPRISE97_CONTAINER) python3 /datas/$(MYSQL_ENTERPRISE97_SCRIPT)
+	docker exec $(MYSQL_ENTERPRISE97_CONTAINER) python3 /datas/$(MYSQL_ENTERPRISE97_SCRIPT) -o /datas/$(MYSQL_ENTERPRISE97_REPORT)
 
 report-mysql-enterprise97:
 	docker cp $(MYSQL_ENTERPRISE97_CONTAINER):/datas/$(MYSQL_ENTERPRISE97_REPORT) reports/
@@ -286,7 +286,7 @@ run-postgresql16:
 	sleep 15
 
 audit-postgresql16:
-	docker exec $(POSTGRESQL16_CONTAINER) python3 /datas/$(POSTGRESQL16_SCRIPT)
+	docker exec $(POSTGRESQL16_CONTAINER) python3 /datas/$(POSTGRESQL16_SCRIPT) -o /datas/$(POSTGRESQL16_REPORT)
 
 report-postgresql16:
 	docker cp $(POSTGRESQL16_CONTAINER):/datas/$(POSTGRESQL16_REPORT) reports/
@@ -308,7 +308,7 @@ run-postgresql17:
 	sleep 15
 
 audit-postgresql17:
-	docker exec $(POSTGRESQL17_CONTAINER) python3 /datas/$(POSTGRESQL17_SCRIPT)
+	docker exec $(POSTGRESQL17_CONTAINER) python3 /datas/$(POSTGRESQL17_SCRIPT) -o /datas/$(POSTGRESQL17_REPORT)
 
 report-postgresql17:
 	docker cp $(POSTGRESQL17_CONTAINER):/datas/$(POSTGRESQL17_REPORT) reports/
@@ -330,7 +330,7 @@ run-postgresql18:
 	sleep 15
 
 audit-postgresql18:
-	docker exec $(POSTGRESQL18_CONTAINER) python3 /datas/$(POSTGRESQL18_SCRIPT)
+	docker exec $(POSTGRESQL18_CONTAINER) python3 /datas/$(POSTGRESQL18_SCRIPT) -o /datas/$(POSTGRESQL18_REPORT)
 
 report-postgresql18:
 	docker cp $(POSTGRESQL18_CONTAINER):/datas/$(POSTGRESQL18_REPORT) reports/
@@ -352,7 +352,7 @@ run-mongodb7:
 	sleep 30
 
 audit-mongodb7:
-	docker exec $(MONGODB7_CONTAINER) python3 /datas/$(MONGODB7_SCRIPT)
+	docker exec $(MONGODB7_CONTAINER) python3 /datas/$(MONGODB7_SCRIPT) -o /datas/$(MONGODB7_REPORT)
 
 report-mongodb7:
 	docker cp $(MONGODB7_CONTAINER):/datas/$(MONGODB7_REPORT) reports/
@@ -374,7 +374,7 @@ run-mongodb8:
 	sleep 30
 
 audit-mongodb8:
-	docker exec $(MONGODB8_CONTAINER) python3 /datas/$(MONGODB8_SCRIPT)
+	docker exec $(MONGODB8_CONTAINER) python3 /datas/$(MONGODB8_SCRIPT) -o /datas/$(MONGODB8_REPORT)
 
 report-mongodb8:
 	docker cp $(MONGODB8_CONTAINER):/datas/$(MONGODB8_REPORT) reports/
@@ -396,7 +396,7 @@ run-cassandra40:
 	sleep 60
 
 audit-cassandra40:
-	docker exec $(CASSANDRA40_CONTAINER) python3 /datas/$(CASSANDRA40_SCRIPT)
+	docker exec $(CASSANDRA40_CONTAINER) python3 /datas/$(CASSANDRA40_SCRIPT) -o /datas/$(CASSANDRA40_REPORT)
 
 report-cassandra40:
 	docker cp $(CASSANDRA40_CONTAINER):/datas/$(CASSANDRA40_REPORT) reports/
@@ -418,7 +418,7 @@ run-cassandra41:
 	sleep 60
 
 audit-cassandra41:
-	docker exec $(CASSANDRA41_CONTAINER) python3 /datas/$(CASSANDRA41_SCRIPT)
+	docker exec $(CASSANDRA41_CONTAINER) python3 /datas/$(CASSANDRA41_SCRIPT) -o /datas/$(CASSANDRA41_REPORT)
 
 report-cassandra41:
 	docker cp $(CASSANDRA41_CONTAINER):/datas/$(CASSANDRA41_REPORT) reports/
@@ -440,7 +440,7 @@ run-cassandra50:
 	sleep 60
 
 audit-cassandra50:
-	docker exec $(CASSANDRA50_CONTAINER) python3 /datas/$(CASSANDRA50_SCRIPT)
+	docker exec $(CASSANDRA50_CONTAINER) python3 /datas/$(CASSANDRA50_SCRIPT) -o /datas/$(CASSANDRA50_REPORT)
 
 report-cassandra50:
 	docker cp $(CASSANDRA50_CONTAINER):/datas/$(CASSANDRA50_REPORT) reports/
