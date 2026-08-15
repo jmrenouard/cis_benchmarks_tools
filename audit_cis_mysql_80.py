@@ -13,7 +13,7 @@ import html # Pour échapper les caractères spéciaux HTML
 # Par exemple, ajoute -u <user> -p<password> ou utilise mysql_config_editor
 # Pour l'instant, on suppose que la connexion fonctionne sans mot de passe
 # ou via un fichier de configuration (ex: /root/.my.cnf)
-MYSQL_CMD = "mysql -N -B || mariadb -N -B" # -N: skip headers, -B: batch mode (tab separated)
+MYSQL_CMD = "mysql --defaults-extra-file=/root/.my.cnf -N -B || mysql -u root -prootpass -N -B || mysql -N -B || mariadb -N -B" # -N: skip headers, -B: batch mode
 
 # --- Structure des Recommandations (Adaptée pour MySQL 8.0) ---
 # Basée sur le PDF "CIS MySQL 8.0 Benchmark – Tableau récapitulatif complet.pdf"
@@ -710,7 +710,11 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
         if rec["type"] == "Automated":
             # Check pre-condition if defined
             if rec.get("pre_condition"):
-                pc_stdout, pc_stderr, pc_returncode = run_command(rec["pre_condition"], remote_host=remote_host, docker_container=docker_container)
+                pc_stdout, pc_stderr, pc_returncode = run_command(
+                    rec["pre_condition"], remote_host=remote_host, docker_container=docker_container,
+                    db_user=db_user, db_password=db_password, db_host=db_host,
+                    db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
+                )
                 if pc_returncode != 0 or not pc_stdout or pc_stdout == "0":
                     check_result["status"] = "Not Applicable"
                     check_result["output"] = f"Check non applicable dans cet environnement (Pré-condition non remplie).\nCommand de vérification: {rec['pre_condition']}"
@@ -729,10 +733,18 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
                         path_cmd_to_run = f"{path_cmd} || mariadb -N -B -e \"SELECT @@datadir;\" || sudo -n mysql -N -B -e \"SELECT @@datadir;\" || sudo -n mariadb -N -B -e \"SELECT @@datadir;\""
                     
-                    path_stdout, path_stderr, path_returncode = run_command(path_cmd_to_run, remote_host=remote_host, docker_container=docker_container)
+                    path_stdout, path_stderr, path_returncode = run_command(
+                        path_cmd_to_run, remote_host=remote_host, docker_container=docker_container,
+                        db_user=db_user, db_password=db_password, db_host=db_host,
+                        db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
+                    )
 
                     if (path_returncode != 0 or not path_stdout) and "datadir" in path_cmd:
-                        fb_stdout, fb_stderr, fb_ret = run_command("ls -d /var/lib/mariadb /var/lib/mysql | head -n 1", remote_host=remote_host, docker_container=docker_container)
+                        fb_stdout, fb_stderr, fb_ret = run_command(
+                            "ls -d /var/lib/mariadb /var/lib/mysql | head -n 1", remote_host=remote_host, docker_container=docker_container,
+                            db_user=db_user, db_password=db_password, db_host=db_host,
+                            db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
+                        )
                         if fb_ret == 0 and fb_stdout:
                             path_stdout = fb_stdout.strip()
                             path_returncode = 0
@@ -765,7 +777,11 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                         check_result["test_procedure"] = command_executed_display
                         results[category].append(check_result)
                         continue
-                    stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host, docker_container=docker_container)
+                    stdout, stderr, returncode = run_command(
+                        cmd_to_run, remote_host=remote_host, docker_container=docker_container,
+                        db_user=db_user, db_password=db_password, db_host=db_host,
+                        db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
+                    )
                     check_result["output"] = "Stdout:" + chr(10) + stdout + chr(10) + "Stderr:" + chr(10) + stderr + chr(10) + f"Return Code: {returncode}"
                     check_result["error"] = stderr
                     check_result["test_procedure"] = command_executed_display
@@ -951,7 +967,7 @@ def get_status_info(status):
 
 
 
-def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en"):
+def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en", execution_context=None):
     """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
     import json
     import os
@@ -1081,13 +1097,16 @@ def export_results(results, overall_score, categories_scores, target_name, filen
 
     else:
         try:
-            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
+            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang, execution_context=execution_context)
         except TypeError:
             try:
-                generate_html_report(results, overall_score, categories_scores, filename=filename)
+                generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
             except TypeError:
-                # Legacy positional args fallback
-                generate_html_report(results, overall_score, categories_scores, 0, 0, 0, 0, 0, 0, 0, [], [], [], [], [], filename)
+                try:
+                    generate_html_report(results, overall_score, categories_scores, filename=filename)
+                except TypeError:
+                    # Legacy positional args fallback
+                    generate_html_report(results, overall_score, categories_scores, 0, 0, 0, 0, 0, 0, 0, [], [], [], [], [], filename)
 
 
 
@@ -1267,6 +1286,30 @@ if __name__ == "__main__":
 
     rules_data = load_recommendations("mysql_80")
     docker_target = detect_docker_container(remote_host=remote_target, docker_name=args.docker_container)
-    check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target)
+    exec_context = detect_execution_context(mode=args.mode, remote_host=remote_target, docker_container=docker_target, product_hint="mysql")
+    if exec_context.get("is_docker"):
+        print(f"🐳 Target Docker container detected/specified: '{docker_target}' ({exec_context['label']})")
+
+    check_results = perform_checks(
+        rules_data,
+        remote_host=remote_target,
+        docker_container=docker_target,
+        db_user=args.db_user,
+        db_password=args.db_password,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        defaults_file=args.defaults_file,
+        auth_db=args.auth_db
+    )
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
-    export_results(check_results, overall_score, categories_scores, target_name="mysql_80", filename=args.output, fmt=args.format, lang=args.lang)
+    export_results(
+        check_results,
+        overall_score,
+        categories_scores,
+        target_name="mysql_80",
+        filename=args.output,
+        fmt=args.format,
+        lang=args.lang,
+        execution_context=exec_context["label"]
+    )

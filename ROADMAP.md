@@ -32,7 +32,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 15** | Error Masking Elimination (`2>/dev/null`) & Engine Resilience        | `v2.4.2`       | `Completed ✅` | 6/6   | 100%     |
 | **Phase 16** | Authentic CIS Spec Rule Sync & Zero Command Errors Guarantee         | `v2.5.0`       | `Completed ✅` | 6/6   | 100%     |
 | **Phase 17** | Automated E2E Text Export Generation, Parsing & Real-Time Analysis   | `v2.6.0`       | `Completed ✅` | 6/6   | 100%     |
-| **Phase 18** | Dedicated Docker Audit Execution & MySQL 8.0 Full Automation         | `v2.6.1`       | `In Progress 🟡`| 2/4   | 50%      |
+| **Phase 18** | Dedicated Docker Audit Execution & MySQL 8.0 Full Automation         | `v2.6.2`       | `Completed ✅` | 4/4   | 100%     |
 
 
 ---
@@ -337,10 +337,15 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 
 ---
 
-### Phase 18: Dedicated Docker Audit Execution & MySQL 8.0 Full Automation (`In Progress 🟡 - v2.6.1`)
+### Phase 18: Dedicated Docker Audit Execution & MySQL 8.0 Full Automation (`Completed ✅ - v2.6.2`)
 **Summary**: Enhance MySQL 8.0 CIS audit execution when targeting Docker containers or local environments. Accurately detect execution context (`Local Docker (mysql80-test)`), forward database connection parameters (`db_user`, `db_password`, etc.) into all `run_command` invocations, harden `MYSQL_CMD` for container environments, clean dummy manual echoes in `rules/mysql_80.json`, and eliminate command execution errors.
 
 #### 18.1 Rule Spec Sanitization & Minimal Environment Hardening (PR #344)
 - [x] **Rule Spec Sanitization (PR #344)**: Clean dummy `echo 'Contrôle Manuel'` entries in `rules/mysql_80.json` (10 controls cleaned).
 - [x] **Crontab Fallback Hardening (PR #344)**: Harden Rule 2.1.1 test procedure to check `/etc/crontab` and `ps -ef` gracefully when `crontab` binary is missing in minimal Docker containers (Part 1 of #343).
+
+#### 18.2 Docker Execution Context & Database Parameter Routing (PR #345)
+- [x] **Execution Context Detection & Reporting (PR #345)**: Call `detect_execution_context()` in `main()` and propagate context label (`Local Docker (mysql80-test)`) to HTML/JSON/XML report metadata.
+- [x] **Database Parameter Forwarding (PR #345)**: Propagate `db_user`, `db_password`, `db_host`, `db_port`, `db_name`, `defaults_file`, and `auth_db` into all `run_command(...)` invocations within `perform_checks()`.
+- [x] **Client Command Resilience & Fallbacks (PR #345)**: Harden `MYSQL_CMD` with `--defaults-extra-file=/root/.my.cnf` and root container credentials fallback (closes #343).
 
