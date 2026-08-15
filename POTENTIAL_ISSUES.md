@@ -6,7 +6,11 @@ This document tracks technical debt, security considerations, active quality con
 
 ## 🔒 Resolved Architectural Backlog
 
-### 1. Phase 22 PostgreSQL, MongoDB & Cassandra Testing Hardening (Resolved in v2.6.6 ✅)
+### 1. Phase 23 PostgreSQL Command Safety & 100% E2E Multi-Format Compliance (Resolved in v2.6.7 ✅)
+- **Problem**: PostgreSQL rule specifications contained raw SQL queries (`SELECT`, `SHOW`) and invalid trailing expressions without `psql` wrappers, triggering bash error 127 command not found.
+- **Resolution**: Sanitized all PostgreSQL rule definitions and audit engines with proper `psql` wrappers, auto-wrap safety logic, and full parameter forwarding in `perform_checks()`. Added unit tests in `tests/test_postgresql_command_safety.py` and validated 100% pass across all 15 targets in HTML, JSON, XML, and TXT formats (PR #362, Closes #361).
+
+### 2. Phase 22 PostgreSQL, MongoDB & Cassandra Testing Hardening (Resolved in v2.6.6 ✅)
 - **Problem**: Default configurations in PostgreSQL, MongoDB, and Cassandra container startup scripts did not enable CIS-mandated parameters (log verbosity, TLS mode, auth parameters, system.log creation).
 - **Resolution**: Enhanced `scripts/start_postgresql.sh`, `scripts/start_mongodb.sh`, and `scripts/start_cassandra.sh` with CIS-compliant settings (SSL/TLS, auditLog, password authentication, log_line_prefix with `%t`). Added unit tests in `tests/test_pg_mongo_cassandra_hardening.py` (PR #360, Closes #359).
 
