@@ -75,6 +75,12 @@ def analyze_report_integrity(filepath):
             return False, "Malformed TXT report structure"
         if "CATEGORY BREAKDOWN & COMPLIANCE SUMMARY TABLE" not in content:
             return False, "Missing TXT ASCII Summary Table"
+        # Real-time execution error analysis on text export
+        from scripts.analyze_e2e_reports import parse_txt_report
+        parsed = parse_txt_report(filepath)
+        if parsed.get("error", 0) > 0:
+            err_cnt = parsed["error"]
+            return False, f"Execution errors detected in text export ({err_cnt} errors)"
 
     return True, f"Valid ({size} bytes)"
 

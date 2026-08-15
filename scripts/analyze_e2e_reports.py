@@ -17,6 +17,13 @@ from datetime import datetime
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORTS_DIR = os.path.join(REPO_ROOT, "reports")
 
+def get_current_version():
+    vfile = os.path.join(REPO_ROOT, "VERSION")
+    if os.path.exists(vfile):
+        with open(vfile, "r", encoding="utf-8") as f:
+            return f.read().strip()
+    return "v2.6.0"
+
 
 def parse_txt_report(filepath):
     with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
@@ -104,7 +111,7 @@ def generate_single_mode_markdown(mode_title, mode_badge_str, targets_data):
     lines.append(f"# 📊 CIS Benchmarks Suite - Analyse Spécifique {mode_title}")
     lines.append("")
     lines.append(f"> **Rapport d'Analyse E2E ({mode_title}) généré le** : `{now_str}`  ")
-    lines.append(f"> **Moteur d'Audit** : `CIS Benchmarks Tools Suite v2.0.0` (100% Python Standard Library - PSL ONLY)  ")
+    lines.append(f"> **Moteur d'Audit** : `CIS Benchmarks Tools Suite v{get_current_version().lstrip('v')}` (100% Python Standard Library - PSL ONLY)  ")
     lines.append(f"> **Mode d'Exécution** : {mode_badge_str}  ")
     lines.append(f"> **Périmètre** : {total_targets} cibles d'audit évaluées dans ce mode")
     lines.append("")
@@ -197,7 +204,7 @@ def generate_unified_comparison_markdown(local_targets, ssh_targets):
     lines.append("# 📊 CIS Benchmarks Suite - Tableau Comparatif (Mode Local vs SSH Remote)")
     lines.append("")
     lines.append(f"> **Dernière mise à jour** : `{now_str}`  ")
-    lines.append(f"> **Moteur d'Audit** : `CIS Benchmarks Tools Suite v2.0.0` (100% Python Standard Library - PSL ONLY)  ")
+    lines.append(f"> **Moteur d'Audit** : `CIS Benchmarks Tools Suite v{get_current_version().lstrip('v')}` (100% Python Standard Library - PSL ONLY)  ")
     lines.append("")
     lines.append("---")
     lines.append("")
