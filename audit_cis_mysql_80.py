@@ -549,6 +549,33 @@ def is_valid_executable_command(cmd_str):
     return False
 
 
+def get_context_command(rec, field_name, exec_context):
+    """Select context-specific command variant for Local/SSH/Docker execution.
+
+    For a given rule field (e.g. 'test_procedure', 'path_command', 'pre_condition'),
+    returns the most specific command available for the current execution context:
+    - Docker context: tries '{field_name}_docker' first
+    - SSH context: tries '{field_name}_ssh' first
+    - Local context: uses the base '{field_name}'
+    Always falls back to the base field if no context-specific variant exists.
+    """
+    ctx_type = exec_context.get("type", "LOCAL_BAREMETAL") if exec_context else "LOCAL_BAREMETAL"
+
+    # Docker contexts (LOCAL_DOCKER or REMOTE_SSH_DOCKER)
+    if ctx_type in ("LOCAL_DOCKER", "REMOTE_SSH_DOCKER"):
+        docker_cmd = rec.get(f"{field_name}_docker")
+        if docker_cmd:
+            return docker_cmd
+
+    # SSH contexts (REMOTE_SSH_BAREMETAL or REMOTE_SSH_DOCKER fallback)
+    if ctx_type in ("REMOTE_SSH_BAREMETAL", "REMOTE_SSH_DOCKER"):
+        ssh_cmd = rec.get(f"{field_name}_ssh")
+        if ssh_cmd:
+            return ssh_cmd
+
+    # Fallback: base field (local or default)
+    return rec.get(field_name, "")
+
 def run_command(command, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None):
     """Execute command safely locally, over SSH, or inside Docker container (PSL ONLY)."""
     try:
@@ -678,8 +705,8 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     print(f"WARN: Unknown condition type '{condition_type}'")
     return False
 
-def perform_checks(recommendations, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None):
-    """Exécute tous les contrôles et stocke les résultats."""
+def perform_checks(recommendations, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None, exec_context=None):
+    """Exécute tous les contrôles et stocke les résultats. Utilise exec_context pour sélectionner les commandes adaptées au contexte (Local/SSH/Docker)."""
     results = {}
     stored_outputs = {} # Store outputs globally for potential cross-check references (if needed later)
 
@@ -709,15 +736,16 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
 
         if rec["type"] == "Automated":
             # Check pre-condition if defined
-            if rec.get("pre_condition"):
+            if rec.get("pre_condition") or rec.get("pre_condition_docker") or rec.get("pre_condition_ssh"):
+                pre_cond_cmd = get_context_command(rec, "pre_condition", exec_context)
                 pc_stdout, pc_stderr, pc_returncode = run_command(
-                    rec["pre_condition"], remote_host=remote_host, docker_container=docker_container,
+                    pre_cond_cmd, remote_host=remote_host, docker_container=docker_container,
                     db_user=db_user, db_password=db_password, db_host=db_host,
                     db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
                 )
                 if pc_returncode != 0 or not pc_stdout or pc_stdout == "0":
                     check_result["status"] = "Not Applicable"
-                    check_result["output"] = f"Check non applicable dans cet environnement (Pré-condition non remplie).\nCommand de vérification: {rec['pre_condition']}"
+                    check_result["output"] = f"Check non applicable dans cet environnement (Pré-condition non remplie).\nCommand de vérification: {pre_cond_cmd}"
                     results[category].append(check_result)
                     continue
             should_run = True
@@ -727,8 +755,8 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
         if should_run:
             try:
                 # Handle checks that require getting a dynamic path first
-                if rec.get("path_command"):
-                    path_cmd = rec["path_command"]
+                if rec.get("path_command") or rec.get("path_command_docker") or rec.get("path_command_ssh"):
+                    path_cmd = get_context_command(rec, "path_command", exec_context)
                     path_cmd_to_run = path_cmd
                     if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
                         path_cmd_to_run = f"{path_cmd} || mariadb -N -B -e \"SELECT @@datadir;\" || sudo -n mysql -N -B -e \"SELECT @@datadir;\" || sudo -n mariadb -N -B -e \"SELECT @@datadir;\""
@@ -763,11 +791,12 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     dynamic_path = path_stdout.strip()
                     stored_outputs[check_number + "_path"] = dynamic_path
 
-                    if rec.get("test_procedure_template"):
-                        cmd_to_run = rec["test_procedure_template"].format(path=dynamic_path)
+                    tpl = get_context_command(rec, "test_procedure_template", exec_context)
+                    if tpl:
+                        cmd_to_run = tpl.format(path=dynamic_path)
                         command_executed_display = cmd_to_run
-                elif "test_procedure" in rec:
-                    cmd_to_run = rec["test_procedure"]
+                elif rec.get("test_procedure") or rec.get("test_procedure_docker") or rec.get("test_procedure_ssh"):
+                    cmd_to_run = get_context_command(rec, "test_procedure", exec_context)
                     command_executed_display = cmd_to_run
 
                 if cmd_to_run:
@@ -1300,7 +1329,8 @@ if __name__ == "__main__":
         db_port=args.db_port,
         db_name=args.db_name,
         defaults_file=args.defaults_file,
-        auth_db=args.auth_db
+        auth_db=args.auth_db,
+        exec_context=exec_context
     )
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
     export_results(
