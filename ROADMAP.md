@@ -34,6 +34,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 17** | Automated E2E Text Export Generation, Parsing & Real-Time Analysis   | `v2.6.0`       | `Completed ✅` | 6/6   | 100%     |
 | **Phase 18** | Dedicated Docker Audit Execution & MySQL 8.0 Full Automation         | `v2.6.2`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 19** | Context-Separated Execution & Systematic Audit Logging             | `v2.6.3`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 20** | History Check Clean Exit & Resilient Empty Path_Command Handling   | `v2.6.4`       | `Completed ✅` | 4/4   | 100%     |
 
 
 ---
@@ -366,4 +367,16 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **`run_command()` instrumentation (PR #350)**: Logs every command (sanitized), stdout, stderr, return code, and execution duration.
 - [x] **`perform_checks()` instrumentation (PR #350)**: WARNING for manual controls, ERROR for failures, DEBUG for pass/fail results.
 - [x] **CLI `--verbose/-v` flag (PR #350)**: Enables DEBUG level on console for real-time command details (closes #349).
+
+
+### Phase 20: History Check Clean Exit & Resilient Empty Path_Command Handling (`Completed ✅ - v2.6.4`)
+**Summary**: Eliminate false negative failures on command history checks (.mysql_history, .psql_history) by ensuring loop procedures exit cleanly with status code 0, and prevent false positive execution errors when database path commands return empty output with returncode 0.
+
+#### 20.1 Command History Loop Resilience (PR #353)
+- [x] **History Command Loop Exit Code (PR #353)**: Appended `; true` to history check loop procedures across all MariaDB (10.6/10.11), MySQL (8.0/8.4/9.7), and PostgreSQL (16/17/18) rule specification files.
+- [x] **Expected Output Validation (PR #353)**: Confirmed that clean empty output evaluates to `Pass` when no history file exists and `Fail` when history files are detected.
+
+#### 20.2 Resilient Empty Path_Command Handling (PR #353)
+- [x] **`perform_checks()` Path Returncode Logic (PR #353)**: Updated `perform_checks()` across all database audit engines to cleanly evaluate empty output with returncode 0 as `Not Applicable` instead of raising an execution `Error`.
+- [x] **Audit Engine Unit Testing (PR #353)**: Added dedicated unit tests in `tests/test_mariadb_audit_engine.py` validating empty path_command handling and history rule syntax (closes #352).
 
