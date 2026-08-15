@@ -36,6 +36,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 19** | Context-Separated Execution & Systematic Audit Logging             | `v2.6.3`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 20** | History Check Clean Exit & Resilient Empty Path_Command Handling   | `v2.6.4`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 21** | Dockerfile Non-Interactive Shell Hardening & Makefile Sync         | `v2.6.5`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 22** | PostgreSQL, MongoDB & Cassandra Testing Hardening                 | `v2.6.6`       | `Completed ✅` | 4/4   | 100%     |
 
 
 ---
@@ -392,4 +393,14 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 #### 21.2 Makefile Audit Output Synchronization (PR #357)
 - [x] **Makefile Flag Alignment (PR #357)**: Updated all database audit targets in `Makefile` to pass `-o /datas/$(REPORT)` for automated report retrieval.
 - [x] **Unit Testing Validation (PR #357)**: Created `tests/test_docker_hardening_and_service_shells.py` validating Dockerfile and startup script configurations (closes #356).
+
+
+### Phase 22: PostgreSQL, MongoDB & Cassandra Testing Hardening (`Completed ✅ - v2.6.6`)
+**Summary**: Harden startup scripts and configuration templates for PostgreSQL, MongoDB, and Cassandra to satisfy CIS requirements in testing containers.
+
+#### 22.1 Multi-Database Testing Configuration Hardening (PR #360)
+- [x] **PostgreSQL CIS Configuration (PR #360)**: Added `log_error_verbosity = verbose`, `%t` in `log_line_prefix`, SSL enablement, and psql history file disabling to `scripts/start_postgresql.sh`.
+- [x] **MongoDB Configuration Hardening (PR #360)**: Hardened `/etc/mongod.conf` with `authorization: enabled`, `requireTLS`, and auditLog configuration in `scripts/start_mongodb.sh`.
+- [x] **Cassandra Configuration Hardening (PR #360)**: Ensured `system.log` creation and `PasswordAuthenticator`/`CassandraAuthorizer` in `scripts/start_cassandra.sh`.
+- [x] **Unit Testing Suite Expansion (PR #360)**: Added `tests/test_pg_mongo_cassandra_hardening.py` to validate multi-database testing configuration integrity (closes #359).
 

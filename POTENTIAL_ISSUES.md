@@ -6,7 +6,11 @@ This document tracks technical debt, security considerations, active quality con
 
 ## 🔒 Resolved Architectural Backlog
 
-### 1. Phase 21 Database Dockerfile Non-Interactive Shell Hardening & Makefile Harmonization (Resolved in v2.6.5 ✅)
+### 1. Phase 22 PostgreSQL, MongoDB & Cassandra Testing Hardening (Resolved in v2.6.6 ✅)
+- **Problem**: Default configurations in PostgreSQL, MongoDB, and Cassandra container startup scripts did not enable CIS-mandated parameters (log verbosity, TLS mode, auth parameters, system.log creation).
+- **Resolution**: Enhanced `scripts/start_postgresql.sh`, `scripts/start_mongodb.sh`, and `scripts/start_cassandra.sh` with CIS-compliant settings (SSL/TLS, auditLog, password authentication, log_line_prefix with `%t`). Added unit tests in `tests/test_pg_mongo_cassandra_hardening.py` (PR #360, Closes #359).
+
+### 2. Phase 21 Database Dockerfile Non-Interactive Shell Hardening & Makefile Harmonization (Resolved in v2.6.5 ✅)
 - **Problem**: Database service accounts (`mysql`) in MariaDB and MySQL Docker testing containers had interactive shells (`/bin/sh` or `/bin/bash`), triggering CIS Rule 1.5 audit failures. Makefile audit targets also missed output flags, preventing report retrieval.
 - **Resolution**: Hardened all MariaDB (10.6/10.11) and MySQL (8.0/8.4/9.7) Dockerfiles and startup scripts with `usermod -s /sbin/nologin mysql`. Synchronized Makefile audit commands with `-o /datas/$(REPORT)`. Added unit tests in `tests/test_docker_hardening_and_service_shells.py` (PR #357, Closes #356).
 

@@ -27,14 +27,26 @@ net:
   port: 27017
   bindIp: 127.0.0.1
   tls:
-    mode: disabled
+    mode: requireTLS
+    certificateKeyFile: /etc/ssl/mongodb/mongodb.pem
+    CAFile: /etc/ssl/mongodb/mongodb.pem
+    clusterFile: /etc/ssl/mongodb/mongodb.pem
+    PEMKeyFile: /etc/ssl/mongodb/mongodb.pem
     disabledProtocols: "TLS1_0,TLS1_1"
+    FIPSMode: true
 security:
-  authorization: disabled
+  authorization: enabled
+  clusterAuthMode: x509
+  authenticationMechanisms:
+    - MONGODB-X509
 setParameter:
   enableLocalhostAuthBypass: false
 operationProfiling:
   mode: slowOp
+auditLog:
+  destination: file
+  format: JSON
+  path: /var/log/mongodb/audit.json
 EOF
 
 # Start MongoDB using official entrypoint
