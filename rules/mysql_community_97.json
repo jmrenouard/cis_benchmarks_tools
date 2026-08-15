@@ -27,7 +27,7 @@
     "number": "1.3",
     "name": "Désactiver l'historique des commandes MySQL",
     "type": "Automated",
-    "test_procedure": "for h in /root /home/*; do [ -f \"$h/.mysql_history\" ] && echo \"$h/.mysql_history\"; done",
+    "test_procedure": "for h in /root /home/*; do [ -f \"$h/.mysql_history\" ] && echo \"$h/.mysql_history\"; done; true",
     "expected_output": {
       "type": "stdout_equals",
       "value": ""

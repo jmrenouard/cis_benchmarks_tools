@@ -6,7 +6,11 @@ This document tracks technical debt, security considerations, active quality con
 
 ## 🔒 Resolved Architectural Backlog
 
-### 1. Phase 17 Automated E2E Text Export Generation, Parsing & Real-Time Analysis (Resolved in v2.6.0 ✅)
+### 1. Phase 18 History Check Command Exit Code & Empty Path_Command Handling (Resolved in v2.6.4 ✅)
+- **Problem**: History file check procedures (.mysql_history, .psql_history) exited with returncode 1 when no history file was present, causing false negative test failures. Moreover, empty output from path_command with returncode 0 caused false positive command execution errors.
+- **Resolution**: Appended `; true` to history check loop procedures in rules across all MariaDB, MySQL, and PostgreSQL specifications. Updated `perform_checks()` in all database audit engines to cleanly return `Not Applicable` when `path_command` returns empty stdout with returncode 0. Added dedicated unit tests in `tests/test_mariadb_audit_engine.py` (PR #353, Closes #352).
+
+### 2. Phase 17 Automated E2E Text Export Generation, Parsing & Real-Time Analysis (Resolved in v2.6.0 ✅)
 - **Problem**: Text export (.txt) formatting varied across engines and was not systematically parsed for real-time error detection during automated E2E test runs.
 - **Resolution**: Harmonized text exporter format across all 18 benchmark engines (PR #326-#336). Implemented comprehensive E2E text export testing suite in `tests/test_e2e_text_export_analysis.py` and `tests/test_e2e_docker_audits.py` (PR #338). Added real-time text parsing and zero-error verification in `scripts/run_e2e_tests.py` and dynamic versioning in `scripts/analyze_e2e_reports.py` (PR #340). Released v2.6.0 (PR #342).
 
