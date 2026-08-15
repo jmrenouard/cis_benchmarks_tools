@@ -236,7 +236,7 @@
     "number": "3.1.10",
     "name": "Choisir syslog_facility",
     "type": "Manual",
-    "test_procedure": "SHOW syslog_facility;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW syslog_facility;\"",
     "expected_output": null,
     "remediation": "Définir la facility Syslog (LOCAL0–LOCAL7).\nALTER SYSTEM SET syslog_facility = 'LOCAL1'; SELECT pg_reload_conf();"
   },
@@ -280,7 +280,7 @@
     "number": "3.1.14",
     "name": "Assurer les bons messages dans le log serveur",
     "type": "Automated",
-    "test_procedure": "psql -U postgres -t -A -c 'SHOW log_statement;' || SHOW log_statement;",
+    "test_procedure": "psql -U postgres -t -A -c 'SHOW log_statement;'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -458,7 +458,7 @@
     "number": "3.2",
     "name": "Activer l’extension pgAudit",
     "type": "Automated",
-    "test_procedure": "SELECT * FROM pg_extension WHERE extname = 'pgaudit';",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SELECT * FROM pg_extension WHERE extname = 'pgaudit';\"",
     "expected_output": {
       "type": "stdout_contains",
       "value": "pgaudit"
@@ -497,7 +497,7 @@
     "number": "4.4",
     "name": "Verrouiller les comptes inactifs",
     "type": "Manual",
-    "test_procedure": "psql -U postgres -t -A -c 'SELECT rolname, rolvaliduntil FROM pg_authid;' || SELECT rolname, rolvaliduntil FROM pg_authid;",
+    "test_procedure": "psql -U postgres -t -A -c 'SELECT rolname, rolvaliduntil FROM pg_authid;'",
     "expected_output": null,
     "remediation": "Désactiver les rôles non utilisés depuis un certain temps.\nSELECT rolname, rolvaliduntil FROM pg_authid; vérifier dates d’expiration.\nALTER ROLE <user> NOLOGIN; ou définir VALID UNTIL à une date passée."
   },
@@ -537,7 +537,7 @@
     "number": "4.8",
     "name": "Installer l’extension set_user",
     "type": "Automated",
-    "test_procedure": "SELECT * FROM pg_extension WHERE extname = 'set_user';",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SELECT * FROM pg_extension WHERE extname = 'set_user';\"",
     "expected_output": {
       "type": "stdout_contains",
       "value": "set_user"
@@ -567,7 +567,7 @@
     "number": "5.2",
     "name": "Lier PostgreSQL à une adresse IP",
     "type": "Manual",
-    "test_procedure": "SHOW listen_addresses;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW listen_addresses;\"",
     "expected_output": null,
     "remediation": "Restreindre l’écoute à l’interface prévue (listen_addresses).\nModifier postgresql.conf (listen_addresses = '192.0.2.1' ou '*') et redémarrer le service."
   },
@@ -594,7 +594,7 @@
     "number": "5.5",
     "name": "Limites de connexion par compte",
     "type": "Automated",
-    "test_procedure": "psql -U postgres -t -A -c 'SELECT rolname, rolconnlimit FROM pg_authid;' || SELECT rolname, rolconnlimit FROM pg_authid;",
+    "test_procedure": "psql -U postgres -t -A -c 'SELECT rolname, rolconnlimit FROM pg_authid;'",
     "expected_output": {
       "type": "stdout_not_empty"
     },
@@ -605,7 +605,7 @@
     "number": "5.6",
     "name": "Configurer la complexité des mots de passe",
     "type": "Manual",
-    "test_procedure": "psql -U postgres -t -A -c 'SHOW password_encryption;' || SHOW password_encryption;",
+    "test_procedure": "psql -U postgres -t -A -c 'SHOW password_encryption;'",
     "expected_output": null,
     "remediation": "Imposer un contrôle de la complexité (extensions passwordcheck, pam, etc.).\nInstaller/configurer passwordcheck ou pam, définir password_encryption = 'scram-sha-256'."
   },
@@ -654,7 +654,7 @@
     "number": "6.3",
     "name": "Configurer Postmaster runtime parameters",
     "type": "Manual",
-    "test_procedure": "SHOW data_directory, hba_file, ident_file;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW data_directory, hba_file, ident_file;\"",
     "expected_output": null,
     "remediation": "Ajuster data_directory, hba_file, ident_file, etc.\nModifier postgresql.conf puis redémarrer."
   },
@@ -663,7 +663,7 @@
     "number": "6.4",
     "name": "Configurer les signaux SIGHUP",
     "type": "Manual",
-    "test_procedure": "psql -U postgres -t -A -c 'SELECT pg_reload_conf();' || SELECT pg_reload_conf();",
+    "test_procedure": "psql -U postgres -t -A -c 'SELECT pg_reload_conf();'",
     "expected_output": null,
     "remediation": "Sécuriser la réaction aux signaux de rechargement de configuration.\nAucun changement automatique ; documenter le processus."
   },
@@ -672,7 +672,7 @@
     "number": "6.5",
     "name": "Configurer les paramètres Superuser",
     "type": "Manual",
-    "test_procedure": "SHOW statement_timeout, idle_in_transaction_session_timeout;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW statement_timeout, idle_in_transaction_session_timeout;\"",
     "expected_output": null,
     "remediation": "Restreindre statement_timeout, idle_in_transaction_session_timeout pour les superusers.\nALTER SYSTEM SET statement_timeout = '...'; ALTER SYSTEM SET idle_in_transaction_session_timeout = '5min'; puis recharger."
   },
@@ -681,7 +681,7 @@
     "number": "6.6",
     "name": "Configurer les paramètres User",
     "type": "Manual",
-    "test_procedure": "SHOW search_path;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW search_path;\"",
     "expected_output": null,
     "remediation": "Ajuster log_statement, search_path, etc., pour les rôles standards.\nALTER ROLE <user> SET search_path TO '$user', public;."
   },
@@ -690,7 +690,7 @@
     "number": "6.7",
     "name": "Utiliser la cryptographie FIPS 140-2",
     "type": "Automated",
-    "test_procedure": "SHOW ssl_library; et vérifier la version OpenSSL.;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW ssl_library;\"",
     "expected_output": {
       "type": "stdout_contains",
       "value": "OpenSSL"
@@ -731,7 +731,7 @@
     "number": "6.9",
     "name": "Configurer TLSv1.3+",
     "type": "Automated",
-    "test_procedure": "SHOW ssl_min_protocol_version;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW ssl_min_protocol_version;\"",
     "expected_output": {
       "type": "stdout_equals",
       "value": "TLSv1.3"
@@ -743,7 +743,7 @@
     "number": "6.10",
     "name": "Désactiver les cipher suites faibles",
     "type": "Automated",
-    "test_procedure": "SHOW ssl_cipher_suites;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW ssl_cipher_suites;\"",
     "expected_output": {
       "type": "stdout_not_contains_any",
       "values": [
@@ -764,7 +764,7 @@
     "number": "6.11",
     "name": "Installer et configurer pgcrypto",
     "type": "Manual",
-    "test_procedure": "SELECT * FROM pg_extension WHERE extname = 'pgcrypto';",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SELECT * FROM pg_extension WHERE extname = 'pgcrypto';\"",
     "expected_output": null,
     "remediation": "Activer pgcrypto pour fonctions cryptographiques.\nCREATE EXTENSION pgcrypto;"
   },
@@ -773,7 +773,7 @@
     "number": "7.1",
     "name": "Créer un utilisateur de réplication dédié",
     "type": "Manual",
-    "test_procedure": "psql -U postgres -t -A -c \"SELECT rolname, rolreplication FROM pg_roles WHERE rolreplication = true;\" || SELECT rolname FROM pg_roles;",
+    "test_procedure": "psql -U postgres -t -A -c \"SELECT rolname, rolreplication FROM pg_roles WHERE rolreplication = true;\"",
     "expected_output": null,
     "remediation": "Ne pas réutiliser postgres pour la réplication.\nCREATE USER repuser REPLICATION LOGIN ENCRYPTED PASSWORD '…';."
   },
@@ -782,7 +782,7 @@
     "number": "7.2",
     "name": "Journaliser les commandes de réplication",
     "type": "Manual",
-    "test_procedure": "SHOW log_replication_commands; doit être on.;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW log_replication_commands;\"",
     "expected_output": null,
     "remediation": "Activer log_replication_commands pour tracer les actions de réplication.\nALTER SYSTEM SET log_replication_commands = 'on'; SELECT pg_reload_conf();."
   },
@@ -823,7 +823,7 @@
     "number": "7.5",
     "name": "Configurer les paramètres de streaming",
     "type": "Manual",
-    "test_procedure": "SHOW primary_conninfo, max_wal_senders, hot_standby;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW primary_conninfo, max_wal_senders, hot_standby;\"",
     "expected_output": null,
     "remediation": "Ajuster primary_conninfo, max_wal_senders, hot_standby.\nALTER SYSTEM SET max_wal_senders = 3; ALTER SYSTEM SET hot_standby = 'on'; SELECT pg_reload_conf();."
   },
@@ -832,7 +832,7 @@
     "number": "8.1",
     "name": "Emplacements hors du cluster de données",
     "type": "Manual",
-    "test_procedure": "SHOW temp_tablespaces, log_directory;",
+    "test_procedure": "sudo -n -u postgres psql -t -c \"SHOW temp_tablespaces, log_directory;\"",
     "expected_output": null,
     "remediation": "Placer les répertoires temporaires et de logs en dehors de $PGDATA pour éviter leur inclusion.\nSet temp_tablespaces and log_directory on another volume and reload."
   },
@@ -853,7 +853,7 @@
     "number": "8.3",
     "name": "Vérifier autres paramètres divers",
     "type": "Manual",
-    "test_procedure": "psql -U postgres -t -A -c 'SHOW max_connections;' || SHOW max_connections;",
+    "test_procedure": "psql -U postgres -t -A -c 'SHOW max_connections;'",
     "expected_output": null,
     "remediation": "Contrôler toute autre configuration (temp_file_limit, temp_tablespaces, …) selon les besoins.\nAjuster manuellement puis recharger la configuration."
   }
