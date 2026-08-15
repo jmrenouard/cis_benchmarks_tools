@@ -7,6 +7,8 @@ import sys
 from datetime import datetime
 import re # Pour les expressions régulières
 import html # Pour échapper les caractères spéciaux HTML
+import logging
+import time
 
 # --- Configuration ---
 # Adapte cette commande si nécessaire pour te connecter à MySQL
@@ -576,8 +578,55 @@ def get_context_command(rec, field_name, exec_context):
     # Fallback: base field (local or default)
     return rec.get(field_name, "")
 
+def _sanitize_log_cmd(cmd_str):
+    """Mask sensitive credentials in command strings before logging."""
+    if not isinstance(cmd_str, str):
+        return str(cmd_str)
+    sanitized = re.sub(r'MYSQL_PWD=[^\s"]+', 'MYSQL_PWD=***', cmd_str)
+    sanitized = re.sub(r'PGPASSWORD=[^\s"]+', 'PGPASSWORD=***', sanitized)
+    sanitized = re.sub(r'-p[^\s"]{1,}', '-p***', sanitized)
+    return sanitized
+
+
+def setup_audit_logger(log_path=None, verbose=False):
+    """Configure the CIS audit logger with file + console handlers (PSL ONLY).
+
+    Args:
+        log_path: Path for the .log companion file. If None, file logging is disabled.
+        verbose: If True, console shows DEBUG level. Otherwise INFO only.
+    Returns:
+        logging.Logger instance.
+    """
+    logger = logging.getLogger("cis_audit")
+    logger.setLevel(logging.DEBUG)
+    # Clear existing handlers to avoid duplicates on re-init
+    logger.handlers.clear()
+
+    if log_path:
+        log_dir = os.path.dirname(log_path)
+        if log_dir:
+            os.makedirs(log_dir, exist_ok=True)
+        fh = logging.FileHandler(log_path, mode="w", encoding="utf-8")
+        fh.setLevel(logging.DEBUG)
+        fh.setFormatter(logging.Formatter(
+            '%(asctime)s [%(levelname)-7s] %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        ))
+        logger.addHandler(fh)
+
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.DEBUG if verbose else logging.INFO)
+    ch.setFormatter(logging.Formatter('%(message)s'))
+    logger.addHandler(ch)
+
+    return logger
+
+
 def run_command(command, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None):
     """Execute command safely locally, over SSH, or inside Docker container (PSL ONLY)."""
+    logger = logging.getLogger("cis_audit")
+    original_cmd = command if isinstance(command, str) else " ".join(command)
+    t0 = time.time()
     try:
         env = os.environ.copy()
         docker_env = []
@@ -614,6 +663,8 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
         if remote_host:
             cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
 
+        logger.debug("CMD: %s", _sanitize_log_cmd(command if isinstance(command, str) else " ".join(cmd_args)))
+
         process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10, env=env)
         stdout_text = process.stdout.strip()
         stderr_text = process.stderr.strip()
@@ -626,10 +677,21 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
             ]
             stderr_text = chr(10).join(filtered_lines).strip()
 
+        elapsed = time.time() - t0
+        if stdout_text:
+            logger.debug("STDOUT: %s", stdout_text[:500])
+        if stderr_text:
+            logger.debug("STDERR: %s", _sanitize_log_cmd(stderr_text[:500]))
+        logger.debug("RC: %d (%.2fs)", process.returncode, elapsed)
+
         return stdout_text, stderr_text, process.returncode
     except subprocess.TimeoutExpired:
+        elapsed = time.time() - t0
+        logger.error("TIMEOUT: %s (%.2fs)", _sanitize_log_cmd(original_cmd[:200]), elapsed)
         return "", "Command execution timed out after 10 seconds", -1
     except Exception as e:
+        elapsed = time.time() - t0
+        logger.error("EXCEPTION: %s - %s (%.2fs)", _sanitize_log_cmd(original_cmd[:200]), str(e), elapsed)
         return "", str(e), -1
 
 
@@ -709,6 +771,10 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
     """Exécute tous les contrôles et stocke les résultats. Utilise exec_context pour sélectionner les commandes adaptées au contexte (Local/SSH/Docker)."""
     results = {}
     stored_outputs = {} # Store outputs globally for potential cross-check references (if needed later)
+    logger = logging.getLogger("cis_audit")
+    auto_count = sum(1 for r in recommendations if r.get('type') == 'Automated')
+    manual_count = sum(1 for r in recommendations if r.get('type') == 'Manual')
+    logger.info("📋 Rules loaded: %d controls (%d Automated, %d Manual)", len(recommendations), auto_count, manual_count)
 
     for rec in recommendations:
         category = rec["category"]
@@ -716,6 +782,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
             results[category] = []
 
         check_number = rec.get("number", "N/A")
+        logger.debug("[%s] --- %s (%s) ---", check_number, rec["name"][:60], rec["type"])
 
         check_result = {
             "number": check_number,
@@ -746,6 +813,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                 if pc_returncode != 0 or not pc_stdout or pc_stdout == "0":
                     check_result["status"] = "Not Applicable"
                     check_result["output"] = f"Check non applicable dans cet environnement (Pré-condition non remplie).\nCommand de vérification: {pre_cond_cmd}"
+                    logger.debug("[%s] Pre-condition not met → Not Applicable", check_number)
                     results[category].append(check_result)
                     continue
             should_run = True
@@ -781,11 +849,13 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                         if "Unknown system variable" in path_stderr or "ERROR 1193" in path_stderr:
                              check_result["status"] = "Not Applicable"
                              check_result["output"] = "Variable/Plugin non disponible (N/A)." + chr(10) + "Stderr:" + chr(10) + path_stderr
+                             logger.debug("[%s] Variable/Plugin N/A", check_number)
                         else:
                              check_result["status"] = "Error"
                              err_detail = path_stderr if path_stderr else "Impossible d'exécuter la commande client MariaDB/MySQL (vérifier si le service est démarré ou conteneur Docker actif). [Erreur d'Exécution de Commande - Non-conformité de sécurité non évaluée]"
                              check_result["output"] = "Error lors de l'obtention du chemin via:" + chr(10) + f"`{path_cmd}`" + chr(10) + "Output:" + chr(10) + err_detail
                              check_result["error"] = err_detail
+                             logger.error("[%s] Path command error: %s", check_number, err_detail[:100])
                         results[category].append(check_result)
                         continue
                     dynamic_path = path_stdout.strip()
@@ -826,27 +896,32 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     if returncode == 127 or ("command not found" in stderr.lower() and not cmd_to_run.strip().startswith('!')):
                         check_result["status"] = "Error"
                         check_result["output"] = "Error: Command not found." + chr(10) + check_result['output']
+                        logger.error("[%s] Command not found", check_number)
                         results[category].append(check_result)
                         continue
                     elif returncode == 124:
                         check_result["status"] = "Error"
                         check_result["output"] = "Error: Timeout." + chr(10) + check_result['output']
+                        logger.error("[%s] Command timeout", check_number)
                         results[category].append(check_result)
                         continue
                     elif "ERROR 1045 (28000): Access denied" in stderr:
                         check_result["status"] = "Error"
                         check_result["output"] = "Error: Accès refusé (vérifier les identifiants/privilèges)." + chr(10) + check_result['output']
+                        logger.error("[%s] Access denied", check_number)
                         results[category].append(check_result)
                         continue
                     elif "ERROR 2002 (HY000): Can't connect" in stderr:
                         check_result["status"] = "Error"
                         check_result["output"] = "Error: Impossible de se connecter au serveur (service arrêté ou mauvais socket)." + chr(10) + check_result['output']
+                        logger.error("[%s] Cannot connect to server", check_number)
                         results[category].append(check_result)
                         continue
 
                     # 3. Manual Checks (when command executed without execution errors)
                     if rec["type"] == "Manual":
                         check_result["status"] = "Manual"
+                        logger.warning("[%s] Manual control: %s", check_number, rec["name"][:60])
                         tp = rec.get("test_procedure", "").strip()
                         if tp and is_valid_executable_command(tp):
                             diag_out, diag_err, diag_ret = run_command(
@@ -874,10 +949,13 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                         
                         if is_pass:
                             check_result["status"] = "Pass"
+                            logger.debug("[%s] → PASS", check_number)
                         else:
                             check_result["status"] = "Fail"
+                            logger.debug("[%s] → FAIL", check_number)
                     else:
                         check_result["status"] = "Manual"
+                        logger.warning("[%s] No expected_output → Manual", check_number)
 
             except Exception as e:
                  check_result["status"] = "Error"
@@ -1301,23 +1379,38 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
     parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Report language choice (en/fr)")
     parser.add_argument("-o", "--output", dest="output", default=None, help="Custom output report file path")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose console output (show all command details)")
     args = parser.parse_args()
+
+    # Compute report and log paths
+    report_path = args.output
+    if not report_path:
+        ext = "html" if args.format == "html" else args.format
+        report_path = f"reports/rapport_cis_mysql_80.{ext}"
+    log_path = os.path.splitext(report_path)[0] + ".log"
+
+    # Setup logger before any execution
+    logger = setup_audit_logger(log_path=log_path, verbose=args.verbose)
+    logger.info("=" * 70)
+    logger.info("=== CIS Audit MySQL 8.0 ===")
+    logger.info("=" * 70)
 
     remote_target = None
     if args.mode == "ssh" or args.remote_host:
         remote_target = args.remote_host
         if not remote_target:
-            print("❌ SSH mode requires a remote host target via --remote user@hostname or --ssh user@hostname", file=sys.stderr)
+            logger.error("❌ SSH mode requires a remote host target via --remote user@hostname or --ssh user@hostname")
             sys.exit(1)
-        print(f"🌐 Running Audit in SSH Remote Mode on host: '{remote_target}'...")
+        logger.info("🌐 Running Audit in SSH Remote Mode on host: '%s'...", remote_target)
     else:
-        print("🖥️  Running Audit in Local Mode on local machine...")
+        logger.info("🖥️  Running Audit in Local Mode on local machine...")
 
     rules_data = load_recommendations("mysql_80")
     docker_target = detect_docker_container(remote_host=remote_target, docker_name=args.docker_container)
     exec_context = detect_execution_context(mode=args.mode, remote_host=remote_target, docker_container=docker_target, product_hint="mysql")
+    logger.info("📍 Execution Context: %s", exec_context["label"])
     if exec_context.get("is_docker"):
-        print(f"🐳 Target Docker container detected/specified: '{docker_target}' ({exec_context['label']})")
+        logger.info("🐳 Target Docker container: '%s'", docker_target)
 
     check_results = perform_checks(
         rules_data,
@@ -1333,6 +1426,24 @@ if __name__ == "__main__":
         exec_context=exec_context
     )
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
+
+    # Log final audit summary
+    flat = []
+    if isinstance(check_results, dict):
+        for checks in check_results.values():
+            flat.extend(checks)
+    else:
+        flat = check_results
+    s_pass = sum(1 for r in flat if r.get("status") in ("PASS", "Pass"))
+    s_fail = sum(1 for r in flat if r.get("status") in ("FAIL", "Fail"))
+    s_manual = sum(1 for r in flat if r.get("status") in ("MANUAL", "Manual"))
+    s_error = sum(1 for r in flat if r.get("status") in ("ERROR", "Error"))
+    s_na = sum(1 for r in flat if r.get("status") in ("Not Applicable",))
+    logger.info("=" * 70)
+    logger.info("=== Audit Complete ===")
+    logger.info("Score: %.1f%% | Pass: %d | Fail: %d | Manual: %d | Error: %d | N/A: %d",
+                overall_score, s_pass, s_fail, s_manual, s_error, s_na)
+
     export_results(
         check_results,
         overall_score,
@@ -1343,3 +1454,5 @@ if __name__ == "__main__":
         lang=args.lang,
         execution_context=exec_context["label"]
     )
+    logger.info("📄 Report: %s", report_path)
+    logger.info("📝 Log: %s", log_path)
