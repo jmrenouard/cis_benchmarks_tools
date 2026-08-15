@@ -33,6 +33,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 16** | Authentic CIS Spec Rule Sync & Zero Command Errors Guarantee         | `v2.5.0`       | `Completed ✅` | 6/6   | 100%     |
 | **Phase 17** | Automated E2E Text Export Generation, Parsing & Real-Time Analysis   | `v2.6.0`       | `Completed ✅` | 6/6   | 100%     |
 | **Phase 18** | Dedicated Docker Audit Execution & MySQL 8.0 Full Automation         | `v2.6.2`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 19** | Context-Separated Execution & Systematic Audit Logging             | `v2.6.3`       | `Completed ✅` | 4/4   | 100%     |
 
 
 ---
@@ -348,4 +349,21 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Execution Context Detection & Reporting (PR #345)**: Call `detect_execution_context()` in `main()` and propagate context label (`Local Docker (mysql80-test)`) to HTML/JSON/XML report metadata.
 - [x] **Database Parameter Forwarding (PR #345)**: Propagate `db_user`, `db_password`, `db_host`, `db_port`, `db_name`, `defaults_file`, and `auth_db` into all `run_command(...)` invocations within `perform_checks()`.
 - [x] **Client Command Resilience & Fallbacks (PR #345)**: Harden `MYSQL_CMD` with `--defaults-extra-file=/root/.my.cnf` and root container credentials fallback (closes #343).
+
+
+### Phase 19: Context-Separated Execution & Systematic Audit Logging (`Completed ✅ - v2.6.3`)
+**Summary**: Separate command execution into 3 distinct contexts (Local/SSH/Docker) with dedicated command sets per rule, and add a systematic logging system that generates a `.log` companion file alongside each audit report.
+
+#### 19.1 Context-Aware Command Selection Engine (PR #347)
+- [x] **`get_context_command()` function (PR #347)**: Selects `test_procedure_docker` / `test_procedure_ssh` / `test_procedure` based on execution context type (LOCAL_DOCKER, REMOTE_SSH_BAREMETAL, etc.).
+- [x] **`perform_checks()` context integration (PR #347)**: Updated to accept `exec_context` parameter and resolve `pre_condition`, `path_command`, `test_procedure_template`, and `test_procedure` through context-aware lookup.
+
+#### 19.2 Docker-Specific OS Command Variants (PR #348)
+- [x] **OS command Docker variants (PR #348)**: Added `test_procedure_docker` for rules 1.4 and 1.7 (systemctl → ps, /proc/*/environ → env). MySQL client swaps not needed since `run_command()` handles `docker exec` wrapping.
+
+#### 19.3 Systematic Audit Logging (PR #350)
+- [x] **PSL logging module (PR #350)**: `setup_audit_logger()` with FileHandler (DEBUG) + StreamHandler (INFO/DEBUG), credential masking via `_sanitize_log_cmd()`.
+- [x] **`run_command()` instrumentation (PR #350)**: Logs every command (sanitized), stdout, stderr, return code, and execution duration.
+- [x] **`perform_checks()` instrumentation (PR #350)**: WARNING for manual controls, ERROR for failures, DEBUG for pass/fail results.
+- [x] **CLI `--verbose/-v` flag (PR #350)**: Enables DEBUG level on console for real-time command details (closes #349).
 
