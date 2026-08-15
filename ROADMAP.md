@@ -35,6 +35,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 18** | Dedicated Docker Audit Execution & MySQL 8.0 Full Automation         | `v2.6.2`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 19** | Context-Separated Execution & Systematic Audit Logging             | `v2.6.3`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 20** | History Check Clean Exit & Resilient Empty Path_Command Handling   | `v2.6.4`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 21** | Dockerfile Non-Interactive Shell Hardening & Makefile Sync         | `v2.6.5`       | `Completed ✅` | 4/4   | 100%     |
 
 
 ---
@@ -379,4 +380,16 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 #### 20.2 Resilient Empty Path_Command Handling (PR #353)
 - [x] **`perform_checks()` Path Returncode Logic (PR #353)**: Updated `perform_checks()` across all database audit engines to cleanly evaluate empty output with returncode 0 as `Not Applicable` instead of raising an execution `Error`.
 - [x] **Audit Engine Unit Testing (PR #353)**: Added dedicated unit tests in `tests/test_mariadb_audit_engine.py` validating empty path_command handling and history rule syntax (closes #352).
+
+
+### Phase 21: Dockerfile Non-Interactive Shell Hardening & Makefile Sync (`Completed ✅ - v2.6.5`)
+**Summary**: Harden system service account shells (`mysql`) in Docker testing containers to satisfy CIS Rule 1.5, and synchronize Makefile audit and report targets.
+
+#### 21.1 Non-Interactive Service Account Shells (PR #357)
+- [x] **Dockerfile Service Account Hardening (PR #357)**: Enforced `usermod -s /sbin/nologin mysql` across all MariaDB and MySQL Dockerfiles.
+- [x] **Startup Script Shell Hardening (PR #357)**: Added `usermod -s /sbin/nologin mysql` to `scripts/start_mariadb.sh` and `scripts/start_mysql.sh`.
+
+#### 21.2 Makefile Audit Output Synchronization (PR #357)
+- [x] **Makefile Flag Alignment (PR #357)**: Updated all database audit targets in `Makefile` to pass `-o /datas/$(REPORT)` for automated report retrieval.
+- [x] **Unit Testing Validation (PR #357)**: Created `tests/test_docker_hardening_and_service_shells.py` validating Dockerfile and startup script configurations (closes #356).
 
