@@ -59,6 +59,23 @@ class TestE2EDockerAudits(unittest.TestCase):
             audit_cis.auto_detect_and_run()
             self.assertTrue(mock_audit.called)
 
+    @patch("subprocess.run")
+    def test_run_single_audit_with_txt_format_e2e(self, mock_run):
+        """Test unified run_single_audit forwards text export format (-f txt) correctly."""
+        mock_run.return_value = MagicMock(returncode=0)
+
+        success = audit_cis.run_single_audit(
+            "mysql80",
+            output_file="reports/custom_report.txt",
+            fmt="txt"
+        )
+        self.assertTrue(success)
+        called_cmd = mock_run.call_args[0][0]
+        self.assertIn("-f", called_cmd)
+        self.assertIn("txt", called_cmd)
+        self.assertIn("-o", called_cmd)
+        self.assertIn("reports/custom_report.txt", called_cmd)
+
 
 if __name__ == "__main__":
     unittest.main()
