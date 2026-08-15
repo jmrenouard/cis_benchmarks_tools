@@ -47,7 +47,8 @@
     "expected_output": {
       "type": "returncode_zero"
     },
-    "remediation": "Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifiée."
+    "remediation": "Modifier les scripts/utilisateurs pour éviter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifiée.",
+    "test_procedure_docker": "env | grep -i MYSQL_PWD || echo OK_NO_MYSQL_PWD"
   },
   {
     "category": "1. Configuration Système d'exploitation",
@@ -86,7 +87,8 @@
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
       "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
-    ]
+    ],
+    "test_procedure_docker": "ps aux | grep -E 'mysqld|mariadbd' | grep -v grep"
   },
   {
     "category": "2. Installation et Planification",
