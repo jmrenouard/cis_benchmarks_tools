@@ -22,7 +22,7 @@
     "number": "1.3",
     "name": "Activer le service systemd",
     "type": "Automated",
-    "test_procedure": "for h in /root /home/* /var/lib/postgresql; do [ -f \"$h/.psql_history\" ] && echo \"$h/.psql_history\"; done",
+    "test_procedure": "for h in /root /home/* /var/lib/postgresql; do [ -f \"$h/.psql_history\" ] && echo \"$h/.psql_history\"; done; true",
     "expected_output": {
       "type": "stdout_equals",
       "value": ""

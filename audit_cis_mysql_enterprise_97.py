@@ -740,6 +740,9 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                         if "Unknown system variable" in path_stderr or "ERROR 1193" in path_stderr:
                              check_result["status"] = "Not Applicable"
                              check_result["output"] = "Variable/Plugin non disponible (N/A)." + chr(10) + "Stderr:" + chr(10) + path_stderr
+                        elif path_returncode == 0 and not path_stdout:
+                             check_result["status"] = "Not Applicable"
+                             check_result["output"] = "Variable/Journal non configuré(e) ou désactivé(e) (N/A)." + chr(10) + f"Commande: `{path_cmd}`"
                         else:
                              check_result["status"] = "Error"
                              err_detail = path_stderr if path_stderr else "Impossible d'exécuter la commande client MariaDB/MySQL (vérifier si le service est démarré ou conteneur Docker actif). [Erreur d'Exécution de Commande - Non-conformité de sécurité non évaluée]"
