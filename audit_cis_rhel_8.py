@@ -687,13 +687,17 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         print(f"📄 XML Report successfully generated: {filename}")
 
     elif fmt == "txt":
+        pass_cnt = sum(1 for r in flat_results if r.get("status") in ["PASS", "Pass"])
+        fail_cnt = sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])
+        manual_cnt = sum(1 for r in flat_results if r.get("status") in ["MANUAL", "Manual"])
+        error_cnt = sum(1 for r in flat_results if r.get("status") in ["ERROR", "Error"])
         lines = [
             "=" * 90,
             f"               CIS BENCHMARK AUDIT REPORT - {target_name.upper()}",
             "=" * 90,
             f"Report Date   : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             f"Global Score  : {overall_score:.1f}%",
-            f"Total Controls: {len(flat_results)}",
+            f"Total Controls: {len(flat_results)} (Passed: {pass_cnt}, Failed: {fail_cnt}, Manual: {manual_cnt}, Error: {error_cnt})",
             "-" * 90,
             " CATEGORY BREAKDOWN & COMPLIANCE SUMMARY TABLE",
             "-" * 90,
@@ -702,12 +706,18 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         ]
         if isinstance(categories_scores, dict):
             for cat_id, data in categories_scores.items():
-                name = str(data.get('name', cat_id))[:44]
-                p = data.get('passed_automated', 0)
-                f = data.get('failed_automated', 0)
-                m = data.get('manual_checks', 0)
-                sc = data.get('score', 0.0)
-                lines.append(f"  {str(cat_id):<6} {name:<45} {p:<6} {f:<6} {m:<8} {sc:>6.1f}%")
+                raw_name = str(data.get("name", cat_id)).strip()
+                m = re.match(r"^(\d+[\.\d]*)\s*[-.:]?\s*(.*)$", raw_name)
+                if m:
+                    cid, cname = m.group(1), m.group(2)
+                else:
+                    cid, cname = str(cat_id)[:6], raw_name
+                cname_trunc = cname[:44] if cname else raw_name[:44]
+                p = data.get("passed_automated", 0)
+                f = data.get("failed_automated", 0)
+                m_cnt = data.get("manual_checks", 0)
+                sc = data.get("score", 0.0)
+                lines.append(f"  {cid:<6} {cname_trunc:<45} {p:<6} {f:<6} {m_cnt:<8} {sc:>6.1f}%")
         lines.extend([
             "=" * 90,
             " DETAILED CONTROL RESULTS",
@@ -716,7 +726,16 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         ])
         for r in flat_results:
             status = r.get("status", "")
-            status_icon = "[PASS]" if status in ["PASS", "Pass"] else ("[FAIL]" if status in ["FAIL", "Fail"] else "[MANUAL]")
+            if status in ["PASS", "Pass"]:
+                status_icon = "[PASS]"
+            elif status in ["FAIL", "Fail"]:
+                status_icon = "[FAIL]"
+            elif status in ["ERROR", "Error"]:
+                status_icon = "[ERROR]"
+            elif status in ["N/A", "Not Applicable"]:
+                status_icon = "[N/A]"
+            else:
+                status_icon = "[MANUAL]"
             rec_id = r.get("number", r.get("id", ""))
             rec_name = r.get("name", r.get("title", ""))
             lines.append(f"{status_icon} {rec_id} - {rec_name}")
@@ -724,10 +743,10 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             test_proc = r.get("test_procedure", r.get("audit", ""))
             if test_proc:
                 lines.append(f"  Commande de test: {str(test_proc).strip()}")
-            out = r.get('output', r.get('stdout', ''))
+            out = r.get("output", r.get("stdout", ""))
             if out:
                 lines.append(f"  Output: {str(out).strip()}")
-            rem = r.get('remediation', '')
+            rem = r.get("remediation", "")
             if rem:
                 lines.append(f"  Procédure de remédiation: {str(rem).strip()}")
             lines.append("-" * 90)
