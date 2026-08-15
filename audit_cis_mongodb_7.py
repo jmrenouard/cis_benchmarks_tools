@@ -3,6 +3,7 @@ import argparse
 import subprocess
 import json
 import os
+import sys
 from datetime import datetime
 import re # Pour les expressions régulières
 import html # Pour échapper les caractères spéciaux HTML
@@ -634,9 +635,13 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     path_stdout, path_stderr, path_returncode = run_command(path_cmd, remote_host=remote_host)
 
                     if path_returncode != 0 or not path_stdout:
-                        check_result["status"] = "Error"
-                        check_result["output"] = f"Error lors de l'obtention du chemin via:\n`{path_cmd}`\nStdout:\n{path_stdout}\nStderr:\n{path_stderr}"
-                        check_result["error"] = path_stderr
+                        if path_returncode == 0 and not path_stdout:
+                            check_result["status"] = "Not Applicable"
+                            check_result["output"] = "Variable/Journal non configuré(e) ou désactivé(e) (N/A)." + chr(10) + f"Commande: `{path_cmd}`"
+                        else:
+                            check_result["status"] = "Error"
+                            check_result["output"] = f"Error lors de l'obtention du chemin via:\n`{path_cmd}`\nStdout:\n{path_stdout}\nStderr:\n{path_stderr}"
+                            check_result["error"] = path_stderr
                         results[category].append(check_result)
                         continue # Passer à la recommandation suivante
 
