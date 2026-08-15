@@ -8,7 +8,7 @@
     "test_procedure_template": "df -P {path} | awk 'NR==2 {{print $6}}'",
     "expected_output": null,
     "remediation": "Sauvegarder la base, déplacer les fichiers de données vers une partition dédiée, mettre à jour datadir dans la configuration MySQL, redémarrer le service.",
-    "test_procedure": "echo 'Contrôle Manuel: '",
+    "test_procedure": "df -P {path} | awk 'NR==2 {{print $6}}'",
     "manual_steps": [
       "Consulter la configuration et les journaux du serveur.",
       "Vérifier la conformité de ce point avec la politique de sécurité de l organisation."
@@ -93,7 +93,7 @@
     "number": "2.1.1",
     "name": "Politique de sauvegarde en place",
     "type": "Manual",
-    "test_procedure": "([ -f /etc/crontab ] && grep -E 'mysqldump|xtrabackup|mysqlbackup|mariadb-backup' /etc/crontab /etc/cron*/*) || ps -ef | grep -E 'mysqldump|xtrabackup|mysqlbackup|mariadb-backup' | grep -v grep",
+    "test_procedure": "([ -f /etc/crontab ] && grep -E \"mysqldump|xtrabackup|mysqlbackup\" /etc/crontab /etc/cron*/* 2>/dev/null) || (command -v crontab >/dev/null 2>&1 && crontab -l 2>/dev/null | grep -E \"mysqldump|xtrabackup|mysqlbackup\") || ps -ef | grep -E \"mysqldump|xtrabackup|mysqlbackup\" | grep -v grep",
     "expected_output": null,
     "remediation": "Créer une politique de sauvegarde et planifier des sauvegardes automatiques.",
     "manual_steps": [
@@ -196,7 +196,7 @@
       "pattern": "^mysql:mysql\\s+7[05][05]$"
     },
     "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "stat -c '%U:%G %a' {path}"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -210,7 +210,7 @@
       "pattern": "^-rw-------$"
     },
     "remediation": "Appliquer chmod 600 sur les fichiers binaires.",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "ls -l {path}* | awk '{{print $1}}' | uniq"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -224,7 +224,7 @@
       "pattern": "^6[04]0$"
     },
     "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "stat -c '%a' {path}"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -238,7 +238,7 @@
       "pattern": "^6[04]0$"
     },
     "remediation": "Limiter l'accès aux utilisateurs autorisés (ex: 640 ou 600).",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "stat -c '%a' {path}"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -252,7 +252,7 @@
       "pattern": "^-rw-------$"
     },
     "remediation": "Appliquer chmod 600.",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "ls -l {path}* | awk '{{print $1}}' | uniq"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -266,7 +266,7 @@
       "pattern": "^6[04]0$"
     },
     "remediation": "Restreindre les droits d'accès (ex: 640 ou 600).",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "stat -c '%a' {path}"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -292,7 +292,7 @@
       "pattern": "^mysql:mysql\\s+755$"
     },
     "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "stat -c '%U:%G %a' {path}"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -306,7 +306,7 @@
       "pattern": "^6[04]0$"
     },
     "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "stat -c '%a' {path}"
   },
   {
     "category": "3. Permissions Fichiers",
@@ -620,7 +620,7 @@
       "value": "/"
     },
     "remediation": "Déplacer les répertoires des journaux (log-bin, log-error) hors des partitions système.",
-    "test_procedure": "echo 'Contrôle Manuel: '"
+    "test_procedure": "df -P {path} | awk 'NR==2 {{print $6}}'"
   },
   {
     "category": "6. Audit & Journalisation",
