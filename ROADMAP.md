@@ -37,6 +37,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 20** | History Check Clean Exit & Resilient Empty Path_Command Handling   | `v2.6.4`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 21** | Dockerfile Non-Interactive Shell Hardening & Makefile Sync         | `v2.6.5`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 22** | PostgreSQL, MongoDB & Cassandra Testing Hardening                 | `v2.6.6`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 23** | PostgreSQL Command Safety & 100% E2E Multi-Format Compliance      | `v2.6.7`       | `Completed ✅` | 4/4   | 100%     |
 
 
 ---
@@ -403,4 +404,14 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **MongoDB Configuration Hardening (PR #360)**: Hardened `/etc/mongod.conf` with `authorization: enabled`, `requireTLS`, and auditLog configuration in `scripts/start_mongodb.sh`.
 - [x] **Cassandra Configuration Hardening (PR #360)**: Ensured `system.log` creation and `PasswordAuthenticator`/`CassandraAuthorizer` in `scripts/start_cassandra.sh`.
 - [x] **Unit Testing Suite Expansion (PR #360)**: Added `tests/test_pg_mongo_cassandra_hardening.py` to validate multi-database testing configuration integrity (closes #359).
+
+
+### Phase 23: PostgreSQL Command Safety & 100% E2E Multi-Format Compliance (`Completed ✅ - v2.6.7`)
+**Summary**: Sanitize PostgreSQL rules and engines with proper `psql` wrappers, eliminate raw SQL execution errors in shell, and achieve 100% E2E test pass across all 15 targets in all 4 formats (HTML, JSON, XML, TXT).
+
+#### 23.1 PostgreSQL Rule and Engine Sanitization (PR #362)
+- [x] **PostgreSQL Rules Sanitization (PR #362)**: Sanitized `rules/postgresql_16.json`, `17.json`, `18.json` by wrapping all raw `SELECT` and `SHOW` commands in `sudo -n -u postgres psql -t -c` and removing trailing invalid shell expressions.
+- [x] **Audit Engine SQL Auto-Wrap Safety (PR #362)**: Enhanced `perform_checks()` in PostgreSQL audit engines to auto-wrap raw SQL queries and forward all connection/container parameters.
+- [x] **Command Safety Unit Tests (PR #362)**: Added `tests/test_postgresql_command_safety.py` validating that rule definitions contain no raw SQL or invalid trailing operators.
+- [x] **100% E2E Multi-Format Pass (PR #362)**: Verified 15/15 target success across HTML, JSON, XML, and TXT report formats in automated runner (closes #361).
 
