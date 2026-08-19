@@ -241,4 +241,12 @@ This document tracks technical debt, security considerations, active quality con
 - [x] **PR #381**: `feat(mariadb1011): export context propagation and CLI forwarding (Part 4b)` — *Propagated execution context in export_results() and CLI main in MariaDB 10.11 audit engine (Issue #373).*
 - [x] **PR #382**: `feat(mariadb1011): execution context badge card rendering (Part 4c)` — *Added execution context card rendering in MariaDB 10.11 audit engine (Issue #373).*
 - [x] **PR #383**: `feat(cli): target alias normalization, bundling, and CLI unit tests (Part 5a)` — *Added target alias normalization in bundler and unit tests in tests/test_audit_cis_cli.py (Issue #373).*
-- [x] **PR #384**: `docs(release): version bump v2.6.8, roadmap, and potential issues sync (Part 5b)` — *Released v2.6.8, synchronized Phase 24 in ROADMAP.md and POTENTIAL_ISSUES.md (closes #373).*
+- [x] **PR #386**: `feat(diagnostics): core failure categories and command classifier (Part 1a)` — *Implemented FailureCategory, FailureDiagnostic, and CommandFailureClassifier in audit_diagnostics.py (Issue #385).*
+- [x] **PR #387**: `feat(diagnostics): control check classifier and diagnostic summary (Part 1b)` — *Implemented classify_control_result and AuditDiagnosticSummary in audit_diagnostics.py (Issue #385).*
+- [x] **PR #388**: `test(diagnostics): unit tests for failure classifier and diagnostic summary (Part 1c)` — *Added test_audit_diagnostics.py test suite covering all failure categories and summaries (Issue #385).*
+- [x] **PR #389**: `feat(orchestration): multi-target discovery and single target audit runner (Part 2a)` — *Implemented CANONICAL_TARGETS catalog and execute_single_target in audit_orchestrator.py (Issue #385).*
+- [x] **PR #390**: `feat(orchestration): parallel worker pool, RCA dashboard, and CLI runner (Part 2b)` — *Implemented execute_all_targets, generate_suite_rca_dashboard, and tests/test_audit_orchestrator.py (Issue #385).*
+- [x] **PR #391**: `feat(execution): automatic RCA diagnostics in execution drivers (Part 3)` — *Integrated CommandFailureClassifier and diagnostic properties into ExecutionResult and execution_drivers.py (Issue #385).*
+- [x] **PR #392**: `feat(reports): fleet root cause analysis (RCA) report generator (Part 4a)` — *Implemented scripts/generate_rca_reports.py for fleet RCA generation in reports/ (Issue #385).*
+- [x] **PR #393**: `test(reports): environmental fault injection and RCA resilience test harness (Part 4b)` — *Added tests/test_audit_resilience_and_rca.py with environmental fault injection (Issue #385).*
+- [x] **PR #394**: `docs(release): version bump v2.6.9, roadmap, and potential issues sync (Part 5)` — *Released v2.6.9, synchronized Phase 25 in ROADMAP.md and POTENTIAL_ISSUES.md (closes #385).*
