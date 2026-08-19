@@ -409,12 +409,17 @@ class DockerExecutor(BaseExecutor):
             for k, v in env.items():
                 docker_env.extend(["-e", f"{k}={v}"])
 
-        env_flags = " ".join(docker_env) if docker_env else ""
-        user_flags = f"-u {as_user} " if as_user else ""
-        workdir_flags = f"-w {cwd} " if cwd else ""
-        tty_flag = "-t" if allocate_tty else ""
-
-        cmd_string = f"{self.container_cli} exec -i {tty_flag} {env_flags} {user_flags}{workdir_flags}{self.container_name} /bin/bash -c {json.dumps(command)}".replace("  ", " ").strip()
+        parts = [self.container_cli, "exec", "-i"]
+        if allocate_tty:
+            parts.append("-t")
+        if docker_env:
+            parts.extend(docker_env)
+        if as_user:
+            parts.extend(["-u", str(as_user)])
+        if cwd:
+            parts.extend(["-w", str(cwd)])
+        parts.extend([self.container_name, "/bin/bash", "-c", json.dumps(command)])
+        cmd_string = " ".join(parts)
         masked_cmd = SecretSanitizer.sanitize(cmd_string) if mask_secrets else cmd_string
 
         try:

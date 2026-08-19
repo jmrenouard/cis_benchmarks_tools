@@ -103,5 +103,19 @@ class TestAuditOrchestrator(unittest.TestCase):
             self.assertTrue(os.path.exists(json_summary_path))
 
 
+    def test_container_info_telemetry(self):
+        """Test TargetAuditExecutionResult serialization with container info."""
+        res = TargetAuditExecutionResult(
+            target_key="mariadb106",
+            title="MariaDB 10.6",
+            success=True,
+            duration_sec=1.2,
+            container_info={"name": "mariadb106-test", "short_id": "112233445566"}
+        )
+        d = res.to_dict()
+        self.assertIn("container_info", d)
+        self.assertEqual(d["container_info"]["name"], "mariadb106-test")
+
+
 if __name__ == "__main__":
     unittest.main()
