@@ -23,6 +23,7 @@ from audit_diagnostics import (
     CommandFailureClassifier,
     AuditDiagnosticSummary
 )
+from docker_transport import DockerTransportResolver, ContainerInfo
 
 
 # Canonical target definitions
@@ -89,7 +90,8 @@ class TargetAuditExecutionResult:
         na_count: int = 0,
         generated_reports: Optional[Dict[str, str]] = None,
         diagnostic_summary: Optional[AuditDiagnosticSummary] = None,
-        exception_msg: Optional[str] = None
+        exception_msg: Optional[str] = None,
+        container_info: Optional[Dict[str, Any]] = None
     ):
         self.target_key = target_key
         self.title = title
@@ -105,6 +107,7 @@ class TargetAuditExecutionResult:
         self.generated_reports = generated_reports or {}
         self.diagnostic_summary = diagnostic_summary
         self.exception_msg = exception_msg
+        self.container_info = container_info
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -121,7 +124,8 @@ class TargetAuditExecutionResult:
             "na_count": self.na_count,
             "generated_reports": self.generated_reports,
             "diagnostic": self.diagnostic_summary.to_dict() if self.diagnostic_summary else None,
-            "exception_msg": self.exception_msg
+            "exception_msg": self.exception_msg,
+            "container_info": self.container_info
         }
 
 
@@ -176,7 +180,15 @@ class AuditOrchestrator:
         title = target_meta["title"]
         module_name = target_meta["module"]
         rule_spec_name = target_meta["rule_spec"]
-        active_container = self.docker_container or target_meta.get("default_container")
+        
+        # Resolve transport and discover target container
+        resolved_transport, c_info, transport_telemetry = DockerTransportResolver.resolve_transport(
+            mode=self.mode,
+            remote_host=self.remote_host,
+            docker_container=self.docker_container or target_meta.get("default_container"),
+            product_hint=canonical_key
+        )
+        active_container = c_info.name if c_info else (self.docker_container or target_meta.get("default_container"))
 
         start_time = time.time()
         diagnostic_summary = AuditDiagnosticSummary(target_name=canonical_key)
@@ -278,7 +290,8 @@ class AuditOrchestrator:
                 error_count=error_cnt,
                 na_count=na_cnt,
                 generated_reports=generated_reports,
-                diagnostic_summary=diagnostic_summary
+                diagnostic_summary=diagnostic_summary,
+                container_info=c_info.to_dict() if c_info else None
             )
         except Exception as exc:
             elapsed = time.time() - start_time
@@ -295,7 +308,8 @@ class AuditOrchestrator:
                 duration_sec=elapsed,
                 generated_reports=generated_reports,
                 diagnostic_summary=diagnostic_summary,
-                exception_msg=f"Audit execution exception: {exc}"
+                exception_msg=f"Audit execution exception: {exc}",
+                container_info=c_info.to_dict() if c_info else None
             )
 
     def execute_all_targets(
