@@ -415,3 +415,108 @@ class DockerExecutor(BaseExecutor):
                 command_masked=masked_cmd,
                 driver_type=self.driver_type
             )
+
+
+class SSHExecutor(BaseExecutor):
+    """Remote SSH execution transport driver with connection hardening and zero-hang configuration."""
+
+    def __init__(self, remote_host, ssh_key="/root/.ssh/id_rsa", ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None):
+        super().__init__(
+            driver_type="REMOTE_SSH_BAREMETAL",
+            db_user=db_user,
+            db_password=db_password,
+            db_host=db_host,
+            db_port=db_port,
+            db_name=db_name,
+            defaults_file=defaults_file
+        )
+        self.remote_host = remote_host
+        self.ssh_key = ssh_key
+        self.ssh_port = ssh_port
+
+    def _build_ssh_prefix(self):
+        cmd = [
+            "ssh",
+            "-o", "StrictHostKeyChecking=no",
+            "-o", "UserKnownHostsFile=/dev/null",
+            "-o", "BatchMode=yes",
+            "-o", "ConnectTimeout=5",
+            "-o", "ServerAliveInterval=3",
+            "-o", "ServerAliveCountMax=2",
+            "-p", str(self.ssh_port)
+        ]
+        if self.ssh_key:
+            cmd.extend(["-i", self.ssh_key])
+        cmd.append(self.remote_host)
+        return cmd
+
+    def execute(self, command, timeout=12, env=None, as_user=None, cwd=None, mask_secrets=True):
+        start_time = time.time()
+        env_prefixes = []
+        if self.db_password:
+            env_prefixes.extend([f"MYSQL_PWD={shlex.quote(str(self.db_password))}", f"PGPASSWORD={shlex.quote(str(self.db_password))}"])
+        if self.db_user:
+            env_prefixes.extend([f"MYSQL_USER={shlex.quote(str(self.db_user))}", f"PGUSER={shlex.quote(str(self.db_user))}"])
+        if self.db_host:
+            env_prefixes.extend([f"MYSQL_HOST={shlex.quote(str(self.db_host))}", f"PGHOST={shlex.quote(str(self.db_host))}"])
+        if self.db_port:
+            env_prefixes.extend([f"MYSQL_TCP_PORT={shlex.quote(str(self.db_port))}", f"PGPORT={shlex.quote(str(self.db_port))}"])
+        if env:
+            for k, v in env.items():
+                env_prefixes.append(f"{k}={shlex.quote(str(v))}")
+
+        prefix_str = ("export " + " ".join(env_prefixes) + "; ") if env_prefixes else ""
+        if as_user:
+            target_cmd = f"{prefix_str}sudo -n -u {as_user} /bin/bash -c {shlex.quote(command)}"
+        else:
+            target_cmd = f"{prefix_str}{command}"
+
+        ssh_args = self._build_ssh_prefix() + ["/bin/bash", "-c", shlex.quote(target_cmd)]
+        masked_cmd = SecretSanitizer.sanitize(f"ssh {self.remote_host} '{target_cmd}'") if mask_secrets else f"ssh {self.remote_host} '{target_cmd}'"
+
+        try:
+            p = subprocess.run(
+                ssh_args,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                check=False,
+                stdin=subprocess.DEVNULL
+            )
+            duration_ms = (time.time() - start_time) * 1000.0
+            filtered_stderr = []
+            if p.stderr:
+                for line in p.stderr.splitlines():
+                    if not line.startswith("Warning: Permanently added") and "pseudo-terminal" not in line:
+                        filtered_stderr.append(line)
+            clean_stderr = "\n".join(filtered_stderr).strip()
+
+            return ExecutionResult(
+                stdout=p.stdout,
+                stderr=clean_stderr,
+                returncode=p.returncode,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+        except subprocess.TimeoutExpired:
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout="",
+                stderr=f"SSH transport execution timed out after {timeout} seconds",
+                returncode=-1,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+        except Exception as e:
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout="",
+                stderr=str(e),
+                returncode=-1,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+
