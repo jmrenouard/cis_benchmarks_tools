@@ -267,3 +267,181 @@ class CommandFailureClassifier:
             command=command,
             returncode=returncode
         )
+
+    @classmethod
+    def classify_control_result(
+        cls,
+        control: Dict[str, Any],
+        target_hint: Optional[str] = None
+    ) -> FailureDiagnostic:
+        """Classify a high-level CIS control check result dict."""
+        status = str(control.get("status", "")).upper()
+        output = str(control.get("output", "")).strip()
+        command = str(control.get("test_procedure", control.get("audit", ""))).strip()
+        remediation = str(control.get("remediation", "")).strip()
+
+        if status in ["PASS", "SUCCESS"]:
+            return FailureDiagnostic(
+                category=FailureCategory.CLEAN_PASS,
+                severity="INFO",
+                root_cause="Control passed compliance check",
+                remediation_suggestion="None required",
+                is_environment_error=False,
+                evidence=output[:80] if output else "Compliant",
+                raw_error="",
+                command=command,
+                returncode=0
+            )
+
+        if status in ["MANUAL", "MANUEL"]:
+            return FailureDiagnostic(
+                category=FailureCategory.MANUAL_ASSESSMENT_REQUIRED,
+                severity="LOW",
+                root_cause="Control requires manual review per CIS Benchmark specification",
+                remediation_suggestion=remediation or "Follow CIS manual audit procedures.",
+                is_environment_error=False,
+                evidence="Manual Control",
+                raw_error="",
+                command=command,
+                returncode=0
+            )
+
+        if status in ["ERROR"]:
+            return cls.classify(command=command, stdout="", stderr=output, returncode=1, target_hint=target_hint)
+
+        if status in ["FAIL", "FAILED"]:
+            for pat in cls.CONNECTION_PATTERNS + cls.AUTH_PATTERNS + cls.MISSING_BINARY_PATTERNS + cls.PERMISSION_PATTERNS:
+                if re.search(pat, output, re.IGNORECASE):
+                    return cls.classify(command=command, stdout=output, stderr=output, returncode=1, target_hint=target_hint)
+
+            return FailureDiagnostic(
+                category=FailureCategory.SECURITY_NON_COMPLIANCE,
+                severity="HIGH",
+                root_cause="System or database configuration does not meet security benchmark requirement",
+                remediation_suggestion=remediation or "Apply remediation steps outlined in CIS benchmark.",
+                is_environment_error=False,
+                evidence=output[:120] if output else "Non-compliant configuration detected",
+                raw_error="",
+                command=command,
+                returncode=0
+            )
+
+        return FailureDiagnostic(
+            category=FailureCategory.UNKNOWN_ERROR,
+            severity="MEDIUM",
+            root_cause=f"Unrecognized control status '{status}'",
+            remediation_suggestion="Inspect audit engine implementation.",
+            is_environment_error=True,
+            evidence=output[:80],
+            raw_error=output,
+            command=command,
+            returncode=1
+        )
+
+
+class AuditDiagnosticSummary:
+    """Aggregates and formats root cause diagnostics across an entire audit suite."""
+
+    def __init__(self, target_name: str, diagnostics: Optional[List[FailureDiagnostic]] = None):
+        self.target_name = target_name
+        self.diagnostics: List[FailureDiagnostic] = diagnostics or []
+        self.analyzed_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    def add(self, diag: FailureDiagnostic) -> None:
+        self.diagnostics.append(diag)
+
+    @property
+    def total_checks(self) -> int:
+        return len(self.diagnostics)
+
+    @property
+    def clean_passes(self) -> int:
+        return sum(1 for d in self.diagnostics if d.category == FailureCategory.CLEAN_PASS)
+
+    @property
+    def security_failures(self) -> int:
+        return sum(1 for d in self.diagnostics if d.category == FailureCategory.SECURITY_NON_COMPLIANCE)
+
+    @property
+    def environment_errors(self) -> int:
+        return sum(1 for d in self.diagnostics if d.is_environment_error)
+
+    @property
+    def manual_checks(self) -> int:
+        return sum(1 for d in self.diagnostics if d.category == FailureCategory.MANUAL_ASSESSMENT_REQUIRED)
+
+    def category_breakdown(self) -> Dict[str, int]:
+        counts: Dict[str, int] = {}
+        for d in self.diagnostics:
+            counts[d.category] = counts.get(d.category, 0) + 1
+        return counts
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "target": self.target_name,
+            "analyzed_at": self.analyzed_at,
+            "total_checks": self.total_checks,
+            "clean_passes": self.clean_passes,
+            "security_failures": self.security_failures,
+            "environment_errors": self.environment_errors,
+            "manual_checks": self.manual_checks,
+            "category_breakdown": self.category_breakdown(),
+            "diagnostics": [d.to_dict() for d in self.diagnostics]
+        }
+
+    def generate_markdown_report(self) -> str:
+        """Generate human-readable Markdown Root Cause Analysis report."""
+        lines = [
+            f"# 🔍 Root Cause Analysis (RCA) Diagnostic Report — {self.target_name}",
+            f"",
+            f"**Analysis Timestamp:** `{self.analyzed_at}` | **Target:** `{self.target_name}`",
+            f"",
+            f"## 📊 Executive Diagnostic Summary",
+            f"",
+            f"| Metric | Count | Percentage |",
+            f"| :--- | :---: | :---: |",
+            f"| **Total Assessed Controls** | `{self.total_checks}` | 100% |",
+            f"| 🟢 **Clean Compliant Passes** | `{self.clean_passes}` | `{self.clean_passes / max(1, self.total_checks) * 100:.1f}%` |",
+            f"| 🔴 **Genuine Security Failures** | `{self.security_failures}` | `{self.security_failures / max(1, self.total_checks) * 100:.1f}%` |",
+            f"| 🟡 **Manual Assessment Needed** | `{self.manual_checks}` | `{self.manual_checks / max(1, self.total_checks) * 100:.1f}%` |",
+            f"| ⚠️ **Environmental / Tooling Errors** | `{self.environment_errors}` | `{self.environment_errors / max(1, self.total_checks) * 100:.1f}%` |",
+            f"",
+            f"## 🏷️ Failure Categories Breakdown",
+            f"",
+            f"| Failure Category | Occurrences | Type |",
+            f"| :--- | :---: | :--- |",
+        ]
+
+        breakdown = self.category_breakdown()
+        for cat, cnt in sorted(breakdown.items(), key=lambda x: -x[1]):
+            cat_type = "Environment / Tooling" if cat in [
+                FailureCategory.MISSING_BINARY,
+                FailureCategory.PERMISSION_DENIED,
+                FailureCategory.AUTH_FAILURE,
+                FailureCategory.CONNECTION_ERROR,
+                FailureCategory.TIMEOUT,
+                FailureCategory.UNKNOWN_ERROR
+            ] else "Security Compliance / Process"
+            lines.append(f"| `{cat}` | `{cnt}` | {cat_type} |")
+
+        lines.extend([
+            f"",
+            f"## 🛠️ Actionable Failure Diagnostics & Remediation",
+            f""
+        ])
+
+        non_passes = [d for d in self.diagnostics if d.category not in [FailureCategory.CLEAN_PASS, FailureCategory.MANUAL_ASSESSMENT_REQUIRED]]
+        if not non_passes:
+            lines.append("🎉 **No execution errors or security non-compliances detected!**")
+        else:
+            for idx, d in enumerate(non_passes, 1):
+                icon = "⚠️" if d.is_environment_error else "🔴"
+                lines.extend([
+                    f"### {idx}. {icon} [{d.category}] {d.root_cause}",
+                    f"- **Severity:** `{d.severity}` | **Environment Error:** `{d.is_environment_error}`",
+                    f"- **Evidence:** `{d.evidence}`",
+                    f"- **Remediation Action:** {d.remediation_suggestion}",
+                    f""
+                ])
+
+        return "\n".join(lines)
