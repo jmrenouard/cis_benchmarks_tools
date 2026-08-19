@@ -14,6 +14,8 @@ import shlex
 import subprocess
 import time
 
+from audit_diagnostics import CommandFailureClassifier, FailureCategory, FailureDiagnostic
+
 
 class SecretSanitizer:
     """Zero-credential leak sanitizer for commands, arguments, and logging (PSL ONLY)."""
@@ -41,7 +43,7 @@ class SecretSanitizer:
 
 
 class ExecutionResult:
-    """Immutable, structured execution result container (PSL ONLY)."""
+    """Immutable, structured execution result container with RCA diagnostics (PSL ONLY)."""
 
     def __init__(self, stdout="", stderr="", returncode=0, duration_ms=0.0, command_masked="", driver_type="BASE"):
         self.stdout = (stdout or "").strip()
@@ -50,6 +52,14 @@ class ExecutionResult:
         self.duration_ms = float(duration_ms)
         self.command_masked = command_masked
         self.driver_type = driver_type
+        # Automatic Root Cause Analysis
+        self.diagnostic = CommandFailureClassifier.classify(
+            command=self.command_masked,
+            stdout=self.stdout,
+            stderr=self.stderr,
+            returncode=self.returncode,
+            elapsed_sec=self.duration_ms / 1000.0
+        )
 
     @property
     def is_success(self):
@@ -59,7 +69,17 @@ class ExecutionResult:
     @property
     def is_timeout(self):
         """Return True if command terminated due to timeout expiration."""
-        return self.returncode == -1 and "timed out" in self.stderr.lower()
+        return self.returncode == -1 and ("timed out" in self.stderr.lower() or "timeoutexpired" in self.stderr.lower())
+
+    @property
+    def is_environment_error(self):
+        """Return True if the failure is caused by environment/tooling issue rather than security non-compliance."""
+        return self.diagnostic.is_environment_error if self.diagnostic else (self.returncode != 0)
+
+    @property
+    def failure_category(self):
+        """Return standardized FailureCategory."""
+        return self.diagnostic.category if self.diagnostic else FailureCategory.CLEAN_PASS
 
     def to_tuple(self):
         """Backward compatibility tuple unpack: (stdout, stderr, returncode)."""
@@ -75,6 +95,9 @@ class ExecutionResult:
             "command_masked": self.command_masked,
             "driver_type": self.driver_type,
             "is_success": self.is_success,
+            "is_environment_error": self.is_environment_error,
+            "failure_category": self.failure_category,
+            "diagnostic": self.diagnostic.to_dict() if self.diagnostic else None,
         }
 
 
