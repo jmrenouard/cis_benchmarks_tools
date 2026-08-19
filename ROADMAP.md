@@ -442,3 +442,19 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Comprehensive Fault Injection Test Suite**: 129 unit tests passing across `tests/test_audit_diagnostics.py`, `tests/test_audit_orchestrator.py`, and `tests/test_audit_resilience_and_rca.py` (closes #385).
 
 
+### Phase 26: In-Container Docker Transport Driver & E2E Audit Execution Engine (`Completed ✅ - v2.7.0`)
+**Summary**: Implement high-fidelity in-container Docker transport driver (`DockerContainerExecutor`), dynamic container discovery and health inspection (`docker_transport.py`), in-container POSIX abstraction (`in_container_inspector.py`), and programmable E2E audit execution engine (`docker_e2e_engine.py`) guaranteeing zero-host command leakages.
+
+#### 26.1 Docker Transport Resolution & Dynamic Discovery
+- [x] **Docker Daemon Health Probing (`DockerDaemonProbe`)**: Validates Docker daemon status, version, driver, and container counts.
+- [x] **Dynamic Container Discovery (`DockerContainerDiscovery`)**: Discovers running and dormant containers by exact name, product hints, or image tags.
+- [x] **Deterministic Transport Routing (`DockerTransportResolver`)**: Container-first priority routing preventing unintended host bare-metal fallbacks.
+
+#### 26.2 High-Fidelity In-Container Execution & POSIX Inspection
+- [x] **Enhanced In-Container Driver (`DockerContainerExecutor`)**: Streamlined `docker exec` execution with TTY/no-TTY control, UID/GID non-root execution, working directory (`-w`), and error categorization.
+- [x] **In-Container POSIX & Data Accessor (`InContainerInspector`)**: Direct in-container file reading (`read_file`), POSIX metadata inspection (`stat_path`), network namespace listening port checks, and query evaluation without host volume mounts.
+- [x] **In-Container E2E Execution Engine (`docker_e2e_engine.py`)**: Complete in-container orchestration with artifact injection, report extraction, and Markdown compliance dashboards.
+- [x] **Adversarial Isolation Test Suite**: 156 unit tests passing with full non-regression, zero host leakage, and error classification (closes #395).
+
+
+
