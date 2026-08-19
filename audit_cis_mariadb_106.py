@@ -8,6 +8,13 @@ from datetime import datetime
 import re # Pour les expressions régulières
 import html # Pour échapper les caractères spéciaux HTML
 
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+
+from temporal_metadata import TemporalAuditMetadata, get_local_timezone_info
+from post_execution_publisher import AuditReportPublisher, atomic_write_text
+
 # --- Configuration ---
 # Adapte cette commande si nécessaire pour te connecter à MariaDB
 # Par exemple, ajoute -u <user> -p<password> ou utilise un fichier de configuration
@@ -982,20 +989,51 @@ def get_status_info(status):
     else:
         return "❓", status, "status-error"
 
-def export_results(results, overall_score, categories_scores, target_name, filename=None, fmt="html", lang="en", execution_context=None):
+def build_thematic_security_metrics(categories_scores):
+    """Dynamically builds HTML cards for security thematic metrics from category scores."""
+    if not categories_scores:
+        return ""
+    cards = []
+    for cat_name, cat_data in list(categories_scores.items())[:3]:
+        score = cat_data.get("score", 0.0)
+        short_name = cat_name.split(".", 1)[-1].strip() if "." in cat_name else cat_name
+        if len(short_name) > 30:
+            short_name = short_name[:27] + "..."
+        if score >= 80.0:
+            bar_color = "bg-emerald-600"
+            text_color = "text-emerald-700"
+        elif score >= 50.0:
+            bar_color = "bg-amber-500"
+            text_color = "text-amber-700"
+        else:
+            bar_color = "bg-red-500"
+            text_color = "text-red-700"
+        cards.append(f"""
+        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-xs font-bold text-gray-700">{html.escape(short_name)}</span>
+                <span class="text-xs font-extrabold {text_color}">{score:.1f}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="{bar_color} h-2 rounded-full" style="width: {min(100.0, max(0.0, score)):.1f}%"></div>
+            </div>
+        </div>
+        """)
+    return "\n".join(cards)
+
+
+def export_results(results, overall_score, categories_scores, target_name, filename=None, fmt="html", lang="en", execution_context=None, temporal_metadata=None):
     """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
     import json
     import os
     import xml.etree.ElementTree as ET
-    from datetime import datetime
+
+    t_meta = temporal_metadata or TemporalAuditMetadata.create_now()
 
     if not filename:
         ext = "html" if fmt == "html" else fmt
         target_slug = target_name.lower().replace(" ", "_").replace(".", "")
         filename = f"reports/rapport_cis_{target_slug}.{ext}"
-
-    if os.path.dirname(filename):
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     # Flatten results if dictionary categorized
     flat_results = []
@@ -1012,19 +1050,26 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         data = {
             "benchmark": target_name,
             "target": target_name,
-            "report_date": datetime.now().isoformat(),
+            "report_date": t_meta.iso_start,
+            "temporal_metadata": t_meta.to_dict(),
             "execution_context": execution_context.get("label") if isinstance(execution_context, dict) else (execution_context or "Local Bare-Metal"),
             "overall_score": overall_score,
             "categories": categories_scores,
             "total_checks": len(flat_results),
             "results": results
         }
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
+        atomic_write_text(filename, json.dumps(data, indent=2))
         print(f"📄 JSON Report successfully generated: {filename}")
 
     elif fmt == "xml":
-        root = ET.Element("testsuite", name=target_name, tests=str(len(flat_results)), failures=str(sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])), timestamp=datetime.now().isoformat())
+        root = ET.Element(
+            "testsuite",
+            name=target_name,
+            tests=str(len(flat_results)),
+            failures=str(sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])),
+            timestamp=t_meta.iso_start,
+            time=str(round(t_meta.duration_sec, 3))
+        )
         for r in flat_results:
             tc = ET.SubElement(root, "testcase", id=str(r.get("number", r.get("id", ""))), name=str(r.get("name", r.get("title", ""))), classname=str(r.get("category", "")))
             test_proc = r.get("test_procedure", r.get("audit", ""))
@@ -1041,8 +1086,8 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             elif r.get("status") in ["ERROR", "Error"]:
                 err = ET.SubElement(tc, "error", message="Control execution error")
                 err.text = str(r.get("output", r.get("stderr", "")))
-        tree = ET.ElementTree(root)
-        tree.write(filename, encoding="utf-8", xml_declaration=True)
+        tree_bytes = ET.tostring(root, encoding="utf-8", xml_declaration=True).decode("utf-8")
+        atomic_write_text(filename, tree_bytes)
         print(f"📄 XML Report successfully generated: {filename}")
 
     elif fmt == "txt":
@@ -1055,7 +1100,9 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             "=" * 90,
             f"               CIS BENCHMARK AUDIT REPORT - {target_name.upper()}",
             "=" * 90,
-            f"Report Date   : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            f"Report Date   : {t_meta.localized_start}",
+            f"Duration      : {t_meta.formatted_duration}",
+            f"Timezone      : {t_meta.timezone_name} ({t_meta.timezone_offset})",
             f"Context       : {ctx_txt}",
             f"Global Score  : {overall_score:.1f}%",
             f"Total Controls: {len(flat_results)} (Passed: {pass_cnt}, Failed: {fail_cnt}, Manual: {manual_cnt}, Error: {error_cnt})",
@@ -1104,9 +1151,7 @@ def export_results(results, overall_score, categories_scores, target_name, filen
 
         try:
             if filename:
-                os.makedirs(os.path.dirname(os.path.abspath(filename)), exist_ok=True)
-                with open(filename, "w", encoding="utf-8") as f:
-                    f.write("\n".join(lines) + "\n")
+                atomic_write_text(filename, "\n".join(lines) + "\n")
                 print(f"📄 TXT Report successfully generated: {filename}")
             else:
                 print("\n".join(lines))
@@ -1114,21 +1159,21 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             print(f"❌ Error writing TXT report: {e}", file=sys.stderr)
 
     else:
-        try:
-            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang, execution_context=execution_context)
-        except TypeError:
-            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
+        generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang, execution_context=execution_context, temporal_metadata=t_meta)
 
 
 
-def generate_html_report(results, overall_score, categories_scores, filename=None, lang="en", execution_context=None):
-    """Génère le rapport HTML complet avec graphiques et résultats détaillés."""
+def generate_html_report(results, overall_score, categories_scores, filename=None, lang="en", execution_context=None, temporal_metadata=None):
+    """Génère le rapport HTML complet avec graphiques, métadonnées temporelles et résultats détaillés."""
     if not filename:
         reports_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reports")
         os.makedirs(reports_dir, exist_ok=True)
         filename = os.path.join(reports_dir, "rapport_cis_mariadb_106.html")
 
-    report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    t_meta = temporal_metadata or TemporalAuditMetadata.create_now()
+    report_date = t_meta.localized_start
+    scan_duration = t_meta.formatted_duration
+    report_timezone = f"{t_meta.timezone_name} ({t_meta.timezone_offset})"
     overall_score_class = get_score_class(overall_score)
     
     sidebar_links_html = ""
@@ -1271,23 +1316,34 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
 </div>
 """
 
-    category_manual_counts = json.dumps([categories_scores.get(cat, {}).get("manual_checks", 0) for cat in category_order])
-    total_other = error_auto_count + na_auto_count
+    version_file = os.path.join(REPO_ROOT, "VERSION")
+    current_suite_ver = "2.7.0"
+    if os.path.exists(version_file):
+        try:
+            with open(version_file, "r") as vf:
+                current_suite_ver = vf.read().strip()
+        except Exception:
+            pass
+
     class SafeDict(dict):
         def __missing__(self, key):
             return f"{{{key}}}"
 
     ctx_label = execution_context.get("label") if isinstance(execution_context, dict) else (execution_context if execution_context else "Local Bare-Metal")
     context_card_html = build_execution_context_card(execution_context)
+    thematic_metrics_html = build_thematic_security_metrics(categories_scores)
+
     html_output = load_html_template().format_map(SafeDict(
         product_title="MariaDB 10.6",
         benchmark_title="MariaDB 10.6",
         benchmark_version="1.0.0",
-        suite_version="2.3.0",
+        suite_version=current_suite_ver,
         execution_context=ctx_label,
         execution_context_card_html=context_card_html,
         lang=lang if 'lang' in locals() else "en",
         report_date=report_date,
+        scan_duration=scan_duration,
+        report_timezone=report_timezone,
         overall_score=overall_score,
         overall_score_class=overall_score_class,
         passed_automated_count=passed_auto_count if 'passed_auto_count' in locals() else 0,
@@ -1298,6 +1354,7 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
         error_checks=total_errors if 'total_errors' in locals() else 0,
         error_count=total_errors if 'total_errors' in locals() else 0,
         na_checks=total_na if 'total_na' in locals() else 0,
+        thematic_security_metrics_html=thematic_metrics_html,
         sidebar_links=sidebar_links_html if 'sidebar_links_html' in locals() else "",
         categories_reports=categories_html,
         donut_svg=svg_global_chart_html if 'svg_global_chart_html' in locals() else "",
@@ -1306,10 +1363,7 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
     ))
 
     try:
-        if os.path.dirname(filename):
-            os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(html_output)
+        atomic_write_text(filename, html_output)
         print(f"Report successfully generated: {filename}")
     except IOError as e:
         print(f"Error writing report file '{filename}': {e}")
@@ -1350,9 +1404,30 @@ if __name__ == "__main__":
     else:
         print("🖥️  Running Audit in Local Mode on local machine...")
 
+    temporal_tracker = TemporalAuditMetadata.create_now()
+    publisher = AuditReportPublisher(
+        target_name="mariadb_106",
+        custom_output=args.output,
+        formats=[args.format],
+        temporal_metadata=temporal_tracker
+    )
+
     rules_data = load_recommendations("mariadb_106")
     docker_target = detect_docker_container(remote_host=remote_target, docker_name=args.docker_container)
     exec_context = detect_execution_context(mode=args.mode, remote_host=remote_target, docker_container=docker_target, product_hint="mariadb")
-    check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target, db_user=args.db_user, db_password=args.db_password, db_host=args.db_host, db_port=args.db_port, db_name=args.db_name, defaults_file=args.defaults_file, auth_db=args.auth_db)
-    (overall_score, categories_scores, *rest) = calculate_scores(check_results)
-    export_results(check_results, overall_score, categories_scores, target_name="mariadb_106", filename=args.output, fmt=args.format, lang=args.lang, execution_context=exec_context)
+
+    def run_audit_flow():
+        check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target, db_user=args.db_user, db_password=args.db_password, db_host=args.db_host, db_port=args.db_port, db_name=args.db_name, defaults_file=args.defaults_file, auth_db=args.auth_db)
+        overall_score, categories_scores, *rest = calculate_scores(check_results)
+        return check_results, overall_score, categories_scores
+
+    success, exc, published = publisher.execute_with_guaranteed_publishing(
+        audit_func=run_audit_flow,
+        export_func=export_results,
+        lang=args.lang,
+        execution_context=exec_context
+    )
+
+    if not success and exc:
+        print(f"⚠️ Audit completed with error: {exc}", file=sys.stderr)
+        sys.exit(1)
