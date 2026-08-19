@@ -38,6 +38,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 21** | Dockerfile Non-Interactive Shell Hardening & Makefile Sync         | `v2.6.5`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 22** | PostgreSQL, MongoDB & Cassandra Testing Hardening                 | `v2.6.6`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 23** | PostgreSQL Command Safety & 100% E2E Multi-Format Compliance      | `v2.6.7`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 24** | Unified Execution Drivers & Multi-Criteria Runtime Detection     | `v2.6.8`       | `Completed ✅` | 4/4   | 100%     |
 
 
 ---
@@ -414,4 +415,14 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Audit Engine SQL Auto-Wrap Safety (PR #362)**: Enhanced `perform_checks()` in PostgreSQL audit engines to auto-wrap raw SQL queries and forward all connection/container parameters.
 - [x] **Command Safety Unit Tests (PR #362)**: Added `tests/test_postgresql_command_safety.py` validating that rule definitions contain no raw SQL or invalid trailing operators.
 - [x] **100% E2E Multi-Format Pass (PR #362)**: Verified 15/15 target success across HTML, JSON, XML, and TXT report formats in automated runner (closes #361).
+
+
+### Phase 24: Unified Execution Drivers & Multi-Criteria Runtime Detection (`Completed ✅ - v2.6.8`)
+**Summary**: Implement robust execution driver abstraction (`LocalExecutor`, `DockerExecutor`, `SSHExecutor`, `RemoteSSHContainerExecutor`) with multi-criteria heuristic runtime detector (`RuntimeDetector`), zero-credential secret scrubbing (`SecretSanitizer`), and rich execution metadata restitution in HTML, JSON, XML, and TXT reports.
+
+#### 24.1 Unified Polymorphic Execution Drivers & Heuristic Runtime Detection (PR #374)
+- [x] **Modular Execution Drivers (`execution_drivers.py`) (PR #374)**: Implemented `BaseExecutor`, `LocalExecutor`, `DockerExecutor`, `SSHExecutor`, and `RemoteSSHContainerExecutor` using 100% Python Standard Library (PSL ONLY).
+- [x] **Multi-Criteria Runtime Detector (`RuntimeDetector`) (PR #374)**: Built 6-probe inspection mechanism checking `/.dockerenv`, `/run/.containerenv`, `/proc/1/cgroup` (cgroups v1 and v2), `/proc/self/mountinfo`, environment variables, rootless status, and container sandbox root inodes.
+- [x] **Zero-Leak Secret Sanitizer (`SecretSanitizer`) (PR #374)**: Scrubber for passwords (`-p`, `MYSQL_PWD`, `PGPASSWORD`), tokens, and secret flags in execution logging and output.
+- [x] **Engine & HTML Report Restitution (PR #374)**: Integrated execution context cards into MariaDB 10.6 and MariaDB 10.11 engines and report templates, backed by 107 unit tests in `test_execution_drivers.py`, `test_mariadb_audit_engine.py`, and `test_audit_cis_cli.py` (closes #373).
 
