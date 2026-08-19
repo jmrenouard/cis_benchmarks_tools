@@ -7,6 +7,7 @@ and multi-criteria environment inspection for CIS database audit benchmarks.
 100% Python Standard Library (PSL ONLY).
 """
 
+import json
 import os
 import re
 import shlex
@@ -246,3 +247,171 @@ class BaseExecutor:
             "defaults_file": self.defaults_file,
             "has_password": bool(self.db_password),
         }
+
+
+class LocalExecutor(BaseExecutor):
+    """Local host subprocess execution driver."""
+
+    def __init__(self, db_user=None, db_password=None, db_host="localhost", db_port=None, db_name=None, defaults_file=None):
+        super().__init__(
+            driver_type="LOCAL_BAREMETAL",
+            db_user=db_user,
+            db_password=db_password,
+            db_host=db_host,
+            db_port=db_port,
+            db_name=db_name,
+            defaults_file=defaults_file
+        )
+
+    def execute(self, command, timeout=10, env=None, as_user=None, cwd=None, mask_secrets=True):
+        start_time = time.time()
+        cmd_env = os.environ.copy()
+
+        if self.db_password:
+            cmd_env["MYSQL_PWD"] = str(self.db_password)
+            cmd_env["PGPASSWORD"] = str(self.db_password)
+        if self.db_user:
+            cmd_env["MYSQL_USER"] = str(self.db_user)
+            cmd_env["PGUSER"] = str(self.db_user)
+        if self.db_host:
+            cmd_env["MYSQL_HOST"] = str(self.db_host)
+            cmd_env["PGHOST"] = str(self.db_host)
+        if self.db_port:
+            cmd_env["MYSQL_TCP_PORT"] = str(self.db_port)
+            cmd_env["PGPORT"] = str(self.db_port)
+        if self.db_name:
+            cmd_env["PGDATABASE"] = str(self.db_name)
+        if env:
+            cmd_env.update(env)
+
+        if isinstance(command, (list, tuple)):
+            cmd_str = " ".join(shlex.quote(str(x)) for x in command)
+        else:
+            cmd_str = str(command)
+
+        if as_user and os.getuid() != 0:
+            cmd_str = f"sudo -n -u {shlex.quote(as_user)} /bin/bash -c {json.dumps(cmd_str)}"
+
+        masked_cmd = SecretSanitizer.sanitize(cmd_str) if mask_secrets else cmd_str
+
+        try:
+            p = subprocess.run(
+                ["/bin/bash", "-c", cmd_str],
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                env=cmd_env,
+                cwd=cwd,
+                check=False,
+                stdin=subprocess.DEVNULL
+            )
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout=p.stdout,
+                stderr=p.stderr,
+                returncode=p.returncode,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+        except subprocess.TimeoutExpired:
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout="",
+                stderr=f"Command execution timed out after {timeout} seconds",
+                returncode=-1,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+        except Exception as e:
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout="",
+                stderr=str(e),
+                returncode=-1,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+
+
+class DockerExecutor(BaseExecutor):
+    """Docker / Podman container execution driver."""
+
+    def __init__(self, container_name, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker"):
+        super().__init__(
+            driver_type="LOCAL_DOCKER",
+            db_user=db_user,
+            db_password=db_password,
+            db_host=db_host,
+            db_port=db_port,
+            db_name=db_name,
+            defaults_file=defaults_file
+        )
+        self.container_name = container_name
+        self.container_cli = container_cli
+
+    def execute(self, command, timeout=10, env=None, as_user=None, cwd=None, mask_secrets=True):
+        start_time = time.time()
+        docker_env = []
+
+        if self.db_password:
+            docker_env.extend(["-e", f"MYSQL_PWD={self.db_password}", "-e", f"PGPASSWORD={self.db_password}"])
+        if self.db_user:
+            docker_env.extend(["-e", f"MYSQL_USER={self.db_user}", "-e", f"PGUSER={self.db_user}"])
+        if self.db_host:
+            docker_env.extend(["-e", f"MYSQL_HOST={self.db_host}", "-e", f"PGHOST={self.db_host}"])
+        if self.db_port:
+            docker_env.extend(["-e", f"MYSQL_TCP_PORT={self.db_port}", "-e", f"PGPORT={self.db_port}"])
+        if self.db_name:
+            docker_env.extend(["-e", f"PGDATABASE={self.db_name}"])
+        if env:
+            for k, v in env.items():
+                docker_env.extend(["-e", f"{k}={v}"])
+
+        env_flags = " ".join(docker_env) if docker_env else ""
+        user_flags = f"-u {as_user} " if as_user else ""
+        workdir_flags = f"-w {cwd} " if cwd else ""
+
+        cmd_string = f"{self.container_cli} exec -i {env_flags} {user_flags}{workdir_flags}{self.container_name} /bin/bash -c {json.dumps(command)}".replace("  ", " ").strip()
+        masked_cmd = SecretSanitizer.sanitize(cmd_string) if mask_secrets else cmd_string
+
+        try:
+            p = subprocess.run(
+                ["/bin/bash", "-c", cmd_string],
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                check=False,
+                stdin=subprocess.DEVNULL
+            )
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout=p.stdout,
+                stderr=p.stderr,
+                returncode=p.returncode,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+        except subprocess.TimeoutExpired:
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout="",
+                stderr=f"Container execution timed out after {timeout} seconds",
+                returncode=-1,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+        except Exception as e:
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout="",
+                stderr=str(e),
+                returncode=-1,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
