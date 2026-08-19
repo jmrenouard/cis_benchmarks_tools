@@ -989,7 +989,7 @@ def get_status_info(status):
 
 
 
-def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en"):
+def export_results(results, overall_score, categories_scores, target_name, filename=None, fmt="html", lang="en", execution_context=None):
     """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
     import json
     import os
@@ -1018,10 +1018,13 @@ def export_results(results, overall_score, categories_scores, target_name, filen
     if fmt == "json":
         data = {
             "benchmark": target_name,
+            "target": target_name,
             "report_date": datetime.now().isoformat(),
+            "execution_context": execution_context.get("label") if isinstance(execution_context, dict) else (execution_context or "Local Bare-Metal"),
             "overall_score": overall_score,
+            "categories": categories_scores,
             "total_checks": len(flat_results),
-            "results": flat_results
+            "results": results
         }
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
@@ -1054,11 +1057,13 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         fail_cnt = sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])
         manual_cnt = sum(1 for r in flat_results if r.get("status") in ["MANUAL", "Manual"])
         error_cnt = sum(1 for r in flat_results if r.get("status") in ["ERROR", "Error"])
+        ctx_txt = execution_context.get("label") if isinstance(execution_context, dict) else (execution_context or "Local Bare-Metal")
         lines = [
             "=" * 90,
             f"               CIS BENCHMARK AUDIT REPORT - {target_name.upper()}",
             "=" * 90,
             f"Report Date   : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            f"Context       : {ctx_txt}",
             f"Global Score  : {overall_score:.1f}%",
             f"Total Controls: {len(flat_results)} (Passed: {pass_cnt}, Failed: {fail_cnt}, Manual: {manual_cnt}, Error: {error_cnt})",
             "-" * 90,
@@ -1067,65 +1072,59 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             f"  {'ID':<6} {'Category Name':<45} {'Pass':<6} {'Fail':<6} {'Manual':<8} {'Score':<8}",
             f"  {'-'*6} {'-'*45} {'-'*6} {'-'*6} {'-'*8} {'-'*8}",
         ]
-        if isinstance(categories_scores, dict):
-            for cat_id, data in categories_scores.items():
-                raw_name = str(data.get("name", cat_id)).strip()
-                m = re.match(r"^(\d+[\.\d]*)\s*[-.:]?\s*(.*)$", raw_name)
-                if m:
-                    cid, cname = m.group(1), m.group(2)
-                else:
-                    cid, cname = str(cat_id)[:6], raw_name
-                cname_trunc = cname[:44] if cname else raw_name[:44]
-                p = data.get("passed_automated", 0)
-                f = data.get("failed_automated", 0)
-                m_cnt = data.get("manual_checks", 0)
-                sc = data.get("score", 0.0)
-                lines.append(f"  {cid:<6} {cname_trunc:<45} {p:<6} {f:<6} {m_cnt:<8} {sc:>6.1f}%")
+        category_order = list(dict.fromkeys(rec["category"] for rec in RECOMMENDATIONS_DATA))
+        for cat in category_order:
+            cat_data = categories_scores.get(cat, {})
+            cat_id = cat.split(".")[0] + "." if "." in cat else cat[:2]
+            cat_name = cat.split(".", 1)[1].strip() if "." in cat else cat
+            if len(cat_name) > 43:
+                cat_name = cat_name[:40] + "..."
+            c_pass = cat_data.get("passed_automated", 0)
+            c_fail = cat_data.get("failed_automated", 0)
+            c_man = cat_data.get("manual_checks", 0)
+            c_score = f"{cat_data.get('score', 0):.1f}%"
+            lines.append(f"  {cat_id:<6} {cat_name:<45} {c_pass:<6} {c_fail:<6} {c_man:<8} {c_score:>8}")
+
         lines.extend([
             "=" * 90,
             " DETAILED CONTROL RESULTS",
             "=" * 90,
-            ""
         ])
         for r in flat_results:
             status = r.get("status", "")
-            if status in ["PASS", "Pass"]:
-                status_icon = "[PASS]"
-            elif status in ["FAIL", "Fail"]:
-                status_icon = "[FAIL]"
-            elif status in ["ERROR", "Error"]:
-                status_icon = "[ERROR]"
-            elif status in ["N/A", "Not Applicable"]:
-                status_icon = "[N/A]"
-            else:
-                status_icon = "[MANUAL]"
+            if status in ["PASS", "Pass"]: status_icon = "[PASS]"
+            elif status in ["FAIL", "Fail"]: status_icon = "[FAIL]"
+            elif status in ["ERROR", "Error"]: status_icon = "[ERROR]"
+            elif status in ["N/A", "Not Applicable"]: status_icon = "[N/A]"
+            else: status_icon = "[MANUAL]"
             rec_id = r.get("number", r.get("id", ""))
             rec_name = r.get("name", r.get("title", ""))
             lines.append(f"{status_icon} {rec_id} - {rec_name}")
             lines.append(f"  Category: {r.get('category')}")
             test_proc = r.get("test_procedure", r.get("audit", ""))
-            if test_proc:
-                lines.append(f"  Commande de test: {str(test_proc).strip()}")
+            if test_proc: lines.append(f"  Commande de test: {str(test_proc).strip()}")
             out = r.get("output", r.get("stdout", ""))
-            if out:
-                lines.append(f"  Output: {str(out).strip()}")
+            if out: lines.append(f"  Output: {str(out).strip()}")
             rem = r.get("remediation", "")
-            if rem:
-                lines.append(f"  Procédure de remédiation: {str(rem).strip()}")
+            if rem: lines.append(f"  Procédure de remédiation: {str(rem).strip()}")
             lines.append("-" * 90)
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write("\n".join(lines) + "\n")
-        print(f"📄 TXT Report successfully generated: {filename}")
+
+        try:
+            if filename:
+                os.makedirs(os.path.dirname(os.path.abspath(filename)), exist_ok=True)
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write("\n".join(lines) + "\n")
+                print(f"📄 TXT Report successfully generated: {filename}")
+            else:
+                print("\n".join(lines))
+        except Exception as e:
+            print(f"❌ Error writing TXT report: {e}", file=sys.stderr)
 
     else:
         try:
-            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
+            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang, execution_context=execution_context)
         except TypeError:
-            try:
-                generate_html_report(results, overall_score, categories_scores, filename=filename)
-            except TypeError:
-                # Legacy positional args fallback
-                generate_html_report(results, overall_score, categories_scores, 0, 0, 0, 0, 0, 0, 0, [], [], [], [], [], filename)
+            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
 
 
 
@@ -1302,6 +1301,7 @@ if __name__ == "__main__":
 
     rules_data = load_recommendations("mariadb_1011")
     docker_target = detect_docker_container(remote_host=remote_target, docker_name=args.docker_container)
-    check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target)
+    exec_context = detect_execution_context(mode=args.mode, remote_host=remote_target, docker_container=docker_target, product_hint="mariadb")
+    check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target, db_user=args.db_user, db_password=args.db_password, db_host=args.db_host, db_port=args.db_port, db_name=args.db_name, defaults_file=args.defaults_file, auth_db=args.auth_db)
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
-    export_results(check_results, overall_score, categories_scores, target_name="mariadb_1011", filename=args.output, fmt=args.format, lang=args.lang)
+    export_results(check_results, overall_score, categories_scores, target_name="mariadb_1011", filename=args.output, fmt=args.format, lang=args.lang, execution_context=exec_context)
