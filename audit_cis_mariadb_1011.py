@@ -475,6 +475,14 @@ def load_recommendations(target_key):
 
 
 
+try:
+    from execution_drivers import create_executor, RuntimeDetector, SecretSanitizer
+except ImportError:
+    create_executor = None
+    RuntimeDetector = None
+    SecretSanitizer = None
+
+
 def detect_execution_context(mode="local", remote_host=None, docker_container=None, product_hint=None):
     """Detect and categorize execution context into structured dictionary (PSL ONLY)."""
     is_remote = bool(mode == "ssh" or remote_host)
@@ -482,7 +490,7 @@ def detect_execution_context(mode="local", remote_host=None, docker_container=No
 
     if not active_container and product_hint:
         try:
-            cmd = "docker ps --format '{{.Names}}'"
+            cmd = "docker ps --format '{{.Names}}' 2>/dev/null"
             stdout, stderr, ret = run_command(cmd, remote_host=remote_host)
             if ret == 0 and stdout:
                 for line in stdout.splitlines():
@@ -494,6 +502,15 @@ def detect_execution_context(mode="local", remote_host=None, docker_container=No
             active_container = None
 
     is_docker = bool(active_container)
+    runtime_info = {}
+    if RuntimeDetector:
+        try:
+            runtime_info = RuntimeDetector.inspect(runner=run_command, remote_host=remote_host)
+            if runtime_info.get("is_container") and not active_container and not is_remote:
+                is_docker = True
+                active_container = runtime_info.get("container_id") or "inside_container"
+        except Exception:
+            pass
 
     if is_remote and is_docker:
         ctype = "REMOTE_SSH_DOCKER"
@@ -515,7 +532,8 @@ def detect_execution_context(mode="local", remote_host=None, docker_container=No
         "docker_container": active_container,
         "is_docker": is_docker,
         "is_remote": is_remote,
-        "label": label
+        "label": label,
+        "runtime_info": runtime_info,
     }
 
 
@@ -523,12 +541,10 @@ def detect_docker_container(remote_host=None, docker_name=None):
     """Detect active MariaDB / MySQL Docker container name."""
     if docker_name:
         return docker_name
-    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' | grep -iE 'mariadb|mysql' | head -n 1", remote_host=remote_host)
+    stdout, stderr, ret = run_command("docker ps --format '{{.Names}}' 2>/dev/null | grep -iE 'mariadb|mysql' | head -n 1", remote_host=remote_host)
     if ret == 0 and stdout:
         return stdout.strip()
     return None
-
-
 
 
 def is_valid_executable_command(cmd_str):
@@ -555,39 +571,69 @@ def is_valid_executable_command(cmd_str):
 
 
 def run_command(command, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None):
-    """Execute command safely locally, over SSH, or inside Docker container (PSL ONLY)."""
+    """Execute command safely locally, over SSH, or inside Docker container via ExecutionDrivers (PSL ONLY)."""
+    if create_executor:
+        try:
+            executor = create_executor(
+                mode="ssh" if remote_host else "local",
+                remote_host=remote_host,
+                docker_container=docker_container,
+                db_user=db_user,
+                db_password=db_password,
+                db_host=db_host,
+                db_port=db_port,
+                db_name=db_name,
+                defaults_file=defaults_file
+            )
+            res = executor.execute(command)
+            return res.stdout, res.stderr, res.returncode
+        except Exception:
+            pass
+
     try:
         env = os.environ.copy()
         docker_env = []
         if db_password:
             env["MYSQL_PWD"] = str(db_password)
-            env["PGPASSWORD"] = str(db_password)
-            docker_env.extend(["-e", f"MYSQL_PWD={db_password}", "-e", f"PGPASSWORD={db_password}"])
+            docker_env.extend(["-e", f"MYSQL_PWD={db_password}"])
         if db_user:
             env["MYSQL_USER"] = str(db_user)
-            env["PGUSER"] = str(db_user)
-            docker_env.extend(["-e", f"MYSQL_USER={db_user}", "-e", f"PGUSER={db_user}"])
+            docker_env.extend(["-e", f"MYSQL_USER={db_user}"])
         if db_host:
             env["MYSQL_HOST"] = str(db_host)
-            env["PGHOST"] = str(db_host)
-            docker_env.extend(["-e", f"MYSQL_HOST={db_host}", "-e", f"PGHOST={db_host}"])
+            docker_env.extend(["-e", f"MYSQL_HOST={db_host}"])
         if db_port:
             env["MYSQL_TCP_PORT"] = str(db_port)
-            env["PGPORT"] = str(db_port)
-            docker_env.extend(["-e", f"MYSQL_TCP_PORT={db_port}", "-e", f"PGPORT={db_port}"])
-        if db_name:
-            env["PGDATABASE"] = str(db_name)
-            docker_env.extend(["-e", f"PGDATABASE={db_name}"])
+            docker_env.extend(["-e", f"MYSQL_TCP_PORT={db_port}"])
+
         if isinstance(command, str):
             if docker_container and not command.startswith("docker exec"):
                 env_flags = " ".join(docker_env) if docker_env else ""
                 command = f"docker exec -i {env_flags} {docker_container} /bin/bash -c {json.dumps(command)}".replace("  ", " ")
-            elif "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
-                if "mariadb" in command or "mysql" in command:
-                    command = "mariadb -e 'SELECT 1;' || mysql -e 'SELECT 1;' || ps aux | grep -v grep | grep mysqld"
             cmd_args = ["/bin/bash", "-c", command]
         else:
             cmd_args = list(command)
+
+        if remote_host:
+            cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
+
+        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10, env=env)
+        stdout_text = process.stdout.strip()
+        stderr_text = process.stderr.strip()
+
+        if stderr_text:
+            filtered_lines = [
+                line for line in stderr_text.splitlines()
+                if not line.startswith("Warning: Permanently added")
+                and "pseudo-terminal" not in line
+            ]
+            stderr_text = "\n".join(filtered_lines).strip()
+
+        return stdout_text, stderr_text, process.returncode
+    except subprocess.TimeoutExpired:
+        return "", "Command execution timed out after 10 seconds", -1
+    except Exception as e:
+        return "", str(e), -1
 
         if remote_host:
             cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args

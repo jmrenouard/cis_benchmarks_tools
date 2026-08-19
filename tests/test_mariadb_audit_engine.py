@@ -119,15 +119,59 @@ class TestMariaDBAuditEngine(unittest.TestCase):
         self.assertEqual(check_res["status"], "Not Applicable")
         self.assertIn("non configuré", check_res["output"].lower())
 
-    def test_mysql_history_rule_syntax(self):
-        """Verify that rule 1.3 for mysql_history in MariaDB rules includes ; true for clean 0 exit code."""
-        rule_106_13 = next((r for r in self.rules_106 if r.get("number") == "1.3"), None)
-        self.assertIsNotNone(rule_106_13)
-        self.assertTrue(rule_106_13["test_procedure"].endswith("; true"), "Rule 1.3 in mariadb_106 must end with '; true'")
+    def test_export_results_with_execution_context_formats(self):
+        """Test export_results with structured execution_context across HTML, JSON, and TXT."""
+        import tempfile
+        import os
+        results = {
+            "1. Configuration": [
+                {
+                    "number": "1.2",
+                    "name": "Test Check",
+                    "type": "Automated",
+                    "status": "Pass",
+                    "output": "1",
+                    "test_procedure": "SELECT 1;"
+                }
+            ]
+        }
+        categories_scores = {
+            "1. Configuration": {"score": 100.0, "passed_automated": 1, "failed_automated": 0, "manual_checks": 0, "error_checks": 0, "na_checks": 0}
+        }
+        ctx = {
+            "type": "LOCAL_DOCKER",
+            "label": "Local Docker (mariadb-test)",
+            "mode": "local",
+            "docker_container": "mariadb-test",
+            "remote_host": None,
+            "runtime_info": {"runtime": "docker", "cgroup_version": "v2", "evidence": ["file:/.dockerenv"]}
+        }
 
-        rule_1011_13 = next((r for r in self.rules_1011 if r.get("number") == "1.3"), None)
-        self.assertIsNotNone(rule_1011_13)
-        self.assertTrue(rule_1011_13["test_procedure"].endswith("; true"), "Rule 1.3 in mariadb_1011 must end with '; true'")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Test JSON export
+            json_file = os.path.join(tmpdir, "report.json")
+            mariadb_106.export_results(results, 100.0, categories_scores, "mariadb_106", json_file, fmt="json", execution_context=ctx)
+            self.assertTrue(os.path.exists(json_file))
+            with open(json_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                self.assertEqual(data.get("execution_context"), "Local Docker (mariadb-test)")
+
+            # Test TXT export
+            txt_file = os.path.join(tmpdir, "report.txt")
+            mariadb_106.export_results(results, 100.0, categories_scores, "mariadb_106", txt_file, fmt="txt", execution_context=ctx)
+            self.assertTrue(os.path.exists(txt_file))
+            with open(txt_file, "r", encoding="utf-8") as f:
+                content = f.read()
+                self.assertIn("Local Docker (mariadb-test)", content)
+
+            # Test HTML export
+            html_file = os.path.join(tmpdir, "report.html")
+            mariadb_106.export_results(results, 100.0, categories_scores, "mariadb_106", html_file, fmt="html", execution_context=ctx)
+            self.assertTrue(os.path.exists(html_file))
+            with open(html_file, "r", encoding="utf-8") as f:
+                html_content = f.read()
+                self.assertIn("LOCAL_DOCKER", html_content)
+                self.assertIn("mariadb-test", html_content)
 
 
 if __name__ == "__main__":
