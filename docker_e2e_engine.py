@@ -21,6 +21,7 @@ if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
 from docker_transport import ContainerInfo, DockerContainerDiscovery, DockerDaemonProbe
+from temporal_metadata import TemporalAuditMetadata
 
 
 class TargetE2ESpec:
@@ -58,7 +59,8 @@ class E2ERunResult:
         duration_sec: float,
         format_validations: Optional[Dict[str, Tuple[bool, str]]] = None,
         extracted_reports: Optional[Dict[str, str]] = None,
-        error_message: Optional[str] = None
+        error_message: Optional[str] = None,
+        temporal_metadata: Optional[Dict[str, Any]] = None
     ):
         self.target_key = target_key
         self.container_name = container_name
@@ -67,6 +69,7 @@ class E2ERunResult:
         self.format_validations = format_validations or {}
         self.extracted_reports = extracted_reports or {}
         self.error_message = error_message
+        self.temporal_metadata = temporal_metadata
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -77,6 +80,7 @@ class E2ERunResult:
             "format_validations": {k: {"valid": v[0], "note": v[1]} for k, v in self.format_validations.items()},
             "extracted_reports": self.extracted_reports,
             "error_message": self.error_message,
+            "temporal_metadata": self.temporal_metadata
         }
 
 
@@ -159,21 +163,25 @@ class DockerE2EOrchestrator:
     ) -> E2ERunResult:
         """Runs the complete E2E workflow for a single target."""
         start_time = time.time()
+        t_meta = TemporalAuditMetadata.create_now()
         container_info = DockerContainerDiscovery.inspect_container(spec.container_name, container_cli=self.container_cli)
 
         if not container_info or not container_info.is_running:
             dur = time.time() - start_time
+            t_meta.finish()
             return E2ERunResult(
                 target_key=spec.key,
                 container_name=spec.container_name,
                 success=False,
                 duration_sec=dur,
-                error_message=f"Target container '{spec.container_name}' is not running or not found."
+                error_message=f"Target container '{spec.container_name}' is not running or not found.",
+                temporal_metadata=t_meta.to_dict()
             )
 
         validations, extracted = self.execute_in_container_audit(spec, mode="local", formats=formats)
         all_passed = all(v[0] for v in validations.values()) and len(validations) > 0
         dur = time.time() - start_time
+        t_meta.finish()
 
         return E2ERunResult(
             target_key=spec.key,
@@ -181,7 +189,8 @@ class DockerE2EOrchestrator:
             success=all_passed,
             duration_sec=dur,
             format_validations=validations,
-            extracted_reports=extracted
+            extracted_reports=extracted,
+            temporal_metadata=t_meta.to_dict()
         )
 
     def generate_e2e_summary_dashboard(self, results: List[E2ERunResult], output_file: Optional[str] = None) -> str:

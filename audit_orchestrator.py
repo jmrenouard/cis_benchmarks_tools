@@ -24,6 +24,7 @@ from audit_diagnostics import (
     AuditDiagnosticSummary
 )
 from docker_transport import DockerTransportResolver, ContainerInfo
+from temporal_metadata import TemporalAuditMetadata
 
 
 # Canonical target definitions
@@ -43,37 +44,59 @@ CANONICAL_TARGETS: Dict[str, Dict[str, Any]] = {
     "cassandra40": {"title": "Apache Cassandra 4.0", "module": "audit_cis_cassandra_40", "category": "database", "default_container": "cassandra40-test", "rule_spec": "cassandra_40"},
     "cassandra41": {"title": "Apache Cassandra 4.1", "module": "audit_cis_cassandra_41", "category": "database", "default_container": "cassandra41-test", "rule_spec": "cassandra_41"},
     "cassandra50": {"title": "Apache Cassandra 5.0", "module": "audit_cis_cassandra_50", "category": "database", "default_container": "cassandra50-test", "rule_spec": "cassandra_50"},
-    "rhel8": {"title": "Red Hat Enterprise Linux 8", "module": "audit_cis_rhel_8", "category": "os", "default_container": None, "rule_spec": "rhel_8"},
-    "rhel9": {"title": "Red Hat Enterprise Linux 9", "module": "audit_cis_rhel_9", "category": "os", "default_container": None, "rule_spec": "rhel_9"},
-    "rhel10": {"title": "Red Hat Enterprise Linux 10", "module": "audit_cis_rhel_10", "category": "os", "default_container": None, "rule_spec": "rhel_10"},
-}
-
-TARGET_ALIASES = {
-    "mariadb": "mariadb106",
-    "mysql": "mysql80",
-    "postgres": "postgresql16",
-    "postgresql": "postgresql16",
-    "mongo": "mongodb7",
-    "mongodb": "mongodb7",
-    "cassandra": "cassandra40",
-    "rhel": "rhel9",
+    "rhel8": {"title": "Red Hat Enterprise Linux 8", "module": "audit_cis_rhel8", "category": "os", "default_container": "rhel8-test", "rule_spec": "rhel8"},
+    "rhel9": {"title": "Red Hat Enterprise Linux 9", "module": "audit_cis_rhel9", "category": "os", "default_container": "rhel9-test", "rule_spec": "rhel9"},
+    "rhel10": {"title": "Red Hat Enterprise Linux 10", "module": "audit_cis_rhel10", "category": "os", "default_container": "rhel10-test", "rule_spec": "rhel10"},
 }
 
 
-def normalize_target_key(target_str: str) -> str:
-    """Normalize target string, handling aliases and common variants."""
-    s = (target_str or "").strip().lower().replace("_", "").replace("-", "")
-    for alias, canonical in TARGET_ALIASES.items():
-        if s == alias:
-            return canonical
-    for key in CANONICAL_TARGETS:
-        if s == key.lower().replace("-", ""):
-            return key
-    return target_str
+def normalize_target_key(target_input: str) -> str:
+    """Normalizes various user inputs to a canonical target key."""
+    cleaned = target_input.strip().lower().replace("_", "").replace(".", "").replace(" ", "")
+    if cleaned in CANONICAL_TARGETS:
+        return cleaned
+    
+    # Prefix matches
+    for k in CANONICAL_TARGETS:
+        if cleaned == k.replace("-", ""):
+            return k
+            
+    # Fuzzy alias map
+    aliases = {
+        "mariadb10.6": "mariadb106",
+        "mariadb-10.6": "mariadb106",
+        "mariadb10.11": "mariadb1011",
+        "mariadb-10.11": "mariadb1011",
+        "mysql8": "mysql80",
+        "mysql8.0": "mysql80",
+        "mysql80": "mysql80",
+        "mysql-80": "mysql80",
+        "mysql-8.0": "mysql80",
+        "mysql84": "mysql-community84",
+        "mysql-84": "mysql-community84",
+        "mysql-8.4": "mysql-community84",
+        "mysql-community-84": "mysql-community84",
+        "mysql-community-8.4": "mysql-community84",
+        "mysql-enterprise-84": "mysql-enterprise84",
+        "mysql-enterprise-8.4": "mysql-enterprise84",
+        "mysql97": "mysql-community97",
+        "mysql-97": "mysql-community97",
+        "mysql-9.7": "mysql-community97",
+        "mysql-community-97": "mysql-community97",
+        "mysql-community-9.7": "mysql-community97",
+        "mysql-enterprise-97": "mysql-enterprise97",
+        "mysql-enterprise-9.7": "mysql-enterprise97",
+        "postgres16": "postgresql16",
+        "postgres17": "postgresql17",
+        "postgres18": "postgresql18",
+        "mongo7": "mongodb7",
+        "mongo8": "mongodb8",
+    }
+    return aliases.get(cleaned, target_input.strip())
 
 
 class TargetAuditExecutionResult:
-    """Telemetry and outcome record for a single target audit execution."""
+    """Encapsulates the execution result and metadata of a single target CIS audit."""
 
     def __init__(
         self,
@@ -91,7 +114,8 @@ class TargetAuditExecutionResult:
         generated_reports: Optional[Dict[str, str]] = None,
         diagnostic_summary: Optional[AuditDiagnosticSummary] = None,
         exception_msg: Optional[str] = None,
-        container_info: Optional[Dict[str, Any]] = None
+        container_info: Optional[Dict[str, Any]] = None,
+        temporal_metadata: Optional[Dict[str, Any]] = None
     ):
         self.target_key = target_key
         self.title = title
@@ -108,6 +132,7 @@ class TargetAuditExecutionResult:
         self.diagnostic_summary = diagnostic_summary
         self.exception_msg = exception_msg
         self.container_info = container_info
+        self.temporal_metadata = temporal_metadata
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -125,7 +150,8 @@ class TargetAuditExecutionResult:
             "generated_reports": self.generated_reports,
             "diagnostic": self.diagnostic_summary.to_dict() if self.diagnostic_summary else None,
             "exception_msg": self.exception_msg,
-            "container_info": self.container_info
+            "container_info": self.container_info,
+            "temporal_metadata": self.temporal_metadata
         }
 
 
@@ -191,6 +217,7 @@ class AuditOrchestrator:
         active_container = c_info.name if c_info else (self.docker_container or target_meta.get("default_container"))
 
         start_time = time.time()
+        t_tracker = TemporalAuditMetadata.create_now()
         diagnostic_summary = AuditDiagnosticSummary(target_name=canonical_key)
         generated_reports: Dict[str, str] = {}
 
@@ -267,16 +294,17 @@ class AuditOrchestrator:
                 for fmt in self.formats:
                     rep_path = os.path.join(self.output_dir, f"rapport_cis_{target_slug}{mode_suffix}.{fmt}")
                     try:
-                        export_fn(results, overall_score, cat_scores, target_name=canonical_key, filename=rep_path, fmt=fmt, lang=self.lang, execution_context=exec_ctx)
+                        export_fn(results, overall_score, cat_scores, target_name=canonical_key, filename=rep_path, fmt=fmt, lang=self.lang, execution_context=exec_ctx, temporal_metadata=t_tracker)
                         generated_reports[fmt] = rep_path
                     except TypeError:
                         try:
-                            export_fn(results, overall_score, cat_scores, target_name=canonical_key, filename=rep_path, fmt=fmt, lang=self.lang)
+                            export_fn(results, overall_score, cat_scores, target_name=canonical_key, filename=rep_path, fmt=fmt, lang=self.lang, execution_context=exec_ctx)
                             generated_reports[fmt] = rep_path
                         except Exception:
                             pass
 
             elapsed = time.time() - start_time
+            t_tracker.finish()
             return TargetAuditExecutionResult(
                 target_key=canonical_key,
                 title=title,
@@ -291,10 +319,12 @@ class AuditOrchestrator:
                 na_count=na_cnt,
                 generated_reports=generated_reports,
                 diagnostic_summary=diagnostic_summary,
-                container_info=c_info.to_dict() if c_info else None
+                container_info=c_info.to_dict() if c_info else None,
+                temporal_metadata=t_tracker.to_dict()
             )
         except Exception as exc:
             elapsed = time.time() - start_time
+            t_tracker.finish()
             diagnostic_summary.add(CommandFailureClassifier.classify(
                 command=f"Audit execution {module_name}",
                 stderr=str(exc),
@@ -309,7 +339,8 @@ class AuditOrchestrator:
                 generated_reports=generated_reports,
                 diagnostic_summary=diagnostic_summary,
                 exception_msg=f"Audit execution exception: {exc}",
-                container_info=c_info.to_dict() if c_info else None
+                container_info=c_info.to_dict() if c_info else None,
+                temporal_metadata=t_tracker.to_dict()
             )
 
     def execute_all_targets(
