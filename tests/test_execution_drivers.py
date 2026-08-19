@@ -101,15 +101,27 @@ class TestExecutionResult(unittest.TestCase):
         r = ExecutionResult(stdout="hello", stderr="", returncode=0, duration_ms=12.5, driver_type="LOCAL_BAREMETAL")
         self.assertTrue(r.is_success)
         self.assertFalse(r.is_timeout)
+        self.assertFalse(r.is_environment_error)
+        self.assertEqual(r.failure_category, "CLEAN_PASS")
         self.assertEqual(r.to_tuple(), ("hello", "", 0))
         d = r.to_dict()
         self.assertEqual(d["stdout"], "hello")
         self.assertEqual(d["returncode"], 0)
+        self.assertIn("diagnostic", d)
 
     def test_timeout_detection(self):
         r = ExecutionResult(stdout="", stderr="Command execution timed out after 10 seconds", returncode=-1)
         self.assertTrue(r.is_timeout)
         self.assertFalse(r.is_success)
+        self.assertTrue(r.is_environment_error)
+        self.assertEqual(r.failure_category, "TIMEOUT")
+
+    def test_missing_binary_diagnostic(self):
+        r = ExecutionResult(command_masked="mongosh --eval 'db.version()'", stdout="", stderr="/bin/bash: mongosh: command not found", returncode=127)
+        self.assertFalse(r.is_success)
+        self.assertTrue(r.is_environment_error)
+        self.assertEqual(r.failure_category, "MISSING_BINARY")
+        self.assertIn("mongosh", r.diagnostic.remediation_suggestion)
 
 
 class TestExecutors(unittest.TestCase):
