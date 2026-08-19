@@ -520,3 +520,164 @@ class SSHExecutor(BaseExecutor):
                 driver_type=self.driver_type
             )
 
+
+class RemoteSSHContainerExecutor(BaseExecutor):
+    """Hybrid transport driver: SSH into remote host and execute inside a Docker/Podman container."""
+
+    def __init__(self, remote_host, container_name, ssh_key="/root/.ssh/id_rsa", ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker"):
+        super().__init__(
+            driver_type="REMOTE_SSH_DOCKER",
+            db_user=db_user,
+            db_password=db_password,
+            db_host=db_host,
+            db_port=db_port,
+            db_name=db_name,
+            defaults_file=defaults_file
+        )
+        self.remote_host = remote_host
+        self.container_name = container_name
+        self.ssh_key = ssh_key
+        self.ssh_port = ssh_port
+        self.container_cli = container_cli
+
+    def _build_ssh_prefix(self):
+        cmd = [
+            "ssh",
+            "-o", "StrictHostKeyChecking=no",
+            "-o", "UserKnownHostsFile=/dev/null",
+            "-o", "BatchMode=yes",
+            "-o", "ConnectTimeout=5",
+            "-o", "ServerAliveInterval=3",
+            "-o", "ServerAliveCountMax=2",
+            "-p", str(self.ssh_port)
+        ]
+        if self.ssh_key:
+            cmd.extend(["-i", self.ssh_key])
+        cmd.append(self.remote_host)
+        return cmd
+
+    def execute(self, command, timeout=15, env=None, as_user=None, cwd=None, mask_secrets=True):
+        start_time = time.time()
+        docker_env = []
+        if self.db_password:
+            docker_env.extend(["-e", f"MYSQL_PWD={self.db_password}", "-e", f"PGPASSWORD={self.db_password}"])
+        if self.db_user:
+            docker_env.extend(["-e", f"MYSQL_USER={self.db_user}", "-e", f"PGUSER={self.db_user}"])
+        if self.db_host:
+            docker_env.extend(["-e", f"MYSQL_HOST={self.db_host}", "-e", f"PGHOST={self.db_host}"])
+        if self.db_port:
+            docker_env.extend(["-e", f"MYSQL_TCP_PORT={self.db_port}", "-e", f"PGPORT={self.db_port}"])
+        if self.db_name:
+            docker_env.extend(["-e", f"PGDATABASE={self.db_name}"])
+        if env:
+            for k, v in env.items():
+                docker_env.extend(["-e", f"{k}={v}"])
+
+        env_flags = " ".join(docker_env) if docker_env else ""
+        user_flags = f"-u {as_user} " if as_user else ""
+        workdir_flags = f"-w {cwd} " if cwd else ""
+
+        remote_docker_cmd = f"{self.container_cli} exec -i {env_flags} {user_flags}{workdir_flags}{self.container_name} /bin/bash -c {json.dumps(command)}".replace("  ", " ").strip()
+        ssh_args = self._build_ssh_prefix() + ["/bin/bash", "-c", shlex.quote(remote_docker_cmd)]
+        masked_cmd = SecretSanitizer.sanitize(f"ssh {self.remote_host} '{remote_docker_cmd}'") if mask_secrets else f"ssh {self.remote_host} '{remote_docker_cmd}'"
+
+        try:
+            p = subprocess.run(
+                ssh_args,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                check=False,
+                stdin=subprocess.DEVNULL
+            )
+            duration_ms = (time.time() - start_time) * 1000.0
+            filtered_stderr = []
+            if p.stderr:
+                for line in p.stderr.splitlines():
+                    if not line.startswith("Warning: Permanently added") and "pseudo-terminal" not in line:
+                        filtered_stderr.append(line)
+            clean_stderr = "\n".join(filtered_stderr).strip()
+
+            return ExecutionResult(
+                stdout=p.stdout,
+                stderr=clean_stderr,
+                returncode=p.returncode,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+        except subprocess.TimeoutExpired:
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout="",
+                stderr=f"Remote SSH Container execution timed out after {timeout} seconds",
+                returncode=-1,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+        except Exception as e:
+            duration_ms = (time.time() - start_time) * 1000.0
+            return ExecutionResult(
+                stdout="",
+                stderr=str(e),
+                returncode=-1,
+                duration_ms=duration_ms,
+                command_masked=masked_cmd,
+                driver_type=self.driver_type
+            )
+
+
+def create_executor(mode="local", remote_host=None, docker_container=None, ssh_key="/root/.ssh/id_rsa", ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker"):
+    """
+    Polymorphic factory function to instantiate the correct execution driver.
+    """
+    if mode == "ssh" or remote_host:
+        if docker_container:
+            return RemoteSSHContainerExecutor(
+                remote_host=remote_host,
+                container_name=docker_container,
+                ssh_key=ssh_key,
+                ssh_port=ssh_port,
+                db_user=db_user,
+                db_password=db_password,
+                db_host=db_host,
+                db_port=db_port,
+                db_name=db_name,
+                defaults_file=defaults_file,
+                container_cli=container_cli
+            )
+        return SSHExecutor(
+            remote_host=remote_host,
+            ssh_key=ssh_key,
+            ssh_port=ssh_port,
+            db_user=db_user,
+            db_password=db_password,
+            db_host=db_host,
+            db_port=db_port,
+            db_name=db_name,
+            defaults_file=defaults_file
+        )
+
+    if docker_container:
+        return DockerExecutor(
+            container_name=docker_container,
+            db_user=db_user,
+            db_password=db_password,
+            db_host=db_host,
+            db_port=db_port,
+            db_name=db_name,
+            defaults_file=defaults_file,
+            container_cli=container_cli
+        )
+
+    return LocalExecutor(
+        db_user=db_user,
+        db_password=db_password,
+        db_host=db_host or "localhost",
+        db_port=db_port,
+        db_name=db_name,
+        defaults_file=defaults_file
+    )
+
+
