@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unit tests for LocalExecutor and DockerExecutor (100% PSL ONLY).
+Unit tests for LocalExecutor, DockerExecutor, and SSHExecutor (100% PSL ONLY).
 """
 
 import unittest
@@ -13,6 +13,7 @@ from execution_drivers import (
     LocalExecutor,
     RuntimeDetector,
     SecretSanitizer,
+    SSHExecutor,
 )
 
 
@@ -162,6 +163,44 @@ class TestExecutors(unittest.TestCase):
         self.assertEqual(res.stdout, "root_data")
         called_cmd = mock_run.call_args[0][0][2]
         self.assertIn("sudo -n -u mysql", called_cmd)
+
+    @patch("subprocess.run")
+    def test_ssh_executor_success(self, mock_run):
+        mock_proc = MagicMock()
+        mock_proc.stdout = "SSH_OK\n"
+        mock_proc.stderr = "Warning: Permanently added '10.0.0.1' (ED25519) to the list of known hosts.\n"
+        mock_proc.returncode = 0
+        mock_run.return_value = mock_proc
+
+        executor = SSHExecutor(remote_host="admin@10.0.0.1")
+        res = executor.execute("uptime")
+
+        self.assertTrue(res.is_success)
+        self.assertEqual(res.stdout, "SSH_OK")
+        self.assertEqual(res.stderr, "")
+        self.assertEqual(res.driver_type, "REMOTE_SSH_BAREMETAL")
+
+    @patch("subprocess.run")
+    def test_ssh_executor_custom_options(self, mock_run):
+        mock_proc = MagicMock()
+        mock_proc.stdout = "OK\n"
+        mock_proc.stderr = ""
+        mock_proc.returncode = 0
+        mock_run.return_value = mock_proc
+
+        executor = SSHExecutor(
+            remote_host="admin@10.0.0.1",
+            ssh_port=2222,
+            ssh_key="/root/.ssh/custom_id_rsa"
+        )
+        res = executor.execute("hostname")
+
+        self.assertTrue(res.is_success)
+        called_args = mock_run.call_args[0][0]
+        self.assertIn("-p", called_args)
+        self.assertIn("2222", called_args)
+        self.assertIn("-i", called_args)
+        self.assertIn("/root/.ssh/custom_id_rsa", called_args)
 
 
 if __name__ == "__main__":
