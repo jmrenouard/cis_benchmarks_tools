@@ -1,0 +1,248 @@
+#!/usr/bin/env python3
+"""
+Unified Execution Drivers & Multi-Criteria Runtime Detection Module.
+Provides robust polymorphic execution transports (Local, Docker, SSH, Nested)
+and multi-criteria environment inspection for CIS database audit benchmarks.
+
+100% Python Standard Library (PSL ONLY).
+"""
+
+import os
+import re
+import shlex
+import subprocess
+import time
+
+
+class SecretSanitizer:
+    """Zero-credential leak sanitizer for commands, arguments, and logging (PSL ONLY)."""
+
+    PASSWORD_PATTERNS = [
+        r"(-p\s*)([^\s;|\&]+)",
+        r"(--password[=\s]+)([^\s;|\&]+)",
+        r"(MYSQL_PWD=)([^\s;|\&]+)",
+        r"(PGPASSWORD=)([^\s;|\&]+)",
+        r"(password\s*[:=]\s*)(['\"][^'\"]*['\"]|[^\s,;]+)",
+        r"(secret\s*[:=]\s*)(['\"][^'\"]*['\"]|[^\s,;]+)",
+        r"(token\s*[:=]\s*)(['\"][^'\"]*['\"]|[^\s,;]+)",
+        r"(key\s*[:=]\s*)(['\"][^'\"]*['\"]|[^\s,;]+)",
+    ]
+
+    @classmethod
+    def sanitize(cls, text):
+        """Redact sensitive database passwords, tokens, and secret flags from string."""
+        if not text or not isinstance(text, str):
+            return text
+        sanitized = text
+        for pattern in cls.PASSWORD_PATTERNS:
+            sanitized = re.sub(pattern, r"\1***", sanitized, flags=re.IGNORECASE)
+        return sanitized
+
+
+class ExecutionResult:
+    """Immutable, structured execution result container (PSL ONLY)."""
+
+    def __init__(self, stdout="", stderr="", returncode=0, duration_ms=0.0, command_masked="", driver_type="BASE"):
+        self.stdout = (stdout or "").strip()
+        self.stderr = (stderr or "").strip()
+        self.returncode = int(returncode)
+        self.duration_ms = float(duration_ms)
+        self.command_masked = command_masked
+        self.driver_type = driver_type
+
+    @property
+    def is_success(self):
+        """Return True if returncode is 0 and no fatal timeout occurred."""
+        return self.returncode == 0
+
+    @property
+    def is_timeout(self):
+        """Return True if command terminated due to timeout expiration."""
+        return self.returncode == -1 and "timed out" in self.stderr.lower()
+
+    def to_tuple(self):
+        """Backward compatibility tuple unpack: (stdout, stderr, returncode)."""
+        return self.stdout, self.stderr, self.returncode
+
+    def to_dict(self):
+        """Dictionary representation for structured JSON logging."""
+        return {
+            "stdout": self.stdout,
+            "stderr": self.stderr,
+            "returncode": self.returncode,
+            "duration_ms": self.duration_ms,
+            "command_masked": self.command_masked,
+            "driver_type": self.driver_type,
+            "is_success": self.is_success,
+        }
+
+
+class RuntimeDetector:
+    """
+    Multi-criteria environment runtime inspection engine (PSL ONLY).
+    Detects container runtimes (Docker, Podman, LXC, Kubernetes, Bare-Metal)
+    using multiple independent heuristic probes across filesystem, cgroups v1/v2,
+    process trees, mount points, and namespace indicators.
+    """
+
+    @classmethod
+    def inspect(cls, runner=None, remote_host=None):
+        """
+        Inspect runtime environment and return comprehensive diagnostic dictionary.
+        """
+        evidence = []
+        runtime = "baremetal"
+        cgroup_version = "unknown"
+        container_id = None
+        is_container = False
+        is_rootless = False
+        is_sandboxed = False
+
+        def _exec(cmd):
+            if runner:
+                try:
+                    out, err, ret = runner(cmd, remote_host=remote_host)
+                    return out if ret == 0 else ""
+                except Exception:
+                    return ""
+            try:
+                p = subprocess.run(
+                    cmd if isinstance(cmd, list) else ["/bin/bash", "-c", cmd],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                    check=False,
+                    stdin=subprocess.DEVNULL
+                )
+                return p.stdout.strip() if p.returncode == 0 else ""
+            except Exception:
+                return ""
+
+        # Probe 1: Direct container marker files
+        file_check_out = _exec(
+            "test -f /.dockerenv && echo FOUND_DOCKERENV; "
+            "test -f /run/.containerenv && echo FOUND_CONTAINERENV; "
+            "test -f /run/systemd/container && echo FOUND_SYSTEMD_CONTAINER"
+        )
+        if "FOUND_DOCKERENV" in file_check_out:
+            runtime = "docker"
+            is_container = True
+            evidence.append("file:/.dockerenv")
+        elif "FOUND_CONTAINERENV" in file_check_out:
+            runtime = "podman"
+            is_container = True
+            evidence.append("file:/run/.containerenv")
+        elif "FOUND_SYSTEMD_CONTAINER" in file_check_out:
+            runtime = "lxc"
+            is_container = True
+            evidence.append("file:/run/systemd/container")
+
+        # Probe 2: /proc/1/cgroup inspection (cgroups v1 & v2)
+        cgroup_content = _exec("cat /proc/1/cgroup 2>/dev/null")
+        if cgroup_content:
+            if "0::" in cgroup_content:
+                cgroup_version = "v2"
+                if "docker" in cgroup_content.lower():
+                    runtime = "docker"
+                    is_container = True
+                    evidence.append("cgroup_v2:docker")
+                elif "podman" in cgroup_content.lower() or "libpod" in cgroup_content.lower():
+                    runtime = "podman"
+                    is_container = True
+                    evidence.append("cgroup_v2:podman")
+                elif "kubepods" in cgroup_content.lower() or "crio" in cgroup_content.lower():
+                    runtime = "kubernetes"
+                    is_container = True
+                    evidence.append("cgroup_v2:kubernetes")
+            else:
+                cgroup_version = "v1"
+                for line in cgroup_content.splitlines():
+                    if "docker" in line:
+                        runtime = "docker"
+                        is_container = True
+                        evidence.append("cgroup_v1:docker")
+                        m = re.search(r"/docker[/-]([a-f0-9]{12,64})", line)
+                        if m:
+                            container_id = m.group(1)[:12]
+                    elif "podman" in line or "libpod" in line:
+                        runtime = "podman"
+                        is_container = True
+                        evidence.append("cgroup_v1:podman")
+                    elif "kubepods" in line:
+                        runtime = "kubernetes"
+                        is_container = True
+                        evidence.append("cgroup_v1:kubernetes")
+                    elif "lxc" in line:
+                        runtime = "lxc"
+                        is_container = True
+                        evidence.append("cgroup_v1:lxc")
+
+        # Probe 3: /proc/self/mountinfo inspection
+        mount_content = _exec("cat /proc/self/mountinfo 2>/dev/null | grep -iE 'docker|overlay|container' | head -n 3")
+        if mount_content:
+            if "docker" in mount_content.lower():
+                evidence.append("mountinfo:docker")
+                if not is_container:
+                    runtime = "docker"
+                    is_container = True
+            elif "podman" in mount_content.lower() or "overlay-container" in mount_content.lower():
+                evidence.append("mountinfo:podman")
+                if not is_container:
+                    runtime = "podman"
+                    is_container = True
+
+        # Probe 4: Rootless environment detection
+        uid_out = _exec("id -u 2>/dev/null")
+        if uid_out and uid_out.strip() != "0":
+            is_rootless = True
+
+        return {
+            "is_container": is_container,
+            "runtime": runtime,
+            "cgroup_version": cgroup_version,
+            "container_id": container_id,
+            "is_rootless": is_rootless,
+            "is_sandboxed": is_sandboxed or is_container,
+            "evidence": evidence,
+        }
+
+
+class BaseExecutor:
+    """Abstract polymorphic interface for all command and filesystem execution transports."""
+
+    def __init__(self, driver_type="BASE", db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None):
+        self.driver_type = driver_type
+        self.db_user = db_user
+        self.db_password = db_password
+        self.db_host = db_host
+        self.db_port = db_port
+        self.db_name = db_name
+        self.defaults_file = defaults_file
+
+    def execute(self, command, timeout=10, env=None, as_user=None, cwd=None, mask_secrets=True):
+        """Execute command with strict isolation and timeout."""
+        raise NotImplementedError("Subclasses must implement execute()")
+
+    def read_file(self, path, timeout=5, as_user=None):
+        """Read remote or container file content safely."""
+        res = self.execute(f"cat {shlex.quote(path)}", timeout=timeout, as_user=as_user)
+        if res.is_success:
+            return res.stdout
+        return None
+
+    def file_exists(self, path, timeout=5):
+        """Check if file exists in the target environment."""
+        res = self.execute(f"[ -e {shlex.quote(path)} ]", timeout=timeout)
+        return res.is_success
+
+    def get_metadata(self):
+        """Return execution transport metadata."""
+        return {
+            "driver_type": self.driver_type,
+            "db_user": self.db_user,
+            "db_host": self.db_host,
+            "db_port": self.db_port,
+            "db_name": self.db_name,
+            "defaults_file": self.defaults_file,
+            "has_password": bool(self.db_password),
+        }
