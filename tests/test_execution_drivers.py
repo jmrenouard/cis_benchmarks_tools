@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unit tests for LocalExecutor, DockerExecutor, and SSHExecutor (100% PSL ONLY).
+Exhaustive unit tests for Execution Drivers & Multi-Criteria Runtime Detection (100% PSL ONLY).
 """
 
 import unittest
@@ -11,9 +11,11 @@ from execution_drivers import (
     DockerExecutor,
     ExecutionResult,
     LocalExecutor,
+    RemoteSSHContainerExecutor,
     RuntimeDetector,
     SecretSanitizer,
     SSHExecutor,
+    create_executor,
 )
 
 
@@ -201,6 +203,60 @@ class TestExecutors(unittest.TestCase):
         self.assertIn("2222", called_args)
         self.assertIn("-i", called_args)
         self.assertIn("/root/.ssh/custom_id_rsa", called_args)
+
+    @patch("subprocess.run")
+    def test_remote_ssh_container_executor(self, mock_run):
+        mock_proc = MagicMock()
+        mock_proc.stdout = "CONTAINER_REMOTE_OK\n"
+        mock_proc.stderr = ""
+        mock_proc.returncode = 0
+        mock_run.return_value = mock_proc
+
+        executor = RemoteSSHContainerExecutor(remote_host="admin@10.0.0.1", container_name="mariadb-prod")
+        res = executor.execute("mysql -e 'SELECT 1;'")
+
+        self.assertTrue(res.is_success)
+        self.assertEqual(res.stdout, "CONTAINER_REMOTE_OK")
+        self.assertEqual(res.driver_type, "REMOTE_SSH_DOCKER")
+
+    @patch("subprocess.run")
+    def test_base_executor_read_file_and_exists(self, mock_run):
+        mock_proc = MagicMock()
+        mock_proc.stdout = "config_data_123\n"
+        mock_proc.stderr = ""
+        mock_proc.returncode = 0
+        mock_run.return_value = mock_proc
+
+        executor = LocalExecutor()
+        content = executor.read_file("/etc/mysql/my.cnf")
+        self.assertEqual(content, "config_data_123")
+        self.assertTrue(executor.file_exists("/etc/mysql/my.cnf"))
+
+        meta = executor.get_metadata()
+        self.assertEqual(meta["driver_type"], "LOCAL_BAREMETAL")
+
+
+class TestExecutorFactory(unittest.TestCase):
+    def test_create_local_baremetal(self):
+        executor = create_executor(mode="local", remote_host=None, docker_container=None)
+        self.assertIsInstance(executor, LocalExecutor)
+        self.assertEqual(executor.driver_type, "LOCAL_BAREMETAL")
+
+    def test_create_local_docker(self):
+        executor = create_executor(mode="local", remote_host=None, docker_container="mariadb106-test")
+        self.assertIsInstance(executor, DockerExecutor)
+        self.assertEqual(executor.driver_type, "LOCAL_DOCKER")
+        self.assertEqual(executor.container_name, "mariadb106-test")
+
+    def test_create_remote_ssh(self):
+        executor = create_executor(mode="ssh", remote_host="root@db.example.com", docker_container=None)
+        self.assertIsInstance(executor, SSHExecutor)
+        self.assertEqual(executor.driver_type, "REMOTE_SSH_BAREMETAL")
+
+    def test_create_remote_ssh_docker(self):
+        executor = create_executor(mode="ssh", remote_host="root@db.example.com", docker_container="db_container")
+        self.assertIsInstance(executor, RemoteSSHContainerExecutor)
+        self.assertEqual(executor.driver_type, "REMOTE_SSH_DOCKER")
 
 
 if __name__ == "__main__":
