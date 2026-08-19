@@ -457,4 +457,22 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Adversarial Isolation Test Suite**: 156 unit tests passing with full non-regression, zero host leakage, and error classification (closes #395).
 
 
+### Phase 27: Dynamic Real-Time Timestamping, Post-Execution Publishing & MariaDB 10.6 Reporting (`Completed ✅ - v2.8.0`)
+**Summary**: Implement timezone-aware real-time dynamic timestamping (`temporal_metadata.py`), crash-resilient post-execution publishing pipeline with atomic disk writes (`post_execution_publisher.py`), clean dynamic HTML template rendering without hardcoded mock data (`templates/report_template.html`), and full integration into the MariaDB 10.6 engine and multi-target orchestrator.
+
+#### 27.1 Real-Time Dynamic Timestamping & Timezone Management
+- [x] **Timezone-Aware Temporal Metadata (`temporal_metadata.py`)**: Precise start/end tracking, millisecond duration calculation, ISO 8601 formatting, localized display (DD/MM/YYYY HH:MM:SS TZ), and UTC offset.
+- [x] **Sub-2s Clock Delta Assertions**: Unit tests verifying that generated timestamps match real-time system clock within 2s tolerance.
+
+#### 27.2 Crash-Resilient Post-Execution Publishing Pipeline
+- [x] **Atomic Disk Writing (`atomic_write_text`)**: Temporary file creation, flush/fsync, and `os.replace` preventing corrupted or incomplete report files.
+- [x] **Unconditional Reporting Hook (`AuditReportPublisher`)**: Guaranteed report generation and export in `try...finally` blocks across all requested formats even during unexpected execution crashes.
+
+#### 27.3 Clean HTML/CSS Template & MariaDB 10.6 Reporting Engine
+- [x] **Elimination of Mock Values (`templates/report_template.html`)**: Removed hardcoded percentage bars and replaced with dynamic thematic security cards computed from category scores.
+- [x] **Execution Timeline Header**: Rendered explicit scan start date, execution duration, and timezone badge for clear human validation.
+- [x] **MariaDB 10.6 & Orchestrator Integration**: Fully connected `audit_cis_mariadb_106.py`, `audit_orchestrator.py`, and `docker_e2e_engine.py` (closes #404).
+
+
+
 
