@@ -426,3 +426,19 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Zero-Leak Secret Sanitizer (`SecretSanitizer`) (PR #374)**: Scrubber for passwords (`-p`, `MYSQL_PWD`, `PGPASSWORD`), tokens, and secret flags in execution logging and output.
 - [x] **Engine & HTML Report Restitution (PR #374)**: Integrated execution context cards into MariaDB 10.6 and MariaDB 10.11 engines and report templates, backed by 107 unit tests in `test_execution_drivers.py`, `test_mariadb_audit_engine.py`, and `test_audit_cis_cli.py` (closes #373).
 
+
+### Phase 25: Multi-Product Audit Orchestrator, RCA Diagnostics & Report Persistence (`Completed ✅ - v2.6.9`)
+**Summary**: Implement autonomous multi-product audit orchestrator (`AuditOrchestrator`), Root Cause Analysis diagnostic engine (`CommandFailureClassifier`), environmental fault isolation, and unified report generation across all 18 database and OS targets in `reports/`.
+
+#### 25.1 Multi-Product Audit Orchestration & Pipeline
+- [x] **Universal Catalog Discovery (`audit_orchestrator.py`)**: Automatic discovery and polymorphic execution across all 18 canonical targets (MySQL 8.0/8.4/9.7, MariaDB 10.6/10.11, PostgreSQL 16/17/18, MongoDB 7/8, Cassandra 4.0/4.1/5.0, RHEL 8/9/10).
+- [x] **Non-Blocking Resilience & Parallel Worker Pool**: Thread pool management (`concurrent.futures`), fault isolation guaranteeing continuous pipeline execution when individual targets encounter environment errors.
+- [x] **Execution Telemetry & Structured Logging**: Per-target execution duration, start/end timestamps, compliance scores, and format persistence.
+
+#### 25.2 Root Cause Analysis (RCA) Diagnostic Engine
+- [x] **Command Failure Classifier (`audit_diagnostics.py`)**: Automatic categorization of failures across 8 standardized categories (`MISSING_BINARY`, `PERMISSION_DENIED`, `AUTH_FAILURE`, `CONNECTION_ERROR`, `TIMEOUT`, `SYNTAX_ERROR`, `SECURITY_NON_COMPLIANCE`, `MANUAL_ASSESSMENT_REQUIRED`).
+- [x] **Strict Distinction of Tooling vs Security Defects**: Guarantees zero false positives and prevents technical execution errors from being falsely classified as compliant or non-compliant.
+- [x] **Multi-Format RCA Persistence (`scripts/generate_rca_reports.py`)**: Automatic generation of `reports/analyse_diagnostique_rca.md`, `.json`, and interactive HTML dashboard (`analyse_diagnostique_rca.html`).
+- [x] **Comprehensive Fault Injection Test Suite**: 129 unit tests passing across `tests/test_audit_diagnostics.py`, `tests/test_audit_orchestrator.py`, and `tests/test_audit_resilience_and_rca.py` (closes #385).
+
+
