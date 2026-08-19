@@ -111,9 +111,16 @@ def auto_detect_and_run():
     try:
         ps_out = subprocess.check_output(["docker", "ps", "--format", "{{.Names}} {{.Image}}"], text=True)
         for line in ps_out.splitlines():
-            line_lower = line.lower()
+            line_norm = line.lower().replace(".", "").replace(":", "").replace("-", "").replace("_", "")
             for key in TARGET_MAP:
-                if key.replace("-", "") in line_lower or key.split("-")[0] in line_lower:
+                key_norm = key.lower().replace(".", "").replace(":", "").replace("-", "").replace("_", "")
+                aliases = [
+                    key_norm,
+                    key_norm.replace("postgresql", "postgres"),
+                    key_norm.replace("mongodb", "mongo"),
+                    key.split("-")[0].lower().replace(".", "")
+                ]
+                if any(alias in line_norm for alias in aliases):
                     if key not in detected:
                         detected.append(key)
     except Exception as e:
