@@ -1222,19 +1222,76 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
             checks_rows=checks_rows_html
         )
 
+    def build_execution_context_card(ctx):
+        if not ctx:
+            return ""
+        ctx_dict = {"label": ctx, "type": "LOCAL_BAREMETAL", "mode": "local", "docker_container": None, "remote_host": None} if isinstance(ctx, str) else (ctx or {})
+        driver_type = ctx_dict.get("type", "LOCAL_BAREMETAL")
+        label = ctx_dict.get("label", "Local Bare-Metal")
+        mode = ctx_dict.get("mode", "local").upper()
+        container = ctx_dict.get("docker_container") or "N/A (Bare-Metal)"
+        remote_host = ctx_dict.get("remote_host") or "localhost"
+        runtime_info = ctx_dict.get("runtime_info", {})
+        runtime_name = runtime_info.get("runtime", "baremetal").capitalize()
+        cgroup_v = runtime_info.get("cgroup_version", "N/A")
+        evidence_list = runtime_info.get("evidence", [])
+        evidence_str = ", ".join(evidence_list) if evidence_list else "Direct execution"
+
+        badge_color = "bg-blue-50 text-blue-700 border-blue-200" if "DOCKER" in driver_type else "bg-gray-50 text-gray-700 border-gray-200"
+        if "SSH" in driver_type:
+            badge_color = "bg-purple-50 text-purple-700 border-purple-200"
+
+        return f"""
+<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 mb-8">
+  <div class="flex items-center justify-between flex-wrap gap-4 border-b border-gray-100 pb-3 mb-4">
+    <div class="flex items-center space-x-3">
+      <span class="p-2.5 bg-blue-50 text-blue-600 rounded-lg text-base"><i class="fas fa-server"></i></span>
+      <div>
+        <h3 class="text-sm font-bold text-gray-900">Environnement d'Exécution & Contexte d'Audit</h3>
+        <p class="text-xs text-gray-500">{html.escape(label)}</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-2">
+      <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border {badge_color}">{driver_type}</span>
+      <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200"><i class="fas fa-shield-alt mr-1"></i> PSL Safe</span>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+    <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+      <span class="text-gray-500 block mb-0.5 font-medium">Mode / Transport</span>
+      <span class="font-bold text-gray-800">{mode} ({html.escape(str(remote_host))})</span>
+    </div>
+    <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+      <span class="text-gray-500 block mb-0.5 font-medium">Conteneur Cible</span>
+      <span class="font-bold text-gray-800">{html.escape(str(container))}</span>
+    </div>
+    <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+      <span class="text-gray-500 block mb-0.5 font-medium">Runtime / Cgroup</span>
+      <span class="font-bold text-gray-800">{runtime_name} ({cgroup_v})</span>
+    </div>
+    <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+      <span class="text-gray-500 block mb-0.5 font-medium">Signatures Heuristiques</span>
+      <span class="font-bold text-gray-800 truncate block" title="{html.escape(evidence_str)}">{html.escape(evidence_str[:30])}...</span>
+    </div>
+  </div>
+</div>
+"""
+
     category_manual_counts = json.dumps([categories_scores.get(cat, {}).get("manual_checks", 0) for cat in category_order])
     total_other = error_auto_count + na_auto_count
     class SafeDict(dict):
         def __missing__(self, key):
             return f"{{{key}}}"
 
-    ctx_label = execution_context if execution_context else "Local Bare-Metal"
+    ctx_label = execution_context.get("label") if isinstance(execution_context, dict) else (execution_context if execution_context else "Local Bare-Metal")
+    context_card_html = build_execution_context_card(execution_context)
     html_output = load_html_template().format_map(SafeDict(
         product_title="MariaDB 10.11",
         benchmark_title="MariaDB 10.11",
         benchmark_version="1.1.0",
         suite_version="2.3.0",
         execution_context=ctx_label,
+        execution_context_card_html=context_card_html,
         lang=lang if 'lang' in locals() else "en",
         report_date=report_date,
         overall_score=overall_score,
