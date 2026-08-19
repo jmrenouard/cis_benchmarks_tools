@@ -982,13 +982,7 @@ def get_status_info(status):
     else:
         return "❓", status, "status-error"
 
-
-
-
-
-
-
-def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en"):
+def export_results(results, overall_score, categories_scores, target_name, filename=None, fmt="html", lang="en", execution_context=None):
     """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
     import json
     import os
@@ -1017,10 +1011,13 @@ def export_results(results, overall_score, categories_scores, target_name, filen
     if fmt == "json":
         data = {
             "benchmark": target_name,
+            "target": target_name,
             "report_date": datetime.now().isoformat(),
+            "execution_context": execution_context.get("label") if isinstance(execution_context, dict) else (execution_context or "Local Bare-Metal"),
             "overall_score": overall_score,
+            "categories": categories_scores,
             "total_checks": len(flat_results),
-            "results": flat_results
+            "results": results
         }
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
@@ -1053,11 +1050,13 @@ def export_results(results, overall_score, categories_scores, target_name, filen
         fail_cnt = sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])
         manual_cnt = sum(1 for r in flat_results if r.get("status") in ["MANUAL", "Manual"])
         error_cnt = sum(1 for r in flat_results if r.get("status") in ["ERROR", "Error"])
+        ctx_txt = execution_context.get("label") if isinstance(execution_context, dict) else (execution_context or "Local Bare-Metal")
         lines = [
             "=" * 90,
             f"               CIS BENCHMARK AUDIT REPORT - {target_name.upper()}",
             "=" * 90,
             f"Report Date   : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            f"Context       : {ctx_txt}",
             f"Global Score  : {overall_score:.1f}%",
             f"Total Controls: {len(flat_results)} (Passed: {pass_cnt}, Failed: {fail_cnt}, Manual: {manual_cnt}, Error: {error_cnt})",
             "-" * 90,
@@ -1066,85 +1065,80 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             f"  {'ID':<6} {'Category Name':<45} {'Pass':<6} {'Fail':<6} {'Manual':<8} {'Score':<8}",
             f"  {'-'*6} {'-'*45} {'-'*6} {'-'*6} {'-'*8} {'-'*8}",
         ]
-        if isinstance(categories_scores, dict):
-            for cat_id, data in categories_scores.items():
-                raw_name = str(data.get("name", cat_id)).strip()
-                m = re.match(r"^(\d+[\.\d]*)\s*[-.:]?\s*(.*)$", raw_name)
-                if m:
-                    cid, cname = m.group(1), m.group(2)
-                else:
-                    cid, cname = str(cat_id)[:6], raw_name
-                cname_trunc = cname[:44] if cname else raw_name[:44]
-                p = data.get("passed_automated", 0)
-                f = data.get("failed_automated", 0)
-                m_cnt = data.get("manual_checks", 0)
-                sc = data.get("score", 0.0)
-                lines.append(f"  {cid:<6} {cname_trunc:<45} {p:<6} {f:<6} {m_cnt:<8} {sc:>6.1f}%")
+        category_order = list(dict.fromkeys(rec["category"] for rec in RECOMMENDATIONS_DATA))
+        for cat in category_order:
+            cat_data = categories_scores.get(cat, {})
+            cat_id = cat.split(".")[0] + "." if "." in cat else cat[:2]
+            cat_name = cat.split(".", 1)[1].strip() if "." in cat else cat
+            if len(cat_name) > 43:
+                cat_name = cat_name[:40] + "..."
+            c_pass = cat_data.get("passed_automated", 0)
+            c_fail = cat_data.get("failed_automated", 0)
+            c_man = cat_data.get("manual_checks", 0)
+            c_score = f"{cat_data.get('score', 0):.1f}%"
+            lines.append(f"  {cat_id:<6} {cat_name:<45} {c_pass:<6} {c_fail:<6} {c_man:<8} {c_score:>8}")
+
         lines.extend([
             "=" * 90,
             " DETAILED CONTROL RESULTS",
             "=" * 90,
-            ""
         ])
         for r in flat_results:
             status = r.get("status", "")
-            if status in ["PASS", "Pass"]:
-                status_icon = "[PASS]"
-            elif status in ["FAIL", "Fail"]:
-                status_icon = "[FAIL]"
-            elif status in ["ERROR", "Error"]:
-                status_icon = "[ERROR]"
-            elif status in ["N/A", "Not Applicable"]:
-                status_icon = "[N/A]"
-            else:
-                status_icon = "[MANUAL]"
+            if status in ["PASS", "Pass"]: status_icon = "[PASS]"
+            elif status in ["FAIL", "Fail"]: status_icon = "[FAIL]"
+            elif status in ["ERROR", "Error"]: status_icon = "[ERROR]"
+            elif status in ["N/A", "Not Applicable"]: status_icon = "[N/A]"
+            else: status_icon = "[MANUAL]"
             rec_id = r.get("number", r.get("id", ""))
             rec_name = r.get("name", r.get("title", ""))
             lines.append(f"{status_icon} {rec_id} - {rec_name}")
             lines.append(f"  Category: {r.get('category')}")
             test_proc = r.get("test_procedure", r.get("audit", ""))
-            if test_proc:
-                lines.append(f"  Commande de test: {str(test_proc).strip()}")
+            if test_proc: lines.append(f"  Commande de test: {str(test_proc).strip()}")
             out = r.get("output", r.get("stdout", ""))
-            if out:
-                lines.append(f"  Output: {str(out).strip()}")
+            if out: lines.append(f"  Output: {str(out).strip()}")
             rem = r.get("remediation", "")
-            if rem:
-                lines.append(f"  Procédure de remédiation: {str(rem).strip()}")
+            if rem: lines.append(f"  Procédure de remédiation: {str(rem).strip()}")
             lines.append("-" * 90)
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write("\n".join(lines) + "\n")
-        print(f"📄 TXT Report successfully generated: {filename}")
+
+        try:
+            if filename:
+                os.makedirs(os.path.dirname(os.path.abspath(filename)), exist_ok=True)
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write("\n".join(lines) + "\n")
+                print(f"📄 TXT Report successfully generated: {filename}")
+            else:
+                print("\n".join(lines))
+        except Exception as e:
+            print(f"❌ Error writing TXT report: {e}", file=sys.stderr)
 
     else:
         try:
-            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
+            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang, execution_context=execution_context)
         except TypeError:
-            try:
-                generate_html_report(results, overall_score, categories_scores, filename=filename)
-            except TypeError:
-                # Legacy positional args fallback
-                generate_html_report(results, overall_score, categories_scores, 0, 0, 0, 0, 0, 0, 0, [], [], [], [], [], filename)
+            generate_html_report(results, overall_score, categories_scores, filename=filename, lang=lang)
 
 
 
 def generate_html_report(results, overall_score, categories_scores, filename=None, lang="en", execution_context=None):
+    """Génère le rapport HTML complet avec graphiques et résultats détaillés."""
     if not filename:
-        filename = "reports/rapport_cis_mariadb_106.html"
+        reports_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reports")
+        os.makedirs(reports_dir, exist_ok=True)
+        filename = os.path.join(reports_dir, "rapport_cis_mariadb_106.html")
 
     report_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     overall_score_class = get_score_class(overall_score)
-    categories_html = ""
+    
     sidebar_links_html = ""
+    categories_html = ""
+    category_labels = []
+    category_pass_counts = []
+    category_fail_counts = []
+    category_manual_counts = []
 
-    flat_results = []
-    if isinstance(results, dict):
-        for cat, checks in results.items():
-            for c in checks:
-                flat_results.append(c)
-    else:
-        flat_results = results
-
+    flat_results = [check for checks in results.values() for check in checks]
     passed_auto_count = sum(1 for c in flat_results if c.get("status") in ["PASS", "Pass"])
     failed_auto_count = sum(1 for c in flat_results if c.get("status") in ["FAIL", "Fail"])
     error_auto_count = sum(1 for c in flat_results if c.get("status") in ["ERROR", "Error"])
@@ -1222,19 +1216,76 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
             checks_rows=checks_rows_html
         )
 
+    def build_execution_context_card(ctx):
+        if not ctx:
+            return ""
+        ctx_dict = {"label": ctx, "type": "LOCAL_BAREMETAL", "mode": "local", "docker_container": None, "remote_host": None} if isinstance(ctx, str) else (ctx or {})
+        driver_type = ctx_dict.get("type", "LOCAL_BAREMETAL")
+        label = ctx_dict.get("label", "Local Bare-Metal")
+        mode = ctx_dict.get("mode", "local").upper()
+        container = ctx_dict.get("docker_container") or "N/A (Bare-Metal)"
+        remote_host = ctx_dict.get("remote_host") or "localhost"
+        runtime_info = ctx_dict.get("runtime_info", {})
+        runtime_name = runtime_info.get("runtime", "baremetal").capitalize()
+        cgroup_v = runtime_info.get("cgroup_version", "N/A")
+        evidence_list = runtime_info.get("evidence", [])
+        evidence_str = ", ".join(evidence_list) if evidence_list else "Direct execution"
+
+        badge_color = "bg-blue-50 text-blue-700 border-blue-200" if "DOCKER" in driver_type else "bg-gray-50 text-gray-700 border-gray-200"
+        if "SSH" in driver_type:
+            badge_color = "bg-purple-50 text-purple-700 border-purple-200"
+
+        return f"""
+<div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 mb-8">
+  <div class="flex items-center justify-between flex-wrap gap-4 border-b border-gray-100 pb-3 mb-4">
+    <div class="flex items-center space-x-3">
+      <span class="p-2.5 bg-blue-50 text-blue-600 rounded-lg text-base"><i class="fas fa-server"></i></span>
+      <div>
+        <h3 class="text-sm font-bold text-gray-900">Environnement d'Exécution & Contexte d'Audit</h3>
+        <p class="text-xs text-gray-500">{html.escape(label)}</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-2">
+      <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border {badge_color}">{driver_type}</span>
+      <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200"><i class="fas fa-shield-alt mr-1"></i> PSL Safe</span>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+    <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+      <span class="text-gray-500 block mb-0.5 font-medium">Mode / Transport</span>
+      <span class="font-bold text-gray-800">{mode} ({html.escape(str(remote_host))})</span>
+    </div>
+    <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+      <span class="text-gray-500 block mb-0.5 font-medium">Conteneur Cible</span>
+      <span class="font-bold text-gray-800">{html.escape(str(container))}</span>
+    </div>
+    <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+      <span class="text-gray-500 block mb-0.5 font-medium">Runtime / Cgroup</span>
+      <span class="font-bold text-gray-800">{runtime_name} ({cgroup_v})</span>
+    </div>
+    <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+      <span class="text-gray-500 block mb-0.5 font-medium">Signatures Heuristiques</span>
+      <span class="font-bold text-gray-800 truncate block" title="{html.escape(evidence_str)}">{html.escape(evidence_str[:30])}...</span>
+    </div>
+  </div>
+</div>
+"""
+
     category_manual_counts = json.dumps([categories_scores.get(cat, {}).get("manual_checks", 0) for cat in category_order])
     total_other = error_auto_count + na_auto_count
     class SafeDict(dict):
         def __missing__(self, key):
             return f"{{{key}}}"
 
-    ctx_label = execution_context if execution_context else "Local Bare-Metal"
+    ctx_label = execution_context.get("label") if isinstance(execution_context, dict) else (execution_context if execution_context else "Local Bare-Metal")
+    context_card_html = build_execution_context_card(execution_context)
     html_output = load_html_template().format_map(SafeDict(
         product_title="MariaDB 10.6",
         benchmark_title="MariaDB 10.6",
         benchmark_version="1.0.0",
         suite_version="2.3.0",
         execution_context=ctx_label,
+        execution_context_card_html=context_card_html,
         lang=lang if 'lang' in locals() else "en",
         report_date=report_date,
         overall_score=overall_score,
@@ -1301,6 +1352,7 @@ if __name__ == "__main__":
 
     rules_data = load_recommendations("mariadb_106")
     docker_target = detect_docker_container(remote_host=remote_target, docker_name=args.docker_container)
-    check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target)
+    exec_context = detect_execution_context(mode=args.mode, remote_host=remote_target, docker_container=docker_target, product_hint="mariadb")
+    check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target, db_user=args.db_user, db_password=args.db_password, db_host=args.db_host, db_port=args.db_port, db_name=args.db_name, defaults_file=args.defaults_file, auth_db=args.auth_db)
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
-    export_results(check_results, overall_score, categories_scores, target_name="mariadb_106", filename=args.output, fmt=args.format, lang=args.lang)
+    export_results(check_results, overall_score, categories_scores, target_name="mariadb_106", filename=args.output, fmt=args.format, lang=args.lang, execution_context=exec_context)
