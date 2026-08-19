@@ -6,7 +6,11 @@ This document tracks technical debt, security considerations, active quality con
 
 ## 🔒 Resolved Architectural Backlog
 
-### 1. Phase 23 PostgreSQL Command Safety & 100% E2E Multi-Format Compliance (Resolved in v2.6.7 ✅)
+### 1. Phase 24 Unified Execution Drivers & Multi-Criteria Runtime Detection (Resolved in v2.6.8 ✅)
+- **Problem**: Environment runtime detection was fragmented, container heuristics were minimal (relied solely on presence of `/.dockerenv`), and command execution lacked polymorphic driver abstraction, structured execution context restitution, and systematic zero-credential secret scrubbing.
+- **Resolution**: Created `execution_drivers.py` providing `RuntimeDetector` (6 inspection probes: cgroups v1/v2, containerenv, mountinfo, env vars, rootless UID, sandbox inodes), `SecretSanitizer`, polymorphic `BaseExecutor` hierarchy (`LocalExecutor`, `DockerExecutor`, `SSHExecutor`, `RemoteSSHContainerExecutor`), and factory `create_executor()`. Integrated execution context metadata cards into MariaDB 10.6 and 10.11 engines and report templates. Added comprehensive unit tests in `tests/test_execution_drivers.py`, `tests/test_mariadb_audit_engine.py`, and `tests/test_audit_cis_cli.py` (PR #374, Closes #373).
+
+### 2. Phase 23 PostgreSQL Command Safety & 100% E2E Multi-Format Compliance (Resolved in v2.6.7 ✅)
 - **Problem**: PostgreSQL rule specifications contained raw SQL queries (`SELECT`, `SHOW`) and invalid trailing expressions without `psql` wrappers, triggering bash error 127 command not found.
 - **Resolution**: Sanitized all PostgreSQL rule definitions and audit engines with proper `psql` wrappers, auto-wrap safety logic, and full parameter forwarding in `perform_checks()`. Added unit tests in `tests/test_postgresql_command_safety.py` and validated 100% pass across all 15 targets in HTML, JSON, XML, and TXT formats (PR #362, Closes #361).
 
@@ -227,3 +231,14 @@ This document tracks technical debt, security considerations, active quality con
 - [x] **PR #345**: `fix(mysql80): enhance Docker execution context and database parameter routing in audit engine` — *Enhanced Docker container execution context detection and report labeling (`Local Docker (mysql80-test)`), propagated database connection parameters (`db_user`, `db_password`, etc.) in perform_checks, and hardened `MYSQL_CMD` for container environments (closes #343).*- [x] **PR #347**: `feat(mysql80): add context-aware command selection for Local/SSH/Docker execution` — *Added `get_context_command()` function for context-separated command resolution and updated `perform_checks()` to use `exec_context` parameter (#346).*
 - [x] **PR #348**: `feat(mysql80): add Docker-specific OS command variants in rules` — *Added `test_procedure_docker` for rules 1.4 and 1.7 (systemctl → ps, /proc/*/environ → env) (#346).*
 - [x] **PR #350**: `feat(mysql80): add systematic audit logging with .log companion file` — *Added PSL logging system with `setup_audit_logger()`, credential masking, `run_command()`/`perform_checks()` instrumentation, and `--verbose/-v` CLI flag (closes #349).*
+- [x] **PR #374**: `feat(execution): execution drivers base, sanitizer, and runtime detector (Part 1)` — *Implemented BaseExecutor, SecretSanitizer, ExecutionResult, and RuntimeDetector with 6 heuristic probes (Issue #373).*
+- [x] **PR #375**: `feat(execution): local and docker execution drivers (Part 2a)` — *Implemented LocalExecutor and DockerExecutor with containerized command wrapping (Issue #373).*
+- [x] **PR #376**: `feat(execution): ssh remote execution driver (Part 2b)` — *Implemented SSHExecutor with batch mode, timeout, and credential injection (Issue #373).*
+- [x] **PR #377**: `feat(execution): remote ssh container driver and factory (Part 2c)` — *Implemented RemoteSSHContainerExecutor, create_executor factory, read_file, and file_exists helpers (Issue #373).*
+- [x] **PR #378**: `feat(mariadb106): execution driver delegation and template token (Part 3a)` — *Delegated command execution in audit_cis_mariadb_106.py to execution_drivers and added template token (Issue #373).*
+- [x] **PR #379**: `feat(mariadb106): execution context badge card and CLI parameter forwarding (Part 3b)` — *Added execution context card and CLI parameter forwarding in MariaDB 10.6 audit engine (Issue #373).*
+- [x] **PR #380**: `feat(mariadb1011): execution driver delegation and test suite (Part 4a)` — *Delegated command execution in audit_cis_mariadb_1011.py to execution_drivers and added multi-format unit tests (Issue #373).*
+- [x] **PR #381**: `feat(mariadb1011): export context propagation and CLI forwarding (Part 4b)` — *Propagated execution context in export_results() and CLI main in MariaDB 10.11 audit engine (Issue #373).*
+- [x] **PR #382**: `feat(mariadb1011): execution context badge card rendering (Part 4c)` — *Added execution context card rendering in MariaDB 10.11 audit engine (Issue #373).*
+- [x] **PR #383**: `feat(cli): target alias normalization, bundling, and CLI unit tests (Part 5a)` — *Added target alias normalization in bundler and unit tests in tests/test_audit_cis_cli.py (Issue #373).*
+- [x] **PR #384**: `docs(release): version bump v2.6.8, roadmap, and potential issues sync (Part 5b)` — *Released v2.6.8, synchronized Phase 24 in ROADMAP.md and POTENTIAL_ISSUES.md (closes #373).*

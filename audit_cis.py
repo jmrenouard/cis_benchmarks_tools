@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unified CIS Benchmark Audit Engine v2.6.7
+Unified CIS Benchmark Audit Engine v2.6.8
 Automated security audit suite for databases and Linux operating systems (Local & SSH Remote Modes).
 100% Python Standard Library (PSL ONLY).
 """
@@ -12,7 +12,7 @@ import os
 import subprocess
 import sys
 
-__version__ = "2.6.7"
+__version__ = "2.6.8"
 
 TARGET_MAP = {
     "mariadb106": ("audit_cis_mariadb_106.py", "MariaDB 10.6", 74),
