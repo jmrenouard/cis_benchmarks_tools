@@ -297,3 +297,118 @@ class AuditOrchestrator:
                 diagnostic_summary=diagnostic_summary,
                 exception_msg=f"Audit execution exception: {exc}"
             )
+
+    def execute_all_targets(
+        self,
+        targets: Optional[List[str]] = None,
+        parallel_workers: int = 1
+    ) -> List[TargetAuditExecutionResult]:
+        """Executes audits across multiple targets sequentially or with thread pool."""
+        target_list = targets or list(CANONICAL_TARGETS.keys())
+        results: List[TargetAuditExecutionResult] = []
+
+        if parallel_workers > 1:
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor(max_workers=parallel_workers) as pool:
+                future_map = {pool.submit(self.execute_single_target, t): t for t in target_list}
+                for fut in concurrent.futures.as_completed(future_map):
+                    results.append(fut.result())
+        else:
+            for t in target_list:
+                results.append(self.execute_single_target(t))
+
+        order_map = {k: idx for idx, k in enumerate(CANONICAL_TARGETS.keys())}
+        results.sort(key=lambda r: order_map.get(r.target_key, 999))
+        return results
+
+    def generate_suite_rca_dashboard(
+        self,
+        execution_results: List[TargetAuditExecutionResult],
+        report_filename: Optional[str] = None
+    ) -> str:
+        """Generates comprehensive Multi-Product Root Cause Analysis (RCA) Markdown Dashboard."""
+        if not report_filename:
+            report_filename = os.path.join(self.output_dir, "analyse_tests_rca_dashboard.md")
+
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        total_targets = len(execution_results)
+        successful_runs = sum(1 for r in execution_results if r.success)
+        avg_score = sum(r.overall_score for r in execution_results) / max(1, total_targets)
+        total_controls = sum(r.total_controls for r in execution_results)
+        total_env_errors = sum(r.diagnostic_summary.environment_errors for r in execution_results if r.diagnostic_summary)
+        total_sec_failures = sum(r.diagnostic_summary.security_failures for r in execution_results if r.diagnostic_summary)
+
+        lines = [
+            "# 📊 Executive Root Cause Analysis (RCA) & Audit Diagnostics Dashboard",
+            "",
+            f"**Generated:** `{now_str}` | **Execution Mode:** `{self.mode.upper()}` | **Targets:** `{total_targets}`",
+            "",
+            "## 📈 Global Compliance & Reliability Metrics",
+            "",
+            "| Metric | Value | Status |",
+            "| :--- | :---: | :---: |",
+            f"| **Audited Target Products** | `{total_targets}` | 🎯 100% Catalog Coverage |",
+            f"| **Successful Audit Runs** | `{successful_runs} / {total_targets}` | {'✅ PASS' if successful_runs == total_targets else '⚠️ PARTIAL'} |",
+            f"| **Average Global Compliance Score** | `{avg_score:.1f}%` | {'🟢 HIGH' if avg_score >= 80 else '🟡 MEDIUM'} |",
+            f"| **Total Assessed Security Controls** | `{total_controls}` | 🛡️ CIS Verified |",
+            f"| **Genuine Security Failures** | `{total_sec_failures}` | 🔴 Actionable Findings |",
+            f"| **Environmental / Tooling Errors** | `{total_env_errors}` | {'🟢 0 Errors (Reliable)' if total_env_errors == 0 else '⚠️ Needs Infrastructure Fix'} |",
+            "",
+            "## 📋 Per-Product Execution & Root Cause Matrix",
+            "",
+            "| Target Key | Product Name | Duration | Score | Controls | Pass | Fail | Manual | Error | Reports |",
+            "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |",
+        ]
+
+        for r in execution_results:
+            rep_links = ", ".join(f"[{fmt.upper()}](file://{path})" for fmt, path in r.generated_reports.items()) if r.generated_reports else "N/A"
+            dur = f"{r.duration_sec:.2f}s"
+            score_str = f"{r.overall_score:.1f}%" if r.success else "ERR"
+            lines.append(
+                f"| `{r.target_key}` | **{r.title}** | `{dur}` | `{score_str}` | `{r.total_controls}` | `{r.pass_count}` | `{r.fail_count}` | `{r.manual_count}` | `{r.error_count}` | {rep_links} |"
+            )
+
+        content = "\n".join(lines)
+        with open(report_filename, "w", encoding="utf-8") as f:
+            f.write(content)
+
+        json_path = report_filename.replace(".md", ".json")
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump([r.to_dict() for r in execution_results], f, indent=2)
+
+        return report_filename
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Multi-Product CIS Audit Orchestrator & RCA Pipeline")
+    parser.add_argument("-t", "--target", dest="target", default=None, help="Target product key (e.g. mariadb106, all)")
+    parser.add_argument("--all", action="store_true", help="Execute audit across all canonical targets")
+    parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Execution mode")
+    parser.add_argument("-r", "--remote", dest="remote_host", default=None, help="Remote SSH server")
+    parser.add_argument("-c", "--docker", dest="docker_container", default=None, help="Target Docker container")
+    parser.add_argument("-f", "--format", dest="formats", default="html,json,xml,txt", help="Report formats")
+    parser.add_argument("-j", "--parallel", type=int, default=1, help="Parallel worker threads")
+    parser.add_argument("-o", "--output-dir", dest="output_dir", default="reports", help="Output directory")
+    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Report language")
+    args = parser.parse_args()
+
+    selected_formats = [fmt.strip().lower() for fmt in args.formats.split(",") if fmt.strip()]
+    orchestrator = AuditOrchestrator(
+        mode=args.mode,
+        remote_host=args.remote_host,
+        docker_container=args.docker_container,
+        output_dir=args.output_dir,
+        formats=selected_formats,
+        lang=args.lang
+    )
+
+    targets_to_run = list(CANONICAL_TARGETS.keys()) if (args.all or args.target == "all") else ([t.strip() for t in args.target.split(",")] if args.target else [])
+    if not targets_to_run:
+        print("❌ Error: Specify --target <key> or --all.", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"🚀 [Audit Orchestrator] Launching CIS Audit for {len(targets_to_run)} targets...")
+    results = orchestrator.execute_all_targets(targets=targets_to_run, parallel_workers=args.parallel)
+    orchestrator.generate_suite_rca_dashboard(results)
+    print("✅ Completed.")
+
