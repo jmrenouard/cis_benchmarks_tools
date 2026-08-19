@@ -360,7 +360,7 @@ class LocalExecutor(BaseExecutor):
 
 
 class DockerExecutor(BaseExecutor):
-    """Docker / Podman container execution driver."""
+    """Docker / Podman in-container execution driver (PSL ONLY)."""
 
     def __init__(self, container_name, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker"):
         super().__init__(
@@ -375,7 +375,23 @@ class DockerExecutor(BaseExecutor):
         self.container_name = container_name
         self.container_cli = container_cli
 
-    def execute(self, command, timeout=10, env=None, as_user=None, cwd=None, mask_secrets=True):
+    def get_container_info(self):
+        """Retrieve rich container runtime metadata."""
+        from docker_transport import DockerContainerDiscovery
+        return DockerContainerDiscovery.inspect_container(self.container_name, container_cli=self.container_cli)
+
+    def is_container_running(self, timeout=3):
+        """Fast health check if container is running."""
+        try:
+            p = subprocess.run(
+                [self.container_cli, "inspect", "--format", "{{.State.Running}}", self.container_name],
+                capture_output=True, text=True, timeout=timeout, check=False, stdin=subprocess.DEVNULL
+            )
+            return p.returncode == 0 and p.stdout.strip().lower() == "true"
+        except Exception:
+            return False
+
+    def execute(self, command, timeout=10, env=None, as_user=None, cwd=None, mask_secrets=True, allocate_tty=False):
         start_time = time.time()
         docker_env = []
 
@@ -396,8 +412,9 @@ class DockerExecutor(BaseExecutor):
         env_flags = " ".join(docker_env) if docker_env else ""
         user_flags = f"-u {as_user} " if as_user else ""
         workdir_flags = f"-w {cwd} " if cwd else ""
+        tty_flag = "-t" if allocate_tty else ""
 
-        cmd_string = f"{self.container_cli} exec -i {env_flags} {user_flags}{workdir_flags}{self.container_name} /bin/bash -c {json.dumps(command)}".replace("  ", " ").strip()
+        cmd_string = f"{self.container_cli} exec -i {tty_flag} {env_flags} {user_flags}{workdir_flags}{self.container_name} /bin/bash -c {json.dumps(command)}".replace("  ", " ").strip()
         masked_cmd = SecretSanitizer.sanitize(cmd_string) if mask_secrets else cmd_string
 
         try:
@@ -438,6 +455,11 @@ class DockerExecutor(BaseExecutor):
                 command_masked=masked_cmd,
                 driver_type=self.driver_type
             )
+
+
+# High-fidelity in-container alias
+DockerContainerExecutor = DockerExecutor
+
 
 
 class SSHExecutor(BaseExecutor):
@@ -651,7 +673,7 @@ class RemoteSSHContainerExecutor(BaseExecutor):
             )
 
 
-def create_executor(mode="local", remote_host=None, docker_container=None, ssh_key="/root/.ssh/id_rsa", ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker"):
+def create_executor(mode="local", remote_host=None, docker_container=None, ssh_key="/root/.ssh/id_rsa", ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker", product_hint=None):
     """
     Polymorphic factory function to instantiate the correct execution driver.
     """
@@ -682,9 +704,20 @@ def create_executor(mode="local", remote_host=None, docker_container=None, ssh_k
             defaults_file=defaults_file
         )
 
-    if docker_container:
+    # Auto-resolve target container if not explicitly provided but product_hint exists
+    resolved_container = docker_container
+    if not resolved_container and product_hint and mode == "local":
+        try:
+            from docker_transport import DockerContainerDiscovery
+            found = DockerContainerDiscovery.find_container_for_product(product_hint, container_cli=container_cli)
+            if found:
+                resolved_container = found.name
+        except Exception:
+            pass
+
+    if resolved_container:
         return DockerExecutor(
-            container_name=docker_container,
+            container_name=resolved_container,
             db_user=db_user,
             db_password=db_password,
             db_host=db_host,
@@ -702,5 +735,6 @@ def create_executor(mode="local", remote_host=None, docker_container=None, ssh_k
         db_name=db_name,
         defaults_file=defaults_file
     )
+
 
 
