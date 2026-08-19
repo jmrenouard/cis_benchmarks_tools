@@ -53,20 +53,16 @@ CANONICAL_TARGETS: Dict[str, Dict[str, Any]] = {
 def normalize_target_key(target_input: str) -> str:
     """Normalizes various user inputs to a canonical target key."""
     cleaned = target_input.strip().lower().replace("_", "").replace(".", "").replace(" ", "")
-    if cleaned in CANONICAL_TARGETS:
-        return cleaned
     
-    # Prefix matches
-    for k in CANONICAL_TARGETS:
-        if cleaned == k.replace("-", ""):
-            return k
-            
-    # Fuzzy alias map
     aliases = {
+        "mariadb": "mariadb106",
+        "mariadb106": "mariadb106",
         "mariadb10.6": "mariadb106",
         "mariadb-10.6": "mariadb106",
+        "mariadb1011": "mariadb1011",
         "mariadb10.11": "mariadb1011",
         "mariadb-10.11": "mariadb1011",
+        "mysql": "mysql80",
         "mysql8": "mysql80",
         "mysql8.0": "mysql80",
         "mysql80": "mysql80",
@@ -86,13 +82,30 @@ def normalize_target_key(target_input: str) -> str:
         "mysql-community-9.7": "mysql-community97",
         "mysql-enterprise-97": "mysql-enterprise97",
         "mysql-enterprise-9.7": "mysql-enterprise97",
+        "postgres": "postgresql16",
+        "postgresql": "postgresql16",
         "postgres16": "postgresql16",
         "postgres17": "postgresql17",
         "postgres18": "postgresql18",
+        "mongo": "mongodb7",
+        "mongodb": "mongodb7",
         "mongo7": "mongodb7",
         "mongo8": "mongodb8",
+        "cassandra": "cassandra40",
+        "rhel": "rhel9",
     }
-    return aliases.get(cleaned, target_input.strip())
+    if cleaned in aliases:
+        return aliases[cleaned]
+
+    if cleaned in CANONICAL_TARGETS:
+        return cleaned
+    
+    # Prefix matches
+    for k in CANONICAL_TARGETS:
+        if cleaned == k.replace("-", ""):
+            return k
+
+    return target_input.strip()
 
 
 class TargetAuditExecutionResult:
