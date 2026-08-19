@@ -50,7 +50,11 @@
         <header class="bg-white border-b border-gray-200 p-6 flex flex-wrap justify-between items-center gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Rapport d'Audit CIS - {product_title}</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Date du rapport : {report_date}</p>
+                <div class="flex items-center flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500 mt-1">
+                    <span><i class="fas fa-calendar-alt text-blue-500 mr-1"></i> <strong>Exécution :</strong> {report_date}</span>
+                    <span><i class="fas fa-stopwatch text-indigo-500 mr-1"></i> <strong>Durée :</strong> {scan_duration}</span>
+                    <span><i class="fas fa-globe text-emerald-500 mr-1"></i> <strong>Fuseau :</strong> {report_timezone}</span>
+                </div>
             </div>
             <div class="flex items-center flex-wrap gap-2.5">
                 <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
@@ -104,33 +108,7 @@
                         <i class="fas fa-layer-group text-blue-500"></i> Métriques par Thématiques de Sécurité
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-gray-700">Authentification & Accès</span>
-                                <span class="text-xs font-extrabold text-blue-600">85%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-gray-700">Chiffrement & TLS/SSL</span>
-                                <span class="text-xs font-extrabold text-green-600">90%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: 90%"></div>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-gray-700">Audits & Logs Système</span>
-                                <span class="text-xs font-extrabold text-amber-600">75%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-amber-500 h-2 rounded-full" style="width: 75%"></div>
-                            </div>
-                        </div>
+                        {thematic_security_metrics_html}
                     </div>
                 </div>
 
