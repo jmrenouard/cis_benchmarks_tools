@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
 """
-Unit tests for SecretSanitizer, RuntimeDetector, ExecutionResult, and BaseExecutor (100% PSL ONLY).
+Unit tests for LocalExecutor and DockerExecutor (100% PSL ONLY).
 """
 
 import unittest
-from execution_drivers import BaseExecutor, ExecutionResult, RuntimeDetector, SecretSanitizer
+from unittest.mock import MagicMock, patch
+
+from execution_drivers import (
+    BaseExecutor,
+    DockerExecutor,
+    ExecutionResult,
+    LocalExecutor,
+    RuntimeDetector,
+    SecretSanitizer,
+)
 
 
 class TestSecretSanitizer(unittest.TestCase):
@@ -98,6 +107,61 @@ class TestExecutionResult(unittest.TestCase):
         r = ExecutionResult(stdout="", stderr="Command execution timed out after 10 seconds", returncode=-1)
         self.assertTrue(r.is_timeout)
         self.assertFalse(r.is_success)
+
+
+class TestExecutors(unittest.TestCase):
+    @patch("subprocess.run")
+    def test_local_executor_success(self, mock_run):
+        mock_proc = MagicMock()
+        mock_proc.stdout = "10.6.18-MariaDB\n"
+        mock_proc.stderr = ""
+        mock_proc.returncode = 0
+        mock_run.return_value = mock_proc
+
+        executor = LocalExecutor(db_user="root", db_password="secret_password")
+        res = executor.execute("mariadb -e 'SELECT @@version;'", timeout=5)
+
+        self.assertTrue(res.is_success)
+        self.assertEqual(res.stdout, "10.6.18-MariaDB")
+        self.assertEqual(res.driver_type, "LOCAL_BAREMETAL")
+        self.assertTrue(mock_run.called)
+        called_env = mock_run.call_args[1]["env"]
+        self.assertEqual(called_env.get("MYSQL_PWD"), "secret_password")
+
+    @patch("subprocess.run")
+    def test_docker_executor(self, mock_run):
+        mock_proc = MagicMock()
+        mock_proc.stdout = "ACTIVE\n"
+        mock_proc.stderr = ""
+        mock_proc.returncode = 0
+        mock_run.return_value = mock_proc
+
+        executor = DockerExecutor(container_name="mariadb106-test", db_user="auditor")
+        res = executor.execute("systemctl is-active mariadb")
+
+        self.assertTrue(res.is_success)
+        self.assertEqual(res.stdout, "ACTIVE")
+        self.assertEqual(res.driver_type, "LOCAL_DOCKER")
+        self.assertTrue(mock_run.called)
+        called_cmd = mock_run.call_args[0][0][2]
+        self.assertIn("docker exec -i", called_cmd)
+        self.assertIn("mariadb106-test", called_cmd)
+
+    @patch("subprocess.run")
+    def test_local_executor_escalation(self, mock_run):
+        mock_proc = MagicMock()
+        mock_proc.stdout = "root_data\n"
+        mock_proc.stderr = ""
+        mock_proc.returncode = 0
+        mock_run.return_value = mock_proc
+
+        executor = LocalExecutor()
+        res = executor.execute("cat /var/lib/mysql/ibdata1", as_user="mysql")
+
+        self.assertTrue(res.is_success)
+        self.assertEqual(res.stdout, "root_data")
+        called_cmd = mock_run.call_args[0][0][2]
+        self.assertIn("sudo -n -u mysql", called_cmd)
 
 
 if __name__ == "__main__":
