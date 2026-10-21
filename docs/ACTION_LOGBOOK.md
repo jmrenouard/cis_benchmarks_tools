@@ -17,7 +17,17 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
-### ACT-005 — Add GitHub Actions Suite (`unit-tests.yml`, `lint.yml`, `security.yml`, `release.yml`, `dependabot.yml`) (Issue `#440`)
+### ACT-006 — Resolve `RCA-003` Cross-Platform Windows Host Execution & UTF-8 Test Suite Compatibility (Issue `#442`)
+- **Date**: `2026-10-21T23:39+02:00`
+- **Status**: `COMPLETED`
+- **Issue / Branch**: Issue `#442` (`fix/issue-442-cross-platform-rca-003`, release `v2.8.1`)
+- **Request**: Resolve all cross-platform discrepancies identified in `RCA-003` (`docs/RCA_REGISTER.md`) and synchronize `VERSION`, `ROADMAP.md`, and `POTENTIAL_ISSUES.md`.
+- **Changes**: Updated [`execution_drivers.py`](../execution_drivers.py), [`audit_diagnostics.py`](../audit_diagnostics.py), [`scripts/pre_commit_checks.py`](../scripts/pre_commit_checks.py), [`tests/test_e2e_text_export_analysis.py`](../tests/test_e2e_text_export_analysis.py), [`tests/test_docker_e2e_engine.py`](../tests/test_docker_e2e_engine.py), [`VERSION`](../VERSION) (`2.8.1`), [`audit_cis.py`](../audit_cis.py), [`ROADMAP.md`](../ROADMAP.md), [`POTENTIAL_ISSUES.md`](../POTENTIAL_ISSUES.md), and [`docs/RCA_REGISTER.md`](RCA_REGISTER.md).
+- **Result**: `python scripts/pre_commit_checks.py`: **8 / 8 steps and 193 / 193 unit tests passed (100%)**.
+
+---
+
+### ACT-005 — Add GitHub Actions Suite (`unit-tests.yml`, `lint.yml`, `security.yml`, `release.yml`, `dependabot.yml`) (Issue `#440` / PR `#441`)
 - **Date**: `2026-10-21T23:21+02:00`
 - **Status**: `COMPLETED`
 - **Issue / Branch**: Issue `#440` (`ci/issue-440-github-actions-suite`)

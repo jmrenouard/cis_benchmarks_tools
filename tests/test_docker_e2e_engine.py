@@ -112,7 +112,7 @@ class TestDockerE2EEngine(unittest.TestCase):
         out_file = os.path.join(self.tmp_dir, "test_dashboard.md")
         res_file = self.orchestrator.generate_e2e_summary_dashboard(results, output_file=out_file)
         self.assertTrue(os.path.exists(res_file))
-        with open(res_file, "r") as f:
+        with open(res_file, "r", encoding="utf-8") as f:
             content = f.read()
         self.assertIn("mariadb106", content)
         self.assertIn("✅ PASS", content)

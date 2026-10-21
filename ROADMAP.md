@@ -39,6 +39,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 22** | PostgreSQL, MongoDB & Cassandra Testing Hardening                 | `v2.6.6`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 23** | PostgreSQL Command Safety & 100% E2E Multi-Format Compliance      | `v2.6.7`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 24** | Unified Execution Drivers & Multi-Criteria Runtime Detection     | `v2.6.8`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 28** | English Governance (`ACTION_LOGBOOK` & `RCA_REGISTER`) & CI/CD   | `v2.8.1`       | `Completed ✅` | 4/4   | 100%     |
 
 
 ---
