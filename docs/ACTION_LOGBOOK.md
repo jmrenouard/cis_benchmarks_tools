@@ -17,7 +17,17 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
-### ACT-004 — Create English Action Logbook (`docs/ACTION_LOGBOOK.md`) and RCA Register (`docs/RCA_REGISTER.md`) (Issue `#438`)
+### ACT-005 — Add GitHub Actions Suite (`unit-tests.yml`, `lint.yml`, `security.yml`, `release.yml`, `dependabot.yml`) (Issue `#440`)
+- **Date**: `2026-10-21T23:21+02:00`
+- **Status**: `COMPLETED`
+- **Issue / Branch**: Issue `#440` (`ci/issue-440-github-actions-suite`)
+- **Request**: Expand the GitHub Actions CI/CD suite in English while preserving the 100% Python Standard Library (`PSL ONLY`) architecture.
+- **Changes**: Updated [`.github/workflows/ci.yml`](../.github/workflows/ci.yml), created [`.github/workflows/unit-tests.yml`](../.github/workflows/unit-tests.yml), [`.github/workflows/lint.yml`](../.github/workflows/lint.yml), [`.github/workflows/security.yml`](../.github/workflows/security.yml), [`.github/workflows/release.yml`](../.github/workflows/release.yml), [`.github/dependabot.yml`](../.github/dependabot.yml), and [`tests/test_github_actions_workflows.py`](../tests/test_github_actions_workflows.py).
+- **Result**: `python -m unittest tests/test_github_actions_workflows.py -v`: **5 / 5 tests passed (100%)**.
+
+---
+
+### ACT-004 — Create English Action Logbook (`docs/ACTION_LOGBOOK.md`) and RCA Register (`docs/RCA_REGISTER.md`) (Issue `#438` / PR `#439`)
 - **Date**: `2026-10-21T23:12+02:00`
 - **Status**: `COMPLETED`
 - **Issue / Branch**: Issue `#438` (`docs/issue-438-action-logbook-rca-register`)

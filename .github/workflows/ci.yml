@@ -1,33 +1,44 @@
-name: CIS Benchmarks Tools CI/CD Pipeline
+name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main", "master"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   pre-commit-and-test:
-    name: Pre-Commit Quality Checks & Unit Tests
+    name: Pre-Commit Quality Checks & Unit Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
-
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
-    - name: Checkout repository code
-      uses: actions/checkout@v4
+      - name: Checkout repository code
+        uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Run 7-Step Pre-Commit Routine (make pre-commit)
-      run: |
-        make pre-commit
+      - name: Run 8-Step Pre-Commit Routine (make pre-commit)
+        run: make pre-commit
 
-    - name: Run Automated Unit Tests (unittest)
-      run: |
-        python3 -m unittest discover -s tests
+      - name: Run Automated Unit Tests (unittest)
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Verify Standalone Unified Audit CLI
+        run: |
+          python3 audit_cis.py --version
+          python3 audit_cis.py --list-targets

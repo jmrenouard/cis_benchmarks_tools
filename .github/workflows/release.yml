@@ -1,0 +1,50 @@
+name: GitHub Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Bundle Standalone CIS Audit Suite & Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run pre-commit bundler and unit tests before release
+        run: |
+          python3 scripts/pre_commit_checks.py
+          python3 -m unittest discover -s tests -v
+
+      - name: Package release archive (dist/)
+        run: |
+          mkdir -p dist
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          cp audit_cis.py "dist/audit_cis-v${VERSION}.py"
+          tar -czf "dist/cis-benchmarks-tools-v${VERSION}.tar.gz" \
+            audit_cis.py audit_cis_*.py execution_drivers.py audit_diagnostics.py \
+            audit_orchestrator.py docker_transport.py in_container_inspector.py \
+            docker_e2e_engine.py temporal_metadata.py post_execution_publisher.py \
+            rules/ templates/ README.md LICENSE VERSION
+
+      - name: Create GitHub Release and attach artifacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true
