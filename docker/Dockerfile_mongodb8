@@ -1,4 +1,4 @@
-FROM mongo:8.0
+FROM mongo:9.0
 
 # Define environment variables
 ENV DEBIAN_FRONTEND=noninteractive \
