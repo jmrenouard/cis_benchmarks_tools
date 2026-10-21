@@ -120,7 +120,10 @@ class TestE2ETextExportAndAnalysis(unittest.TestCase):
 
     def test_live_docker_mysql80_text_export_and_analysis_if_running(self):
         """If mysql80-test Docker container is running, execute live audit with text export and verify 0 errors."""
-        res = subprocess.run(["docker", "ps", "-q", "-f", "name=mysql80-test"], capture_output=True, text=True)
+        try:
+            res = subprocess.run(["docker", "ps", "-q", "-f", "name=mysql80-test"], capture_output=True, text=True)
+        except (FileNotFoundError, OSError):
+            self.skipTest("Docker CLI is not installed or accessible on this host")
         if not res.stdout.strip():
             self.skipTest("mysql80-test Docker container is not currently running")
 

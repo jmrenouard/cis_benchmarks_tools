@@ -312,7 +312,7 @@ class LocalExecutor(BaseExecutor):
         else:
             cmd_str = str(command)
 
-        if as_user and os.getuid() != 0:
+        if as_user and getattr(os, "getuid", lambda: 1000)() != 0:
             cmd_str = f"sudo -n -u {shlex.quote(as_user)} /bin/bash -c {json.dumps(cmd_str)}"
 
         masked_cmd = SecretSanitizer.sanitize(cmd_str) if mask_secrets else cmd_str

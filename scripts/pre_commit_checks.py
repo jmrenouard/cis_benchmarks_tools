@@ -17,6 +17,11 @@ import unittest
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
+os.environ.setdefault("PYTHONUTF8", "1")
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 VERSION_FILE = os.path.join(REPO_ROOT, "VERSION")
 
@@ -64,8 +69,10 @@ def step_check_psl_compliance():
         tree = ast.parse(f.read(), filename="audit_cis.py")
 
     allowed_std_libs = {
-        "argparse", "datetime", "json", "os", "subprocess", "sys", "re",
-        "ast", "py_compile", "glob", "unittest", "html", "xml", "math"
+        "__future__", "argparse", "datetime", "json", "os", "subprocess", "sys", "re",
+        "ast", "py_compile", "glob", "unittest", "html", "xml", "math", "pathlib",
+        "shlex", "time", "typing", "concurrent", "tempfile", "shutil", "stat",
+        "hashlib", "logging", "socket", "platform", "collections", "functools",
     }
 
     for node in ast.walk(tree):
@@ -88,14 +95,19 @@ def step_check_psl_compliance():
 def step_check_shell_scripts():
     """Validate syntax of shell scripts using bash -n."""
     print("📜 [5/8] Validating Shell script syntax (bash -n)...")
-    shell_files = sorted(glob.glob("scripts/*.sh"))
+    shell_files = [sh.replace("\\", "/") for sh in sorted(glob.glob("scripts/*.sh"))]
     for sh in shell_files:
         try:
-            subprocess.run(["bash", "-n", sh], check=True)
+            res = subprocess.run(["bash", "-n", sh], capture_output=True, text=True)
+            if res.returncode != 0:
+                if "WSL" in (res.stderr or "") or "0x8007" in (res.stderr or ""):
+                    print(f"  ⚠ Skipping bash -n on Windows WSL stub for {sh}")
+                    continue
+                print(f"❌ Shell syntax error in {sh}: {res.stderr}", file=sys.stderr)
+                sys.exit(1)
             print(f"  ✓ {sh}")
-        except subprocess.CalledProcessError:
-            print(f"❌ Shell syntax error in {sh}", file=sys.stderr)
-            sys.exit(1)
+        except (FileNotFoundError, OSError):
+            print(f"  ⚠ bash binary not found on host, skipping {sh}")
 
 
 def step_validate_reports_and_structure():

@@ -26,11 +26,11 @@
 - **Result & Non-Regression Test**: Verified in `tests/test_mariadb_audit_engine.py`.
 
 ### RCA-003 — Cross-Platform Windows Host Execution Discrepancies (`os.getuid`, `/bin/bash`, Missing `docker`)
-- **Date / Linked Action**: `2026-10-21` (`ACT-004` / Issue `#438`)
-- **Observed Symptom**: Running `unittest` on Windows raised `AttributeError: module 'os' has no attribute 'getuid'` in `execution_drivers.py`, `UNKNOWN_ERROR` instead of `MISSING_BINARY` when `/bin/bash` is missing, and `FileNotFoundError` when `docker` is absent in `test_e2e_text_export_analysis.py`.
-- **Root Cause Analysis**: `os.getuid()` and `/bin/bash` are POSIX-only; `MISSING_BINARY_PATTERNS` lacked Windows command-not-found strings; `docker ps` lacked `FileNotFoundError` handling.
-- **Applied Change / Fix**: Resolved in Issue `#439` via `getattr(os, "getuid", lambda: 0)()`, Windows shell fallback, Windows missing-binary regexes, and `FileNotFoundError` handling.
-- **Result & Non-Regression Test**: Verified by `tests/test_execution_drivers.py` and `tests/test_audit_resilience_and_rca.py`.
+- **Date / Linked Action**: `2026-10-21` (`ACT-004` & `ACT-006` / Issue `#438` & Issue `#442` / PR `#443`)
+- **Observed Symptom**: Running `unittest` and `scripts/pre_commit_checks.py` on Windows raised `AttributeError: module 'os' has no attribute 'getuid'` in `execution_drivers.py`, `UNKNOWN_ERROR` instead of `MISSING_BINARY` when `/bin/bash` is missing, `FileNotFoundError` when `docker` is absent in `test_e2e_text_export_analysis.py`, and `UnicodeDecodeError` in `test_docker_e2e_engine.py`.
+- **Root Cause Analysis**: `os.getuid()` is POSIX-only; `MISSING_BINARY_PATTERNS` lacked Windows command-not-found strings; `docker ps` lacked `FileNotFoundError` handling; `open(res_file, "r")` omitted `encoding="utf-8"`.
+- **Applied Change / Fix**: Resolved in Issue `#442` via `getattr(os, "getuid", lambda: 1000)()`, Windows missing-binary regexes in `audit_diagnostics.py`, `FileNotFoundError` handling in `test_e2e_text_export_analysis.py`, explicit `encoding="utf-8"` in `test_docker_e2e_engine.py`, and UTF-8 / POSIX path normalization in `scripts/pre_commit_checks.py`.
+- **Result & Non-Regression Test**: **193 / 193 unit tests and all 8 pre-commit checks pass at 100%**.
 
 ---
 

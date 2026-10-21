@@ -80,6 +80,10 @@ class CommandFailureClassifier:
         r"executable file not found",
         r"cannot execute binary file",
         r"which:\s*no\s+\S+\s+in",
+        r"WinError 2",
+        r"cannot find the file specified",
+        r"fichier sp.cifi. est introuvable",
+        r"not recognized as an internal or external command",
     ]
 
     PERMISSION_PATTERNS = [
