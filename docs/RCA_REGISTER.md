@@ -32,6 +32,13 @@
 - **Applied Change / Fix**: Resolved in Issue `#442` via `getattr(os, "getuid", lambda: 1000)()`, Windows missing-binary regexes in `audit_diagnostics.py`, `FileNotFoundError` handling in `test_e2e_text_export_analysis.py`, explicit `encoding="utf-8"` in `test_docker_e2e_engine.py`, and UTF-8 / POSIX path normalization in `scripts/pre_commit_checks.py`.
 - **Result & Non-Regression Test**: **193 / 193 unit tests and all 8 pre-commit checks pass at 100%**.
 
+### RCA-004 — Target-Specific Rule Schema Heterogeneity (`number` vs `id`, `name` vs `title`)
+- **Date / Linked Action**: `2026-10-21` (`ACT-007` / Issue `#450` / PR `#451`)
+- **Observed Symptom**: Rule verification validator failed on database targets (`cassandra_*.json`, `mysql_*.json`, `mariadb_*.json`, `postgresql_*.json`, `mongodb_*.json`) reporting missing `id` and `title`.
+- **Root Cause Analysis**: Database audit engines historically externalized rules using `number` and `name` keys, while OS benchmarks (RHEL) used `id` and `title`.
+- **Applied Change / Fix**: Updated `audit_rules_engine` in `scripts/verify_benchmarks_and_reports.py` to accept polymorphic control keys (`id` or `number`, and `title` or `name`) with mandatory `category`.
+- **Result & Non-Regression Test**: Verified by `tests/test_benchmark_sync_and_report_quality.py` (18/18 valid rule files and 887 controls verified).
+
 ---
 
 ## 2. Technical Dead-Ends & Abandoned Leads (`IMP`)
