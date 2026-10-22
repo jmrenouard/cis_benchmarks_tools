@@ -1,4 +1,4 @@
-FROM mysql:9.2
+FROM mysql:9.6
 
 # Define environment variables
 ENV DEBIAN_FRONTEND=noninteractive \
