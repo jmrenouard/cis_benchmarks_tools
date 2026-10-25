@@ -46,6 +46,13 @@
 - **Applied Change / Fix**: Implemented packaging validation in `tests/test_pypi_packaging.py` validating `pyproject.toml`, metadata, and modules without requiring in-tree temporary builds, and verified that out-of-tree builds in `$env:TEMP` succeed cleanly.
 - **Result & Non-Regression Test**: 4/4 packaging unit tests passed (`tests/test_pypi_packaging.py`); CI workflow runs on isolated Linux runners.
 
+### RCA-006 — CI Lint F821 Undefined Names, Gitignored Benchmark PDF Inventory, and PyPI OIDC Exchange Failure
+- **Date / Linked Action**: `2026-10-25` (`ACT-011` / Issue `#460`)
+- **Observed Symptom**: CI failed on lint (22 Ruff F821 undefined variable errors), benchmark inventory test in CI (`0 < 15`), and PyPI workflow (`invalid-publisher`).
+- **Root Cause Analysis**: Missing `import sys`/`os` and uninitialized `env`; `audit_benchmark_documents()` only scanned `*.pdf` (gitignored in CI); and `pypi-publish.yml` defaulted to OIDC without registered publisher.
+- **Applied Change / Fix**: Fixed imports and initialized `env = os.environ.copy()`; scanned both `*.pdf` and `*.md` with stem deduplication; added resilient preflight in `pypi-publish.yml`.
+- **Result & Non-Regression Test**: `ruff check` 0 errors; `pre_commit_checks.py` 8/8 checks and 199/199 unit tests pass; `.md`-only scan validates 22/22 documents.
+
 
 ---
 

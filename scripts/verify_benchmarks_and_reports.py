@@ -22,15 +22,23 @@ TARGET_MAP = [
 
 
 def audit_benchmark_documents(data_dir=None):
-    """Scan CIS_DATA/ and extract benchmark PDF metadata."""
+    """Scan CIS_DATA/ and extract benchmark document metadata (PDF or Markdown)."""
     data_dir = data_dir or os.path.join(REPO_ROOT, "CIS_DATA")
     if not os.path.isdir(data_dir):
         return []
 
     ver_re = re.compile(r'v(\d+\.\d+(?:\.\d+)?)', re.IGNORECASE)
+    stems = set()
+    for ext in ("*.pdf", "*.md"):
+        for fpath in glob.glob(os.path.join(data_dir, ext)):
+            stems.add(os.path.splitext(os.path.basename(fpath))[0])
+
     docs = []
-    for pdf in sorted(glob.glob(os.path.join(data_dir, "*.pdf"))):
-        fname = os.path.basename(pdf)
+    for stem in sorted(stems):
+        pdf_path = os.path.join(data_dir, stem + ".pdf")
+        md_path = os.path.join(data_dir, stem + ".md")
+        active_path = pdf_path if os.path.isfile(pdf_path) else md_path
+        fname = os.path.basename(active_path)
         vm = ver_re.search(fname)
         low = fname.lower()
         tgt = next((val for key, val in TARGET_MAP if key in low), "unknown")
@@ -38,8 +46,8 @@ def audit_benchmark_documents(data_dir=None):
             "filename": fname,
             "target": tgt,
             "version": vm.group(1) if vm else "unknown",
-            "has_md_extract": os.path.isfile(pdf[:-4] + ".md"),
-            "file_size": os.path.getsize(pdf),
+            "has_md_extract": os.path.isfile(md_path),
+            "file_size": os.path.getsize(active_path),
         })
     return docs
 

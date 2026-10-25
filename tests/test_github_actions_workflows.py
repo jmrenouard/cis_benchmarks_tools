@@ -90,7 +90,9 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         content = pypi_path.read_text(encoding="utf-8")
         self.assertIn("pypa/gh-action-pypi-publish@", content)
         self.assertIn("secrets.PYPI_API_TOKEN", content)
+        self.assertIn("secrets.PIPY_API_TOKEN", content)
         self.assertIn("secrets.PYPI_TOKEN", content)
+        self.assertIn("pypi_preflight", content)
         self.assertIn("python -m build", content)
 
 
