@@ -453,7 +453,7 @@ test-cassandra50: clean-cassandra50 build-cassandra50 run-cassandra50 audit-cass
 	@echo "Full test cycle for Cassandra 5.0 completed."
 
 
-.PHONY: pre-commit install-hooks audit-unified
+.PHONY: pre-commit install-hooks audit-unified sync-cis sync-cis-all verify-cis
 
 pre-commit:
 	bash scripts/pre-commit.sh
@@ -465,3 +465,13 @@ install-hooks:
 
 audit-unified:
 	python3 audit_cis.py --list-targets
+
+sync-cis:
+	python3 scripts/download_cis_benchmarks.py --types md
+
+sync-cis-all:
+	python3 scripts/download_cis_benchmarks.py
+
+verify-cis:
+	python3 scripts/download_cis_benchmarks.py --verify-only
+

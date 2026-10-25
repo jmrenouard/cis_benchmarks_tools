@@ -163,6 +163,8 @@ def main():
     parser.add_argument("--list-targets", action="store_true", help="List all supported database targets")
     parser.add_argument("-a", "--all", action="store_true", help="Run CIS audits for ALL targets sequentially")
     parser.add_argument("--auto-detect", action="store_true", help="Auto-detect running database containers and execute audits")
+    parser.add_argument("--sync-cis", action="store_true", help="Sync CIS data")
+    parser.add_argument("--verify-cis", action="store_true", help="Verify CIS integrity")
     parser.add_argument("-v", "--version", action="version", version=f"CIS Benchmarks Suite v{__version__}")
 
     args = parser.parse_args()
@@ -174,6 +176,10 @@ def main():
     if args.auto_detect:
         auto_detect_and_run()
         sys.exit(0)
+
+    if args.sync_cis or args.verify_cis:
+        d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "download_cis_benchmarks.py")
+        sys.exit(subprocess.run([sys.executable, d] + (["--verify-only"] if args.verify_cis else []) + (["-t", args.target] if args.target else [])).returncode)
 
     exec_mode = "ssh" if (args.mode == "ssh" or args.remote_host) else "local"
 

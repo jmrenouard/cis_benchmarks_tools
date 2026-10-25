@@ -2,6 +2,7 @@
 """Unit tests for CIS Benchmarks manifest and verifier (PSL ONLY)."""
 
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -20,6 +21,8 @@ from scripts.download_cis_benchmarks import (
     parse_args,
     verify_benchmarks,
     verify_file,
+    download_file,
+    sync_benchmarks,
 )
 
 
@@ -75,6 +78,28 @@ class TestCISBenchmarksManifestAndVerifier(unittest.TestCase):
         self.assertEqual(args.target, ["mariadb106"])
         self.assertEqual(main(["-t", "mariadb106", "--types", "md", "--quiet"]), 0)
 
+    class DummyResp(io.BytesIO):
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+
+    def test_download_file_success_atomic(self):
+        dest = os.path.join(self.tmp, "dl.md")
+        ok, dig, cnt = download_file("http://ex.com/t.md", dest, self.c_hash, opener=lambda r, **k: self.DummyResp(self.content))
+        self.assertTrue(ok and dig == self.c_hash and cnt == len(self.content) and os.path.isfile(dest) and not os.path.isfile(f"{dest}.part"))
+
+    def test_download_file_checksum_mismatch_cleans_part(self):
+        dest = os.path.join(self.tmp, "c.md")
+        with self.assertRaises(ValueError):
+            download_file("http://ex.com/t.md", dest, self.c_hash, opener=lambda r, **k: self.DummyResp(b"bad"))
+        self.assertTrue(not os.path.isfile(dest) and not os.path.isfile(f"{dest}.part"))
+
+    def test_sync_benchmarks_workflow(self):
+        op = lambda r, **k: self.DummyResp(self.content)
+        self.assertEqual(sync_benchmarks(self.tmp, self.m_path, targets=["mariadb106"], file_types=("md",), dry_run=True)["skipped"], 1)
+        self.assertEqual(sync_benchmarks(self.tmp, self.m_path, targets=["mariadb106"], file_types=("md",), opener=op)["downloaded"], 1)
+        self.assertEqual(sync_benchmarks(self.tmp, self.m_path, targets=["mariadb106"], file_types=("md",), opener=op)["skipped"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -11,13 +11,27 @@
 
 | Action ID | Date / Time (ISO) | Issue / Branch | Status | Request, Ongoing Changes & Expected Results |
 | :--- | :--- | :--- | :--- | :--- |
-| `ACT-014` | `2026-10-25T22:20+01:00` | Issue `#466` (`feat/issue-466-download-cis-benchmarks`) | `IN PROGRESS` | **Request**: Automated task to download/verify latest CIS benchmarks (`CIS_DATA/`).<br>**Changes**: Implement `conf/cis_manifest.json`, `scripts/download_cis_benchmarks.py`, and `tests/test_download_cis_benchmarks.py`.<br>**Result**: 100% passing tests, PSL-only, diff `< 15,000` chars. |
+| _None_ | — | — | — | No ongoing action. |
 
 
 
 ---
 
 ## 2. Completed Actions (`COMPLETED`)
+
+### ACT-015 — Streaming Downloader & CLI Sync (Issue `#468`)
+- **Date**: `2026-10-25T22:42+01:00` | **Status**: `COMPLETED` | **Issue**: `#468`
+- **Changes**: Updated `download_cis_benchmarks.py`, `bundle_audit_cis.py`, `audit_cis.py`, `Makefile`, and unit tests.
+- **Result**: `pre_commit_checks.py`: 8/8 checks, 211/211 tests pass; PR diff < 15,000 chars.
+
+---
+
+### ACT-014 — Manifest & Integrity Verifier (Issue `#466`)
+- **Date**: `2026-10-25T22:33+01:00` | **Status**: `COMPLETED` | **Issue**: `#466` (PR `#467`)
+- **Changes**: Created `conf/cis_manifest.json`, `download_cis_benchmarks.py`, and tests.
+- **Result**: `pre_commit_checks.py`: 8/8 checks, 207/207 tests pass; PR diff 14,740 chars; merged in PR `#467`.
+
+---
 
 ### ACT-013 — Release v2.9.1 Quality, Attached Distribution Assets & PyPI OIDC Publishing Fix (Issue `#464`)
 - **Date**: `2026-10-25T21:25+01:00`

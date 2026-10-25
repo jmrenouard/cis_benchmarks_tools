@@ -11,6 +11,7 @@ import unittest
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
+if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from audit_cis import TARGET_MAP, list_targets, run_single_audit
 
@@ -109,6 +110,15 @@ class TestAuditCisCliEngine(unittest.TestCase):
             called_targets = [call[0][0] for call in mock_single.call_args_list]
             self.assertIn("mariadb106", called_targets)
             self.assertIn("postgresql16", called_targets)
+
+    def test_sync_and_verify_cis_cli_dispatch(self):
+        from unittest.mock import patch
+        import audit_cis
+        with patch("sys.argv", ["audit_cis.py", "--verify-cis", "-t", "mariadb106"]), patch("subprocess.run") as m, self.assertRaises(SystemExit):
+            m.return_value.returncode = 0
+            audit_cis.main()
+        c = m.call_args[0][0]
+        self.assertTrue(any("download_cis_benchmarks.py" in str(x) for x in c) and "--verify-only" in c and "mariadb106" in c)
 
 
 if __name__ == "__main__":
