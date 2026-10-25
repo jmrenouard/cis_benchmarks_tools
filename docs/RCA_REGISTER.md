@@ -105,7 +105,8 @@
 ### APP-003 — Local SHA-256 Benchmark Integrity Manifest Validation
 - **Target Files**: `conf/cis_manifest.json` & `scripts/download_cis_benchmarks.py`
 - **Nature & Justification**: Benchmark specifications mapped in `conf/cis_manifest.json` with SHA-256 digests. Verification runs in `< 0.1s` PSL-only.
-- **Removal Condition**: Expanded with streaming remote mirror sync in Part 2.
+- **Removal Condition**: Streaming remote sync and CLI integrated in Part 2 (Issue `#468`).
+
 
 
 
