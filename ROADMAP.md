@@ -40,7 +40,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 23** | PostgreSQL Command Safety & 100% E2E Multi-Format Compliance      | `v2.6.7`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 24** | Unified Execution Drivers & Multi-Criteria Runtime Detection     | `v2.6.8`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 28** | English Governance (`ACTION_LOGBOOK` & `RCA_REGISTER`) & CI/CD   | `v2.8.1`       | `Completed ✅` | 4/4   | 100%     |
-| **Phase 29** | Commit Testing CI, PyPI Distribution Pipeline & Stable Release     | `v2.9.0`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 29** | Commit Testing CI, PyPI Distribution Pipeline & Stable Release     | `v2.9.1`       | `Completed ✅` | 4/4   | 100%     |
 
 
 ---
@@ -475,8 +475,8 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Execution Timeline Header**: Rendered explicit scan start date, execution duration, and timezone badge for clear human validation.
 - [x] **MariaDB 10.6 & Orchestrator Integration**: Fully connected `audit_cis_mariadb_106.py`, `audit_orchestrator.py`, and `docker_e2e_engine.py` (closes #404).
 
-### Phase 29: Commit Testing CI, PyPI Distribution Pipeline & Stable Release (`Completed ✅ - v2.9.0`)
-**Summary**: Implement GitHub Actions commit testing on pushes to all branches and pull requests, configure standardized `pyproject.toml` packaging with console entrypoints (`audit-cis`, `audit_cis`), create automated GitHub Actions PyPI publishing workflow (`pypi-publish.yml`) supporting repository secrets, enforce the post-merge issue closure with comment governance rule, and publish a stable release (`v2.9.0`).
+### Phase 29: Commit Testing CI, PyPI Distribution Pipeline & Stable Release (`Completed ✅ - v2.9.1`)
+**Summary**: Implement GitHub Actions commit testing on pushes to all branches and pull requests, configure standardized `pyproject.toml` packaging with console entrypoints (`audit-cis`, `audit_cis`), create automated GitHub Actions PyPI publishing workflow (`pypi-publish.yml`) supporting repository secrets, enforce the post-merge issue closure with comment governance rule, and publish a verified stable release (`v2.9.1`).
 
 #### 29.1 PyPI Packaging & PSL Distribution
 - [x] **Standard `pyproject.toml` Configuration**: Zero external runtime dependencies (`dependencies = []`, PSL only), setuptools build backend, metadata, and dynamic version sync.
@@ -487,3 +487,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Commit Testing Workflows**: Updated `ci.yml`, `unit-tests.yml`, `lint.yml`, and `security.yml` to trigger on all pushed commits across all branches and PRs.
 - [x] **Automated PyPI Publishing Workflow (`.github/workflows/pypi-publish.yml`)**: Automated build and publication to PyPI on release creation and tagged pushes (`v*`), supporting `PYPI_API_TOKEN` / `PYPI_TOKEN`.
 - [x] **Stable Release Packaging (`release.yml`)**: Integrated `python -m build` into release workflow to attach sdist and wheels to GitHub releases alongside standalone tar.gz and single-file CLI script.
+
+#### 29.3 Release Quality, Asset Integrity & PyPI OIDC Publishing Fix (`v2.9.1`)
+- [x] **OIDC Publishing Correction**: Removed conflicting password argument in `pypi-publish.yml` OIDC step to allow unhindered OIDC minting when API token is omitted.
+- [x] **Distribution Asset Attachment**: Verified and attached full release assets (wheel, sdist, standalone script, and complete archive) for v2.9.1.

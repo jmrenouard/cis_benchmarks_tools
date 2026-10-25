@@ -60,6 +60,13 @@
 - **Applied Change / Fix**: Explicitly annotated `results: Dict[str, Any] = {}`, `categories_scores: Dict[str, Any] = {}`, `captured_exc: Optional[Exception] = None`, and `extra: List[Any] = ...` in `post_execution_publisher.py`.
 - **Result & Non-Regression Test**: Unit test suite passes 100% (199/199); pre-commit checks 8/8 pass.
 
+### RCA-008 — Release v2.9.0 Asset Pipeline Failure Due to Untagged Post-Fix State and OIDC Token Secret Shadowing
+- **Date / Linked Action**: `2026-10-25` (`ACT-013` / Issue `#464`)
+- **Observed Symptom**: GitHub Release `v2.9.0` workflow failed in CI during pre-commit checks (`test_audit_benchmark_documents_inventory`), leaving the release with 0 attached artifacts and formatted notes with ASCII bell characters (`\a`). Moreover, in `pypi-publish.yml`, passing empty `password:` to `pypa/gh-action-pypi-publish` in OIDC mode shadowed native OIDC minting.
+- **Root Cause Analysis**: `v2.9.0` tag was cut at commit `e3ebf9c` prior to PR `#461` and PR `#463` fixes. Additionally, `pypa/gh-action-pypi-publish` treats the presence of `password:` as a signal to use token authentication rather than OIDC exchange.
+- **Applied Change / Fix**: Bumped version to `v2.9.1`, removed conflicting `password:` argument in the OIDC publish step, expanded `tests/test_pypi_packaging.py` to verify wheel structure and entrypoints, and released `v2.9.1` with full distribution assets attached.
+- **Result & Non-Regression Test**: 202/202 unit tests pass; 8/8 pre-commit checks pass; clean wheel and sdist builds verified.
+
 
 ---
 

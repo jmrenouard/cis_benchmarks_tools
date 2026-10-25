@@ -271,5 +271,9 @@ This document tracks technical debt, security considerations, active quality con
 - [x] **PR #441**: `ci(workflows): add GitHub Actions suite and Dependabot config` — *Added unit-tests.yml, lint.yml, security.yml, release.yml, dependabot.yml, and tests/test_github_actions_workflows.py (closes #440).*
 - [x] **PR #443**: `fix(cross-platform): resolve RCA-003 Windows host execution and UTF-8 test suite compatibility` — *Resolved cross-platform execution discrepancies in execution_drivers.py, audit_diagnostics.py, and pre_commit_checks.py (v2.8.1, closes #442).*
 - [x] **PR #455**: `ci(workflows): add commit testing workflow and enforce post-merge issue comment rule` — *Enabled all-commit push CI testing and added post-merge issue closure with comment rule across governance files (closes #454).*
-- [x] **PR (Issue #456)**: `feat(packaging): add PyPI packaging configuration, release publishing workflow, and publish stable release` — *Added pyproject.toml, MANIFEST.in, pypi-publish.yml, version bump v2.9.0, and packaging unit tests (closes #456).*
+- [x] **PR #457**: `feat(packaging): add PyPI packaging configuration and entry points` — *Added pyproject.toml, MANIFEST.in, and packaging unit tests (closes #456).*
+- [x] **PR #459**: `ci(pypi): add PyPI publishing workflow, release distribution build, and documentation` — *Added .github/workflows/pypi-publish.yml, release distribution build, and README sync (closes #458).*
+- [x] **PR #461**: `fix(ci): fix ruff lint undefined names, CI benchmark document inventory, and PyPI preflight` — *Fixed missing imports, initialized env, CI benchmark document scanning, and PyPI preflight resilience (closes #460).*
+- [x] **PR #463**: `fix(lint): add explicit type annotations in post_execution_publisher.py for mypy` — *Added explicit Mypy type annotations in post_execution_publisher.py (closes #462).*
+- [x] **PR (Issue #464)**: `fix(release): bump v2.9.1, fix PyPI OIDC publishing config, and publish stable release with assets` — *Bumped version v2.9.1, removed conflicting password in OIDC step, added wheel structure tests, and verified stable release (closes #464).*
 

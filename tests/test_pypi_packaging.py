@@ -60,5 +60,38 @@ class TestPyPIPackaging(unittest.TestCase):
             )
 
 
+    def test_entrypoint_main_callable_in_audit_cis(self) -> None:
+        """Verify audit_cis module defines a callable main() entrypoint."""
+        import audit_cis
+        self.assertTrue(hasattr(audit_cis, "main"), "audit_cis must expose a main function")
+        self.assertTrue(callable(getattr(audit_cis, "main")), "audit_cis.main must be callable")
+
+    def test_audit_cis_version_matches_version_file(self) -> None:
+        """Verify audit_cis.__version__ matches the string in VERSION file."""
+        import audit_cis
+        version = VERSION_PATH.read_text(encoding="utf-8").strip()
+        self.assertEqual(audit_cis.__version__, version, "audit_cis.__version__ must match VERSION")
+
+    def test_wheel_archive_contains_required_modules_and_entrypoints(self) -> None:
+        """If distribution wheels are present in dist/, verify their archive layout."""
+        import zipfile
+        dist_dir = ROOT / "dist"
+        if not dist_dir.is_dir():
+            return
+        wheels = list(dist_dir.glob("*.whl"))
+        if not wheels:
+            return
+
+        for whl in wheels:
+            with zipfile.ZipFile(whl, "r") as z:
+                names = z.namelist()
+                self.assertIn("audit_cis.py", names, f"{whl.name} missing audit_cis.py")
+                entry_points = [n for n in names if n.endswith("entry_points.txt")]
+                self.assertTrue(len(entry_points) > 0, f"{whl.name} missing entry_points.txt")
+                ep_content = z.read(entry_points[0]).decode("utf-8")
+                self.assertIn("audit-cis = audit_cis:main", ep_content)
+                self.assertIn("audit_cis = audit_cis:main", ep_content)
+
+
 if __name__ == "__main__":
     unittest.main()
