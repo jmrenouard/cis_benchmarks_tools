@@ -98,8 +98,8 @@
 - **Description**: Native PSL `--format sarif` exporter for uploading CIS Benchmark findings to GitHub Security.
 
 ### IDEA-004 — PyPI Distribution Pipeline with Trusted Publishing or API Token
-- **Priority / Target**: `High` · `pyproject.toml` & `.github/workflows/pypi-publish.yml`
-- **Description**: Standard `pyproject.toml` packaging with console entrypoints (`audit-cis`, `audit_cis`) and automated GitHub Actions PyPI publishing workflow triggered on stable release creation.
+- **Priority / Target**: `Completed ✅` · `pyproject.toml`, `.github/workflows/pypi-publish.yml`, and `release.yml`
+- **Description**: Standard `pyproject.toml` packaging with console entrypoints (`audit-cis`, `audit_cis`) and automated GitHub Actions PyPI publishing workflow triggered on stable release creation (implemented in v2.9.0, ACT-009, ACT-010).
 
 ### IDEA-005 — Automated GitHub Actions Issue Closure with PR Merge Summary Comment
 - **Priority / Target**: `Medium` · `.github/workflows/ci.yml` & `.agents/rules/`

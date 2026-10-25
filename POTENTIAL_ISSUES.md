@@ -270,3 +270,6 @@ This document tracks technical debt, security considerations, active quality con
 - [x] **PR #439**: `docs(governance): create English Action Logbook and RCA Register` — *Created docs/ACTION_LOGBOOK.md, docs/RCA_REGISTER.md, and tests/test_project_governance_rules.py (closes #438).*
 - [x] **PR #441**: `ci(workflows): add GitHub Actions suite and Dependabot config` — *Added unit-tests.yml, lint.yml, security.yml, release.yml, dependabot.yml, and tests/test_github_actions_workflows.py (closes #440).*
 - [x] **PR #443**: `fix(cross-platform): resolve RCA-003 Windows host execution and UTF-8 test suite compatibility` — *Resolved cross-platform execution discrepancies in execution_drivers.py, audit_diagnostics.py, and pre_commit_checks.py (v2.8.1, closes #442).*
+- [x] **PR #455**: `ci(workflows): add commit testing workflow and enforce post-merge issue comment rule` — *Enabled all-commit push CI testing and added post-merge issue closure with comment rule across governance files (closes #454).*
+- [x] **PR (Issue #456)**: `feat(packaging): add PyPI packaging configuration, release publishing workflow, and publish stable release` — *Added pyproject.toml, MANIFEST.in, pypi-publish.yml, version bump v2.9.0, and packaging unit tests (closes #456).*
+

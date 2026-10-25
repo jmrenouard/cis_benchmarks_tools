@@ -20,6 +20,7 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
             "lint.yml",
             "security.yml",
             "release.yml",
+            "pypi-publish.yml",
         ]
         for wf_name in expected_workflows:
             wf_path = WORKFLOWS_DIR / wf_name
@@ -81,6 +82,16 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
             self.assertIn("pull_request:", content)
             self.assertIn("actions/checkout@", content)
             self.assertIn("actions/setup-python@", content)
+
+    def test_pypi_publish_workflow_configured_correctly(self) -> None:
+        """Verify pypi-publish.yml builds distribution and publishes with token secret."""
+        pypi_path = WORKFLOWS_DIR / "pypi-publish.yml"
+        self.assertTrue(pypi_path.is_file(), "pypi-publish.yml must exist")
+        content = pypi_path.read_text(encoding="utf-8")
+        self.assertIn("pypa/gh-action-pypi-publish@", content)
+        self.assertIn("secrets.PYPI_API_TOKEN", content)
+        self.assertIn("secrets.PYPI_TOKEN", content)
+        self.assertIn("python -m build", content)
 
 
 if __name__ == "__main__":
