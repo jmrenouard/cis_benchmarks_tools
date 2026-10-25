@@ -88,3 +88,11 @@
 ### IDEA-003 — SARIF v2.1.0 Exporter for GitHub Code Scanning (`--format sarif`)
 - **Priority / Target**: `Medium` · `audit_cis.py` & `audit_cis_*.py`
 - **Description**: Native PSL `--format sarif` exporter for uploading CIS Benchmark findings to GitHub Security.
+
+### IDEA-004 — PyPI Distribution Pipeline with Trusted Publishing or API Token
+- **Priority / Target**: `High` · `pyproject.toml` & `.github/workflows/pypi-publish.yml`
+- **Description**: Standard `pyproject.toml` packaging with console entrypoints (`audit-cis`, `audit_cis`) and automated GitHub Actions PyPI publishing workflow triggered on stable release creation.
+
+### IDEA-005 — Automated GitHub Actions Issue Closure with PR Merge Summary Comment
+- **Priority / Target**: `Medium` · `.github/workflows/ci.yml` & `.agents/rules/`
+- **Description**: Enforcement of the rule requiring every task to be tracked by an issue closed with an explicit summary comment upon PR merge.

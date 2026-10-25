@@ -14,3 +14,4 @@ For every request made on the **CIS Benchmarks Tools Suite** project, you MUST s
 5. **Commit (Conventional Commits) and push the branch** to `origin`.
 6. **Create a Pull Request** (`gh pr create`) referencing `Closes #<id>`.
 7. **Merge the Pull Request** (`gh pr merge --merge --delete-branch`) and update `main`.
+8. **Close the Issue with an explicit summary comment** (`gh issue comment <id> --body "..."` then `gh issue close <id>`).

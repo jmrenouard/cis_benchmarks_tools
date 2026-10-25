@@ -14,3 +14,4 @@ For every user request on this project, you **MUST MANDATORILY** execute the com
 5. **Commit and push** the branch (`git push -u origin <branch>`) referencing `Closes #<number>`.
 6. **Create a Pull Request** with `gh pr create --base main --head <branch> --title "..." --body "Closes #<number>..."`.
 7. **Merge the Pull Request** with `gh pr merge --merge --delete-branch` and sync `main`.
+8. **Close the Issue with a Comment**: Post a completion comment on the GitHub Issue detailing the changes, verification results, and merge commit (`gh issue comment <number> --body "..."`), then close the issue (`gh issue close <number>`).

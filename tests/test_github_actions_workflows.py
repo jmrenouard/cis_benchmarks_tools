@@ -72,6 +72,16 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         self.assertIn("pre_commit_checks.py", content)
         self.assertIn("softprops/action-gh-release@", content)
 
+    def test_commit_testing_workflows_trigger_on_all_pushes_and_pull_requests(self) -> None:
+        """Verify ci.yml and unit-tests.yml run on all pushed commits and pull requests."""
+        for wf_name in ("ci.yml", "unit-tests.yml"):
+            wf_path = WORKFLOWS_DIR / wf_name
+            content = wf_path.read_text(encoding="utf-8")
+            self.assertIn("push:", content)
+            self.assertIn("pull_request:", content)
+            self.assertIn("actions/checkout@", content)
+            self.assertIn("actions/setup-python@", content)
+
 
 if __name__ == "__main__":
     unittest.main()
