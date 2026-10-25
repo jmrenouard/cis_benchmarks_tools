@@ -16,4 +16,4 @@ For **every modification** (code, CI/CD, refactoring, documentation):
 3. **Implementation, Registers & Validation**:
    - Update [`docs/ACTION_LOGBOOK.md`](../docs/ACTION_LOGBOOK.md) and [`docs/RCA_REGISTER.md`](../docs/RCA_REGISTER.md) on every request, change, and result.
    - Synchronize `VERSION`, `ROADMAP.md`, and `POTENTIAL_ISSUES.md` when Python code changes; run `python scripts/pre_commit_checks.py` and `python -m unittest discover -s tests -v`.
-4. **PR & Merge**: Push branch, verify diff `< 15,000` chars, open PR (`gh pr create`), merge (`gh pr merge --merge --delete-branch`), and sync `main`.
+4. **PR, Merge & Issue Closure**: Push branch, verify diff `< 15,000` chars, open PR (`gh pr create`), merge (`gh pr merge --merge --delete-branch`), sync `main`, and close the issue with an explicit completion comment (`gh issue comment <id> --body "..."` followed by `gh issue close <id>`).

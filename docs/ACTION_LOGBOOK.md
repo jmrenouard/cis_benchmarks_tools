@@ -17,6 +17,16 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-008 — Add Commit Testing Workflows & Enforce Post-Merge Issue Comment Rule (Issue `#454`)
+- **Date**: `2026-10-25T20:12+01:00`
+- **Status**: `COMPLETED`
+- **Issue / Branch**: Issue `#454` (`ci/issue-454-commit-testing-and-issue-comment-rule`)
+- **Request**: Add commit testing GitHub Actions workflow (running on pushes to all branches and PRs) and enforce repository governance rule requiring each task to have an issue that is closed with an explicit summary comment after merging the pull request.
+- **Changes**: Updated [`.github/workflows/ci.yml`](../.github/workflows/ci.yml), [`.github/workflows/unit-tests.yml`](../.github/workflows/unit-tests.yml), [`.github/workflows/lint.yml`](../.github/workflows/lint.yml), [`.github/workflows/security.yml`](../.github/workflows/security.yml), [`AGENTS.md`](../AGENTS.md), [`.agents/AGENTS.md`](../.agents/AGENTS.md), [`.agents/rules/git-workflow.md`](../.agents/rules/git-workflow.md), [`.agents/rules/github-workflow.md`](../.agents/rules/github-workflow.md), [`tests/test_github_actions_workflows.py`](../tests/test_github_actions_workflows.py), and [`tests/test_project_governance_rules.py`](../tests/test_project_governance_rules.py).
+- **Result**: `python -m unittest discover -s tests -v`: **194 / 194 unit tests passed (100%)**; `python scripts/pre_commit_checks.py`: **8 / 8 checks passed**.
+
+---
+
 ### ACT-007 — CIS Benchmarks PDF Update Tracking, Rule Verification, and Report Quality Test Suite (Issue `#450`)
 - **Date**: `2026-10-21T23:45+02:00`
 - **Status**: `COMPLETED`

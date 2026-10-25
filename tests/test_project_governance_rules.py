@@ -41,6 +41,10 @@ class TestProjectGovernanceRules(unittest.TestCase):
             self.assertIn("every change", content.lower())
             self.assertIn("every result", content.lower())
 
+        for content in (agents_content, git_content, gh_content):
+            self.assertIn("gh issue comment", content)
+            self.assertIn("gh issue close", content)
+
     def test_action_logbook_exists_in_english_and_tracks_ongoing_and_completed_actions(self) -> None:
         """Verify docs/ACTION_LOGBOOK.md exists in English and contains structured ongoing/completed sections."""
         logbook_path = ROOT / "docs" / "ACTION_LOGBOOK.md"

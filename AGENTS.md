@@ -31,8 +31,10 @@ For **every user request** (new feature, bug fix, CI/CD, documentation, or refac
    - Make atomic Conventional Commits (`feat:`, `fix:`, `ci:`, `docs:`, `test:`, `chore:`) referencing `Refs #<id>` or `Closes #<id>`, keeping PR diff `< 15,000` characters, and push (`git push -u origin <branch>`).
 6. **Create a Pull Request (PR)**:
    - Open a PR targeting `main` via `gh pr create --base main --head <branch> --title "<type>: <title> (#<id>)" --body "Closes #<id> ..."`.
-7. **Merge the Pull Request & Close**:
+7. **Merge the Pull Request**:
    - Merge into `main` via `gh pr merge <pr-id> --merge --delete-branch` and synchronize `main` (`git pull --ff-only origin main`).
+8. **Close Issue with Comment**:
+   - Explicitly close the corresponding GitHub Issue with a summary comment detailing the changes, verification results, and merge status (`gh issue comment <id> --body "..."` followed by `gh issue close <id>`).
 
 ---
 
