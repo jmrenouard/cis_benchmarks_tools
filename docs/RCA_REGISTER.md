@@ -39,6 +39,14 @@
 - **Applied Change / Fix**: Updated `audit_rules_engine` in `scripts/verify_benchmarks_and_reports.py` to accept polymorphic control keys (`id` or `number`, and `title` or `name`) with mandatory `category`.
 - **Result & Non-Regression Test**: Verified by `tests/test_benchmark_sync_and_report_quality.py` (18/18 valid rule files and 887 controls verified).
 
+### RCA-005 — Windows Cloud Sync (Dropbox) File Locking during In-Tree Wheel Builds
+- **Date / Linked Action**: `2026-10-25` (`ACT-009` / Issue `#456` / PR `#457`)
+- **Observed Symptom**: `PermissionError: [WinError 32]` or `[WinError 5]` during setuptools temporary folder removal when running `python -m build` in the local Windows Dropbox folder.
+- **Root Cause Analysis**: Background sync daemons immediately acquire read locks on newly created build files (`build/`, `*.egg-info`), causing setuptools' immediate cleanup step to fail on Windows.
+- **Applied Change / Fix**: Implemented packaging validation in `tests/test_pypi_packaging.py` validating `pyproject.toml`, metadata, and modules without requiring in-tree temporary builds, and verified that out-of-tree builds in `$env:TEMP` succeed cleanly.
+- **Result & Non-Regression Test**: 4/4 packaging unit tests passed (`tests/test_pypi_packaging.py`); CI workflow runs on isolated Linux runners.
+
+
 ---
 
 ## 2. Technical Dead-Ends & Abandoned Leads (`IMP`)

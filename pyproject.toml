@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cis-benchmarks-tools"
+dynamic = ["version"]
+description = "Enterprise-Grade Automated Security Compliance Audit Engine for Databases and Linux Systems (100% Python Standard Library - PSL ONLY)"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+authors = [
+    { name = "Jean-Marie Renouard", email = "jmrenouard@gmail.com" }
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Information Technology",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: System :: Systems Administration",
+]
+keywords = ["cis", "benchmarks", "security", "audit", "compliance", "database", "linux"]
+dependencies = []
+
+[project.scripts]
+audit-cis = "audit_cis:main"
+audit_cis = "audit_cis:main"
+
+[project.urls]
+Homepage = "https://github.com/jmrenouard/cis_benchmarks_tools"
+Documentation = "https://github.com/jmrenouard/cis_benchmarks_tools/blob/main/README.md"
+Repository = "https://github.com/jmrenouard/cis_benchmarks_tools"
+Issues = "https://github.com/jmrenouard/cis_benchmarks_tools/issues"
+Changelog = "https://github.com/jmrenouard/cis_benchmarks_tools/blob/main/ROADMAP.md"
+
+[tool.setuptools.dynamic]
+version = { file = "VERSION" }
+
+[tool.setuptools]
+py-modules = [
+    "audit_cis",
+    "audit_cis_mariadb_106",
+    "audit_cis_mariadb_1011",
+    "audit_cis_mysql_80",
+    "audit_cis_mysql_community_84",
+    "audit_cis_mysql_enterprise_84",
+    "audit_cis_mysql_community_97",
+    "audit_cis_mysql_enterprise_97",
+    "audit_cis_postgresql_16",
+    "audit_cis_postgresql_17",
+    "audit_cis_postgresql_18",
+    "audit_cis_mongodb_7",
+    "audit_cis_mongodb_8",
+    "audit_cis_cassandra_40",
+    "audit_cis_cassandra_41",
+    "audit_cis_cassandra_50",
+    "audit_cis_rhel_8",
+    "audit_cis_rhel_9",
+    "audit_cis_rhel_10",
+    "audit_diagnostics",
+    "audit_orchestrator",
+    "docker_transport",
+    "in_container_inspector",
+    "docker_e2e_engine",
+    "temporal_metadata",
+    "post_execution_publisher",
+    "execution_drivers",
+]
+
+[tool.setuptools.package-data]
+"*" = ["rules/*.json", "templates/*.html", "VERSION"]

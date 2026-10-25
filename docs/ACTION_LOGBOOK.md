@@ -17,6 +17,16 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-009 — PyPI Packaging Configuration, Release Publishing Workflow & Stable Release `v2.9.0` (Issue `#456`)
+- **Date**: `2026-10-25T20:24+01:00`
+- **Status**: `COMPLETED`
+- **Issue / Branch**: Issue `#456` (`feat/issue-456-pypi-packaging-and-stable-release`, release `v2.9.0`)
+- **Request**: Add PyPI packaging (`pyproject.toml`, `MANIFEST.in`), add GitHub Actions PyPI publishing workflow (`pypi-publish.yml`) supporting repository token secret, update release workflow to package wheels/sdist, and publish stable release.
+- **Changes**: Created [`pyproject.toml`](../pyproject.toml), [`MANIFEST.in`](../MANIFEST.in), [`.github/workflows/pypi-publish.yml`](../.github/workflows/pypi-publish.yml), and [`tests/test_pypi_packaging.py`](../tests/test_pypi_packaging.py); updated [`.github/workflows/release.yml`](../.github/workflows/release.yml), [`VERSION`](../VERSION) (`2.9.0`), [`audit_cis.py`](../audit_cis.py), [`scripts/bundle_audit_cis.py`](../scripts/bundle_audit_cis.py), [`README.md`](../README.md), [`ROADMAP.md`](../ROADMAP.md), [`POTENTIAL_ISSUES.md`](../POTENTIAL_ISSUES.md), and [`tests/test_github_actions_workflows.py`](../tests/test_github_actions_workflows.py).
+- **Result**: `python -m unittest discover -s tests -v`: **198 / 198 unit tests passed (100%)**; `python scripts/pre_commit_checks.py`: **8 / 8 checks passed**; wheel & sdist build cleanly verified.
+
+---
+
 ### ACT-008 — Add Commit Testing Workflows & Enforce Post-Merge Issue Comment Rule (Issue `#454`)
 - **Date**: `2026-10-25T20:12+01:00`
 - **Status**: `COMPLETED`
