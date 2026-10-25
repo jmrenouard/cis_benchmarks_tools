@@ -119,6 +119,10 @@ class TestAuditCisCliEngine(unittest.TestCase):
             audit_cis.main()
         c = m.call_args[0][0]
         self.assertTrue(any("download_cis_benchmarks.py" in str(x) for x in c) and "--verify-only" in c and "mariadb106" in c)
+        with patch("sys.argv", ["audit_cis.py", "--sync-cis", "-t", "mariadb106", "--force", "--dry-run", "--cis-types", "md", "--base-url", "u"]), patch("subprocess.run") as m2, self.assertRaises(SystemExit):
+            m2.return_value.returncode = 0
+            audit_cis.main()
+        self.assertTrue(all(k in m2.call_args[0][0] for k in ["--force", "--dry-run", "--types", "md", "--base-url", "u"]))
 
 
 if __name__ == "__main__":

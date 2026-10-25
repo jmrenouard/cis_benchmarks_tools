@@ -33,7 +33,7 @@ def verify_file(filepath: str, expected_sha256: str):
     if not os.path.isfile(filepath):
         return False, "File missing"
     actual = calculate_sha256(filepath)
-    if actual.lower() != expected_sha256.lower():
+    if not actual or not expected_sha256 or actual.lower() != expected_sha256.lower():
         return False, f"SHA-256 mismatch: exp {expected_sha256}, got {actual}"
     return True, "Integrity verified"
 
@@ -46,13 +46,22 @@ def load_manifest(manifest_path: str = None):
         return json.load(f)
 
 
+def parse_file_types(types_input):
+    if not types_input or types_input == "all": return ("md", "pdf")
+    raw = [str(t).strip().lower() for t in (types_input if isinstance(types_input, (list, tuple, set)) else str(types_input).split(",")) if str(t).strip()]
+    if invalid := [t for t in raw if t not in ("md", "pdf")]:
+        raise ValueError(f"Invalid file type(s): {', '.join(invalid)}. Supported: md, pdf, all")
+    return tuple(raw)
+
+
 def download_file(url: str, dest: str, expected_sha256: str = None, timeout: int = 30, opener=None):
     if d := os.path.dirname(dest):
         os.makedirs(d, exist_ok=True)
     part, h, count = f"{dest}.part", hashlib.sha256(), 0
     req = urllib.request.Request(url, headers={"User-Agent": "cis-benchmarks-tools/2.9.1"})
     try:
-        with (opener or urllib.request.urlopen)(req, timeout=timeout) as resp, open(part, "wb") as out:
+        ctx = (opener.open(req, timeout=timeout) if hasattr(opener, "open") else opener(req, timeout=timeout)) if opener else urllib.request.urlopen(req, timeout=timeout)
+        with ctx as resp, open(part, "wb") as out:
             while chunk := resp.read(65536):
                 h.update(chunk); out.write(chunk); count += len(chunk)
         digest = h.hexdigest()
@@ -72,16 +81,24 @@ def resolve_file_spec(entry: dict, ftype: str):
     return f"{entry['stem']}.{ftype}", sha
 
 
+def _targets(bmarks, targets, res, unk_key):
+    if not targets: return bmarks
+    ts = {targets} if isinstance(targets, str) else set(targets)
+    for u in [t for t in ts if t not in bmarks]:
+        res["total"] += 1; res[unk_key] += 1
+        res["details"].append({"target": u, "file": "N/A", "status": "UNKNOWN_TARGET", "msg": f"Target '{u}' not found"})
+    return {k: v for k, v in bmarks.items() if k in ts}
+
+
 def verify_benchmarks(data_dir=None, manifest_path=None, targets=None, file_types=("md", "pdf")):
     manifest = load_manifest(manifest_path)
-    bmarks = manifest.get("benchmarks", {})
-    if targets:
-        bmarks = {k: v for k, v in bmarks.items() if k in targets}
+    fts = parse_file_types(file_types)
     tdir = data_dir or DEFAULT_DATA_DIR
     res = {"total": 0, "verified": 0, "missing": 0, "corrupted": 0, "details": []}
+    bmarks = _targets(manifest.get("benchmarks", {}), targets, res, "missing")
 
     for tgt, entry in bmarks.items():
-        for ft in file_types:
+        for ft in fts:
             fname, sha = resolve_file_spec(entry, ft)
             if not sha:
                 continue
@@ -106,13 +123,11 @@ def sync_benchmarks(data_dir=None, manifest_path=None, targets=None, file_types=
     base = (base_url or manifest.get("base_url", "")).rstrip("/")
     tdir = data_dir or DEFAULT_DATA_DIR
     os.makedirs(tdir, exist_ok=True)
-    bmarks = manifest.get("benchmarks", {})
-    if targets:
-        bmarks = {k: v for k, v in bmarks.items() if k in targets}
-
     res = {"total": 0, "verified": 0, "downloaded": 0, "skipped": 0, "failed": 0, "details": []}
+    bmarks = _targets(manifest.get("benchmarks", {}), targets, res, "failed")
+    fts = parse_file_types(file_types)
     for tgt, entry in bmarks.items():
-        for ft in file_types:
+        for ft in fts:
             fname, sha = resolve_file_spec(entry, ft)
             if not sha:
                 continue
@@ -139,7 +154,7 @@ def sync_benchmarks(data_dir=None, manifest_path=None, targets=None, file_types=
 def parse_args(argv=None):
     p = argparse.ArgumentParser(description="CIS Integrity Verifier")
     p.add_argument("-t", "--target", action="append")
-    p.add_argument("--types", default="all")
+    p.add_argument("--types", default=None)
     p.add_argument("--verify-only", action="store_true")
     p.add_argument("--force", action="store_true")
     p.add_argument("--dry-run", action="store_true")
@@ -152,7 +167,11 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
-    fts = ("md", "pdf") if args.types == "all" else (args.types,)
+    try:
+        fts = parse_file_types(args.types) if args.types else (("md", "pdf") if args.verify_only else ("md",))
+    except ValueError as e:
+        if not args.quiet: print(f"❌ Error: {e}", file=sys.stderr)
+        return 1
     tgts = set(args.target) if args.target else None
     if not args.quiet:
         act = "Verifying" if args.verify_only else "Synchronizing"
@@ -163,7 +182,8 @@ def main(argv=None):
     if not args.quiet:
         for it in s["details"]:
             sym = "✓" if it["status"] in ("VERIFIED", "UP_TO_DATE", "DOWNLOADED") else "✗"
-            print(f"  {sym} [{it['target']}] {it['file']} -> {it['status']}")
+            msg = f" ({it['msg']})" if it.get("msg") else ""
+            print(f"  {sym} [{it['target']}] {it['file']} -> {it['status']}{msg}")
         print("\n📊 " + " | ".join(f"{k.capitalize()}: {v}" for k, v in s.items() if k != "details"))
 
     return 1 if (s.get("failed", 0) or s.get("corrupted", 0) or (args.verify_only and s.get("missing", 0))) else 0

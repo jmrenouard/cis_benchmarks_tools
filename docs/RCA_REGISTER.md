@@ -11,6 +11,15 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-009 — CIS Downloader 404 Remote PDFs, Silent Skips & Opener Crash
+- **Date / Linked Action**: `2026-10-25` (`ACT-016` / Issue `#470`)
+- **Observed Symptom**: Sync defaulted to 404 remote PDFs; comma-types and unknown targets silently skipped; `OpenerDirector` crashed.
+- **Root Cause Analysis**: Default sync type was `"all"`; no comma-parsing or target manifest check; direct callable call on `OpenerDirector`.
+- **Applied Change / Fix**: Defaulted sync to `md`; added `parse_file_types` and unknown target check; supported `opener.open()`; forwarded CLI flags.
+- **Result & Non-Regression Test**: 216/216 unit tests and 8/8 pre-commit checks pass.
+
+---
+
 ### RCA-001 — PostgreSQL Raw SQL Executed Without `psql` Wrapper (`returncode 127`)
 - **Date / Linked Action**: `2026-08-18` (Phase 23 / Issue `#361` / PR `#362`)
 - **Observed Symptom**: Raw `SELECT`/`SHOW` in `rules/postgresql_*.json` triggered `/bin/bash: SELECT: command not found`.

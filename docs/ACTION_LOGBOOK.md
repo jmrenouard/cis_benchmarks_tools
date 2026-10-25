@@ -19,6 +19,13 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-016 — Robust CIS Downloader & CLI Sync Forwarding (Issue `#470`)
+- **Date**: `2026-10-25T23:05+01:00` | **Status**: `COMPLETED` | **Issue**: `#470`
+- **Changes**: Defaulted sync to `md`, added comma type parsing, unknown target check, OpenerDirector support, and forwarded CLI sync flags.
+- **Result**: `pre_commit_checks.py`: 8/8 checks, 216/216 tests pass; PR diff < 15,000 chars.
+
+---
+
 ### ACT-015 — Streaming Downloader & CLI Sync (Issue `#468`)
 - **Date**: `2026-10-25T22:42+01:00` | **Status**: `COMPLETED` | **Issue**: `#468`
 - **Changes**: Updated `download_cis_benchmarks.py`, `bundle_audit_cis.py`, `audit_cis.py`, `Makefile`, and unit tests.
