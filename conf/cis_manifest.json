@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "base_url": "https://raw.githubusercontent.com/jmrenouard/cis_benchmarks_tools/main/CIS_DATA",
+  "benchmarks": {
+  "cassandra40": {"stem": "CIS Apache Cassandra 4.0 Benchmark v1.3.0 PDF", "ver": "1.3.0", "md": "fff4b2402f8212dc741fae7c37f530a4abeec5e2f93c00c428b312c89589e628", "pdf": "749eda023522eda7854f36fba41cc5f6482b18eedf4ea23c2cccbb70d23299bf"},
+  "cassandra41": {"stem": "CIS Apache Cassandra 4.1 v1.0.0 PDF", "ver": "1.0.0", "md": "c73e40d03d90b4c407278f389816d9c48e4ab2a74a23c35fcc61893ab27369f3", "pdf": "8015be5aaac296d793f0cf63d55c82caeb75e24eeda27f1075b704f7745a2035"},
+  "cassandra50": {"stem": "CIS Apache Cassandra 5.0 Benchmark v1.1.0 PDF", "ver": "1.1.0", "md": "d1c7ea85dcc2d1a75104e57768474ff45397551e15a917f09d2f23180d9db658", "pdf": "5fb6b687ace2c2718b28527c25a148568361de8daafb7cbd6edee7fdbaac26ad"},
+  "cassandra311": {"stem": "CIS_APACHE_CASSANDRA_3.11_Benchmark_v1.1.0_ARCHIVE", "ver": "1.1.0", "md": "0d0f08703dffe105d068fc282cb8a35076c3973f6e81f477980f98e50f4b1257", "pdf": "7d686c5be6fb20c829d5228f4cad804313fa4d4a90250d90c3884221c1b2e0c5"},
+  "github": {"stem": "CIS_GitHub_Benchmark_v1.2.0_PDF", "ver": "1.2.0", "md": "c1194c654a1f344f7436811a83499de38e422ca790a26a91f4a8cf6b35c75b09", "pdf": "533e150d224129ad37f1560ffede82aaff7191bcc148de42dec73ca0f70adb9d"},
+  "mariadb1011": {"stem": "CIS_MariaDB_10.11_Benchmark_v1.0.0", "ver": "1.0.0", "md": "0bedcda902f25f44bb5f063bb06f4c408129d9f27179e7da7f07ed6a5ecdd19c", "pdf": "605d29768d2ccd3aeff712325c542c5b0f27c28b85bbfcbad4280af7baef4134"},
+  "mariadb106": {"stem": "CIS_MariaDB_10.6_Benchmark_v1.1.0", "ver": "1.1.0", "md": "ec1141fa0c6622159934b24cb1eca5c27bd0cd752bd7311cd8d0f76ae33ebd74", "pdf": "79610a3519eedb95f9de09ea7121e0a07ec00af1def34eeefbb4baa281781a34"},
+  "mongodb7": {"stem": "CIS_MongoDB7_Benchmark_v1.2.0 PDF", "ver": "1.2.0", "md": "fe429eb7173cc4e60f9fb60f20c5e54d4deae4283e45fcd3a44404e51fd86d91", "pdf": "c32bd85e85dee84778e49d82ebee9ca26d5ae034d1b58e28134027f8a217180e"},
+  "mongodb8": {"stem": "CIS_MongoDB8_Benchmark_v1.0.0", "ver": "1.0.0", "md": "272b59549514af4bd4126486e8b20d1b5824044b12a673c4c2fde2b28ef08c18", "pdf": "3d3726530e2643939f8f467805c33566017a369a481cf7f140dad2c99dc45ff4"},
+  "mysql-community84": {"stem": "CIS_Oracle_MySQL_Community_Server_8.4_Benchmark_v1.1.0", "ver": "1.1.0", "md": "be149737bcaee10869677a25e983949916c3fa7a20b262420e0e185e9f18b0ad", "pdf": "0079b3a89039ad4fdb881d299ff53e8cb8e4e3deed4539c86d0cafb0e720ecbe"},
+  "mysql-community97": {"stem": "CIS_Oracle_MySQL_Community_Server_9.7_Benchmark_v1.0.0", "ver": "1.0.0", "md": "fa996c0c3c53d46ebfe127dc6398f5a9f4ea7986c7ef2025721a38426ca254cc", "pdf": "0c1a8f61d63f58cffaab8273aab91e7df792a9b8a562e82feaf71e756965ddfc"},
+  "mysql80": {"stem": "CIS_Oracle_MySQL_Enterprise_Edition_8.0_Benchmark_v1.5.0_FINAL_UPDATE", "ver": "1.5.0", "md": "7fcc0c04b2b958af83813139cfd1701c0ce2a0a491979549a618b92b928b784d", "pdf": "9521dd91cd5110e318920d116b084f3d2081943bb0afe350f89e3f70fad8d943"},
+  "mysql-enterprise84": {"stem": "CIS_Oracle_MySQL_Enterprise_Edition_8.4_Benchmark_v1.1.0", "ver": "1.1.0", "md": "341f8aa5a77b1d74349132e92394cf6b3d2575b724b348c8ac4718caf14dd700", "pdf": "70038657b2ce726ec6a815892ab889a43f958f5ec23633fbcae5536593d8ee17"},
+  "mysql-enterprise97": {"stem": "CIS_Oracle_MySQL_Enterprise_Edition_9.7_Benchmark_v1.0.0", "ver": "1.0.0", "md": "9bfe45a30b2f3e8b755da44950582a9d2dc317e5cfe29232b19529db98b52aca", "pdf": "386fc572d2b53c2b254cc5095917953bd6957b27249861ec794d8c6da9963f1c"},
+  "postgresql16": {"stem": "CIS_PostgreSQL_16_Benchmark_v1.1.0", "ver": "1.1.0", "md": "02a0846d2a991cbd08763e3c0b4b58481baa84aad3f7b53408d8b9d2a62402d7", "pdf": "a90261efff3f3cc48be4fa090e5fcd8035a2fa49dbd4d13bb15b359134fce860"},
+  "postgresql17": {"stem": "CIS_PostgreSQL_17_Benchmark_v1.1.0", "ver": "1.1.0", "md": "4ebe6c790691ec1960df5c9e4b41d7c3c375ec62db3473cfa1e143ff0525babf", "pdf": "e9e21cfcce02d40a73dd5fd1df9fdae6f19efc50eb3090df7c3e519f1f61d3f6"},
+  "postgresql18": {"stem": "CIS_PostgreSQL_18_Benchmark_v1.0.0", "ver": "1.0.0", "md": "e7d93195b65805c82e231c10b3bbb61effb752b9920808127f8ccf1e9597bbd1", "pdf": "eae098af712ef333be2ebb146e72d8cdcba9f740f3a99e15de8363055f49f1b9"},
+  "rhel10": {"stem": "CIS_Red_Hat_Enterprise_Linux_10_Benchmark_v1.0.1", "ver": "1.0.1", "md": "b0a041f9bf0bfecfefdc8b8b9d80e578261a27e71f760e825096282d9a16264d", "pdf": "5ac1adfbc26394c82227b334bfb8216d07875458fa75f558833e9af63d9b7a2a"},
+  "rhel8": {"stem": "CIS_Red_Hat_Enterprise_Linux_8_Benchmark_v4.0.0", "ver": "4.0.0", "md": "47648435dd641b4fb0c1c94989c3df76690b58686e8a99a10f13fcb24028d525", "pdf": "60157164f4516b2aa3ef6a9be3c4797a067e064a8b9c37f8bee9f7a1a9b1fdfa"},
+  "rhel8-stig": {"stem": "CIS_Red_Hat_Enterprise_Linux_8_STIG_Benchmark_v2.0.0", "ver": "2.0.0", "md": "6aff626698c02d4b54dd4d70789b96830de4c0eae1fa73b9ae547ae57253c6a8", "pdf": "2dbece0dda3d2468ad211e225eef7625b93ec3ccbb64c475315667f3258b06de"},
+  "rhel9": {"stem": "CIS_Red_Hat_Enterprise_Linux_9_Benchmark_v2.0.0", "ver": "2.0.0", "md": "ed772402238eb99ef42025694043eca2473f814f17e9bea0df538eaf5f5a3736", "pdf": "0d60d4cd0a3206aa55f959d79c83bf9c003019fd93676a4c58214d9063599af7"},
+  "rhel9-stig": {"stem": "CIS_Red_Hat_Enterprise_Linux_9_STIG_Benchmark_v1.0.0", "ver": "1.0.0", "md": "577dbf04e3df0205eb28cbaab24e11db75a919505ef1146880788130b586a817", "pdf": "e956b316140e5ec24dae4ab656f91edc4b0027c504c138f833e9f25aa30a90fc"}
+  }
+}

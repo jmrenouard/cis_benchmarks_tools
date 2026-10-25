@@ -11,7 +11,9 @@
 
 | Action ID | Date / Time (ISO) | Issue / Branch | Status | Request, Ongoing Changes & Expected Results |
 | :--- | :--- | :--- | :--- | :--- |
-| *None* | — | — | — | All current actions are completed and archived below. |
+| `ACT-014` | `2026-10-25T22:20+01:00` | Issue `#466` (`feat/issue-466-download-cis-benchmarks`) | `IN PROGRESS` | **Request**: Automated task to download/verify latest CIS benchmarks (`CIS_DATA/`).<br>**Changes**: Implement `conf/cis_manifest.json`, `scripts/download_cis_benchmarks.py`, and `tests/test_download_cis_benchmarks.py`.<br>**Result**: 100% passing tests, PSL-only, diff `< 15,000` chars. |
+
+
 
 ---
 

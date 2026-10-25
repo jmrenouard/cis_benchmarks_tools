@@ -102,6 +102,13 @@
 - **Nature & Justification**: Classifies failures (`MISSING_BINARY`, `PERMISSION_DENIED`, `AUTH_FAILURE`, `CONNECTION_ERROR`, `TIMEOUT`, `SYNTAX_ERROR`) using priority-ordered regexes in `< 0.1 ms` with zero external dependencies.
 - **Removal Condition**: Extend pattern catalogs when new localized OS/DB CLI messages appear.
 
+### APP-003 — Local SHA-256 Benchmark Integrity Manifest Validation
+- **Target Files**: `conf/cis_manifest.json` & `scripts/download_cis_benchmarks.py`
+- **Nature & Justification**: Benchmark specifications mapped in `conf/cis_manifest.json` with SHA-256 digests. Verification runs in `< 0.1s` PSL-only.
+- **Removal Condition**: Expanded with streaming remote mirror sync in Part 2.
+
+
+
 ---
 
 ## 4. Unimplemented Ideas & Future Roadmap (`IDEA`)
