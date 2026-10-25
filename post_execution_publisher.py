@@ -90,13 +90,17 @@ class AuditReportPublisher:
         Returns: (success_bool, exception_if_any, published_reports_dict)
         """
         success = False
-        captured_exc = None
-        results = {}
-        overall_score = 0.0
-        categories_scores = {}
+        captured_exc: Optional[Exception] = None
+        results: Dict[str, Any] = {}
+        overall_score: float = 0.0
+        categories_scores: Dict[str, Any] = {}
 
         try:
-            results, overall_score, categories_scores, *extra = audit_func()
+            audit_output = audit_func()
+            results = audit_output[0]
+            overall_score = float(audit_output[1])
+            categories_scores = audit_output[2]
+            extra: List[Any] = list(audit_output[3:]) if len(audit_output) > 3 else []
             success = True
         except Exception as exc:
             captured_exc = exc
