@@ -17,6 +17,16 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-010 — PyPI Publishing GitHub Actions Workflow, Release Asset Pipeline & Stable Release `v2.9.0` (Issue `#458`)
+- **Date**: `2026-10-25T20:48+01:00`
+- **Status**: `COMPLETED`
+- **Issue / Branch**: Issue `#458` (`ci/issue-458-pypi-workflow-and-release`, release `v2.9.0`)
+- **Request**: Add automated GitHub Actions PyPI publishing workflow (`.github/workflows/pypi-publish.yml`) supporting repository secrets (`PYPI_API_TOKEN` / `PYPI_TOKEN`), update `.github/workflows/release.yml` with wheel and sdist builds, sync `README.md`, `ROADMAP.md`, `POTENTIAL_ISSUES.md`, and publish stable release.
+- **Changes**: Created [`.github/workflows/pypi-publish.yml`](../.github/workflows/pypi-publish.yml); updated [`.github/workflows/release.yml`](../.github/workflows/release.yml), [`tests/test_github_actions_workflows.py`](../tests/test_github_actions_workflows.py), [`README.md`](../README.md), [`ROADMAP.md`](../ROADMAP.md), and [`POTENTIAL_ISSUES.md`](../POTENTIAL_ISSUES.md).
+- **Result**: `python -m unittest discover -s tests -v`: **199 / 199 unit tests passed (100%)**; `python scripts/pre_commit_checks.py`: **8 / 8 checks passed**.
+
+---
+
 ### ACT-009 — PyPI Packaging Configuration, Release Publishing Workflow & Stable Release `v2.9.0` (Issue `#456`)
 - **Date**: `2026-10-25T20:24+01:00`
 - **Status**: `COMPLETED`
