@@ -5,6 +5,7 @@ across ALL 18 Audit Scripts with 100% Pure Inline SVG Donut and Category Bar Cha
 """
 
 import glob
+import os
 import re
 
 audit_files = sorted(glob.glob("audit_cis_*.py"))

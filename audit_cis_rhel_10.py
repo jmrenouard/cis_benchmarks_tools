@@ -536,6 +536,7 @@ def is_valid_executable_command(cmd_str):
 def run_command(command, remote_host=None):
     """Execute command safely with timeout=10, stdin=DEVNULL, and clean SSH noise (PSL ONLY)."""
     try:
+        env = os.environ.copy()
         if isinstance(command, str):
             if "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
                 if "postgresql" in command:

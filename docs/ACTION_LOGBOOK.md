@@ -17,6 +17,16 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-011 — CI Lint Fixes, Markdown Benchmark Inventory Sync & Resilient PyPI Preflight Workflow (Issue `#460`)
+- **Date**: `2026-10-25T21:05+01:00`
+- **Status**: `COMPLETED`
+- **Issue / Branch**: Issue `#460` (`fix/issue-460-ci-lint-and-pypi-preflight`)
+- **Request**: Resolve CI failures by fixing Ruff undefined variable lint errors (`F821`), update benchmark inventory scanner to support git-tracked Markdown files when PDFs are gitignored, and implement resilient multi-mode PyPI publishing preflight check.
+- **Changes**: Updated 10 audit engines (`audit_cis_mysql_*.py`, `audit_cis_postgresql_*.py`, `audit_cis_rhel_*.py`), [`scripts/standardize_generate_html_report.py`](../scripts/standardize_generate_html_report.py), [`scripts/verify_benchmarks_and_reports.py`](../scripts/verify_benchmarks_and_reports.py), [`.github/workflows/pypi-publish.yml`](../.github/workflows/pypi-publish.yml), and [`tests/test_github_actions_workflows.py`](../tests/test_github_actions_workflows.py).
+- **Result**: `ruff check`: 0 errors; `pre_commit_checks.py`: **8 / 8 checks and 199 / 199 tests passed (100%)**; PR diff `< 15,000` chars.
+
+---
+
 ### ACT-010 — PyPI Publishing GitHub Actions Workflow, Release Asset Pipeline & Stable Release `v2.9.0` (Issue `#458`)
 - **Date**: `2026-10-25T20:48+01:00`
 - **Status**: `COMPLETED`

@@ -2,6 +2,7 @@ import argparse
 import subprocess
 import json
 import os
+import sys
 from datetime import datetime
 import re # Pour les expressions régulières
 import html # Pour échapper les caractères spéciaux HTML
