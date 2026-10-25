@@ -53,6 +53,13 @@
 - **Applied Change / Fix**: Fixed imports and initialized `env = os.environ.copy()`; scanned both `*.pdf` and `*.md` with stem deduplication; added resilient preflight in `pypi-publish.yml`.
 - **Result & Non-Regression Test**: `ruff check` 0 errors; `pre_commit_checks.py` 8/8 checks and 199/199 unit tests pass; `.md`-only scan validates 22/22 documents.
 
+### RCA-007 — Mypy Type Analysis Var-Annotated Failures on Unpacked Dynamic Return Values
+- **Date / Linked Action**: `2026-10-25` (`ACT-012` / Issue `#462`)
+- **Observed Symptom**: CI failed in `Mypy Type Check (Python 3.12)` with `Need type annotation for "results"` and `Need type annotation for "categories_scores"`.
+- **Root Cause Analysis**: Mypy requires explicit type annotations when empty collections are assigned from untyped callable return unpacking (`results, overall_score, categories_scores, *extra = audit_func()`).
+- **Applied Change / Fix**: Explicitly annotated `results: Dict[str, Any] = {}`, `categories_scores: Dict[str, Any] = {}`, `captured_exc: Optional[Exception] = None`, and `extra: List[Any] = ...` in `post_execution_publisher.py`.
+- **Result & Non-Regression Test**: Unit test suite passes 100% (199/199); pre-commit checks 8/8 pass.
+
 
 ---
 

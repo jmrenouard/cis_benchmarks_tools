@@ -17,6 +17,16 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-012 — Explicit Variable Type Annotations for Mypy in Post-Execution Publisher (Issue `#462`)
+- **Date**: `2026-10-25T21:12+01:00`
+- **Status**: `COMPLETED`
+- **Issue / Branch**: Issue `#462` (`fix/issue-462-mypy-type-annotations`)
+- **Request**: Fix Mypy type-checking errors in `post_execution_publisher.py` by providing explicit type annotations for `results`, `categories_scores`, `extra`, and `captured_exc`.
+- **Changes**: Updated [`post_execution_publisher.py`](../post_execution_publisher.py).
+- **Result**: `pre_commit_checks.py`: **8 / 8 checks and 199 / 199 tests passed (100%)**; PR diff `< 15,000` chars.
+
+---
+
 ### ACT-011 — CI Lint Fixes, Markdown Benchmark Inventory Sync & Resilient PyPI Preflight Workflow (Issue `#460`)
 - **Date**: `2026-10-25T21:05+01:00`
 - **Status**: `COMPLETED`
