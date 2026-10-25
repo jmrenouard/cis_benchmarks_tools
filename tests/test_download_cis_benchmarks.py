@@ -23,6 +23,7 @@ from scripts.download_cis_benchmarks import (
     verify_file,
     download_file,
     sync_benchmarks,
+    parse_file_types,
 )
 
 
@@ -98,6 +99,24 @@ class TestCISBenchmarksManifestAndVerifier(unittest.TestCase):
         self.assertEqual(sync_benchmarks(self.tmp, self.m_path, targets=["mariadb106"], file_types=("md",), dry_run=True)["skipped"], 1)
         self.assertEqual(sync_benchmarks(self.tmp, self.m_path, targets=["mariadb106"], file_types=("md",), opener=op)["downloaded"], 1)
         self.assertEqual(sync_benchmarks(self.tmp, self.m_path, targets=["mariadb106"], file_types=("md",), opener=op)["skipped"], 1)
+
+    def test_parse_file_types_and_errors(self):
+        self.assertEqual(parse_file_types("md,pdf"), ("md", "pdf"))
+        self.assertEqual(parse_file_types(" md , pdf "), ("md", "pdf"))
+        self.assertEqual(parse_file_types("md"), ("md",))
+        with self.assertRaises(ValueError): parse_file_types("invalid_ext")
+        self.assertEqual(main(["--types", "invalid", "--quiet"]), 1)
+
+    def test_download_file_with_opener_director(self):
+        dest = os.path.join(self.tmp, "op.md")
+        mock_op = type("MockOpener", (), {"open": lambda s, r, **k: self.DummyResp(self.content)})()
+        ok, dig, cnt = download_file("http://ex.com/t.md", dest, self.c_hash, opener=mock_op)
+        self.assertTrue(ok and os.path.isfile(dest) and dig == self.c_hash)
+
+    def test_unknown_target_reported_and_fails(self):
+        self.assertEqual(sync_benchmarks(self.tmp, self.m_path, targets=["bad_tgt"], file_types=("md",))["failed"], 1)
+        self.assertEqual(verify_benchmarks(self.tmp, self.m_path, targets=["bad_tgt"], file_types=("md",))["missing"], 1)
+        self.assertEqual(main(["-t", "bad_tgt", "--manifest", self.m_path, "--quiet"]), 1)
 
 
 if __name__ == "__main__":

@@ -470,7 +470,7 @@ sync-cis:
 	python3 scripts/download_cis_benchmarks.py --types md
 
 sync-cis-all:
-	python3 scripts/download_cis_benchmarks.py
+	python3 scripts/download_cis_benchmarks.py --types all
 
 verify-cis:
 	python3 scripts/download_cis_benchmarks.py --verify-only

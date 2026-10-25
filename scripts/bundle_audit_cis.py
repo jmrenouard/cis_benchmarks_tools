@@ -198,6 +198,10 @@ def main():
     parser.add_argument("--auto-detect", action="store_true", help="Auto-detect running database containers and execute audits")
     parser.add_argument("--sync-cis", action="store_true", help="Sync CIS data")
     parser.add_argument("--verify-cis", action="store_true", help="Verify CIS integrity")
+    parser.add_argument("--cis-types", "--types", dest="cis_types", default=None, help="CIS types")
+    parser.add_argument("--force", action="store_true", help="Force sync")
+    parser.add_argument("--dry-run", action="store_true", help="Dry run")
+    parser.add_argument("--base-url", default=None, help="Base URL")
     parser.add_argument("-v", "--version", action="version", version=f"CIS Benchmarks Suite v{{__version__}}")
 
     args = parser.parse_args()
@@ -212,7 +216,12 @@ def main():
 
     if args.sync_cis or args.verify_cis:
         d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "download_cis_benchmarks.py")
-        sys.exit(subprocess.run([sys.executable, d] + (["--verify-only"] if args.verify_cis else []) + (["-t", args.target] if args.target else [])).returncode)
+        cmd = [sys.executable, d] + (["--verify-only"] if args.verify_cis else []) + (["-t", args.target] if args.target else [])
+        for k, v in [("--types", getattr(args, "cis_types", None)), ("--base-url", getattr(args, "base_url", None))]:
+            if v: cmd.extend([k, v])
+        if getattr(args, "force", False): cmd.append("--force")
+        if getattr(args, "dry_run", False): cmd.append("--dry-run")
+        sys.exit(subprocess.run(cmd).returncode)
 
     exec_mode = "ssh" if (args.mode == "ssh" or args.remote_host) else "local"
 
