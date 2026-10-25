@@ -17,6 +17,16 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-013 — Release v2.9.1 Quality, Attached Distribution Assets & PyPI OIDC Publishing Fix (Issue `#464`)
+- **Date**: `2026-10-25T21:25+01:00`
+- **Status**: `COMPLETED`
+- **Issue / Branch**: Issue `#464` (`fix/issue-464-v2.9.1-release-and-assets`, release `v2.9.1`)
+- **Request**: Bump version to `v2.9.1`, fix PyPI OIDC publishing workflow by eliminating conflicting `password` input, add wheel and entrypoint tests in `tests/test_pypi_packaging.py`, and publish stable release `v2.9.1` with full distribution assets attached.
+- **Changes**: Updated [`VERSION`](../VERSION), [`audit_cis.py`](../audit_cis.py), [`.github/workflows/pypi-publish.yml`](../.github/workflows/pypi-publish.yml), [`tests/test_pypi_packaging.py`](../tests/test_pypi_packaging.py), [`README.md`](../README.md), [`ROADMAP.md`](../ROADMAP.md), and [`POTENTIAL_ISSUES.md`](../POTENTIAL_ISSUES.md).
+- **Result**: `pre_commit_checks.py`: **8 / 8 checks and 202 / 202 tests passed (100%)**; PR diff `< 15,000` chars; wheel and sdist built cleanly.
+
+---
+
 ### ACT-012 — Explicit Variable Type Annotations for Mypy in Post-Execution Publisher (Issue `#462`)
 - **Date**: `2026-10-25T21:12+01:00`
 - **Status**: `COMPLETED`

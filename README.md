@@ -1,4 +1,4 @@
-# 🛡️ CIS Benchmarks Tools Suite (v2.9.0)
+# 🛡️ CIS Benchmarks Tools Suite (v2.9.1)
 
 > **Enterprise-Grade Automated Security Compliance Audit Engine for Databases and Linux Systems (100% Python Standard Library - PSL ONLY).**
 
@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
-[![Release](https://img.shields.io/badge/Release-v2.9.0-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
+[![Release](https://img.shields.io/badge/Release-v2.9.1-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
 
 ---
 
