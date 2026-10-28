@@ -1,4 +1,4 @@
-FROM mysql:8.0
+FROM mysql:26.7
 
 # Define environment variables to avoid interactions during installation
 ENV DEBIAN_FRONTEND=noninteractive \
