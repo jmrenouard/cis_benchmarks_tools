@@ -622,7 +622,7 @@ def setup_audit_logger(log_path=None, verbose=False):
     return logger
 
 
-def run_command(command, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None):
+def run_command(command, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None, ssh_port=22, ssh_key=None, sudo=False):
     """Execute command safely locally, over SSH, or inside Docker container (PSL ONLY)."""
     logger = logging.getLogger("cis_audit")
     original_cmd = command if isinstance(command, str) else " ".join(command)
@@ -661,7 +661,17 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
             cmd_args = list(command)
 
         if remote_host:
-            cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
+            ssh_cmd = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5"]
+            if ssh_port and int(ssh_port) != 22:
+                ssh_cmd.extend(["-p", str(ssh_port)])
+            if ssh_key:
+                ssh_cmd.extend(["-i", ssh_key])
+            else:
+                ssh_cmd.extend(["-i", "/root/.ssh/id_rsa"])
+            ssh_cmd.append(remote_host)
+            cmd_args = ssh_cmd + (["sudo", "-n"] if sudo else []) + cmd_args
+        elif sudo:
+            cmd_args = ["sudo", "-n"] + cmd_args
 
         logger.debug("CMD: %s", _sanitize_log_cmd(command if isinstance(command, str) else " ".join(cmd_args)))
 
@@ -767,7 +777,7 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     print(f"WARN: Unknown condition type '{condition_type}'")
     return False
 
-def perform_checks(recommendations, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None, exec_context=None):
+def perform_checks(recommendations, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None, exec_context=None, ssh_port=22, ssh_key=None, sudo=False):
     """Exécute tous les contrôles et stocke les résultats. Utilise exec_context pour sélectionner les commandes adaptées au contexte (Local/SSH/Docker)."""
     results = {}
     stored_outputs = {} # Store outputs globally for potential cross-check references (if needed later)
@@ -775,6 +785,21 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
     auto_count = sum(1 for r in recommendations if r.get('type') == 'Automated')
     manual_count = sum(1 for r in recommendations if r.get('type') == 'Manual')
     logger.info("📋 Rules loaded: %d controls (%d Automated, %d Manual)", len(recommendations), auto_count, manual_count)
+
+    common_run_kwargs = {
+        "remote_host": remote_host,
+        "docker_container": docker_container,
+        "db_user": db_user,
+        "db_password": db_password,
+        "db_host": db_host,
+        "db_port": db_port,
+        "db_name": db_name,
+        "defaults_file": defaults_file,
+        "auth_db": auth_db,
+        "ssh_port": ssh_port,
+        "ssh_key": ssh_key,
+        "sudo": sudo,
+    }
 
     for rec in recommendations:
         category = rec["category"]
@@ -805,11 +830,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
             # Check pre-condition if defined
             if rec.get("pre_condition") or rec.get("pre_condition_docker") or rec.get("pre_condition_ssh"):
                 pre_cond_cmd = get_context_command(rec, "pre_condition", exec_context)
-                pc_stdout, pc_stderr, pc_returncode = run_command(
-                    pre_cond_cmd, remote_host=remote_host, docker_container=docker_container,
-                    db_user=db_user, db_password=db_password, db_host=db_host,
-                    db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
-                )
+                pc_stdout, pc_stderr, pc_returncode = run_command(pre_cond_cmd, **common_run_kwargs)
                 if pc_returncode != 0 or not pc_stdout or pc_stdout == "0":
                     check_result["status"] = "Not Applicable"
                     check_result["output"] = f"Check non applicable dans cet environnement (Pré-condition non remplie).\nCommand de vérification: {pre_cond_cmd}"
@@ -829,17 +850,11 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     if ("mysql -N -B" in path_cmd or "mariadb -N -B" in path_cmd) and "SELECT @@datadir;" in path_cmd:
                         path_cmd_to_run = f"{path_cmd} || mariadb -N -B -e \"SELECT @@datadir;\" || sudo -n mysql -N -B -e \"SELECT @@datadir;\" || sudo -n mariadb -N -B -e \"SELECT @@datadir;\""
                     
-                    path_stdout, path_stderr, path_returncode = run_command(
-                        path_cmd_to_run, remote_host=remote_host, docker_container=docker_container,
-                        db_user=db_user, db_password=db_password, db_host=db_host,
-                        db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
-                    )
+                    path_stdout, path_stderr, path_returncode = run_command(path_cmd_to_run, **common_run_kwargs)
 
                     if (path_returncode != 0 or not path_stdout) and "datadir" in path_cmd:
                         fb_stdout, fb_stderr, fb_ret = run_command(
-                            "ls -d /var/lib/mariadb /var/lib/mysql | head -n 1", remote_host=remote_host, docker_container=docker_container,
-                            db_user=db_user, db_password=db_password, db_host=db_host,
-                            db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
+                            "ls -d /var/lib/mariadb /var/lib/mysql | head -n 1", **common_run_kwargs
                         )
                         if fb_ret == 0 and fb_stdout:
                             path_stdout = fb_stdout.strip()
@@ -880,11 +895,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                         check_result["test_procedure"] = command_executed_display
                         results[category].append(check_result)
                         continue
-                    stdout, stderr, returncode = run_command(
-                        cmd_to_run, remote_host=remote_host, docker_container=docker_container,
-                        db_user=db_user, db_password=db_password, db_host=db_host,
-                        db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
-                    )
+                    stdout, stderr, returncode = run_command(cmd_to_run, **common_run_kwargs)
                     check_result["output"] = "Stdout:" + chr(10) + stdout + chr(10) + "Stderr:" + chr(10) + stderr + chr(10) + f"Return Code: {returncode}"
                     check_result["error"] = stderr
                     check_result["test_procedure"] = command_executed_display
@@ -928,11 +939,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                         logger.warning("[%s] Manual control: %s", check_number, rec["name"][:60])
                         tp = rec.get("test_procedure", "").strip()
                         if tp and is_valid_executable_command(tp):
-                            diag_out, diag_err, diag_ret = run_command(
-                                tp, remote_host=remote_host, docker_container=docker_container,
-                                db_user=db_user, db_password=db_password, db_host=db_host,
-                                db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
-                            )
+                            diag_out, diag_err, diag_ret = run_command(tp, **common_run_kwargs)
                             diag_disp = diag_out if diag_out else (diag_err or "")
                             if diag_disp:
                                 check_result["output"] = f"--- [Contrôle Manuel - Diagnostic Système] ---\nCommande: {tp}\n\nRésultat capturé:\n{diag_disp}\n\nNote: L'auditeur doit valider la conformité selon la politique de sécurité de l'organisation."
@@ -1427,7 +1434,10 @@ if __name__ == "__main__":
         db_name=args.db_name,
         defaults_file=args.defaults_file,
         auth_db=args.auth_db,
-        exec_context=exec_context
+        exec_context=exec_context,
+        ssh_port=args.ssh_port,
+        ssh_key=args.ssh_key,
+        sudo=args.sudo
     )
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
 
