@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-037 — fix(reports): repair syntax in MySQL 8.0 SSH JSON report (Part 1/3) (Issue `#532`)
+- **Date**: `2026-10-30T20:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#532`
+- **Request**: Remediate Ponytail Audit Finding 8 (Part B): repair syntax in `reports/rapport_cis_mysql_8_ssh.json`.
+- **Changes**: Replaced corrupted output/error pattern in `reports/rapport_cis_mysql_8_ssh.json` (batch of 20); verified diff strictly < 15,000 characters.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 237/237 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-036 — fix(reports): repair syntax in PostgreSQL 18 SSH JSON report (Part 2/2) (Issue `#530`)
 - **Date**: `2026-10-30T20:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#530`
 - **Request**: Remediate Ponytail Audit Finding 8 (Part B): repair syntax in `reports/rapport_cis_postgresql_18_ssh.json`.
