@@ -19,9 +19,9 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
-### ACT-021 — Database Credentials & SSH Flag Propagation (Parts A1, A2, B1-B9, Issue `#484`)
-- **Date**: `2026-10-30T18:16+01:00` | **Status**: `COMPLETED` | **Issue**: `#484`
-- **Changes**: Forwarded `args.db_*` in `__main__` across all 12 database engines; propagated `ssh_port`, `ssh_key`, and `sudo` in `audit_orchestrator.py`, `audit_cis_rhel_8/9/10.py`, `audit_cis_postgresql_16/17/18.py`, `audit_cis_mariadb_106/1011.py`, `audit_cis_mysql_80.py`, and `audit_cis_mysql_community_84.py`; added unit tests in `tests/test_credential_and_flag_propagation.py`.
+### ACT-021 — Database Credentials & SSH Flag Propagation (Parts A1, A2, B1-B10, Issue `#484`)
+- **Date**: `2026-10-30T18:19+01:00` | **Status**: `COMPLETED` | **Issue**: `#484`
+- **Changes**: Forwarded `args.db_*` in `__main__` across all 12 database engines; propagated `ssh_port`, `ssh_key`, and `sudo` in `audit_orchestrator.py`, `audit_cis_rhel_8/9/10.py`, `audit_cis_postgresql_16/17/18.py`, `audit_cis_mariadb_106/1011.py`, `audit_cis_mysql_80.py`, `audit_cis_mysql_community_84.py`, and `audit_cis_mysql_enterprise_84.py`; added unit tests in `tests/test_credential_and_flag_propagation.py`.
 - **Result**: `pre_commit_checks.py` 8/8 checks pass, 224/224 tests pass, PR diff < 15,000 chars.
 
 ---
