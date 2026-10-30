@@ -308,8 +308,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_print_rewritten;'",
       "remediation": "Ne pas afficher les arbres r\u00e9\u00e9crits SQL dans les logs.\nALTER SYSTEM SET debug_print_rewritten = 'off'; SELECT pg_reload_conf();",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -319,8 +319,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_print_plan;'",
       "remediation": "Ne pas afficher les plans d\u2019ex\u00e9cution SQL dans les logs.\nALTER SYSTEM SET debug_print_plan = 'off'; SELECT pg_reload_conf();",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -330,8 +330,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW debug_pretty_print;'",
       "remediation": "Formater lisiblement les arbres d\u2019analyse/r\u00e9\u00e9criture dans les logs.\nALTER SYSTEM SET debug_pretty_print = 'on'; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -341,8 +341,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_connections;'",
       "remediation": "Enregistrer chaque nouvelle connexion \u00e0 PostgreSQL.\nALTER SYSTEM SET log_connections = 'on'; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -352,8 +352,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_disconnections;'",
       "remediation": "Enregistrer chaque d\u00e9connexion de PostgreSQL.\nALTER SYSTEM SET log_disconnections = 'on'; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -363,8 +363,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_error_verbosity;'",
       "remediation": "Contr\u00f4ler la verbosit\u00e9 des messages d\u2019erreur (DEFAULT, VERBOSE).\nALTER SYSTEM SET log_error_verbosity = 'verbose'; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -374,8 +374,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_hostname;'",
       "remediation": "Indiquer le nom d\u2019h\u00f4te ou l\u2019IP dans les logs de connexion.\nALTER SYSTEM SET log_hostname = 'off'; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -385,8 +385,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_line_prefix;'",
       "remediation": "D\u00e9finir le pr\u00e9fixe de ligne (timestamp, utilisateur, base, etc.) dans chaque log.\nALTER SYSTEM SET log_line_prefix = '%m [%p] user=%u db=%d '; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -396,8 +396,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_statement;'",
       "remediation": "Choisir le niveau de requ\u00eates \u00e0 logger (none, ddl, mod, all).\nALTER SYSTEM SET log_statement = 'ddl'; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -407,8 +407,8 @@
       "test_procedure": "sudo -u postgres psql -t -c 'SHOW log_timezone;'",
       "remediation": "Uniformiser le fuseau horaire des horodatages des logs (ex. UTC).\nALTER SYSTEM SET log_timezone = 'UTC'; SELECT pg_reload_conf();.",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3.1. Journalisation des erreurs serveur"
     },
     {
@@ -495,8 +495,8 @@
       "test_procedure": "Utiliser set_user pour l\u2019\u00e9mulation de r\u00f4les et la r\u00e9vocabilit\u00e9 de sessions.\nSELECT * FROM pg_extension WHERE extname = 'set_user';",
       "remediation": "Utiliser set_user pour l\u2019\u00e9mulation de r\u00f4les et la r\u00e9vocabilit\u00e9 de sessions.\nCREATE EXTENSION set_user;",
       "status": "Error",
-      "output": "Execution error: Command not found.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Execution error: Command not found.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "4. Acc\u00e8s et autorisations utilisateur"
     },
     {
@@ -594,8 +594,8 @@
       "test_procedure": "",
       "remediation": "Ajuster max_connections, shared_buffers, work_mem, etc., pour limiter l\u2019exposition.\nALTER SYSTEM SET max_connections = 100; ALTER SYSTEM SET shared_buffers = '...'; ALTER SYSTEM SET work_mem = '...'; SELECT pg_reload_conf();",
       "status": "Not Applicable",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "6. Param\u00e8tres PostgreSQL"
     },
     {
@@ -649,8 +649,8 @@
       "test_procedure": "S\u2019assurer qu\u2019OpenSSL FIPS est utilis\u00e9 si requis.\nSHOW ssl_library; et v\u00e9rifier la version OpenSSL.",
       "remediation": "S\u2019assurer qu\u2019OpenSSL FIPS est utilis\u00e9 si requis.\nRecompiler PostgreSQL avec FIPS ou configurer la biblioth\u00e8que FIPS.",
       "status": "Error",
-      "output": "Execution error: Command not found.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Execution error: Command not found.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "6. Param\u00e8tres PostgreSQL"
     },
     {
@@ -660,8 +660,8 @@
       "test_procedure": "",
       "remediation": "Installer certificats TLS et configurer ssl_cert_file, ssl_key_file.\nCopier les certificats, ALTER SYSTEM SET ssl = 'on'; SELECT pg_reload_conf();.",
       "status": "Not Applicable",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "6. Param\u00e8tres PostgreSQL"
     },
     {
@@ -671,8 +671,8 @@
       "test_procedure": "Forcer au minimum TLSv1.3.\nSHOW ssl_min_protocol_version; doit \u00eatre TLSv1.3.",
       "remediation": "Forcer au minimum TLSv1.3.\nALTER SYSTEM SET ssl_min_protocol_version = 'TLSv1.3'; SELECT pg_reload_conf();.",
       "status": "Error",
-      "output": "Execution error: Command not found.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Execution error: Command not found.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "6. Param\u00e8tres PostgreSQL"
     },
     {
@@ -682,8 +682,8 @@
       "test_procedure": "Exclure RC4, DES, etc., dans ssl_cipher_suites.\nSHOW ssl_cipher_suites; v\u00e9rifier l\u2019absence de ciphers faibles.",
       "remediation": "Exclure RC4, DES, etc., dans ssl_cipher_suites.\nALTER SYSTEM SET ssl_cipher_suites = 'HIGH:!aNULL'; SELECT pg_reload_conf();.",
       "status": "Error",
-      "output": "Execution error: Command not found.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Execution error: Command not found.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "6. Param\u00e8tres PostgreSQL"
     },
     {
@@ -693,8 +693,8 @@
       "test_procedure": "Activer pgcrypto pour fonctions cryptographiques.\nSELECT * FROM pg_extension WHERE extname = 'pgcrypto';",
       "remediation": "Activer pgcrypto pour fonctions cryptographiques.\nCREATE EXTENSION pgcrypto;",
       "status": "Error",
-      "output": "Execution error: Command not found.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Execution error: Command not found.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "6. Param\u00e8tres PostgreSQL"
     },
     {
@@ -715,8 +715,8 @@
       "test_procedure": "Activer log_replication_commands pour tracer les actions de r\u00e9plication.\nSHOW log_replication_commands; doit \u00eatre on.",
       "remediation": "Activer log_replication_commands pour tracer les actions de r\u00e9plication.\nALTER SYSTEM SET log_replication_commands = 'on'; SELECT pg_reload_conf();.",
       "status": "Error",
-      "output": "Execution error: Command not found.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Execution error: Command not found.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "7. R\u00e9plication"
     },
     {
@@ -737,8 +737,8 @@
       "test_procedure": "",
       "remediation": "Activer archive_mode et archive_command pour conserver les WAL.\nALTER SYSTEM SET archive_mode = 'on'; ALTER SYSTEM SET archive_command = 'cp %p /archive/%f'; SELECT pg_reload_conf();.",
       "status": "Not Applicable",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "7. R\u00e9plication"
     },
     {
@@ -770,8 +770,8 @@
       "test_procedure": "sudo pgbackrest info",
       "remediation": "Utiliser pgBackRest pour des sauvegardes et restaurations robustes.\nInstaller le paquet pgbackrest et configurer au moins une stanza (pgbackrest stanza-create).",
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "8. Consid\u00e9rations sp\u00e9ciales de configuration"
     },
     {
