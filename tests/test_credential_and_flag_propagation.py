@@ -35,9 +35,12 @@ class TestCredentialAndFlagPropagation(unittest.TestCase):
         import audit_cis_postgresql_16
         recs = [{"id": "1", "name": "C1", "category": "General", "type": "Manual", "test_procedure": "echo 1"}]
         with patch.object(audit_cis_postgresql_16, "run_command", return_value=("", "", 0)) as m:
-            audit_cis_postgresql_16.perform_checks(recs, db_user="u", db_password="p", db_host="h", db_port=5432, db_name="d", defaults_file="f", auth_db="a")
+            audit_cis_postgresql_16.perform_checks(recs, db_user="u", db_password="p", db_host="h", db_port=5432, db_name="d", defaults_file="f", auth_db="a", ssh_port=2222, ssh_key="/tmp/k", sudo=True)
             self.assertEqual(m.call_args.kwargs.get("db_user"), "u")
             self.assertEqual(m.call_args.kwargs.get("db_password"), "p")
+            self.assertEqual(m.call_args.kwargs.get("ssh_port"), 2222)
+            self.assertEqual(m.call_args.kwargs.get("ssh_key"), "/tmp/k")
+            self.assertTrue(m.call_args.kwargs.get("sudo"))
     def test_orchestrator_ssh_flag_propagation(self):
         from audit_orchestrator import AuditOrchestrator
         orch = AuditOrchestrator(ssh_port=2222, ssh_key="/tmp/id_rsa", sudo=True)
