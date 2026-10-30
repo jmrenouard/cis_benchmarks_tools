@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-024 — Database Password Elimination in Docker & SSH Executor Argv (Finding 6 Part A, Issue `#508`)
+- **Date**: `2026-10-30T19:45+01:00` | **Status**: `COMPLETED` | **Issue**: `#508`
+- **Request**: Remediate Ponytail Audit Finding 6 (Part A): Eliminate exposure of plaintext database passwords in process table (`ps aux`) arguments across `DockerExecutor` and `RemoteSSHContainerExecutor`.
+- **Changes**: In `execution_drivers.py`, updated `DockerExecutor.execute` to pass bare `-e MYSQL_PWD` and `-e PGPASSWORD` flags on Docker CLI and propagate secrets via `env=cmd_env` to `subprocess.run`; updated `RemoteSSHContainerExecutor` to export variables in remote subshell; updated unit tests in `tests/test_credential_injection.py` and `tests/test_execution_drivers.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 233/233 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-023 — Shell Injection & Host Variable Expansion Elimination in Execution Drivers (Issue `#506`)
 - **Date**: `2026-10-30T19:35+01:00` | **Status**: `COMPLETED` | **Issue**: `#506`
 - **Request**: Remediate Ponytail Audit Finding 5: Eliminate host variable expansion and shell injection in `DockerExecutor`, `RemoteSSHContainerExecutor`, `SSHExecutor`, and `LocalExecutor`.
