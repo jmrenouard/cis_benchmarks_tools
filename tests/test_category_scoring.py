@@ -261,7 +261,7 @@ class TestDynamicCategoryScoringMySQL(unittest.TestCase):
                 {"number": "C.2", "name": "Custom Scored Fail", "status": "Fail", "scored": True, "category": "Cyber_Defense_Custom"},
             ]
         }
-        for name, mod in self.mysql_community_modules:
+        for name, mod in self.mysql_modules:
             with self.subTest(engine=name):
                 overall_score, cat_scores, *rest = mod.calculate_scores(custom_results)
                 self.assertIn("Cyber_Defense_Custom", cat_scores, f"{name} failed to discover custom category")
@@ -279,7 +279,7 @@ class TestDynamicCategoryScoringMySQL(unittest.TestCase):
                 {"number": "I.1", "name": "No Status Check", "type": "Automated"}
             ]
         }
-        for name, mod in self.mysql_community_modules:
+        for name, mod in self.mysql_modules:
             with self.subTest(engine=name):
                 overall_score, cat_scores, *rest = mod.calculate_scores(missing_status_results)
                 self.assertIn("Incomplete_Category", cat_scores)
@@ -296,7 +296,7 @@ class TestDynamicCategoryScoringMySQL(unittest.TestCase):
                 {}
             ]
         }
-        for name, mod in self.mysql_community_modules:
+        for name, mod in self.mysql_modules:
             with self.subTest(engine=name):
                 overall_score, cat_scores, *rest = mod.calculate_scores(empty_item_results)
                 self.assertIn("Empty_Item_Category", cat_scores)
@@ -317,7 +317,7 @@ class TestDynamicCategoryScoringMySQL(unittest.TestCase):
                 {"number": "CI.5", "type": "Manual", "status": "MANUAL"},
             ]
         }
-        for name, mod in self.mysql_community_modules:
+        for name, mod in self.mysql_modules:
             with self.subTest(engine=name):
                 overall_score, cat_scores, *rest = mod.calculate_scores(case_results)
                 self.assertIn("Case_Insensitive_Category", cat_scores)
