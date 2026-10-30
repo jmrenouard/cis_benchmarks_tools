@@ -38,7 +38,28 @@ class TestCredentialAndFlagPropagation(unittest.TestCase):
             audit_cis_postgresql_16.perform_checks(recs, db_user="u", db_password="p", db_host="h", db_port=5432, db_name="d", defaults_file="f", auth_db="a")
             self.assertEqual(m.call_args.kwargs.get("db_user"), "u")
             self.assertEqual(m.call_args.kwargs.get("db_password"), "p")
+    def test_orchestrator_ssh_flag_propagation(self):
+        from audit_orchestrator import AuditOrchestrator
+        orch = AuditOrchestrator(ssh_port=2222, ssh_key="/tmp/id_rsa", sudo=True)
+        self.assertEqual(orch.ssh_port, 2222)
+        self.assertEqual(orch.ssh_key, "/tmp/id_rsa")
+        self.assertTrue(orch.sudo)
+        kwargs = orch.check_kwargs
+        self.assertEqual(kwargs.get("ssh_port"), 2222)
+        self.assertEqual(kwargs.get("ssh_key"), "/tmp/id_rsa")
+        self.assertTrue(kwargs.get("sudo"))
+
+    def test_rhel_engines_forward_ssh_flags_to_run_command(self):
+        import audit_cis_rhel_8
+        recs = [{"id": "1", "name": "C1", "category": "General", "type": "Automated", "audit": "echo 1", "condition": {"type": "exit_code_equal", "value": 0}}]
+        for mod in (audit_cis_rhel_8,):
+            with patch.object(mod, "run_command", return_value=("", "", 0)) as m:
+                mod.perform_checks(recs, remote_host="user@host", docker_container="c1", ssh_port=2222, ssh_key="/tmp/k", sudo=True)
+                self.assertEqual(m.call_args.kwargs.get("ssh_port"), 2222)
+                self.assertEqual(m.call_args.kwargs.get("ssh_key"), "/tmp/k")
+                self.assertTrue(m.call_args.kwargs.get("sudo"))
 
 
 if __name__ == "__main__":
     unittest.main()
+

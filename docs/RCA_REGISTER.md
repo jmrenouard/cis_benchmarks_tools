@@ -11,13 +11,14 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
-### RCA-013 — Database Credentials Dropped Between CLI and perform_checks (Finding 3 Part A)
+### RCA-013 — Database Credentials and SSH Flags Dropped Across Engines and Orchestrator (Finding 3)
 - **Date / Linked Action**: `2026-10-30` (`ACT-021` / Issue `#484`)
-- **Observed Symptom**: CLI arguments `-u/--db-user`, `-p/--db-password`, `-H/--db-host`, `-P/--db-port`, `-D/--db-name`, `--defaults-file`, `--auth-db` had no effect on 12 database engines.
+- **Observed Symptom**: CLI arguments `-u/--db-user`, `-p/--db-password`, `-H/--db-host`, `-P/--db-port`, `-D/--db-name`, `--defaults-file`, `--auth-db` had no effect on 12 database engines, and `--ssh-port`, `-i/--ssh-key`, `--sudo` were not propagated in orchestrator and engines.
 - **Root Cause Analysis (5 Whys)**:
   1. *Why had arguments no effect?* `__main__` called `perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target)` omitting parsed `args.db_*`.
-- **Applied Change / Fix**: Updated `__main__` across all 12 database engines to pass `db_user=args.db_user`, `db_password=args.db_password`, `db_host=args.db_host`, `db_port=args.db_port`, `db_name=args.db_name`, `defaults_file=args.defaults_file`, `auth_db=args.auth_db`; added non-regression tests in `tests/test_credential_and_flag_propagation.py`.
-- **Result & Non-Regression Test**: `tests/test_credential_and_flag_propagation.py` verifies all 15 database engines pass `db_*` kwargs in `__main__`.
+  2. *Why were SSH flags dropped?* `audit_orchestrator.py` omitted `ssh_port`, `ssh_key`, `sudo` from check invocation; engines did not propagate `ssh_port`, `ssh_key`, `sudo` to `run_command`.
+- **Applied Change / Fix**: Updated `__main__` across all 12 database engines to pass `db_*` kwargs; added `check_kwargs` property and forwarded `ssh_port`, `ssh_key`, `sudo` in `audit_orchestrator.py` and `audit_cis_rhel_8.py`; added non-regression tests in `tests/test_credential_and_flag_propagation.py`.
+- **Result & Non-Regression Test**: `tests/test_credential_and_flag_propagation.py` verifies all 15 database engines pass `db_*` kwargs in `__main__`, and verifies SSH flag propagation in orchestrator and RHEL engines.
 
 ---
 

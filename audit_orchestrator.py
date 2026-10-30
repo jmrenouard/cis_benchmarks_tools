@@ -186,7 +186,10 @@ class AuditOrchestrator:
         db_port: Optional[int] = None,
         db_name: Optional[str] = None,
         defaults_file: Optional[str] = None,
-        auth_db: Optional[str] = None
+        auth_db: Optional[str] = None,
+        ssh_port: int = 22,
+        ssh_key: Optional[str] = None,
+        sudo: bool = False
     ):
         self.mode = mode
         self.remote_host = remote_host
@@ -201,7 +204,29 @@ class AuditOrchestrator:
         self.db_name = db_name
         self.defaults_file = defaults_file
         self.auth_db = auth_db
+        self.ssh_port = ssh_port
+        self.ssh_key = ssh_key
+        self.sudo = sudo
         os.makedirs(self.output_dir, exist_ok=True)
+
+    @property
+    def check_kwargs(self) -> Dict[str, Any]:
+        """Base keyword arguments for check execution."""
+        kw = {
+            "remote_host": self.remote_host,
+            "docker_container": self.docker_container,
+        }
+        if self.ssh_port: kw["ssh_port"] = self.ssh_port
+        if self.ssh_key: kw["ssh_key"] = self.ssh_key
+        if self.sudo: kw["sudo"] = self.sudo
+        if self.db_user: kw["db_user"] = self.db_user
+        if self.db_password: kw["db_password"] = self.db_password
+        if self.db_host: kw["db_host"] = self.db_host
+        if self.db_port: kw["db_port"] = self.db_port
+        if self.db_name: kw["db_name"] = self.db_name
+        if self.defaults_file: kw["defaults_file"] = self.defaults_file
+        if self.auth_db: kw["auth_db"] = self.auth_db
+        return kw
 
     def execute_single_target(self, target_key: str) -> TargetAuditExecutionResult:
         """Executes CIS audit for a single target with complete fault isolation."""
@@ -256,17 +281,8 @@ class AuditOrchestrator:
                     exec_ctx = None
 
             if hasattr(mod, "perform_checks"):
-                check_kwargs = {
-                    "remote_host": self.remote_host,
-                    "docker_container": active_container,
-                }
-                if self.db_user: check_kwargs["db_user"] = self.db_user
-                if self.db_password: check_kwargs["db_password"] = self.db_password
-                if self.db_host: check_kwargs["db_host"] = self.db_host
-                if self.db_port: check_kwargs["db_port"] = self.db_port
-                if self.db_name: check_kwargs["db_name"] = self.db_name
-                if self.defaults_file: check_kwargs["defaults_file"] = self.defaults_file
-                if self.auth_db: check_kwargs["auth_db"] = self.auth_db
+                check_kwargs = dict(self.check_kwargs)
+                check_kwargs["docker_container"] = active_container
 
                 try:
                     sig = inspect.signature(mod.perform_checks)
@@ -457,6 +473,9 @@ if __name__ == "__main__":
     parser.add_argument("--all", action="store_true", help="Execute audit across all canonical targets")
     parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Execution mode")
     parser.add_argument("-r", "--remote", dest="remote_host", default=None, help="Remote SSH server")
+    parser.add_argument("--ssh-port", type=int, default=22, help="SSH port for remote execution (default: 22)")
+    parser.add_argument("-i", "--ssh-key", dest="ssh_key", default=None, help="Path to SSH private key file")
+    parser.add_argument("--sudo", action="store_true", help="Execute commands with sudo privileges")
     parser.add_argument("-c", "--docker", dest="docker_container", default=None, help="Target Docker container")
     parser.add_argument("-f", "--format", dest="formats", default="html,json,xml,txt", help="Report formats")
     parser.add_argument("-j", "--parallel", type=int, default=1, help="Parallel worker threads")
@@ -471,7 +490,10 @@ if __name__ == "__main__":
         docker_container=args.docker_container,
         output_dir=args.output_dir,
         formats=selected_formats,
-        lang=args.lang
+        lang=args.lang,
+        ssh_port=args.ssh_port,
+        ssh_key=args.ssh_key,
+        sudo=args.sudo
     )
 
     targets_to_run = list(CANONICAL_TARGETS.keys()) if (args.all or args.target == "all") else ([t.strip() for t in args.target.split(",")] if args.target else [])

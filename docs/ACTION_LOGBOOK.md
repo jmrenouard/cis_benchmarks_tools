@@ -19,10 +19,10 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
-### ACT-021 — Database Credentials CLI Propagation (Parts A1 & A2, Issue `#484`)
-- **Date**: `2026-10-30T17:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#484`
-- **Changes**: Forwarded `args.db_*` in `__main__` to `perform_checks()` across all 12 database audit engines (`mysql_community_84/97`, `mysql_enterprise_84/97`, `postgresql_16/17/18`, `cassandra_40/41/50`, `mongodb_7/8`); added and extended unit test suite `tests/test_credential_and_flag_propagation.py`.
-- **Result**: `pre_commit_checks.py` 8/8 checks pass, 222/222 tests pass, PR diff < 15,000 chars.
+### ACT-021 — Database Credentials & SSH Flag Propagation (Parts A1, A2, B1, Issue `#484`)
+- **Date**: `2026-10-30T17:45+01:00` | **Status**: `COMPLETED` | **Issue**: `#484`
+- **Changes**: Forwarded `args.db_*` in `__main__` across all 12 database engines; propagated `ssh_port`, `ssh_key`, and `sudo` in `audit_orchestrator.py` (`check_kwargs` property) and `audit_cis_rhel_8.py`; added unit tests in `tests/test_credential_and_flag_propagation.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 224/224 tests pass, PR diff < 15,000 chars.
 
 ---
 
