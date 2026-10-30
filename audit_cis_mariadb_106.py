@@ -578,7 +578,7 @@ def is_valid_executable_command(cmd_str):
 
 def run_command(command, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None, ssh_port=22, ssh_key=None, sudo=False):
     """Execute command safely locally, over SSH, or inside Docker container via ExecutionDrivers (PSL ONLY)."""
-    if create_executor:
+    if create_executor and not sudo:
         try:
             executor = create_executor(
                 mode="ssh" if remote_host else "local",

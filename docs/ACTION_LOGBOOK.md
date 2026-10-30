@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-022 — MariaDB Sudo Propagation, Orchestrator Export Adaptation & CLI DB Args (Issue `#504`)
+- **Date**: `2026-10-30T19:15+01:00` | **Status**: `COMPLETED` | **Issue**: `#504`
+- **Request**: Resolve Challenger 2 findings: MariaDB 10.6/10.11 sudo drop, orchestrator export adaptation for 7-argument engines, and missing orchestrator CLI DB arguments.
+- **Changes**: Updated `run_command` in `audit_cis_mariadb_106.py` and `1011.py` with `if create_executor and not sudo:` to preserve `sudo -n`; added standard 7-argument fallback in `audit_orchestrator.py` and file existence check; added `build_cli_parser()` with DB arguments; added unit tests in `tests/test_mariadb_sudo_and_orchestrator_export.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 234/234 tests pass, PR diff < 15,000 chars.
+
+---
+
 ### ACT-021 — Database Credentials & SSH Flag Propagation (Parts A1, A2, B1-B17, Issue `#484`)
 - **Date**: `2026-10-30T18:45+01:00` | **Status**: `COMPLETED` | **Issue**: `#484`
 - **Changes**: Forwarded `args.db_*` in `__main__` across all 12 database engines; propagated `ssh_port`, `ssh_key`, and `sudo` across `audit_orchestrator.py` and all 15 audit engines (`rhel_8/9/10`, `postgresql_16/17/18`, `mariadb_106/1011`, `mysql_80`, `mysql_community_84/97`, `mysql_enterprise_84/97`, `cassandra_40/41/50`, `mongodb_7/8`); added unit tests in `tests/test_credential_and_flag_propagation.py`.
