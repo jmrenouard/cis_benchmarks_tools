@@ -537,12 +537,14 @@ def is_valid_executable_command(cmd_str):
     return False
 
 
-def run_command(command, remote_host=None):
+def run_command(command, remote_host=None, docker_container=None, ssh_port=22, ssh_key=None, sudo=False):
     """Execute command safely with timeout=10, stdin=DEVNULL, and clean SSH noise (PSL ONLY)."""
     try:
         env = os.environ.copy()
         if isinstance(command, str):
-            if "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
+            if docker_container and not command.startswith("docker exec"):
+                command = f"docker exec -i {docker_container} /bin/bash -c {json.dumps(command)}"
+            elif "systemctl" in command and (os.path.exists("/.dockerenv") or not os.path.exists("/run/systemd/system")):
                 if "postgresql" in command:
                     command = "pg_isready -h localhost -p 5432 || ps aux | grep -v grep | grep postgres"
                 elif "mariadb" in command or "mysql" in command:
@@ -552,7 +554,17 @@ def run_command(command, remote_host=None):
             cmd_args = list(command)
 
         if remote_host:
-            cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
+            ssh_cmd = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5"]
+            if ssh_port and int(ssh_port) != 22:
+                ssh_cmd.extend(["-p", str(ssh_port)])
+            if ssh_key:
+                ssh_cmd.extend(["-i", ssh_key])
+            else:
+                ssh_cmd.extend(["-i", "/root/.ssh/id_rsa"])
+            ssh_cmd.append(remote_host)
+            cmd_args = ssh_cmd + (["sudo", "-n"] if sudo else []) + cmd_args
+        elif sudo:
+            cmd_args = ["sudo", "-n"] + cmd_args
 
         process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10, env=env)
         stdout_text = process.stdout.strip()
@@ -573,11 +585,11 @@ def run_command(command, remote_host=None):
         return "", str(e), -1
 
 
-def perform_checks(recommendations, remote_host=None):
+def perform_checks(recommendations, remote_host=None, docker_container=None, ssh_port=22, ssh_key=None, sudo=False):
     """Execute all RHEL CIS & STIG security audit controls locally or remotely over SSH."""
     results = []
     for rec in recommendations:
-        stdout, stderr, code = run_command(rec["audit"], remote_host=remote_host)
+        stdout, stderr, code = run_command(rec["audit"], remote_host=remote_host, docker_container=docker_container, ssh_port=ssh_port, ssh_key=ssh_key, sudo=sudo)
         is_pass = evaluate_condition(rec["condition"], stdout, stderr, code)
         status = "PASS" if is_pass else "FAIL"
 
@@ -979,6 +991,14 @@ if __name__ == "__main__":
         print("🖥️  Running Audit in Local Mode on local machine...")
 
     rules_data = load_recommendations("rhel_9")
-    check_results = perform_checks(rules_data, remote_host=remote_target)
+    docker_target = args.docker_container
+    check_results = perform_checks(
+        rules_data,
+        remote_host=remote_target,
+        docker_container=docker_target,
+        ssh_port=args.ssh_port,
+        ssh_key=args.ssh_key,
+        sudo=args.sudo
+    )
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
     export_results(check_results, overall_score, categories_scores, target_name="rhel_9", filename=args.output, fmt=args.format, lang=args.lang)

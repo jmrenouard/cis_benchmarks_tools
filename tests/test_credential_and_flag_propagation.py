@@ -50,9 +50,9 @@ class TestCredentialAndFlagPropagation(unittest.TestCase):
         self.assertTrue(kwargs.get("sudo"))
 
     def test_rhel_engines_forward_ssh_flags_to_run_command(self):
-        import audit_cis_rhel_8
+        import audit_cis_rhel_8, audit_cis_rhel_9, audit_cis_rhel_10
         recs = [{"id": "1", "name": "C1", "category": "General", "type": "Automated", "audit": "echo 1", "condition": {"type": "exit_code_equal", "value": 0}}]
-        for mod in (audit_cis_rhel_8,):
+        for mod in (audit_cis_rhel_8, audit_cis_rhel_9, audit_cis_rhel_10):
             with patch.object(mod, "run_command", return_value=("", "", 0)) as m:
                 mod.perform_checks(recs, remote_host="user@host", docker_container="c1", ssh_port=2222, ssh_key="/tmp/k", sudo=True)
                 self.assertEqual(m.call_args.kwargs.get("ssh_port"), 2222)
