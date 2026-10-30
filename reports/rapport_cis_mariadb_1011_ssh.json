@@ -397,8 +397,8 @@
       "remediation": "Limiter l'acc\u00e8s aux utilisateurs autoris\u00e9s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@slow_query_log_file;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@slow_query_log_file;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -409,8 +409,8 @@
       "remediation": "Appliquer chmod 600.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@relay_log_basename;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@relay_log_basename;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -421,8 +421,8 @@
       "remediation": "Restreindre les droits d'acc\u00e8s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@general_log_file;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@general_log_file;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -433,8 +433,8 @@
       "remediation": "Restreindre l'acc\u00e8s aux cl\u00e9s priv\u00e9es (ex: chmod 600) et s'assurer que le propri\u00e9taire est mysql.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -445,8 +445,8 @@
       "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@plugin_dir;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@plugin_dir;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -457,8 +457,8 @@
       "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -469,8 +469,8 @@
       "remediation": "Restreindre l'acc\u00e8s aux fichiers de cl\u00e9s de chiffrement (chmod 640).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -485,8 +485,8 @@
         "V\u00e9rifier les CVE critiques."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -497,8 +497,8 @@
       "remediation": "Ex\u00e9cutez DROP DATABASE <database name>; pour supprimer une base de donn\u00e9es d'exemple.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -509,8 +509,8 @@
       "remediation": "Supprimer --allow-suspicious-udfs de la ligne de commande ou du fichier de configuration.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\nNOT FOUND\nStderr:\n
-      "error": "
+      "output": "Stdout:\nNOT FOUND\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -521,8 +521,8 @@
       "remediation": "Ajouter local-infile=0 \u00e0 la section [mariadbd] et [client] du fichier de configuration MariaDB.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -533,8 +533,8 @@
       "remediation": "Supprimer l'option --skip-grant-tables de la ligne de commande ou du fichier de configuration.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\nNOT FOUND\nStderr:\n
-      "error": "
+      "output": "Stdout:\nNOT FOUND\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -545,8 +545,8 @@
       "remediation": "Ajouter skip-symbolic-links dans la section [mariadbd] du fichier mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -557,8 +557,8 @@
       "remediation": "Configurer secure_file_priv sur NULL (pour d\u00e9sactiver) ou sur un chemin sp\u00e9cifique dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -569,8 +569,8 @@
       "remediation": "Ajouter STRICT_ALL_TABLES au param\u00e8tre sql_mode dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -581,8 +581,8 @@
       "remediation": "Configurer file_key_management plugin et innodb_encrypt_tables=ON dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
@@ -597,8 +597,8 @@
         "REVOKE les privil\u00e8ges excessifs."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
@@ -612,8 +612,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
@@ -627,8 +627,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
@@ -642,8 +642,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
@@ -657,8 +657,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
@@ -672,8 +672,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
