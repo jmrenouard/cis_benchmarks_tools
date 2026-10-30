@@ -990,28 +990,35 @@ def calculate_scores(results):
     """Calcule les scores globaux et par catégorie."""
     overall = {"total_automated": 0, "passed_automated": 0, "failed_automated": 0, "manual": 0, "error": 0, "na": 0}
     categories_scores = {}
-    # Initialize category counts using the order from RECOMMENDATIONS_DATA
-    category_order = list(dict.fromkeys(rec["category"] for rec in RECOMMENDATIONS_DATA))
-    for category in category_order:
-        categories_scores[category] = {
-            "score": 0,
-            "total_automated": 0, # Total attempted (Pass + Fail)
-            "passed_automated": 0,
-            "failed_automated": 0,
-            "manual_checks": 0,
-            "error_checks": 0,
-            "na_checks": 0,
-            "pass_count": 0, # Counts for charts
-            "fail_count": 0,
-            "error_count": 0,
-            "na_count": 0
-        }
+    category_order = []
+    if isinstance(results, dict):
+        items_to_process = list(results.items())
+    elif isinstance(results, (list, tuple)):
+        grouped = {}
+        for check in results:
+            cat = check.get("category", "General")
+            grouped.setdefault(cat, []).append(check)
+        items_to_process = list(grouped.items())
+    else:
+        items_to_process = []
 
-
-    for category, checks in results.items():
+    for category, checks in items_to_process:
         if category not in categories_scores:
-             print(f"WARN: Category '{category}' found in results but not pre-initialized. Skipping.")
-             continue
+            category_order.append(category)
+            categories_scores[category] = {
+                "name": category,
+                "score": 0,
+                "total_automated": 0,
+                "passed_automated": 0,
+                "failed_automated": 0,
+                "manual_checks": 0,
+                "error_checks": 0,
+                "na_checks": 0,
+                "pass_count": 0,
+                "fail_count": 0,
+                "error_count": 0,
+                "na_count": 0
+            }
         for check in checks:
             cat_stats = categories_scores[category]
             if check["type"] == "Automated":
