@@ -632,7 +632,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                 # Gérer les contrôles qui nécessitent d'obtenir d'abord un chemin dynamique (non utilisé pour MongoDB ici, mais conservé)
                 if rec.get("path_command"):
                     path_cmd = rec["path_command"]
-                    path_stdout, path_stderr, path_returncode = run_command(path_cmd, remote_host=remote_host)
+                    path_stdout, path_stderr, path_returncode = run_command(path_cmd, remote_host=remote_host, docker_container=docker_container)
 
                     if path_returncode != 0 or not path_stdout:
                         if path_returncode == 0 and not path_stdout:
@@ -667,7 +667,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     continue
 
                 # Exécuter la commande
-                stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host)
+                stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host, docker_container=docker_container)
                 check_result["output"] = f"Stdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}"
                 check_result["error"] = stderr
                 check_result["test_procedure"] = command_executed_display # Met à jour avec la commande réellement exécutée
