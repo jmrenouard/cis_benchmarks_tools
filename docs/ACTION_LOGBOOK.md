@@ -15,6 +15,17 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-078 — test(coverage): implement target catalog and CLI argument matrix test suite (Finding 13, Issue `#614`)
+- **Date**: `2026-10-31T00:15+01:00` | **Status**: `COMPLETED` | **Issue**: `#614`
+- **Request**: Remediate Ponytail Audit Finding 13: implement comprehensive target catalog and CLI argument matrix test suite `tests/test_target_catalog_and_cli_matrix.py` covering canonical target resolution, interface contracts across all 18 targets, rule specification integrity, CLI argument parsing, parameter forwarding without secret leakage, and error isolation on invalid targets, and document `IDEA-007`.
+- **Changes**:
+  - Created `tests/test_target_catalog_and_cli_matrix.py` with 3 test classes and 9 matrix test methods.
+  - Updated `docs/RCA_REGISTER.md` with entry `IDEA-007`.
+  - Updated `docs/ACTION_LOGBOOK.md` with entry `ACT-078`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 285/285 unit tests pass (100%), PR diff < 15,000 characters.
+
+---
+
 ### ACT-077 — fix(ci): exclude archive from Bandit SAST scan, anchor path checks, and harden inventory tests (Issue `#612`)
 - **Date**: `2026-10-30T23:45+01:00` | **Status**: `COMPLETED` | **Issue**: `#612`
 - **Request**: Remediate Reviewer M4-2 findings: exclude `./archive` from Bandit SAST scan in `.github/workflows/security.yml`, replace loose substring matching with path-anchored check in `scripts/pre_commit_checks.py`, harden `tests/test_script_inventory_and_governance.py` with subdirectory whitelist validation and Bandit exclusion assertion, and document `RCA-022`.
