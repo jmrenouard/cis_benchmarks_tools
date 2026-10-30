@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-029 — UTF-8 Console Streams for Cassandra, MongoDB, and RHEL Engines (Finding 8 Part A2, Issue `#515`)
+- **Date**: `2026-10-30T20:21+01:00` | **Status**: `COMPLETED` | **Issue**: `#515`
+- **Request**: Complete Finding 8 Part A: reconfigure UTF-8 console output across Cassandra, MongoDB, and RHEL benchmark audit engines.
+- **Changes**: Configured `os.environ.setdefault('PYTHONUTF8', '1')` and `sys.stdout/sys.stderr.reconfigure(encoding='utf-8', errors='replace')` across `audit_cis_cassandra_40.py`, `41.py`, `50.py`, `audit_cis_mongodb_7.py`, `8.py`, `audit_cis_rhel_8.py`, `9.py`, and `10.py`; updated `test_all_audit_engines_have_utf8_stream_reconfiguration` in `tests/test_benchmark_sync_and_report_quality.py` to assert 100% of all 18 engines have UTF-8 stream reconfiguration.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 236/236 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-028 — UTF-8 Console Streams Across All Engines & SSH Warning Script Hardening (Finding 8 Part A, Issue `#515`)
 - **Date**: `2026-10-30T20:18+01:00` | **Status**: `COMPLETED` | **Issue**: `#515`
 - **Request**: Remediate Ponytail Audit Finding 8 (Part A): prevent Windows console crashes (`UnicodeEncodeError: 'charmap'`) across all benchmark engines and harden SSH warning cleaning script.

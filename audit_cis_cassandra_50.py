@@ -4,6 +4,11 @@ import subprocess
 import json
 import os
 import sys
+os.environ.setdefault("PYTHONUTF8", "1")
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 from datetime import datetime
 import re # Pour les expressions régulières
 import html # Pour échapper les caractères spéciaux HTML
