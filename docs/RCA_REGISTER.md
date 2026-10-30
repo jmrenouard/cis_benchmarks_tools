@@ -11,6 +11,16 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-013 — Database Credentials Dropped Between CLI and perform_checks (Finding 3 Part A)
+- **Date / Linked Action**: `2026-10-30` (`ACT-021` / Issue `#484`)
+- **Observed Symptom**: CLI arguments `-u/--db-user`, `-p/--db-password`, `-H/--db-host`, `-P/--db-port`, `-D/--db-name`, `--defaults-file`, `--auth-db` had no effect on 12 database engines.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why had arguments no effect?* `__main__` called `perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target)` omitting parsed `args.db_*`.
+- **Applied Change / Fix**: Updated `__main__` across all 12 database engines to pass `db_user=args.db_user`, `db_password=args.db_password`, `db_host=args.db_host`, `db_port=args.db_port`, `db_name=args.db_name`, `defaults_file=args.defaults_file`, `auth_db=args.auth_db`; added non-regression tests in `tests/test_credential_and_flag_propagation.py`.
+- **Result & Non-Regression Test**: `tests/test_credential_and_flag_propagation.py` verifies all 15 database engines pass `db_*` kwargs in `__main__`.
+
+---
+
 ### RCA-012 — Automated Checks Omitting `docker_container` in PostgreSQL, MongoDB, and Cassandra (Finding 2)
 - **Date / Linked Action**: `2026-10-30` (`ACT-020` / Issue `#481`)
 - **Observed Symptom**: Auditing containerized instances of PostgreSQL (16, 17, 18), MongoDB (7, 8), and Cassandra (4.0, 4.1, 5.0) via `audit_cis.py --docker <name>` executed commands on the local host rather than inside the specified container, resulting in `returncode 127` (`psql: command not found` / `cqlsh: command not found`).

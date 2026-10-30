@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+"""Unit tests for credential and flag propagation across engines (PSL ONLY)."""
+
+import ast, os, sys, unittest
+from unittest.mock import patch
+
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+
+ACTIVE_ENGINES = [
+    "audit_cis_mariadb_106.py", "audit_cis_mariadb_1011.py", "audit_cis_mysql_80.py",
+    "audit_cis_mysql_community_84.py", "audit_cis_mysql_community_97.py",
+    "audit_cis_mysql_enterprise_84.py", "audit_cis_mysql_enterprise_97.py",
+    "audit_cis_postgresql_16.py", "audit_cis_postgresql_17.py", "audit_cis_postgresql_18.py",
+]
+
+
+class TestCredentialAndFlagPropagation(unittest.TestCase):
+    def test_database_engines_pass_credentials_in_main(self):
+        expected = {"db_user", "db_password", "db_host", "db_port", "db_name", "defaults_file", "auth_db"}
+        for f in ACTIVE_ENGINES:
+            with open(os.path.join(REPO_ROOT, f), encoding="utf-8") as src:
+                tree = ast.parse(src.read(), filename=f)
+            calls = [
+                {kw.arg for kw in node.keywords}
+                for node in ast.walk(tree)
+                if isinstance(node, ast.Call) and getattr(node.func, "id", None) == "perform_checks"
+            ]
+            self.assertTrue(any(expected.issubset(c) for c in calls), f"{f} drops credentials in __main__")
+
+    def test_perform_checks_forwards_credentials_to_run_command(self):
+        import audit_cis_postgresql_16
+        recs = [{"id": "1", "name": "C1", "category": "General", "type": "Manual", "test_procedure": "echo 1"}]
+        with patch.object(audit_cis_postgresql_16, "run_command", return_value=("", "", 0)) as m:
+            audit_cis_postgresql_16.perform_checks(recs, db_user="u", db_password="p", db_host="h", db_port=5432, db_name="d", defaults_file="f", auth_db="a")
+            self.assertEqual(m.call_args.kwargs.get("db_user"), "u")
+            self.assertEqual(m.call_args.kwargs.get("db_password"), "p")
+
+
+if __name__ == "__main__":
+    unittest.main()

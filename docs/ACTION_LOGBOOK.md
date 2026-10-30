@@ -19,6 +19,13 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-021 — Database Credentials CLI Propagation (Part A1, Issue `#484`)
+- **Date**: `2026-10-30T17:25+01:00` | **Status**: `COMPLETED` | **Issue**: `#484`
+- **Changes**: Forwarded `args.db_*` in `__main__` to `perform_checks()` across MySQL and PostgreSQL engines (`mysql_community_84/97`, `mysql_enterprise_84/97`, `postgresql_16/17/18`); added unit test suite `tests/test_credential_and_flag_propagation.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 221/221 tests pass, PR diff < 15,000 chars.
+
+---
+
 ### ACT-020 — Docker Container Forwarding in Automated Database Checks (Issue `#481`)
 - **Date**: `2026-10-30T17:15+01:00` | **Status**: `COMPLETED` | **Issue**: `#481`
 - **Changes**: Forwarded `docker_container=docker_container` in all automated check `run_command()` calls across 8 database audit engines (`postgresql_16/17/18`, `mongodb_7/8`, `cassandra_40/41/50`); added unit test suite `tests/test_container_parameter_forwarding.py`.
