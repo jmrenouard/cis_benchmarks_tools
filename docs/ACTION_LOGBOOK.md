@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-051 — fix(reports): repair syntax in MariaDB 10.6 SSH JSON report (Part 3/3) (Issue `#560`)
+- **Date**: `2026-10-30T20:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#560`
+- **Request**: Remediate Ponytail Audit Finding 8 (Part B): repair syntax in `reports/rapport_cis_mariadb_106_ssh.json`.
+- **Changes**: Replaced corrupted output/error pattern in `reports/rapport_cis_mariadb_106_ssh.json` (final batch); verified diff strictly < 15,000 characters.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 237/237 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-050 — fix(reports): repair syntax in MariaDB 10.6 SSH JSON report (Part 2/3) (Issue `#558`)
 - **Date**: `2026-10-30T20:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#558`
 - **Request**: Remediate Ponytail Audit Finding 8 (Part B): repair syntax in `reports/rapport_cis_mariadb_106_ssh.json`.
