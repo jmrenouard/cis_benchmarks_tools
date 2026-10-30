@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-031 — fix(reports): repair syntax in PostgreSQL 16 SSH JSON report (Part 1/2) (Issue `#520`)
+- **Date**: `2026-10-30T20:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#520`
+- **Request**: Remediate Ponytail Audit Finding 8 (Part B): repair syntax in `reports/rapport_cis_postgresql_16_ssh.json`.
+- **Changes**: Replaced corrupted output/error pattern in `reports/rapport_cis_postgresql_16_ssh.json` (batch of 20); verified diff strictly < 15,000 characters.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 237/237 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-030 — Repair Syntax Corruption in MariaDB SSH XML Reports (Finding 8 Part B1, Issue `#518`)
 - **Date**: `2026-10-30T20:28+01:00` | **Status**: `COMPLETED` | **Issue**: `#518`
 - **Request**: Remediate Ponytail Audit Finding 8 (Part B1): repair XML syntax errors in MariaDB 10.6 and 10.11 SSH reports caused by earlier unbounded regex warning stripping.
