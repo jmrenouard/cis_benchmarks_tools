@@ -9,8 +9,10 @@ if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
 ACTIVE_ENGINES = [
-    "audit_cis_mariadb_106.py", "audit_cis_mariadb_1011.py", "audit_cis_mysql_80.py",
-    "audit_cis_mysql_community_84.py", "audit_cis_mysql_community_97.py",
+    "audit_cis_cassandra_40.py", "audit_cis_cassandra_41.py", "audit_cis_cassandra_50.py",
+    "audit_cis_mariadb_106.py", "audit_cis_mariadb_1011.py",
+    "audit_cis_mongodb_7.py", "audit_cis_mongodb_8.py",
+    "audit_cis_mysql_80.py", "audit_cis_mysql_community_84.py", "audit_cis_mysql_community_97.py",
     "audit_cis_mysql_enterprise_84.py", "audit_cis_mysql_enterprise_97.py",
     "audit_cis_postgresql_16.py", "audit_cis_postgresql_17.py", "audit_cis_postgresql_18.py",
 ]
