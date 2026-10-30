@@ -15,6 +15,7 @@ import audit_cis_mysql_enterprise_84 as mysql_ent_84
 import audit_cis_mysql_enterprise_97 as mysql_ent_97
 import audit_cis_postgresql_16 as postgresql_16
 import audit_cis_postgresql_17 as postgresql_17
+import audit_cis_postgresql_18 as postgresql_18
 
 
 class TestDynamicCategoryScoringMariaDB(unittest.TestCase):
@@ -175,6 +176,7 @@ class TestDynamicCategoryScoringPostgreSQL(unittest.TestCase):
         self.pg_modules = [
             ("postgresql_16", postgresql_16),
             ("postgresql_17", postgresql_17),
+            ("postgresql_18", postgresql_18),
         ]
 
     def test_dynamic_custom_category_discovery(self):
