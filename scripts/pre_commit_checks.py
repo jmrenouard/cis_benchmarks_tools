@@ -48,12 +48,25 @@ def step_concatenate_python_code():
         sys.exit(1)
 
 
+def should_skip_syntax_validation(py: str) -> bool:
+    """Check if a file path belongs to excluded directories (archive, .agents, .ruff_cache)."""
+    norm_path = py.replace("\\", "/")
+    if norm_path.startswith("./"):
+        norm_path = norm_path[2:]
+    return (
+        norm_path.startswith("archive/")
+        or "/archive/" in norm_path
+        or ".agents" in norm_path
+        or ".ruff_cache" in norm_path
+    )
+
+
 def step_validate_python_syntax():
     """Check Python syntax for all .py files using py_compile."""
     print("🐍 [3/8] Validating Python syntax across all scripts (py_compile)...")
     py_files = sorted(glob.glob("**/*.py", recursive=True))
     for py in py_files:
-        if "archive" in py or ".agents" in py or ".ruff_cache" in py:
+        if should_skip_syntax_validation(py):
             continue
         try:
             py_compile.compile(py, doraise=True)

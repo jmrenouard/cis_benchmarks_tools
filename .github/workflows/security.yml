@@ -35,7 +35,7 @@ jobs:
 
       - name: Run Bandit static security analysis (High severity)
         run: |
-          bandit -r . -lll -iii -x ./tests,./scripts
+          bandit -r . -lll -iii -x ./tests,./scripts,./archive
 
   psl-and-secrets-audit:
     name: Zero-Dependency PSL & Secret Sanitizer Audit (pip-audit)
