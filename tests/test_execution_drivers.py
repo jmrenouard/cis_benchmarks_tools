@@ -164,6 +164,25 @@ class TestExecutors(unittest.TestCase):
         self.assertIn("systemctl is-active mariadb", called_args)
 
     @patch("subprocess.run")
+    def test_docker_executor_db_password_not_in_argv(self, mock_run):
+        """Finding 6: verify DockerExecutor passes -e MYSQL_PWD without secret in argv, secret in env."""
+        mock_proc = MagicMock(stdout="ok\n", stderr="", returncode=0)
+        mock_run.return_value = mock_proc
+
+        executor = DockerExecutor(container_name="mariadb106-test", db_password="SuperSecretPassword999!")
+        res = executor.execute("mariadb -e 'SELECT 1;'")
+
+        self.assertTrue(res.is_success)
+        called_args = mock_run.call_args[0][0]
+        called_cmd = " ".join(called_args)
+        self.assertNotIn("SuperSecretPassword999!", called_cmd)
+        self.assertIn("-e", called_args)
+        self.assertIn("MYSQL_PWD", called_args)
+        called_env = mock_run.call_args[1].get("env", {})
+        self.assertEqual(called_env.get("MYSQL_PWD"), "SuperSecretPassword999!")
+        self.assertEqual(called_env.get("PGPASSWORD"), "SuperSecretPassword999!")
+
+    @patch("subprocess.run")
     def test_local_executor_escalation(self, mock_run):
         mock_proc = MagicMock()
         mock_proc.stdout = "root_data\n"

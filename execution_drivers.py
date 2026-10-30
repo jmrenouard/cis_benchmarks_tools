@@ -394,9 +394,12 @@ class DockerExecutor(BaseExecutor):
     def execute(self, command, timeout=10, env=None, as_user=None, cwd=None, mask_secrets=True, allocate_tty=False):
         start_time = time.time()
         docker_env = []
+        cmd_env = os.environ.copy()
 
         if self.db_password:
-            docker_env.extend(["-e", f"MYSQL_PWD={self.db_password}", "-e", f"PGPASSWORD={self.db_password}"])
+            docker_env.extend(["-e", "MYSQL_PWD", "-e", "PGPASSWORD"])
+            cmd_env["MYSQL_PWD"] = str(self.db_password)
+            cmd_env["PGPASSWORD"] = str(self.db_password)
         if self.db_user:
             docker_env.extend(["-e", f"MYSQL_USER={self.db_user}", "-e", f"PGUSER={self.db_user}"])
         if self.db_host:
@@ -407,7 +410,8 @@ class DockerExecutor(BaseExecutor):
             docker_env.extend(["-e", f"PGDATABASE={self.db_name}"])
         if env:
             for k, v in env.items():
-                docker_env.extend(["-e", f"{k}={v}"])
+                docker_env.extend(["-e", str(k)])
+                cmd_env[str(k)] = str(v)
 
         parts = [self.container_cli, "exec", "-i"]
         if allocate_tty:
@@ -433,7 +437,8 @@ class DockerExecutor(BaseExecutor):
                 text=True,
                 timeout=timeout,
                 check=False,
-                stdin=subprocess.DEVNULL
+                stdin=subprocess.DEVNULL,
+                env=cmd_env
             )
             duration_ms = (time.time() - start_time) * 1000.0
             return ExecutionResult(
@@ -613,8 +618,10 @@ class RemoteSSHContainerExecutor(BaseExecutor):
     def execute(self, command, timeout=15, env=None, as_user=None, cwd=None, mask_secrets=True):
         start_time = time.time()
         docker_env = []
+        remote_env_exports = []
         if self.db_password:
-            docker_env.extend(["-e", f"MYSQL_PWD={self.db_password}", "-e", f"PGPASSWORD={self.db_password}"])
+            docker_env.extend(["-e", "MYSQL_PWD", "-e", "PGPASSWORD"])
+            remote_env_exports.extend([f"export MYSQL_PWD={shlex.quote(str(self.db_password))}", f"export PGPASSWORD={shlex.quote(str(self.db_password))}"])
         if self.db_user:
             docker_env.extend(["-e", f"MYSQL_USER={self.db_user}", "-e", f"PGUSER={self.db_user}"])
         if self.db_host:
@@ -625,7 +632,8 @@ class RemoteSSHContainerExecutor(BaseExecutor):
             docker_env.extend(["-e", f"PGDATABASE={self.db_name}"])
         if env:
             for k, v in env.items():
-                docker_env.extend(["-e", f"{k}={v}"])
+                docker_env.extend(["-e", str(k)])
+                remote_env_exports.append(f"export {shlex.quote(str(k))}={shlex.quote(str(v))}")
 
         env_flags = " ".join(docker_env) if docker_env else ""
         user_flags = f"-u {shlex.quote(str(as_user))} " if as_user else ""
@@ -636,7 +644,8 @@ class RemoteSSHContainerExecutor(BaseExecutor):
         else:
             cmd_arg = str(command)
 
-        remote_docker_cmd = f"{shlex.quote(self.container_cli)} exec -i {env_flags} {user_flags}{workdir_flags}{shlex.quote(self.container_name)} /bin/bash -c {shlex.quote(cmd_arg)}".replace("  ", " ").strip()
+        export_prefix = ("; ".join(remote_env_exports) + "; ") if remote_env_exports else ""
+        remote_docker_cmd = f"{export_prefix}{shlex.quote(self.container_cli)} exec -i {env_flags} {user_flags}{workdir_flags}{shlex.quote(self.container_name)} /bin/bash -c {shlex.quote(cmd_arg)}".replace("  ", " ").strip()
         ssh_args = self._build_ssh_prefix() + ["/bin/bash", "-c", shlex.quote(remote_docker_cmd)]
         masked_cmd = SecretSanitizer.sanitize(f"ssh {self.remote_host} '{remote_docker_cmd}'") if mask_secrets else f"ssh {self.remote_host} '{remote_docker_cmd}'"
 

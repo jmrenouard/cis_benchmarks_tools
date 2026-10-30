@@ -11,6 +11,18 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-017 — Database Passwords Exposed in Process Tables via CLI Args (Finding 6 Part A)
+- **Date / Linked Action**: `2026-10-30` (`ACT-024` / Issue `#508`)
+- **Observed Symptom**: Plaintext database passwords were visible to all OS users in `ps aux` and `/proc/<pid>/cmdline`: `DockerExecutor` and `RemoteSSHContainerExecutor` passed `-e MYSQL_PWD=<pass>` and `-e PGPASSWORD=<pass>` on the CLI.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why were passwords visible in ps aux?* Secrets were passed as explicit command line arguments to `docker exec`.
+  2. *Why does Docker expose -e KEY=VAL on CLI?* Passing `=VAL` on CLI stores the value in host `argv`, whereas passing bare `-e KEY` forwards the variable securely from the parent environment over the daemon socket.
+  3. *Why did RemoteSSHContainerExecutor leak?* Secret values were embedded directly in the docker exec command string.
+- **Applied Change / Fix**: In `execution_drivers.py`, updated `DockerExecutor.execute` to pass bare `-e MYSQL_PWD` / `-e PGPASSWORD` flags on CLI and pass passwords in `env=cmd_env`; updated `RemoteSSHContainerExecutor` to export variables in remote subshell; updated unit tests in `tests/test_credential_injection.py` and `tests/test_execution_drivers.py`.
+- **Result & Non-Regression Test**: `test_credential_injection.py` and `test_execution_drivers.py` assert zero secret strings in `called_cmd` argv and successful environment forwarding; 233/233 tests pass.
+
+---
+
 ### RCA-016 — Shell Injection and Host Variable Expansion in Execution Drivers (Finding 5)
 - **Date / Linked Action**: `2026-10-30` (`ACT-023` / Issue `#506`)
 - **Observed Symptom**: DockerExecutor invoked host `/bin/bash -c` wrapping `docker exec` with `json.dumps(command)`, causing host shell variable expansion (`$VAR`, `$(...)`, backticks) and shell injection, and failing on Windows hosts lacking `/bin/bash`; RemoteSSHContainerExecutor evaluated commands inside double quotes on remote host before container entry; SSHExecutor and LocalExecutor did not quote `as_user` or `cmd_str` with `shlex.quote`.

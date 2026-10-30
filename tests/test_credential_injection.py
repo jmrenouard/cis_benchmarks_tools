@@ -80,10 +80,14 @@ class TestCredentialInjection(unittest.TestCase):
             db_password="MariaPassword789!"
         )
 
-        called_cmd = " ".join(mock_sub.call_args[0][0]) if isinstance(mock_sub.call_args[0][0], list) else str(mock_sub.call_args[0][0])
-        self.assertIn("-e MYSQL_USER=maria_user", called_cmd)
-        self.assertIn("-e MYSQL_PWD=MariaPassword789!", called_cmd)
+        called_args = mock_sub.call_args[0][0]
+        called_cmd = " ".join(called_args) if isinstance(called_args, list) else str(called_args)
+        self.assertIn("-e", called_args)
+        self.assertIn("MYSQL_PWD", called_args)
+        self.assertNotIn("MariaPassword789!", called_cmd)
         self.assertIn("mariadb-test-cont", called_cmd)
+        called_env = mock_sub.call_args[1].get("env", {})
+        self.assertEqual(called_env.get("MYSQL_PWD"), "MariaPassword789!")
 
 
 if __name__ == "__main__":
