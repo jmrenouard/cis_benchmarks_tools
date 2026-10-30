@@ -11,6 +11,18 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-014 — Orchestrator `ModuleNotFoundError` on RHEL Targets Caused by Missing Underscores (Finding 4)
+- **Date / Linked Action**: `2026-10-30` (`ACT-018` / Issue `#477`)
+- **Observed Symptom**: Running `audit_orchestrator.py` against `rhel8`, `rhel9`, or `rhel10` failed immediately with `ModuleNotFoundError: No module named 'audit_cis_rhel8'`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did import fail?* `CANONICAL_TARGETS` in `audit_orchestrator.py` mapped RHEL keys to `"module": "audit_cis_rhel8"`, `"audit_cis_rhel9"`, and `"audit_cis_rhel10"`.
+  2. *Why did that filename not exist?* The actual script files on disk were created with underscores: `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, and `audit_cis_rhel_10.py`.
+  3. *Why did unit tests not catch this?* `test_canonical_targets_catalog_completeness` only checked dictionary keys, never attempting to import the referenced module.
+- **Applied Change / Fix**: Corrected module and rule specification names in `audit_orchestrator.py` to `audit_cis_rhel_8`, `audit_cis_rhel_9`, `audit_cis_rhel_10` (and `rhel_8`, `rhel_9`, `rhel_10`); added inspect-based signature adaptation and fallback normalization; updated unit tests to assert module importability and rule file presence for all 18 canonical targets.
+- **Result & Non-Regression Test**: `tests/test_audit_orchestrator.py` dynamically verifies that `importlib.import_module()` succeeds and rule files exist for all 18 canonical targets.
+
+---
+
 ### RCA-010 — Windows CP1252 UnicodeEncodeError & RHEL HTML Exporter Regression
 - **Date / Linked Action**: `2026-10-30` (`ACT-017` / Issue `#453`)
 - **Observed Symptom**: `verify_benchmarks_and_reports.py` and RHEL engines failed on Windows with `UnicodeEncodeError: 'charmap'`; RHEL `generate_html_report` crashed with `TypeError` and `KeyError`; `clean_ssh_warnings_from_reports.py` regex truncated quotes/tags.
