@@ -12,8 +12,8 @@
       "remediation": "Sauvegarder la base, d\u00e9placer les fichiers de donn\u00e9es vers une partition d\u00e9di\u00e9e, mettre \u00e0 jour datadir dans la configuration MySQL, red\u00e9marrer le service.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -24,8 +24,8 @@
       "remediation": "Configurer le service MySQL pour qu'il s'ex\u00e9cute sous un utilisateur d\u00e9di\u00e9 (ex: 'mysql') avec les privil\u00e8ges minimaux.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -36,8 +36,8 @@
       "remediation": "Supprimer les fichiers d'historique, cr\u00e9er un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -48,8 +48,8 @@
       "remediation": "Modifier les scripts/utilisateurs pour \u00e9viter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifi\u00e9e.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -60,8 +60,8 @@
       "remediation": "Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\nTry `getent --help' or `getent --usage' for more information.\nStderr:\n
-      "error": "
+      "output": "Stdout:\nTry `getent --help' or `getent --usage' for more information.\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -72,8 +72,8 @@
       "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -84,8 +84,8 @@
       "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur sp\u00e9cifique, ou d\u00e9ployer MySQL sous Docker.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\nNOT_SANDBOX\nStderr:\n
-      "error": "
+      "output": "Stdout:\nNOT_SANDBOX\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -96,8 +96,8 @@
       "remediation": "Cr\u00e9er une politique de sauvegarde et planifier des sauvegardes automatiques.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -142,8 +142,8 @@
       "remediation": "Activer log_bin dans my.cnf, configurer binlog_expire_logs_seconds, tester les restaurations PITR.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -185,8 +185,8 @@
       "remediation": "Configurer binlog_encryption=ON dans my.cnf et installer un plugin keyring.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -231,8 +231,8 @@
         "V\u00e9rifier qu'aucun compte n'est partag\u00e9 entre plusieurs personnes."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -246,8 +246,8 @@
         "S'assurer qu'ils ne sont pas auto-g\u00e9n\u00e9r\u00e9s par MySQL."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -258,8 +258,8 @@
       "remediation": "SET PERSIST default_password_lifetime=365;",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -270,8 +270,8 @@
       "remediation": "Installer component_validate_password et configurer validate_password.policy=STRONG.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -282,8 +282,8 @@
       "remediation": "SET PERSIST password_require_current=ON;",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -313,8 +313,8 @@
         "Les verrouiller."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -325,8 +325,8 @@
       "remediation": "SET PERSIST block_encryption_mode='aes-256-cbc';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -340,8 +340,8 @@
         "S'assurer que seuls les comptes syst\u00e8me l\u00e9gitimes l'utilisent."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -352,8 +352,8 @@
       "remediation": "Configurer bind-address dans my.cnf pour \u00e9couter sur une IP sp\u00e9cifique plut\u00f4t que sur toutes les interfaces.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -364,8 +364,8 @@
       "remediation": "Configurer tls_version='TLSv1.2,TLSv1.3' dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -376,8 +376,8 @@
       "remediation": "ALTER USER '<user>'@'<host>' REQUIRE X509;",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -388,8 +388,8 @@
       "remediation": "Configurer ssl-cipher dans my.cnf avec des ciphers forts uniquement.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -400,8 +400,8 @@
       "remediation": "INSTALL COMPONENT 'file://component_connection_control'; SET PERSIST connection_control_min_connection_delay=1000;",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
