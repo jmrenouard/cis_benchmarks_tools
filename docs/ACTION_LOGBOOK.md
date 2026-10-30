@@ -22,7 +22,7 @@
 ### ACT-020 — Docker Container Forwarding in Automated Database Checks (Issue `#481`)
 - **Date**: `2026-10-30T17:15+01:00` | **Status**: `COMPLETED` | **Issue**: `#481`
 - **Changes**: Forwarded `docker_container=docker_container` in all automated check `run_command()` calls across 8 database audit engines (`postgresql_16/17/18`, `mongodb_7/8`, `cassandra_40/41/50`); added unit test suite `tests/test_container_parameter_forwarding.py`.
-- **Result**: `pre_commit_checks.py` 8/8 checks pass, 222/222 tests pass, PR diff < 15,000 chars.
+- **Result**: Part A (PostgreSQL) merged in PR #482; Part B (MongoDB & Cassandra) implemented; `pre_commit_checks.py` 8/8 checks pass, 220/220 tests pass.
 
 ---
 
