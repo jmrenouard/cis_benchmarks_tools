@@ -19,6 +19,13 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-019 — RHEL HTML Report & Category Score Population (Issue `#479`)
+- **Date**: `2026-10-30T17:05+01:00` | **Status**: `COMPLETED` | **Issue**: `#479`
+- **Changes**: Updated `calculate_scores()` in `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, and `audit_cis_rhel_10.py` to calculate full category breakdown scores; standardized `build_inline_svg_category_chart()` invocation in `generate_html_report()`; added comprehensive unit test suite `tests/test_rhel_html_export_quality.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 221/221 tests pass, PR diff < 15,000 chars.
+
+---
+
 ### ACT-018 — Orchestrator RHEL Module & Rule Spec Alignment (Issue `#477`)
 - **Date**: `2026-10-30T16:55+01:00` | **Status**: `COMPLETED` | **Issue**: `#477`
 - **Changes**: Updated `CANONICAL_TARGETS` in `audit_orchestrator.py` to map RHEL targets to `audit_cis_rhel_8`, `audit_cis_rhel_9`, `audit_cis_rhel_10` and rule specs `rhel_8`, `rhel_9`, `rhel_10`; added inspect-based signature filtering for `perform_checks`; updated `tests/test_audit_orchestrator.py` to verify module importability and rule file existence across all 18 targets.

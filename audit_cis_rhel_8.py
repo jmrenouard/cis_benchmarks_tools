@@ -595,10 +595,37 @@ def perform_checks(recommendations, remote_host=None):
     return results
 
 def calculate_scores(results):
-    """Calculate compliance score statistics."""
+    """Calculate compliance score statistics and category breakdown."""
     flat = [c for s in results.values() for c in s] if isinstance(results, dict) else list(results)
+    if not flat:
+        return 0.0, {}
     passed = sum(1 for r in flat if r.get("status") in ("PASS", "Pass"))
-    return (passed / (len(flat) or 1)) * 100, {}
+    evaluated = [r for r in flat if r.get("status") not in ("MANUAL", "Manual")]
+    overall_score = (passed / (len(evaluated) or 1)) * 100
+    cats = {}
+    for r in flat:
+        c = r.get("category", "General")
+        if c not in cats:
+            cats[c] = {"name": c, "score": 0.0, "total_automated": 0, "passed_automated": 0, "failed_automated": 0, "manual_checks": 0, "error_checks": 0, "na_checks": 0}
+        s = cats[c]
+        st = str(r.get("status", "")).upper()
+        if str(r.get("type", "")).capitalize() == "Manual" or st == "MANUAL":
+            s["manual_checks"] += 1
+        elif st == "PASS":
+            s["passed_automated"] += 1
+        elif st == "FAIL":
+            s["failed_automated"] += 1
+        elif st == "ERROR":
+            s["error_checks"] += 1
+        elif st in ("N/A", "NA", "NOT APPLICABLE"):
+            s["na_checks"] += 1
+        else:
+            s["failed_automated"] += 1
+    for s in cats.values():
+        tot = s["passed_automated"] + s["failed_automated"] + s["error_checks"]
+        s["total_automated"] = tot + s["na_checks"]
+        s["score"] = (s["passed_automated"] / (tot or 1) * 100) if tot > 0 else 0.0
+    return overall_score, cats
 
 
 
@@ -889,7 +916,9 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
             </div>
         </div>"""
 
-    bar_svg = build_inline_svg_category_chart(cat_names, cat_pass, cat_fail, cat_err, cat_na)
+    if not categories_scores or not isinstance(categories_scores, dict):
+        _, categories_scores = calculate_scores(results)
+    bar_svg = build_inline_svg_category_chart(categories_scores)
 
     html_template = load_html_template()
     html_content = html_template.format_map(type("SafeDict", (dict,), {"__missing__": lambda s, k: f"{{{k}}}"})(
