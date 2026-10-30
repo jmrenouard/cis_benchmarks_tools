@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-058 — Automated Non-Regression Test Suite for SSH JSON & XML Reports Quality (Finding 8 Part B, Issue `#574`)
+- **Date**: `2026-10-30T20:42+01:00` | **Status**: `COMPLETED` | **Issue**: `#574`
+- **Request**: Complete Ponytail Audit Finding 8 (Part B): add automated regression unit tests in `tests/test_benchmark_sync_and_report_quality.py` guaranteeing all 10 SSH JSON reports and 2 SSH XML reports remain 100% syntactically valid and pass quality checks.
+- **Changes**: Added `test_ssh_json_reports_syntax` to `tests/test_benchmark_sync_and_report_quality.py` validating that all 10 SSH JSON reports parse and conform to quality criteria; logged RCA-020 in `docs/RCA_REGISTER.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 238/238 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-057 — fix(reports): repair syntax in MySQL Community 8.4 SSH JSON report (Part 3/3) (Issue `#572`)
 - **Date**: `2026-10-30T20:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#572`
 - **Request**: Remediate Ponytail Audit Finding 8 (Part B): repair syntax in `reports/rapport_cis_mysql_community_84_ssh.json`.

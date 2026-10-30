@@ -89,6 +89,15 @@ class TestBenchmarkSyncAndReportQuality(unittest.TestCase):
                 ok, msg = analyze_report_quality(target_path)
                 self.assertTrue(ok, f"{target} failed quality check: {msg}")
 
+    def test_ssh_json_reports_syntax(self):
+        """Verify all 10 SSH JSON reports have valid JSON syntax and pass quality criteria."""
+        import glob
+        json_reports = sorted(glob.glob(os.path.join(REPO_ROOT, "reports", "rapport_cis_*_ssh.json")))
+        self.assertGreaterEqual(len(json_reports), 10)
+        for jf in json_reports:
+            ok, msg = analyze_report_quality(jf)
+            self.assertTrue(ok, f"{os.path.basename(jf)} failed quality check: {msg}")
+
 
 if __name__ == "__main__":
     unittest.main()

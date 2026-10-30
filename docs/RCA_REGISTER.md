@@ -11,6 +11,23 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-020 — SSH Audit Reports Syntax Corruption from Unbounded Host Warning Regex (Finding 8 Part B)
+- **Date / Linked Action**: `2026-10-30` (`ACT-030` through `ACT-058` / Issues `#518` to `#574`)
+- **Observed Symptom**: 12 SSH audit reports in `reports/` (2 XML and 10 JSON) suffered severe syntax breakage: XML reports had `</error></testcase>` tags swallowed; JSON reports contained unescaped quotes and missing commas (`\nStderr:\n\n      "error": "\n`), causing `json.loads` and `xml.etree.ElementTree` parsing failures.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did JSON/XML reports fail to parse?* JSON parser raised `Invalid control character at line X column Y`; XML parser raised `mismatched tag: line 11 column 34`.
+  2. *Why were closing tags and quotes missing?* An earlier warning cleaner script applied an unbounded regex `re.sub(r'Warning: Permanently added.*?to the list of known hosts\.\r?\n?', '', content)` across all report files.
+  3. *Why did the regex match across line boundaries?* The non-greedy `.*?` matched beyond newline boundaries into the surrounding JSON structure and swallowed quotes, commas, and XML closing tags.
+  4. *Why was this not caught immediately?* Pre-commit checks validated file size (> 1KB) on HTML reports but did not parse JSON or XML reports with `json.loads` or `ElementTree`.
+  5. *Why was the cleaner script run without safeguards?* The script lacked post-cleaning syntax verification before overwriting files.
+- **Applied Change / Fix**:
+  - Restored clean XML structure in `reports/rapport_cis_mariadb_106_ssh.xml` and `reports/rapport_cis_mariadb_1011_ssh.xml` using bounded line-specific regex `re.compile(r'Warning: Permanently added [^\r\n]+ to the list of known hosts\.\r?\n?')`.
+  - Replaced corrupted output/error syntax patterns across all 10 SSH JSON reports through sequential, atomic Pull Requests strictly respecting the `< 15,000` characters diff limit.
+  - Added non-regression unit tests `test_mariadb_ssh_xml_reports_syntax` and `test_ssh_json_reports_syntax` in `tests/test_benchmark_sync_and_report_quality.py`.
+- **Result & Non-Regression Test**: All 12 SSH reports pass syntax and quality checks (`python scripts/verify_benchmarks_and_reports.py --test-reports`); unit tests pass 238/238; pre-commit checks pass 8/8.
+
+---
+
 ### RCA-019 — Windows Console Crashes on UTF-8 Output & Report Cleaning Syntax Breaks (Finding 8)
 - **Date / Linked Action**: `2026-10-30` (`ACT-028` / Issue `#515`)
 - **Observed Symptom**: Audit scripts crashed on Windows console with `UnicodeEncodeError: 'charmap'` when emitting emoji or accented text (e.g. `✓`, `❌`, `🚀`, `é`); legacy regex in `clean_ssh_warnings_from_reports.py` lacked validation and boundary containment.
