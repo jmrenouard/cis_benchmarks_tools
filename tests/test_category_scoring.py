@@ -20,6 +20,7 @@ import audit_cis_mongodb_7 as mongodb_7
 import audit_cis_mongodb_8 as mongodb_8
 import audit_cis_cassandra_40 as cassandra_40
 import audit_cis_cassandra_41 as cassandra_41
+import audit_cis_cassandra_50 as cassandra_50
 
 
 class TestDynamicCategoryScoringMariaDB(unittest.TestCase):
@@ -325,6 +326,7 @@ class TestDynamicCategoryScoringCassandra(unittest.TestCase):
         self.cas_modules = [
             ("cassandra_40", cassandra_40),
             ("cassandra_41", cassandra_41),
+            ("cassandra_50", cassandra_50),
         ]
 
     def test_dynamic_custom_category_discovery(self):
