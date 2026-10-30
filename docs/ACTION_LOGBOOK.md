@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-046 — fix(reports): repair syntax in MySQL Enterprise 9.7 SSH JSON report (Part 1/3) (Issue `#550`)
+- **Date**: `2026-10-30T20:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#550`
+- **Request**: Remediate Ponytail Audit Finding 8 (Part B): repair syntax in `reports/rapport_cis_mysql_enterprise_97_ssh.json`.
+- **Changes**: Replaced corrupted output/error pattern in `reports/rapport_cis_mysql_enterprise_97_ssh.json` (batch of 20); verified diff strictly < 15,000 characters.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 237/237 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-045 — fix(reports): repair syntax in MySQL Enterprise 8.4 SSH JSON report (Part 3/3) (Issue `#548`)
 - **Date**: `2026-10-30T20:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#548`
 - **Request**: Remediate Ponytail Audit Finding 8 (Part B): repair syntax in `reports/rapport_cis_mysql_enterprise_84_ssh.json`.
