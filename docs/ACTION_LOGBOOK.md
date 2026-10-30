@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-071 — fix(mariadb): safe key access and hardening in calculate_scores (Issue `#600`)
+- **Date**: `2026-10-30T22:20+01:00` | **Status**: `COMPLETED` | **Issue**: `#600`
+- **Request**: Remediate Challenger M3-1 empirical finding in MariaDB 10.6 and 10.11 engines: replace raw dictionary subscripts (`check["type"]`, `check["status"]`) in `calculate_scores()` with safe getters, guard non-dict items, add fallback support for untyped checks (`check.get("scored") is True` or status-based detection), and support case-insensitive status matching.
+- **Changes**: Updated `calculate_scores()` in `audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py` with defensive key access (`check.get()`), non-dict item guard, untyped fallback scoring, and case-insensitive status evaluation; expanded `tests/test_category_scoring.py` with 4 new unit test methods in `TestDynamicCategoryScoringMariaDB`; updated `APP-004` in `docs/RCA_REGISTER.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 263/263 unit tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-070 — feat(engines): dynamic rule category scoring in Cassandra 5.0 engine & APP-004 (Finding 10 Part 11, Issue `#598`)
 - **Date**: `2026-10-30T21:52+01:00` | **Status**: `COMPLETED` | **Issue**: `#598`
 - **Request**: Remediate Ponytail Audit Finding 10 (Part 11 / Final): refactor `calculate_scores(results)` to dynamically discover categories from `results` in Cassandra 5.0 audit engine (`audit_cis_cassandra_50.py`), complete Finding 10 across all 15 database engines, and document the dynamic rule category scoring architectural standard in `docs/RCA_REGISTER.md` (`APP-004`).
