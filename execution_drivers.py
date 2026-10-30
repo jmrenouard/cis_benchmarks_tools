@@ -499,9 +499,10 @@ class SSHExecutor(BaseExecutor):
             "-o", "StrictHostKeyChecking=no",
             "-o", "UserKnownHostsFile=/dev/null",
             "-o", "BatchMode=yes",
-            "-o", "ConnectTimeout=5",
-            "-o", "ServerAliveInterval=3",
-            "-o", "ServerAliveCountMax=2",
+            "-o", "ConnectTimeout=10",
+            "-o", "ServerAliveInterval=15",
+            "-o", "ServerAliveCountMax=3",
+            "-o", "TCPKeepAlive=yes",
             "-p", str(self.ssh_port)
         ]
         if self.ssh_key:
@@ -509,7 +510,7 @@ class SSHExecutor(BaseExecutor):
         cmd.append(self.remote_host)
         return cmd
 
-    def execute(self, command, timeout=12, env=None, as_user=None, cwd=None, mask_secrets=True):
+    def execute(self, command, timeout=15, env=None, as_user=None, cwd=None, mask_secrets=True):
         start_time = time.time()
         env_prefixes = []
         if self.db_password:
@@ -605,9 +606,10 @@ class RemoteSSHContainerExecutor(BaseExecutor):
             "-o", "StrictHostKeyChecking=no",
             "-o", "UserKnownHostsFile=/dev/null",
             "-o", "BatchMode=yes",
-            "-o", "ConnectTimeout=5",
-            "-o", "ServerAliveInterval=3",
-            "-o", "ServerAliveCountMax=2",
+            "-o", "ConnectTimeout=10",
+            "-o", "ServerAliveInterval=15",
+            "-o", "ServerAliveCountMax=3",
+            "-o", "TCPKeepAlive=yes",
             "-p", str(self.ssh_port)
         ]
         if self.ssh_key:
