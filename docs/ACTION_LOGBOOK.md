@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-060 — feat(engines): dynamic rule category scoring in MariaDB engines (Finding 10 Part 1/3, Issue `#578`)
+- **Date**: `2026-10-30T21:14+01:00` | **Status**: `COMPLETED` | **Issue**: `#578`
+- **Request**: Remediate Ponytail Audit Finding 10 (Part 1/3): refactor `calculate_scores(results)` to dynamically discover categories from `results` across MariaDB audit engines (`audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py`).
+- **Changes**: Updated `calculate_scores()` in MariaDB audit engines (`audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py`) to discover categories dynamically from `results` dictionary or list; added unit test suite `tests/test_category_scoring.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 243/243 unit tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-059 — fix(engines): remove unreachable duplicate code in run_command (Finding 11, Issue `#576`)
 - **Date**: `2026-10-30T21:05+01:00` | **Status**: `COMPLETED` | **Issue**: `#576`
 - **Request**: Remediate Ponytail Audit Finding 11: cleanly remove unreachable duplicate subprocess execution and exception handling in `run_command()` across MariaDB audit engines (`audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py`).
