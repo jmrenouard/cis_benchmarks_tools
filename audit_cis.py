@@ -12,6 +12,18 @@ import os
 import subprocess
 import sys
 
+os.environ.setdefault("PYTHONUTF8", "1")
+
+if hasattr(sys.stdout, "reconfigure"):
+
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+if hasattr(sys.stderr, "reconfigure"):
+
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+
+
 __version__ = "2.9.1"
 
 TARGET_MAP = {
@@ -80,8 +92,11 @@ def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="
         cmd.extend(["--db-port", str(db_port)])
     if db_user:
         cmd.extend(["--db-user", db_user])
+    cmd_env = os.environ.copy()
+
     if db_password:
-        cmd.extend(["--db-password", db_password])
+        cmd_env["CIS_DB_PASSWORD"] = str(db_password)
+
     if db_name:
         cmd.extend(["--db-name", db_name])
     if defaults_file:
@@ -94,7 +109,8 @@ def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="
         cmd.extend(["--output", output_file])
 
     try:
-        subprocess.run(cmd, check=True)
+        subprocess.run(cmd, check=True, env=cmd_env)
+
         elapsed = (datetime.datetime.now() - start_time).total_seconds()
         print(f"✅ {label} CIS Audit completed successfully in {elapsed:.2f}s")
         return True
@@ -151,7 +167,8 @@ def main():
     parser.add_argument("-H", "--host", "--db-host", dest="db_host", default="localhost", help="Database host address (default: localhost)")
     parser.add_argument("-P", "--port", "--db-port", dest="db_port", type=int, default=None, help="Database port number")
     parser.add_argument("-u", "--user", "--db-user", dest="db_user", default=None, help="Database username")
-    parser.add_argument("-p", "--password", "--db-password", dest="db_password", default=None, help="Database password")
+    parser.add_argument("-p", "--password", "--db-password", dest="db_password", default=os.environ.get("CIS_DB_PASSWORD"), help="Database password")
+
     parser.add_argument("-D", "-d", "--database", "--db-name", dest="db_name", default=None, help="Database name")
     parser.add_argument("--defaults-file", "--config-file", dest="defaults_file", default=None, help="Path to database option/configuration file (.my.cnf, .pgpass, cqlshrc)")
     parser.add_argument("--auth-db", dest="auth_db", default=None, help="Authentication database (MongoDB)")

@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-025 — CLI Password Forwarding via Environment in Audit Runner (Finding 6 Part B1, Issue `#510`)
+- **Date**: `2026-10-30T19:55+01:00` | **Status**: `COMPLETED` | **Issue**: `#510`
+- **Request**: Remediate Finding 6 Part B1: eliminate database password exposure in OS process tables when invoking benchmarks from unified CLI runner `audit_cis.py`.
+- **Changes**: In `scripts/bundle_audit_cis.py` and `audit_cis.py`, passed `CIS_DB_PASSWORD` via child process environment (`env=cmd_env`) instead of appending `--db-password` to CLI argv; defaulted CLI `--db-password` parameter to `os.environ.get('CIS_DB_PASSWORD')`; added UTF-8 stream reconfigurations; updated unit tests in `tests/test_audit_cis_cli.py` and `tests/test_e2e_docker_audits.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 233/233 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-024 — Database Password Elimination in Docker & SSH Executor Argv (Finding 6 Part A, Issue `#508`)
 - **Date**: `2026-10-30T19:45+01:00` | **Status**: `COMPLETED` | **Issue**: `#508`
 - **Request**: Remediate Ponytail Audit Finding 6 (Part A): Eliminate exposure of plaintext database passwords in process table (`ps aux`) arguments across `DockerExecutor` and `RemoteSSHContainerExecutor`.

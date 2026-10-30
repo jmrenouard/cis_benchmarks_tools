@@ -46,9 +46,10 @@ class TestE2EDockerAudits(unittest.TestCase):
         self.assertIn("--docker", called_cmd)
         self.assertIn("mysql80-test", called_cmd)
         self.assertIn("--db-user", called_cmd)
-        self.assertIn("root", called_cmd)
-        self.assertIn("--db-password", called_cmd)
-        self.assertIn("RootPassword123!", called_cmd)
+        self.assertNotIn("--db-password", called_cmd)
+        self.assertNotIn("RootPassword123!", called_cmd)
+        called_env = mock_run.call_args[1].get("env", {})
+        self.assertEqual(called_env.get("CIS_DB_PASSWORD"), "RootPassword123!")
 
     @patch("audit_cis.run_single_audit")
     def test_auto_detect_target_keys(self, mock_audit):
