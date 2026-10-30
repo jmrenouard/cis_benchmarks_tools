@@ -12,8 +12,8 @@
       "remediation": "Sauvegarder la base, d\u00e9placer les fichiers de donn\u00e9es vers une partition d\u00e9di\u00e9e, mettre \u00e0 jour datadir dans la configuration MariaDB, red\u00e9marrer le service.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -24,8 +24,8 @@
       "remediation": "Configurer le service MariaDB pour qu'il s'ex\u00e9cute sous un utilisateur d\u00e9di\u00e9 (ex: 'mysql') avec les privil\u00e8ges minimaux.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -36,8 +36,8 @@
       "remediation": "Supprimer les fichiers d'historique, cr\u00e9er un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -48,8 +48,8 @@
       "remediation": "Modifier les scripts/utilisateurs pour \u00e9viter MYSQL_PWD, utiliser des m\u00e9thodes d'authentification s\u00e9curis\u00e9es.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -60,8 +60,8 @@
       "remediation": "Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\nTry `getent --help' or `getent --usage' for more information.\nStderr:\n
-      "error": "
+      "output": "Stdout:\nTry `getent --help' or `getent --usage' for more information.\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -72,8 +72,8 @@
       "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -104,8 +104,8 @@
         "Documenter la politique de sauvegarde."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\nAUCUNE_SAUVEGARDE_PLANIFIEE\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\nAUCUNE_SAUVEGARDE_PLANIFIEE\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -165,8 +165,8 @@
       "remediation": "Activer les binlogs, configurer binlog_expire_logs_seconds dans mariadb.cnf, tester les restaurations PITR.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -196,8 +196,8 @@
         "V\u00e9rifier la pr\u00e9sence de /etc/mysql/mariadb.cnf et des certificats SSL."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -227,8 +227,8 @@
         "S'assurer que -p<password> n'appara\u00eet nulle part."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -242,8 +242,8 @@
         "V\u00e9rifier que chaque nom de compte n'est utilis\u00e9 que pour un seul r\u00f4le."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -257,8 +257,8 @@
         "V\u00e9rifier qu'ils ne contiennent pas 'Auto_Generated'."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -269,8 +269,8 @@
       "remediation": "SET GLOBAL default_password_lifetime=365;",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -285,8 +285,8 @@
         "Verrouiller les comptes non utilis\u00e9s."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -301,8 +301,8 @@
         "S'assurer que seuls les acc\u00e8s locaux autoris\u00e9s l'utilisent."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -313,8 +313,8 @@
       "remediation": "Configurer bind_address=<adresse_IP_sp\u00e9cifique> dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -325,8 +325,8 @@
       "remediation": "Configurer tls_version=TLSv1.2,TLSv1.3 dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -337,8 +337,8 @@
       "remediation": "ALTER USER '<user>'@'<host>' REQUIRE X509;",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -349,8 +349,8 @@
       "remediation": "Configurer ssl_cipher avec une liste de chiffrements approuv\u00e9s dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -361,8 +361,8 @@
       "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -373,8 +373,8 @@
       "remediation": "Appliquer chmod 600 sur les fichiers binaires.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -385,8 +385,8 @@
       "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
