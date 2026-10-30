@@ -17,6 +17,7 @@ import audit_cis_postgresql_16 as postgresql_16
 import audit_cis_postgresql_17 as postgresql_17
 import audit_cis_postgresql_18 as postgresql_18
 import audit_cis_mongodb_7 as mongodb_7
+import audit_cis_mongodb_8 as mongodb_8
 
 
 class TestDynamicCategoryScoringMariaDB(unittest.TestCase):
@@ -249,6 +250,7 @@ class TestDynamicCategoryScoringMongoDB(unittest.TestCase):
     def setUp(self):
         self.mongo_modules = [
             ("mongodb_7", mongodb_7),
+            ("mongodb_8", mongodb_8),
         ]
 
     def test_dynamic_custom_category_discovery(self):
