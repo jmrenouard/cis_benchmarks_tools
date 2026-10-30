@@ -695,8 +695,8 @@
       "remediation": "REVOKE CREATE USER ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -707,8 +707,8 @@
       "remediation": "REVOKE GRANT OPTION ON *.* FROM '<user>'@'<host>';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -719,8 +719,8 @@
       "remediation": "REVOKE REPLICATION SLAVE ON *.* FROM les comptes non d\u00e9di\u00e9s \u00e0 la r\u00e9plication.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -731,8 +731,8 @@
       "remediation": "R\u00e9voquer les droits superflus par base de donn\u00e9es/compte.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -743,8 +743,8 @@
       "remediation": "Recr\u00e9er les routines avec un DEFINER minimal ou utiliser SQL SECURITY INVOKER.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -758,8 +758,8 @@
         "S'assurer que seuls les administrateurs l\u00e9gitimes le poss\u00e8dent."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -773,8 +773,8 @@
         "S'assurer que seuls les administrateurs l\u00e9gitimes le poss\u00e8dent."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Gestion des privil\u00e8ges"
     },
     {
@@ -785,8 +785,8 @@
       "remediation": "D\u00e9finir log-error=/chemin/vers/mysql.err dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -797,8 +797,8 @@
       "remediation": "D\u00e9placer les r\u00e9pertoires des journaux hors des partitions syst\u00e8me.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -809,8 +809,8 @@
       "remediation": "Ajouter log_error_verbosity=2 dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -821,8 +821,8 @@
       "remediation": "S'assurer que 'log-raw' n'est pas activ\u00e9 dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -833,8 +833,8 @@
       "remediation": "SET PERSIST authentication_policy='caching_sha2_password,,';",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -845,8 +845,8 @@
       "remediation": "Utiliser mysql_config_editor ou des fichiers .my.cnf priv\u00e9s avec permissions restreintes.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -857,8 +857,8 @@
       "remediation": "ALTER USER '<user>'@'<host>' IDENTIFIED BY '<password>'; ou utiliser mysql_secure_installation.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -869,8 +869,8 @@
       "remediation": "SET PERSIST default_password_lifetime=365;",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -881,8 +881,8 @@
       "remediation": "Installer et configurer component_validate_password avec validate_password.policy=STRONG.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -893,8 +893,8 @@
       "remediation": "ALTER USER '<user>'@'%' ... RENAME TO '<user>'@'<specific_host>'; ou supprimer le compte.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -905,8 +905,8 @@
       "remediation": "DROP USER ''@'<host>'; ou utiliser mysql_secure_installation.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -917,8 +917,8 @@
       "remediation": "Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans my.cnf.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -929,8 +929,8 @@
       "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -941,8 +941,8 @@
       "remediation": "Ajuster max_connections et max_user_connections dans my.cnf selon les besoins.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -957,8 +957,8 @@
         "Configurer TLS pour la r\u00e9plication si n\u00e9cessaire."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "9. R\u00e9plication"
     },
     {
