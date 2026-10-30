@@ -9,15 +9,19 @@
 
 ## 1. Ongoing Actions (`IN PROGRESS`)
 
-| Action ID | Date / Time (ISO) | Issue / Branch | Status | Request, Ongoing Changes & Expected Results |
-| :--- | :--- | :--- | :--- | :--- |
-| _None_ | — | — | — | No ongoing action. |
-
-
+_None._
 
 ---
 
 ## 2. Completed Actions (`COMPLETED`)
+
+### ACT-063 — feat(engines): dynamic rule category scoring in PostgreSQL 16 engine (Finding 10 Part 4, Issue `#584`)
+- **Date**: `2026-10-30T21:28+01:00` | **Status**: `COMPLETED` | **Issue**: `#584`
+- **Request**: Remediate Ponytail Audit Finding 10 (Part 4): refactor `calculate_scores(results)` to dynamically discover categories from `results` in PostgreSQL 16 audit engine (`audit_cis_postgresql_16.py`).
+- **Changes**: Updated `calculate_scores()` in PostgreSQL 16 engine (`audit_cis_postgresql_16.py`) to discover categories dynamically from `results` dictionary or list without relying on static `RECOMMENDATIONS_DATA`; expanded unit test suite `tests/test_category_scoring.py` with `TestDynamicCategoryScoringPostgreSQL`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 251/251 unit tests pass with 100% success, PR diff < 15,000 chars.
+
+---
 
 ### ACT-062 — feat(engines): dynamic rule category scoring in MySQL Enterprise engines (Finding 10 Part 3/4, Issue `#582`)
 - **Date**: `2026-10-30T21:24+01:00` | **Status**: `COMPLETED` | **Issue**: `#582`
