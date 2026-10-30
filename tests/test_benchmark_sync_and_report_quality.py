@@ -81,6 +81,14 @@ class TestBenchmarkSyncAndReportQuality(unittest.TestCase):
             self.assertIn("sys.stdout.reconfigure", content, f"{eng} missing stdout.reconfigure")
             self.assertIn("sys.stderr.reconfigure", content, f"{eng} missing stderr.reconfigure")
 
+    def test_mariadb_ssh_xml_reports_syntax(self):
+        """Verify MariaDB SSH XML reports have valid XML syntax and quality criteria."""
+        for target in ["reports/rapport_cis_mariadb_106_ssh.xml", "reports/rapport_cis_mariadb_1011_ssh.xml"]:
+            target_path = os.path.join(REPO_ROOT, target)
+            if os.path.exists(target_path):
+                ok, msg = analyze_report_quality(target_path)
+                self.assertTrue(ok, f"{target} failed quality check: {msg}")
+
 
 if __name__ == "__main__":
     unittest.main()
