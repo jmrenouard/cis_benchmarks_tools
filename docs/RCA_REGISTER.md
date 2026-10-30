@@ -11,6 +11,18 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-021 — Unreachable Duplicate Subprocess Code in MariaDB Audit Engines (Finding 11)
+- **Date / Linked Action**: `2026-10-30` (`ACT-059` / Issue `#576`)
+- **Observed Symptom**: Static analysis detected 21 lines of unreachable dead code inside `run_command()` in `audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py` located inside an `except Exception as e:` block following an unconditional return statement.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why was code unreachable?* The statements followed `return "", str(e), -1` inside the exception handler.
+  2. *Why were statements placed after return?* During earlier refactoring of SSH/subprocess execution, an older duplicate block was left behind after the return statement instead of being replaced.
+  3. *Why did it not raise a Python SyntaxError?* Python syntax permits statements after a return inside an exception block (they are simply never executed at runtime).
+  4. *Why was it not detected during unit test execution?* Code coverage or dead code analyzers were not included in standard test discovery.
+  5. *Why did other engines not have this issue?* The duplicate block was accidentally appended only to `audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py`.
+- **Applied Change / Fix**: Removed all dead unreachable code in `audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py`; added automated AST analysis regression test `test_no_unreachable_code_in_audit_engines` in `tests/test_benchmark_sync_and_report_quality.py` to prevent any unreachable statements across all 18 audit engines.
+- **Result & Non-Regression Test**: 239/239 unit tests pass; `scripts/pre_commit_checks.py` 8/8 checks pass with 100% success; AST analysis verifies 0 unreachable statements.
+
 ### RCA-020 — SSH Audit Reports Syntax Corruption from Unbounded Host Warning Regex (Finding 8 Part B)
 - **Date / Linked Action**: `2026-10-30` (`ACT-030` through `ACT-058` / Issues `#518` to `#574`)
 - **Observed Symptom**: 12 SSH audit reports in `reports/` (2 XML and 10 JSON) suffered severe syntax breakage: XML reports had `</error></testcase>` tags swallowed; JSON reports contained unescaped quotes and missing commas (`\nStderr:\n\n      "error": "\n`), causing `json.loads` and `xml.etree.ElementTree` parsing failures.

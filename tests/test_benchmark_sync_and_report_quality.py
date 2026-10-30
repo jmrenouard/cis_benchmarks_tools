@@ -98,6 +98,28 @@ class TestBenchmarkSyncAndReportQuality(unittest.TestCase):
             ok, msg = analyze_report_quality(jf)
             self.assertTrue(ok, f"{os.path.basename(jf)} failed quality check: {msg}")
 
+    def test_no_unreachable_code_in_audit_engines(self):
+        """Verify across all 18 audit engines that no unreachable code exists after return/raise statements."""
+        import glob
+        import ast
+        engines = sorted(glob.glob("audit_cis_*.py"))
+        self.assertEqual(len(engines), 18)
+        unreachable = []
+        for eng in engines:
+            with open(eng, "r", encoding="utf-8") as f:
+                tree = ast.parse(f.read(), filename=eng)
+            for node in ast.walk(tree):
+                if hasattr(node, "body") and isinstance(node.body, list):
+                    has_term = False
+                    term_line = None
+                    for s in node.body:
+                        if has_term:
+                            unreachable.append(f"{eng}:{s.lineno} after line {term_line}")
+                        if isinstance(s, (ast.Return, ast.Raise)):
+                            has_term = True
+                            term_line = s.lineno
+        self.assertEqual(unreachable, [], f"Unreachable dead code found in audit engines: {unreachable}")
+
 
 if __name__ == "__main__":
     unittest.main()
