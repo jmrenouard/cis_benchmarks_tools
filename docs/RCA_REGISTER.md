@@ -266,8 +266,10 @@
 - **Nature & Justification**: Benchmark specifications mapped in `conf/cis_manifest.json` with SHA-256 digests. Verification runs in `< 0.1s` PSL-only.
 - **Removal Condition**: Streaming remote sync and CLI integrated in Part 2 (Issue `#468`).
 
-
-
+### APP-004 — Dynamic Rule Category Discovery in Database Audit Engines (Finding 10)
+- **Target Files**: All 15 database audit engines (`audit_cis_mariadb_106.py`, `audit_cis_mariadb_1011.py`, `audit_cis_mysql_80.py`, `audit_cis_mysql_community_84.py`, `audit_cis_mysql_community_97.py`, `audit_cis_mysql_enterprise_84.py`, `audit_cis_mysql_enterprise_97.py`, `audit_cis_postgresql_16.py`, `audit_cis_postgresql_17.py`, `audit_cis_postgresql_18.py`, `audit_cis_mongodb_7.py`, `audit_cis_mongodb_8.py`, `audit_cis_cassandra_40.py`, `audit_cis_cassandra_41.py`, `audit_cis_cassandra_50.py`).
+- **Nature & Justification**: Database engines previously relied on static iteration over `RECOMMENDATIONS_DATA` for category order and ignored or skipped categories not pre-initialized in the static specification, causing crashes (`KeyError` in PostgreSQL) or missing compliance metrics. All 15 engines now discover categories dynamically from `results` (supporting dict and flat list inputs, arbitrary category order, and filtered subsets) without any hardcoded rule specs dependency.
+- **Removal Condition**: Permanent architectural standard across all audit engines and report exporters.
 
 ---
 
