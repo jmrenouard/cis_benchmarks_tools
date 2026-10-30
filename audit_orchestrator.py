@@ -14,6 +14,12 @@ import time
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
 
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
@@ -343,8 +349,16 @@ class AuditOrchestrator:
                         try:
                             export_fn(results, overall_score, cat_scores, target_name=canonical_key, filename=rep_path, fmt=fmt, lang=self.lang, execution_context=exec_ctx)
                             generated_reports[fmt] = rep_path
+                        except TypeError:
+                            try:
+                                export_fn(results, overall_score, cat_scores, target_name=canonical_key, filename=rep_path, fmt=fmt, lang=self.lang)
+                                generated_reports[fmt] = rep_path
+                            except Exception:
+                                pass
                         except Exception:
                             pass
+                    if os.path.exists(rep_path):
+                        generated_reports[fmt] = rep_path
 
             elapsed = time.time() - start_time
             t_tracker.finish()
@@ -467,7 +481,8 @@ class AuditOrchestrator:
         return report_filename
 
 
-if __name__ == "__main__":
+def build_cli_parser() -> argparse.ArgumentParser:
+    """Build and return argument parser for audit_orchestrator."""
     parser = argparse.ArgumentParser(description="Multi-Product CIS Audit Orchestrator & RCA Pipeline")
     parser.add_argument("-t", "--target", dest="target", default=None, help="Target product key (e.g. mariadb106, all)")
     parser.add_argument("--all", action="store_true", help="Execute audit across all canonical targets")
@@ -481,6 +496,18 @@ if __name__ == "__main__":
     parser.add_argument("-j", "--parallel", type=int, default=1, help="Parallel worker threads")
     parser.add_argument("-o", "--output-dir", dest="output_dir", default="reports", help="Output directory")
     parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Report language")
+    parser.add_argument("-u", "--user", "--db-user", dest="db_user", default=None, help="Database username")
+    parser.add_argument("-p", "--password", "--db-password", dest="db_password", default=None, help="Database password")
+    parser.add_argument("-H", "--host", "--db-host", dest="db_host", default=None, help="Database host address")
+    parser.add_argument("-P", "--port", "--db-port", dest="db_port", type=int, default=None, help="Database port number")
+    parser.add_argument("-D", "--database", "--db-name", dest="db_name", default=None, help="Database name")
+    parser.add_argument("--defaults-file", "--config-file", dest="defaults_file", default=None, help="Path to database options/configuration file")
+    parser.add_argument("--auth-db", dest="auth_db", default=None, help="Authentication database (MongoDB)")
+    return parser
+
+
+if __name__ == "__main__":
+    parser = build_cli_parser()
     args = parser.parse_args()
 
     selected_formats = [fmt.strip().lower() for fmt in args.formats.split(",") if fmt.strip()]
@@ -493,7 +520,14 @@ if __name__ == "__main__":
         lang=args.lang,
         ssh_port=args.ssh_port,
         ssh_key=args.ssh_key,
-        sudo=args.sudo
+        sudo=args.sudo,
+        db_user=args.db_user,
+        db_password=args.db_password,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        defaults_file=args.defaults_file,
+        auth_db=args.auth_db
     )
 
     targets_to_run = list(CANONICAL_TARGETS.keys()) if (args.all or args.target == "all") else ([t.strip() for t in args.target.split(",")] if args.target else [])

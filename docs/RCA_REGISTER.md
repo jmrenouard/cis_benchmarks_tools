@@ -11,6 +11,18 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-015 — MariaDB Sudo Drop and Orchestrator Export Mismatch
+- **Date / Linked Action**: `2026-10-30` (`ACT-022` / Issue `#504`)
+- **Observed Symptom**: MariaDB 10.6/10.11 dropped `sudo=True` commands without `sudo -n`; `audit_orchestrator.py` raised `TypeError` on 15 targets lacking `execution_context` in `export_results`; orchestrator CLI rejected DB args.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why was sudo dropped?* `create_executor` omitted sudo and executed commands before reaching fallback.
+  2. *Why did export fail?* `export_fn` fallback retained `execution_context`, unsupported by 15 targets.
+  3. *Why did CLI reject DB args?* `argparse` parser omitted DB credentials arguments.
+- **Applied Change / Fix**: Updated MariaDB engines to bypass `create_executor` on `sudo=True`; added standard 7-arg `export_fn` fallback and UTF-8 stdout streams; added DB options to `build_cli_parser()`; added tests in `tests/test_mariadb_sudo_and_orchestrator_export.py`.
+- **Result & Non-Regression Test**: `tests/test_mariadb_sudo_and_orchestrator_export.py` passes 6/6 tests; test suite passes 234/234 tests with 100% success.
+
+---
+
 ### RCA-013 — Database Credentials and SSH Flags Dropped Across Engines and Orchestrator (Finding 3)
 - **Date / Linked Action**: `2026-10-30` (`ACT-021` / Issue `#484`)
 - **Observed Symptom**: CLI arguments `-u/--db-user`, `-p/--db-password`, `-H/--db-host`, `-P/--db-port`, `-D/--db-name`, `--defaults-file`, `--auth-db` had no effect on 12 database engines, and `--ssh-port`, `-i/--ssh-key`, `--sudo` were not propagated in orchestrator and engines.
