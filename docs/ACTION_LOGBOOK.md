@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-030 — Repair Syntax Corruption in MariaDB SSH XML Reports (Finding 8 Part B1, Issue `#518`)
+- **Date**: `2026-10-30T20:28+01:00` | **Status**: `COMPLETED` | **Issue**: `#518`
+- **Request**: Remediate Ponytail Audit Finding 8 (Part B1): repair XML syntax errors in MariaDB 10.6 and 10.11 SSH reports caused by earlier unbounded regex warning stripping.
+- **Changes**: Cleaned `reports/rapport_cis_mariadb_106_ssh.xml` and `reports/rapport_cis_mariadb_1011_ssh.xml` restoring closing tags `</error></testcase>` and stripping host warning lines cleanly with bounded regex; added unit test `test_mariadb_ssh_xml_reports_syntax` in `tests/test_benchmark_sync_and_report_quality.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 237/237 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-029 — UTF-8 Console Streams for Cassandra, MongoDB, and RHEL Engines (Finding 8 Part A2, Issue `#515`)
 - **Date**: `2026-10-30T20:21+01:00` | **Status**: `COMPLETED` | **Issue**: `#515`
 - **Request**: Complete Finding 8 Part A: reconfigure UTF-8 console output across Cassandra, MongoDB, and RHEL benchmark audit engines.

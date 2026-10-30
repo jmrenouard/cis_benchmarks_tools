@@ -4,6 +4,7 @@
 Stdout:
 
 Stderr:
+</error></testcase><testcase id="1.2" name="Utiliser un compte dédié et privilégié minimal pour MariaDB" classname="1. Configuration Système d'exploitation"><failure message="Control failed">Stdout:
 
 Stderr:
 Return Code: 0
@@ -59,26 +60,32 @@ Condition de succès non remplie.</failure></testcase><testcase id="3.1" name="P
 Stdout:
 
 Stderr:
+</error></testcase><testcase id="3.2" name="Permissions sur les fichiers 'log_bin_basename'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@log_bin_basename;"`
 Stdout:
 
 Stderr:
+</error></testcase><testcase id="3.3" name="Permissions sur 'log_error'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@log_error;"`
 Stdout:
 
 Stderr:
+</error></testcase><testcase id="3.4" name="Permissions sur 'slow_query_log'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@slow_query_log_file;"`
 Stdout:
 
 Stderr:
+</error></testcase><testcase id="3.5" name="Permissions sur 'relay_log_basename'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@relay_log_basename;"`
 Stdout:
 
 Stderr:
+</error></testcase><testcase id="3.6" name="Permissions sur 'general_log_file'" classname="3. Permissions Fichiers"><error message="Control execution error">Error lors de l'obtention du chemin via:
 `mysql -N -B -e "SELECT @@general_log_file;"`
 Stdout:
 
 Stderr:
+</error></testcase><testcase id="3.7" name="Permissions sur les fichiers de clés SSL" classname="3. Permissions Fichiers"><failure message="Control failed">Stdout:
 
 Stderr:
 stat: missing operand
@@ -90,6 +97,7 @@ Condition de succès non remplie.</failure></testcase><testcase id="3.8" name="P
 Stdout:
 
 Stderr:
+</error></testcase><testcase id="3.9" name="Permissions sur 'server_audit_file_path'" classname="3. Permissions Fichiers"><failure message="Control failed">Stdout:
 
 Stderr:
 stat: missing operand
@@ -133,6 +141,7 @@ Condition de succès non remplie.</failure></testcase><testcase id="5.1" name="L
 Stdout:
 
 Stderr:
+</error></testcase><testcase id="6.3" name="log_warnings=2" classname="6. Audit &amp; Journalisation"><failure message="Control failed">Stdout:
 
 Stderr:
 Return Code: 0
