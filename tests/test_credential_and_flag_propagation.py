@@ -32,9 +32,9 @@ class TestCredentialAndFlagPropagation(unittest.TestCase):
             self.assertTrue(any(expected.issubset(c) for c in calls), f"{f} drops credentials in __main__")
 
     def test_perform_checks_forwards_credentials_to_run_command(self):
-        import audit_cis_postgresql_16, audit_cis_postgresql_17
+        import audit_cis_postgresql_16, audit_cis_postgresql_17, audit_cis_postgresql_18
         recs = [{"id": "1", "name": "C1", "category": "General", "type": "Manual", "test_procedure": "echo 1"}]
-        for mod in (audit_cis_postgresql_16, audit_cis_postgresql_17):
+        for mod in (audit_cis_postgresql_16, audit_cis_postgresql_17, audit_cis_postgresql_18):
             with patch.object(mod, "run_command", return_value=("", "", 0)) as m:
                 mod.perform_checks(recs, db_user="u", db_password="p", db_host="h", db_port=5432, db_name="d", defaults_file="f", auth_db="a", ssh_port=2222, ssh_key="/tmp/k", sudo=True)
                 self.assertEqual(m.call_args.kwargs.get("db_user"), "u")

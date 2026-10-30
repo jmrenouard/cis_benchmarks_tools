@@ -535,7 +535,7 @@ def is_valid_executable_command(cmd_str):
     return False
 
 
-def run_command(command, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None):
+def run_command(command, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None, ssh_port=22, ssh_key=None, sudo=False):
     """Execute command safely locally, over SSH, or inside Docker container (PSL ONLY)."""
     try:
         env = os.environ.copy()
@@ -571,7 +571,17 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
             cmd_args = list(command)
 
         if remote_host:
-            cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
+            ssh_cmd = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5"]
+            if ssh_port and int(ssh_port) != 22:
+                ssh_cmd.extend(["-p", str(ssh_port)])
+            if ssh_key:
+                ssh_cmd.extend(["-i", ssh_key])
+            else:
+                ssh_cmd.extend(["-i", "/root/.ssh/id_rsa"])
+            ssh_cmd.append(remote_host)
+            cmd_args = ssh_cmd + (["sudo", "-n"] if sudo else []) + cmd_args
+        elif sudo:
+            cmd_args = ["sudo", "-n"] + cmd_args
 
         process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10, env=env)
         stdout_text = process.stdout.strip()
@@ -645,8 +655,22 @@ def evaluate_condition(condition, stdout, stderr, returncode):
     # Ajouter d'autres types de conditions au besoin
     return False # Type de condition inconnu
 
-def perform_checks(recommendations, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None):
+def perform_checks(recommendations, remote_host=None, docker_container=None, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, auth_db=None, ssh_port=22, ssh_key=None, sudo=False):
     """Exécute tous les contrôles et stocke les résultats."""
+    common_run_kwargs = {
+        "remote_host": remote_host,
+        "docker_container": docker_container,
+        "db_user": db_user,
+        "db_password": db_password,
+        "db_host": db_host,
+        "db_port": db_port,
+        "db_name": db_name,
+        "defaults_file": defaults_file,
+        "auth_db": auth_db,
+        "ssh_port": ssh_port,
+        "ssh_key": ssh_key,
+        "sudo": sudo,
+    }
     results = {}
     for rec in recommendations:
         category = rec["category"]
@@ -671,11 +695,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
             check_result["status"] = "Manual"
             tp = rec.get("test_procedure", "").strip()
             if tp and is_valid_executable_command(tp):
-                diag_out, diag_err, diag_ret = run_command(
-                    tp, remote_host=remote_host, docker_container=docker_container,
-                    db_user=db_user, db_password=db_password, db_host=db_host,
-                    db_port=db_port, db_name=db_name, defaults_file=defaults_file, auth_db=auth_db
-                )
+                diag_out, diag_err, diag_ret = run_command(tp, **common_run_kwargs)
                 diag_disp = diag_out if diag_out else (diag_err or "")
                 if diag_disp:
                     check_result["output"] = f"--- [Contrôle Manuel - Diagnostic Système] ---\nCommande: {tp}\n\nRésultat capturé:\n{diag_disp}\n\nNote: L'auditeur doit valider la conformité selon la politique de sécurité de l'organisation."
@@ -696,7 +716,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                  # For path_command, run it first
                  if rec.get("path_command"):
                      path_cmd = rec["path_command"]
-                     path_cmd_output, path_cmd_error, path_cmd_returncode = run_command(path_cmd, remote_host=remote_host, docker_container=docker_container)
+                     path_cmd_output, path_cmd_error, path_cmd_returncode = run_command(path_cmd, **common_run_kwargs)
                      aggregated_output.append(f"--- Command pour obtenir le chemin: {path_cmd} ---\nStdout:\n{path_cmd_output}\nStderr:\n{path_cmd_error}\nReturn Code: {path_cmd_returncode}\n---")
                      aggregated_error.append(path_cmd_error)
 
@@ -737,7 +757,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                              break # Cannot proceed with this sub-check
 
 
-                        stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host, docker_container=docker_container)
+                        stdout, stderr, returncode = run_command(cmd_to_run, **common_run_kwargs)
                         aggregated_output.append(f"--- Command {i+1}: {cmd_to_run} ---\nStdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}\n---")
                         aggregated_error.append(stderr)
 
@@ -801,7 +821,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                               all_sub_checks_passed = False
                               break # Cannot proceed with this sub-check
 
-                         stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host, docker_container=docker_container)
+                         stdout, stderr, returncode = run_command(cmd_to_run, **common_run_kwargs)
                          aggregated_output.append(f"--- Command {i+1}: {cmd_to_run} ---\nStdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}\n---")
                          aggregated_error.append(stderr)
 
@@ -851,7 +871,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
             elif all_sub_checks_passed: # Run single test procedure if no sub_checks or sub_checks setup passed
                 cmd = check_result.get("test_procedure", rec.get("test_procedure", "")) # Use the formatted procedure if available
                 command_executed_display = cmd
-                stdout, stderr, returncode = run_command(cmd, remote_host=remote_host, docker_container=docker_container)
+                stdout, stderr, returncode = run_command(cmd, **common_run_kwargs)
                 check_result["output"] = f"Stdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}"
                 check_result["error"] = stderr
                 check_result["test_procedure"] = command_executed_display # Store the command that was run
@@ -1298,7 +1318,10 @@ if __name__ == "__main__":
         db_port=args.db_port,
         db_name=args.db_name,
         defaults_file=args.defaults_file,
-        auth_db=args.auth_db
+        auth_db=args.auth_db,
+        ssh_port=args.ssh_port,
+        ssh_key=args.ssh_key,
+        sudo=args.sudo
     )
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
     export_results(check_results, overall_score, categories_scores, target_name="postgresql_18", filename=args.output, fmt=args.format, lang=args.lang)
