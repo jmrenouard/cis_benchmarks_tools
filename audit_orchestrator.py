@@ -256,10 +256,10 @@ class AuditOrchestrator:
         resolved_transport, c_info, transport_telemetry = DockerTransportResolver.resolve_transport(
             mode=self.mode,
             remote_host=self.remote_host,
-            docker_container=self.docker_container or target_meta.get("default_container"),
+            docker_container=self.docker_container,
             product_hint=canonical_key
         )
-        active_container = c_info.name if c_info else (self.docker_container or target_meta.get("default_container"))
+        active_container = c_info.name if (c_info and c_info.is_running) else self.docker_container
 
         start_time = time.time()
         t_tracker = TemporalAuditMetadata.create_now()
