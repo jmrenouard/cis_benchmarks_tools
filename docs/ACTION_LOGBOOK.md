@@ -15,6 +15,19 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-077 — fix(ci): exclude archive from Bandit SAST scan, anchor path checks, and harden inventory tests (Issue `#612`)
+- **Date**: `2026-10-30T23:45+01:00` | **Status**: `COMPLETED` | **Issue**: `#612`
+- **Request**: Remediate Reviewer M4-2 findings: exclude `./archive` from Bandit SAST scan in `.github/workflows/security.yml`, replace loose substring matching with path-anchored check in `scripts/pre_commit_checks.py`, harden `tests/test_script_inventory_and_governance.py` with subdirectory whitelist validation and Bandit exclusion assertion, and document `RCA-022`.
+- **Changes**:
+  - Updated `.github/workflows/security.yml` line 38 to `-x ./tests,./scripts,./archive`.
+  - Updated `scripts/pre_commit_checks.py` line 56 with normalized `should_skip_syntax_validation()`.
+  - Updated `tests/test_script_inventory_and_governance.py` with subdirectory validation, Bandit exclusion test, path anchoring test, and syntax exclusion logic unit tests.
+  - Updated `docs/RCA_REGISTER.md` with entry `RCA-022`.
+  - Updated `docs/ACTION_LOGBOOK.md` with entry `ACT-077`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 276/276 unit tests pass (100%), PR diff < 15,000 characters.
+
+---
+
 ### ACT-076 — feat(scripts): decommission remaining obsolete scripts, add inventory test, document IMP-005 (Finding 12 Part 2/2, Issue `#610`)
 - **Date**: `2026-10-30T23:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#610`
 - **Request**: Remediate Finding 12 (Part 2/2): relocate remaining 33 obsolete scripts to `archive/scripts/` via git mv, add inventory test `tests/test_script_inventory_and_governance.py`, and document `IMP-005`.

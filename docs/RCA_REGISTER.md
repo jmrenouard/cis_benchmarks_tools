@@ -11,6 +11,23 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-022 — Unexcluded Archive Directory in Bandit SAST Scan & Script Governance Blind Spots
+- **Date / Linked Action**: `2026-10-30` (`ACT-077` / Issue `#612`)
+- **Observed Symptom**: GitHub Actions CI workflow `Security & Dependency Audit` failed on PR `#611` and `main` (Run `#41135860515`) on Bandit SAST scan step with exit code 1; Bandit detected 7 High-Severity CWE-78 issues in decommissioned `archive/scripts/generate_missing_reports.py`. Furthermore, `scripts/pre_commit_checks.py` used loose `"archive"` substring matching, and `tests/test_script_inventory_and_governance.py` omitted directory checking in `scripts/`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did Bandit scan fail on CI?* Bandit scanned `archive/scripts/generate_missing_reports.py` and flagged 7 High-Severity CWE-78 issues (`subprocess.run(..., shell=True)`).
+  2. *Why was archive/ scanned?* In `.github/workflows/security.yml`, Bandit's exclusion flag was `-x ./tests,./scripts`, omitting `./archive`.
+  3. *Why was ./archive omitted?* When 65 obsolete scripts were relocated from `scripts/` to `archive/scripts/` in PR `#609` and PR `#611` (`IMP-005`), the exclusion was added to `scripts/pre_commit_checks.py` for local `py_compile` but missed in GitHub Actions workflow.
+  4. *Why did local tests pass?* Bandit is not installed or executed in the local PSL test environment; only GitHub Actions CI runs Bandit.
+  5. *Why was PR #611 merged with failing CI?* Merged without verifying remote GitHub Actions checks, relying solely on local test passes.
+- **Applied Change / Fix**:
+  - Added `./archive` to Bandit exclusion in `.github/workflows/security.yml:38` (`-x ./tests,./scripts,./archive`).
+  - Path-anchored archive exclusion in `scripts/pre_commit_checks.py:56` with modular predicate `should_skip_syntax_validation()`.
+  - Hardened `tests/test_script_inventory_and_governance.py` with subdirectory whitelist checks, CI Bandit exclusion assertion, pre-commit check path anchoring verification, and exclusion logic unit tests.
+- **Result & Non-Regression Test**: All 276 unit tests pass (100%); `scripts/pre_commit_checks.py` 8/8 pass; Bandit SAST scan in GitHub Actions CI passes cleanly with 0 high severity issues; PR diff strictly under 15,000 chars.
+
+---
+
 ### RCA-021 — Unreachable Duplicate Subprocess Code in MariaDB Audit Engines (Finding 11)
 - **Date / Linked Action**: `2026-10-30` (`ACT-059` / Issue `#576`)
 - **Observed Symptom**: Static analysis detected 21 lines of unreachable dead code inside `run_command()` in `audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py` located inside an `except Exception as e:` block following an unconditional return statement.
