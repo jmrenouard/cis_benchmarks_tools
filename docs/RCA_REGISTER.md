@@ -11,6 +11,18 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-011 — RHEL 8, 9, 10 HTML Report Exporter Crash & Unpopulated Category Scores (Finding 1)
+- **Date / Linked Action**: `2026-10-30` (`ACT-019` / Issue `#479`)
+- **Observed Symptom**: When running `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, or `audit_cis_rhel_10.py` with `--format html`, execution crashed with `TypeError: build_inline_svg_category_chart() takes 1 positional argument but 5 were given`, and the HTML category breakdown section displayed empty/NaN score metrics.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did HTML export crash?* RHEL audit scripts called `build_inline_svg_category_chart(cat_scores, total, passed, failed, manual)` instead of passing a dictionary `categories_scores`.
+  2. *Why was the signature mismatched?* The inline SVG chart generator had been refactored in database scripts to take a single structured dictionary, but RHEL scripts retained legacy multi-argument invocation signatures.
+  3. *Why were category scores unpopulated?* RHEL's `calculate_scores()` returned an empty dictionary `{}`, leaving category statistics uncalculated.
+- **Applied Change / Fix**: Standardized `calculate_scores()` across `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, and `audit_cis_rhel_10.py` to populate category metrics dictionary; updated `generate_html_report()` to pass `categories_scores` dict to `build_inline_svg_category_chart()`; added unit tests in `tests/test_rhel_html_export_quality.py`.
+- **Result & Non-Regression Test**: Unit test `tests/test_rhel_html_export_quality.py` passes 100%; HTML reports generate valid inline SVGs with category breakdowns.
+
+---
+
 ### RCA-014 — Orchestrator `ModuleNotFoundError` on RHEL Targets Caused by Missing Underscores (Finding 4)
 - **Date / Linked Action**: `2026-10-30` (`ACT-018` / Issue `#477`)
 - **Observed Symptom**: Running `audit_orchestrator.py` against `rhel8`, `rhel9`, or `rhel10` failed immediately with `ModuleNotFoundError: No module named 'audit_cis_rhel8'`.
