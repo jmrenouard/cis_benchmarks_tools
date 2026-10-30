@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-069 — feat(engines): dynamic rule category scoring in Cassandra 4.1 engine (Finding 10 Part 10, Issue `#596`)
+- **Date**: `2026-10-30T21:49+01:00` | **Status**: `COMPLETED` | **Issue**: `#596`
+- **Request**: Remediate Ponytail Audit Finding 10 (Part 10): refactor `calculate_scores(results)` to dynamically discover categories from `results` in Cassandra 4.1 audit engine (`audit_cis_cassandra_41.py`).
+- **Changes**: Updated `calculate_scores()` in Cassandra 4.1 engine (`audit_cis_cassandra_41.py`) to discover categories dynamically from `results` dictionary or list without relying on static `RECOMMENDATIONS_DATA`; expanded unit test suite `tests/test_category_scoring.py` with Cassandra 4.1.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 259/259 unit tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-068 — feat(engines): dynamic rule category scoring in Cassandra 4.0 engine (Finding 10 Part 9, Issue `#594`)
 - **Date**: `2026-10-30T21:46+01:00` | **Status**: `COMPLETED` | **Issue**: `#594`
 - **Request**: Remediate Ponytail Audit Finding 10 (Part 9): refactor `calculate_scores(results)` to dynamically discover categories from `results` in Cassandra 4.0 audit engine (`audit_cis_cassandra_40.py`).
