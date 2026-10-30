@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-074 — feat(transport): harden SSH timeouts and document ControlMaster trade-offs (Finding 14, Issue `#606`)
+- **Date**: `2026-10-30T23:05+01:00` | **Status**: `COMPLETED` | **Issue**: `#606`
+- **Request**: Remediate Ponytail Audit Finding 14: harden SSH connection options in `execution_drivers.py` (`SSHExecutor`, `RemoteSSHContainerExecutor`) with `ConnectTimeout=10`, `ServerAliveInterval=15`, `ServerAliveCountMax=3`, `TCPKeepAlive=yes`, and document the deliberate rejection of `ControlMaster` socket multiplexing in `docs/RCA_REGISTER.md` (`IMP-006`).
+- **Changes**: Updated `_build_ssh_prefix()` in `SSHExecutor` and `RemoteSSHContainerExecutor` within `execution_drivers.py`; updated `SSHExecutor.execute()` default timeout to 15s; added unit test methods in `tests/test_execution_drivers.py` asserting presence of hardened flags and absence of `ControlMaster`; added entry `IMP-006` to `docs/RCA_REGISTER.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, unit tests pass 269/269 with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-073 — fix(mysql-enterprise): safe key access and hardening in MySQL Enterprise engines (Part 2B, Issue `#604`)
 - **Date**: `2026-10-30T22:28+01:00` | **Status**: `COMPLETED` | **Issue**: `#604`
 - **Request**: Remediate Challenger M3-1 empirical finding in MySQL Enterprise 8.4 and Enterprise 9.7 audit engines: replace raw dictionary subscripts (`check["type"]`, `check["status"]`) in `calculate_scores()` with safe getters, guard non-dict items, add fallback support for untyped checks, and support case-insensitive status matching.

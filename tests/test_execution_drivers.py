@@ -305,6 +305,53 @@ class TestExecutors(unittest.TestCase):
         self.assertIn("echo $HOST_VAR", ssh_payload)
 
     @patch("subprocess.run")
+    def test_ssh_executor_hardened_connection_options(self, mock_run):
+        """Finding 14 / IMP-006: verify SSHExecutor constructs hardened timeout and keepalive flags."""
+        mock_proc = MagicMock(stdout="ok\n", stderr="", returncode=0)
+        mock_run.return_value = mock_proc
+
+        executor = SSHExecutor(remote_host="user@example.com")
+        res = executor.execute("uptime")
+
+        self.assertTrue(res.is_success)
+        called_args = mock_run.call_args[0][0]
+        self.assertIn("-o", called_args)
+        self.assertIn("ConnectTimeout=10", called_args)
+        self.assertIn("BatchMode=yes", called_args)
+        self.assertIn("ServerAliveInterval=15", called_args)
+        self.assertIn("ServerAliveCountMax=3", called_args)
+        self.assertIn("StrictHostKeyChecking=no", called_args)
+        self.assertIn("UserKnownHostsFile=/dev/null", called_args)
+        self.assertIn("TCPKeepAlive=yes", called_args)
+        self.assertEqual(mock_run.call_args[1].get("timeout"), 15)
+        called_cmd_str = " ".join(called_args)
+        self.assertNotIn("ControlMaster", called_cmd_str)
+        self.assertNotIn("ControlPath", called_cmd_str)
+
+    @patch("subprocess.run")
+    def test_remote_ssh_container_executor_hardened_connection_options(self, mock_run):
+        """Finding 14 / IMP-006: verify RemoteSSHContainerExecutor constructs hardened options."""
+        mock_proc = MagicMock(stdout="ok\n", stderr="", returncode=0)
+        mock_run.return_value = mock_proc
+
+        executor = RemoteSSHContainerExecutor(remote_host="user@example.com", container_name="db")
+        res = executor.execute("echo 1")
+
+        self.assertTrue(res.is_success)
+        called_args = mock_run.call_args[0][0]
+        self.assertIn("ConnectTimeout=10", called_args)
+        self.assertIn("BatchMode=yes", called_args)
+        self.assertIn("ServerAliveInterval=15", called_args)
+        self.assertIn("ServerAliveCountMax=3", called_args)
+        self.assertIn("StrictHostKeyChecking=no", called_args)
+        self.assertIn("UserKnownHostsFile=/dev/null", called_args)
+        self.assertIn("TCPKeepAlive=yes", called_args)
+        self.assertEqual(mock_run.call_args[1].get("timeout"), 15)
+        called_cmd_str = " ".join(called_args)
+        self.assertNotIn("ControlMaster", called_cmd_str)
+        self.assertNotIn("ControlPath", called_cmd_str)
+
+    @patch("subprocess.run")
     def test_base_executor_read_file_and_exists(self, mock_run):
         mock_proc = MagicMock()
         mock_proc.stdout = "config_data_123\n"

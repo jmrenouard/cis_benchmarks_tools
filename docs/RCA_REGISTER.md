@@ -247,6 +247,23 @@
 - **Why It Is a Dead-End**: Automated review gates (Sourcery AI) and human reviewers reject oversized PRs (`> 15,000` diff chars).
 - **Adopted Decision**: Enforce `< 15,000` diff characters per PR (`git diff main...HEAD | wc -c`) via atomic PR splitting.
 
+### IMP-006 — OpenSSH `ControlMaster` Connection Multiplexing for Remote Audits (Finding 14)
+- **Observed Finding / Proposed Optimization**: Finding 14 of the Ponytail Audit highlighted the connection overhead of establishing separate SSH connections for each of the 70+ (or up to 180+) individual CIS control checks per audit target, proposing OpenSSH connection multiplexing (`ControlMaster auto`, `ControlPath /tmp/ssh_mux_%h_%p_%r`, `ControlPersist 10m`) to reuse a single persistent TCP connection.
+- **Why It Is a Dead-End**:
+  1. *Cross-Platform Windows Host Incompatibility*: The test harness and orchestrator run interchangeably on Linux and Windows. On Windows hosts, OpenSSH (`ssh.exe`) lacks stable Unix Domain Socket (`AF_UNIX`) emulation for `ControlPath`, named pipes cannot be bound as control sockets transparently, and user path lengths (`%TEMP%`, `AppData`) frequently exceed the 108-character POSIX `sockaddr_un.sun_path` buffer limit, causing immediate crashes (`unix_listener: path ... too long for Unix domain socket`). Furthermore, Windows NTFS permissions cannot satisfy OpenSSH's strict 0600 file ownership verification.
+  2. *Orphaned Control Sockets and Unrecoverable Hangs*: If a remote target host, container, or network link bounces or freezes mid-audit, the local control socket file remains orphaned on disk. Subsequent child `ssh` commands connect to the stale socket and hang indefinitely waiting for an unresponsive master process, or crash with `mux_client_hello_exchange: write packet: Broken pipe`. Recovering requires external process reaping and socket unlinking (`ssh -O stop` / `rm -f`), which is brittle and prone to deadlock in automated headless CI/CD runs.
+  3. *Concurrency & Head-of-Line Blocking*: When `audit_orchestrator.py` executes concurrent checks across multiple worker threads (`parallel_workers > 1`), multiplexing all concurrent streams over a single TCP connection and single-threaded SSH crypto process causes Head-of-Line (HOL) blocking whenever a heavy command (such as a recursive filesystem scan or database dump) executes. Additionally, simultaneous initial connections trigger socket binding race conditions (`bind(): Address already in use`).
+  4. *PSL-Only Architectural Mandate*: Rule 1 and `IMP-001` strictly forbid external SSH libraries with native in-process multiplexing (such as `paramiko` or `asyncssh`). Implementing OpenSSH master daemon lifecycle management, signal trapping, cross-platform socket cleanup, and zombie process reaping in pure Python Standard Library introduces hundreds of lines of fragile scaffolding that violates the repository's KISS and YAGNI architectural standards.
+- **Adopted Decision & Hardened Alternative**:
+  1. **Deliberate Rejection of `ControlMaster`**: Maintain completely stateless, independent, decoupled SSH invocations per command to guarantee total cross-platform isolation and zero-hang guarantees.
+  2. **Connection Resiliency Hardening**: Standardize connection parameters across `SSHExecutor` and `RemoteSSHContainerExecutor` in `execution_drivers.py` with:
+     - `ConnectTimeout=10`: Allows reliable connection establishment on high-latency WAN/VPN/cloud links while failing fast (10s) when hosts are down.
+     - `BatchMode=yes`: Strictly suppresses password/passphrase/hostkey prompts on `stdin`, preventing hanging interactive prompts.
+     - `ServerAliveInterval=15` and `ServerAliveCountMax=3`: Sends encrypted keepalive packets every 15s, keeping stateful NAT/firewalls open during long checks and terminating dead sessions within 45s instead of standard 2-hour OS TCP timeouts.
+     - `StrictHostKeyChecking=no` and `UserKnownHostsFile=/dev/null`: Eliminates host key collision errors across ephemeral containers and avoids polluting `~/.ssh/known_hosts`.
+     - `TCPKeepAlive=yes`: Ensures OS-level TCP socket heartbeat.
+  3. **Non-Regression Verification**: Assert in `tests/test_execution_drivers.py` that hardened timeout and keepalive flags are systematically constructed in SSH command arguments and that no `ControlMaster` options are present.
+
 ---
 
 ## 3. Current Approximations & Simplifying Assumptions (`APP`)
