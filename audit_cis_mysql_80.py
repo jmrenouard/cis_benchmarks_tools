@@ -1019,26 +1019,48 @@ def calculate_scores(results):
                 "error_count": 0,
                 "na_count": 0
             }
+        if not isinstance(checks, (list, tuple)):
+            continue
+
         for check in checks:
+            if not isinstance(check, dict):
+                continue
             cat_stats = categories_scores[category]
-            if check["type"] == "Automated":
-                if check["status"] == "Pass":
+            check_type = check.get("type")
+            status_raw = check.get("status", "")
+            status_upper = str(status_raw).strip().upper() if status_raw is not None else ""
+
+            is_manual = check_type == "Manual" or status_upper == "MANUAL"
+            is_automated = (
+                check_type == "Automated"
+                or (
+                    check_type is None
+                    and not is_manual
+                    and (
+                        check.get("scored") is True
+                        or status_upper in ("PASS", "FAIL", "ERROR", "NOT APPLICABLE", "N/A", "NA")
+                    )
+                )
+            )
+
+            if is_automated:
+                if status_upper == "PASS":
                     overall["passed_automated"] += 1
                     cat_stats["passed_automated"] += 1
                     cat_stats["pass_count"] += 1
-                elif check["status"] == "Fail":
+                elif status_upper == "FAIL":
                     overall["failed_automated"] += 1
                     cat_stats["failed_automated"] += 1
                     cat_stats["fail_count"] += 1
-                elif check["status"] == "Error":
+                elif status_upper == "ERROR":
                     overall["error"] += 1
                     cat_stats["error_checks"] += 1
                     cat_stats["error_count"] += 1
-                elif check["status"] == "Not Applicable":
+                elif status_upper in ("NOT APPLICABLE", "N/A", "NA"):
                     overall["na"] += 1
                     cat_stats["na_checks"] += 1
                     cat_stats["na_count"] += 1
-            elif check["type"] == "Manual":
+            elif is_manual:
                 overall["manual"] += 1
                 cat_stats["manual_checks"] += 1
 

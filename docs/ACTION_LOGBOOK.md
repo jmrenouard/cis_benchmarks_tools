@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-072 — fix(mysql): safe key access and hardening in MySQL Community engines (Part 2A, Issue `#602`)
+- **Date**: `2026-10-30T22:25+01:00` | **Status**: `COMPLETED` | **Issue**: `#602`
+- **Request**: Remediate Challenger M3-1 finding in MySQL 8.0, Community 8.4/9.7 engines: replace raw subscripts with safe getters in `calculate_scores()`, guard non-dict items, add untyped check fallback, and support case-insensitive status.
+- **Changes**: Updated `calculate_scores()` in `audit_cis_mysql_80.py`, `audit_cis_mysql_community_84.py`, `audit_cis_mysql_community_97.py` with defensive key resolution (`check.get()`), non-dict guard, untyped fallback, case-insensitivity; added 4 unit tests in `TestDynamicCategoryScoringMySQL`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 263/263 tests pass, PR diff < 15,000 chars.
+
+---
+
 ### ACT-071 — fix(mariadb): safe key access and hardening in calculate_scores (Issue `#600`)
 - **Date**: `2026-10-30T22:20+01:00` | **Status**: `COMPLETED` | **Issue**: `#600`
 - **Request**: Remediate Challenger M3-1 empirical finding in MariaDB 10.6 and 10.11 engines: replace raw dictionary subscripts (`check["type"]`, `check["status"]`) in `calculate_scores()` with safe getters, guard non-dict items, add fallback support for untyped checks (`check.get("scored") is True` or status-based detection), and support case-insensitive status matching.
