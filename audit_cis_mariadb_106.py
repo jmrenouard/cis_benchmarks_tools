@@ -658,27 +658,6 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
     except Exception as e:
         return "", str(e), -1
 
-        if remote_host:
-            cmd_args = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", "-i", "/root/.ssh/id_rsa", remote_host] + cmd_args
-
-        process = subprocess.run(cmd_args, check=False, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=10, env=env)
-        stdout_text = process.stdout.strip()
-        stderr_text = process.stderr.strip()
-
-        if stderr_text:
-            filtered_lines = [
-                line for line in stderr_text.splitlines()
-                if not line.startswith("Warning: Permanently added")
-                and "pseudo-terminal" not in line
-            ]
-            stderr_text = chr(10).join(filtered_lines).strip()
-
-        return stdout_text, stderr_text, process.returncode
-    except subprocess.TimeoutExpired:
-        return "", "Command execution timed out after 10 seconds", -1
-    except Exception as e:
-        return "", str(e), -1
-
 
 
 def evaluate_condition(condition, stdout, stderr, returncode):

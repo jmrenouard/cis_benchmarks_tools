@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-059 — fix(engines): remove unreachable duplicate code in run_command (Finding 11, Issue `#576`)
+- **Date**: `2026-10-30T21:05+01:00` | **Status**: `COMPLETED` | **Issue**: `#576`
+- **Request**: Remediate Ponytail Audit Finding 11: cleanly remove unreachable duplicate subprocess execution and exception handling in `run_command()` across MariaDB audit engines (`audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py`).
+- **Changes**: Removed unreachable dead duplicate blocks in `audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py`; verified all 18 engines with AST check; added `test_no_unreachable_code_in_audit_engines` in `tests/test_benchmark_sync_and_report_quality.py`; logged `RCA-021` in `docs/RCA_REGISTER.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 239/239 unit tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-058 — Automated Non-Regression Test Suite for SSH JSON & XML Reports Quality (Finding 8 Part B, Issue `#574`)
 - **Date**: `2026-10-30T20:42+01:00` | **Status**: `COMPLETED` | **Issue**: `#574`
 - **Request**: Complete Ponytail Audit Finding 8 (Part B): add automated regression unit tests in `tests/test_benchmark_sync_and_report_quality.py` guaranteeing all 10 SSH JSON reports and 2 SSH XML reports remain 100% syntactically valid and pass quality checks.
