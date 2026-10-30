@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-075 — feat(scripts): decommission obsolete migration scripts (Finding 12 Part 1/2, Issue `#608`)
+- **Date**: `2026-10-30T23:20+01:00` | **Status**: `COMPLETED` | **Issue**: `#608`
+- **Request**: Remediate Ponytail Audit Finding 12 (Part 1/2): decommission first batch of 32 obsolete one-off migration and hotfix scripts from `scripts/` to `archive/scripts/` via git mv to comply strictly with the `< 15,000` PR diff character ceiling, and update `scripts/pre_commit_checks.py` to skip `archive/` during syntax validation.
+- **Changes**: Relocated 32 obsolete scripts from `scripts/` to `archive/scripts/` via git mv; updated `scripts/pre_commit_checks.py` line 56 to skip `archive/`, `.agents/`, and `.ruff_cache/` directories during `py_compile`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, unit tests pass 269/269 with 100% success, PR diff < 15,000 chars (~8,500 chars).
+
+---
+
 ### ACT-074 — feat(transport): harden SSH timeouts and document ControlMaster trade-offs (Finding 14, Issue `#606`)
 - **Date**: `2026-10-30T23:05+01:00` | **Status**: `COMPLETED` | **Issue**: `#606`
 - **Request**: Remediate Ponytail Audit Finding 14: harden SSH connection options in `execution_drivers.py` (`SSHExecutor`, `RemoteSSHContainerExecutor`) with `ConnectTimeout=10`, `ServerAliveInterval=15`, `ServerAliveCountMax=3`, `TCPKeepAlive=yes`, and document the deliberate rejection of `ControlMaster` socket multiplexing in `docs/RCA_REGISTER.md` (`IMP-006`).
