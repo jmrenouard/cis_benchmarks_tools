@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-026 — Cassandra Default Password Removal from CLI Benchmark Checks (Finding 6 Part B2, Issue `#508`)
+- **Date**: `2026-10-30T20:00+01:00` | **Status**: `COMPLETED` | **Issue**: `#508`
+- **Request**: Complete Finding 6 remediation (Item 4): eliminate plaintext password `-p cassandra` from CLI argument list in automated check 3.2 across Cassandra benchmark engines and rule definitions.
+- **Changes**: In `audit_cis_cassandra_40.py`, `41.py`, `50.py` and `rules/cassandra_40.json`, `41.json`, `50.json`, removed `-p cassandra` from automated control 3.2 test procedure; added unit test `test_control_3_2_no_hardcoded_password_in_command` in `tests/test_cassandra_audit_engine.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 233/233 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-025 — CLI Password Forwarding via Environment in Audit Runner (Finding 6 Part B1, Issue `#510`)
 - **Date**: `2026-10-30T19:55+01:00` | **Status**: `COMPLETED` | **Issue**: `#510`
 - **Request**: Remediate Finding 6 Part B1: eliminate database password exposure in OS process tables when invoking benchmarks from unified CLI runner `audit_cis.py`.

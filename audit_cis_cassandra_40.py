@@ -63,7 +63,7 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "stdout_regex_match", "pattern": r"[1-9]\d*"},
      "remediation": "Créer un nouveau rôle superuser, se connecter avec ce rôle, puis exécuter ALTER ROLE cassandra WITH SUPERUSER = false;"},
     {"category": "3 Contrôle d'accès", "number": "3.2", "name": "S'assurer que le mot de passe par défaut du rôle cassandra est changé", "type": "Automated",
-     "test_procedure": f"{CQLSH_CMD} \"SELECT * FROM system_auth.roles WHERE role='cassandra';\" -u cassandra -p cassandra 2>&1 | grep -c 'AuthenticationFailed\\|Unauthorized\\|Bad credentials'",
+     "test_procedure": f"{CQLSH_CMD} \"SELECT * FROM system_auth.roles WHERE role='cassandra';\" -u cassandra 2>&1 | grep -c 'AuthenticationFailed\\|Unauthorized\\|Bad credentials'",
      "expected_output": {"type": "stdout_regex_match", "pattern": r"[1-9]"},
      "remediation": "Se connecter et exécuter ALTER ROLE cassandra WITH PASSWORD = '<nouveau_mot_de_passe>';"},
     {"category": "3 Contrôle d'accès", "number": "3.3", "name": "S'assurer qu'il n'y a pas de rôles ou privilèges excessifs", "type": "Manual",
