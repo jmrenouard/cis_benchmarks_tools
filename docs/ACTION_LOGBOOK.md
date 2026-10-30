@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-027 — Prevent Fake Docker Container Synthesis on Bare-Metal Hosts (Finding 7, Issue `#513`)
+- **Date**: `2026-10-30T20:06+01:00` | **Status**: `COMPLETED` | **Issue**: `#513`
+- **Request**: Remediate Ponytail Audit Finding 7: prevent `audit_orchestrator.py` from synthesizing fake Docker containers on bare-metal hosts and routing audits through `docker exec`.
+- **Changes**: In `audit_orchestrator.py`, passed `self.docker_container` directly to `DockerTransportResolver.resolve_transport` rather than defaulting to `target_meta.get('default_container')`, and set `active_container = c_info.name if (c_info and c_info.is_running) else self.docker_container`; in `docker_transport.py`, removed synthetic `is_running=True` fallback, set `is_running=False` on unfound specified containers, and required `must_be_running=True` for product auto-discovery; added unit tests in `tests/test_audit_orchestrator.py` and `tests/test_docker_transport.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 234/234 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-026 — Cassandra Default Password Removal from CLI Benchmark Checks (Finding 6 Part B2, Issue `#508`)
 - **Date**: `2026-10-30T20:00+01:00` | **Status**: `COMPLETED` | **Issue**: `#508`
 - **Request**: Complete Finding 6 remediation (Item 4): eliminate plaintext password `-p cassandra` from CLI argument list in automated check 3.2 across Cassandra benchmark engines and rule definitions.

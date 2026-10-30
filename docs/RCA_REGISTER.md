@@ -11,6 +11,20 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-018 — Fake Docker Container Synthesis on Bare-Metal Hosts (Finding 7)
+- **Date / Linked Action**: `2026-10-30` (`ACT-027` / Issue `#513`)
+- **Observed Symptom**: Bare-metal local audits executed via `audit_orchestrator.py` were routed through `docker exec <default_container>` even when Docker daemon was down or no containers existed, failing audits on bare-metal systems.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did local bare-metal audits run docker exec?* `perform_checks` received a non-None `docker_container` argument (e.g. `mariadb106-prod`).
+  2. *Why did orchestrator set active_container to default_container?* `execute_single_target` passed `self.docker_container or target_meta.get('default_container')` to `resolve_transport`.
+  3. *Why did resolve_transport return TRANSPORT_CONTAINER_EXEC?* `docker_transport.py` had a fallback `or ContainerInfo(..., is_running=True)` when `inspect_container` failed.
+  4. *Why did inspect_container fail?* The container did not exist on the bare-metal host.
+  5. *Why was a synthetic is_running=True container created?* An over-optimistic fallback assumed specified containers were running without verifying with the Docker engine.
+- **Applied Change / Fix**: In `audit_orchestrator.py`, passed `self.docker_container` directly to `resolve_transport` without falling back to `default_container`, and assigned `active_container = c_info.name if (c_info and c_info.is_running) else self.docker_container`; in `docker_transport.py`, removed `is_running=True` synthetic fallback and required `must_be_running=True` for product auto-discovery; added unit tests in `tests/test_audit_orchestrator.py` and `tests/test_docker_transport.py`.
+- **Result & Non-Regression Test**: `test_baremetal_local_mode_does_not_synthesize_fake_container` verifies local bare-metal audit executes with `docker_container=None`; `test_transport_resolver_nonexistent_specified_container` verifies non-running status; 234/234 tests pass.
+
+---
+
 ### RCA-017 — Database Passwords Exposed in Process Tables via CLI Args (Finding 6 Parts A & B)
 - **Date / Linked Action**: `2026-10-30` (`ACT-024` & `ACT-025` / Issues `#508`, `#510`)
 - **Observed Symptom**: Plaintext database passwords were visible to all OS users in `ps aux` and `/proc/<pid>/cmdline`: `DockerExecutor` and `RemoteSSHContainerExecutor` passed `-e MYSQL_PWD=<pass>` and `-e PGPASSWORD=<pass>` on the CLI; `audit_cis.py` passed `--db-password <password>` when invoking child benchmark scripts; Cassandra automated check 3.2 embedded `-p cassandra` directly in shell command line.

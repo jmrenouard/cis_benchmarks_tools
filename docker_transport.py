@@ -213,9 +213,11 @@ class DockerTransportResolver:
 
         target_container: Optional[ContainerInfo] = None
         if docker_container:
-            target_container = DockerContainerDiscovery.inspect_container(docker_container, container_cli=container_cli) or ContainerInfo(container_id=docker_container, name=docker_container, image="unknown", status="specified", is_running=True)
+            target_container = DockerContainerDiscovery.inspect_container(docker_container, container_cli=container_cli)
+            if not target_container:
+                target_container = ContainerInfo(container_id=docker_container, name=docker_container, image="unknown", status="not_found", is_running=False)
         elif product_hint:
-            target_container = DockerContainerDiscovery.find_container_for_product(product_hint, container_cli=container_cli, must_be_running=False)
+            target_container = DockerContainerDiscovery.find_container_for_product(product_hint, container_cli=container_cli, must_be_running=True)
 
         if target_container:
             telemetry["transport"] = cls.TRANSPORT_CONTAINER_EXEC

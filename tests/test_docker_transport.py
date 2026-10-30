@@ -177,6 +177,18 @@ class TestDockerTransport(unittest.TestCase):
         )
         self.assertEqual(mode2, DockerTransportResolver.TRANSPORT_SSH_HOST)
 
+    @patch("docker_transport.DockerContainerDiscovery.inspect_container", return_value=None)
+    def test_transport_resolver_nonexistent_specified_container(self, mock_inspect):
+        """Test that a nonexistent specified container is not synthesized as is_running=True."""
+        mode, target_c, meta = DockerTransportResolver.resolve_transport(
+            mode="local",
+            docker_container="nonexistent-box"
+        )
+        self.assertEqual(mode, DockerTransportResolver.TRANSPORT_CONTAINER_EXEC)
+        self.assertIsNotNone(target_c)
+        self.assertEqual(target_c.name, "nonexistent-box")
+        self.assertFalse(target_c.is_running)
+
 
 if __name__ == "__main__":
     unittest.main()

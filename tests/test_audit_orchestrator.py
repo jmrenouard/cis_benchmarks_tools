@@ -144,6 +144,23 @@ class TestAuditOrchestrator(unittest.TestCase):
         self.assertIn("container_info", d)
         self.assertEqual(d["container_info"]["name"], "mariadb106-test")
 
+    @patch("audit_cis_postgresql_16.run_command", return_value=("1", "", 0))
+    @patch("docker_transport.DockerContainerDiscovery.find_container_for_product", return_value=None)
+    def test_baremetal_local_mode_does_not_synthesize_fake_container(self, mock_find, mock_cmd):
+        """Verify bare-metal local audit passes docker_container=None rather than fake default_container."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            orchestrator = AuditOrchestrator(
+                mode="local",
+                docker_container=None,
+                output_dir=tmp_dir,
+                formats=["json"]
+            )
+            res = orchestrator.execute_single_target("postgresql16")
+            self.assertTrue(res.success)
+            self.assertIsNone(res.container_info)
+            self.assertIn("docker_container", mock_cmd.call_args[1])
+            self.assertIsNone(mock_cmd.call_args[1]["docker_container"])
+
 
 if __name__ == "__main__":
     unittest.main()
