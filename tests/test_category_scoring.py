@@ -18,6 +18,7 @@ import audit_cis_postgresql_17 as postgresql_17
 import audit_cis_postgresql_18 as postgresql_18
 import audit_cis_mongodb_7 as mongodb_7
 import audit_cis_mongodb_8 as mongodb_8
+import audit_cis_cassandra_40 as cassandra_40
 
 
 class TestDynamicCategoryScoringMariaDB(unittest.TestCase):
@@ -309,6 +310,77 @@ class TestDynamicCategoryScoringMongoDB(unittest.TestCase):
     def test_empty_results_resilience(self):
         """Verify empty results dictionary or list yields safe zero score without exceptions."""
         for name, mod in self.mongo_modules:
+            with self.subTest(engine=name):
+                overall_score, cat_scores, *rest = mod.calculate_scores({})
+                self.assertEqual(overall_score, 0.0)
+                self.assertEqual(cat_scores, {})
+
+
+
+class TestDynamicCategoryScoringCassandra(unittest.TestCase):
+    """Test dynamic category discovery and scoring across Cassandra engines."""
+
+    def setUp(self):
+        self.cas_modules = [
+            ("cassandra_40", cassandra_40),
+        ]
+
+    def test_dynamic_custom_category_discovery(self):
+        """Verify custom dynamic categories not in RECOMMENDATIONS_DATA are scored properly without skipping."""
+        custom_results = {
+            "99. Custom Dynamic Rules": [
+                {"number": "99.1", "name": "Custom Pass", "type": "Automated", "status": "Pass"},
+                {"number": "99.2", "name": "Custom Fail", "type": "Automated", "status": "Fail"},
+                {"number": "99.3", "name": "Custom NA", "type": "Automated", "status": "Not Applicable"},
+                {"number": "99.4", "name": "Custom Manual", "type": "Manual", "status": "Manual"},
+            ]
+        }
+        for name, mod in self.cas_modules:
+            with self.subTest(engine=name):
+                overall_score, cat_scores, *rest = mod.calculate_scores(custom_results)
+                self.assertIn("99. Custom Dynamic Rules", cat_scores, f"{name} failed to discover dynamic category")
+                cat_data = cat_scores["99. Custom Dynamic Rules"]
+                self.assertEqual(cat_data["passed_automated"], 1)
+                self.assertEqual(cat_data["failed_automated"], 1)
+                self.assertEqual(cat_data["na_checks"], 1)
+                self.assertEqual(cat_data["manual_checks"], 1)
+                # In Cassandra formula: Pass / (Pass + Fail) * 100 = 1 / 2 * 100 = 50.0
+                self.assertEqual(cat_data["score"], 50.0)
+                self.assertEqual(overall_score, 50.0)
+
+    def test_filtered_categories_only_contain_audited_categories(self):
+        """Verify that when only a single category is audited, cat_scores only contains audited categories."""
+        subset_results = {
+            "1. Configuration": [
+                {"number": "1.1", "name": "Check 1", "type": "Automated", "status": "Pass"},
+                {"number": "1.2", "name": "Check 2", "type": "Automated", "status": "Pass"},
+            ]
+        }
+        for name, mod in self.cas_modules:
+            with self.subTest(engine=name):
+                overall_score, cat_scores, *rest = mod.calculate_scores(subset_results)
+                self.assertIn("1. Configuration", cat_scores)
+                self.assertEqual(list(cat_scores.keys()), ["1. Configuration"])
+                self.assertEqual(overall_score, 100.0)
+
+    def test_flat_list_results_support(self):
+        """Verify calculate_scores accepts flat list of check result dictionaries."""
+        flat_results = [
+            {"category": "Alpha", "number": "A.1", "type": "Automated", "status": "Pass"},
+            {"category": "Beta", "number": "B.1", "type": "Automated", "status": "Fail"},
+        ]
+        for name, mod in self.cas_modules:
+            with self.subTest(engine=name):
+                overall_score, cat_scores, *rest = mod.calculate_scores(flat_results)
+                self.assertIn("Alpha", cat_scores)
+                self.assertIn("Beta", cat_scores)
+                self.assertEqual(cat_scores["Alpha"]["passed_automated"], 1)
+                self.assertEqual(cat_scores["Beta"]["failed_automated"], 1)
+                self.assertEqual(overall_score, 50.0)
+
+    def test_empty_results_resilience(self):
+        """Verify empty results dictionary or list yields safe zero score without exceptions."""
+        for name, mod in self.cas_modules:
             with self.subTest(engine=name):
                 overall_score, cat_scores, *rest = mod.calculate_scores({})
                 self.assertEqual(overall_score, 0.0)
