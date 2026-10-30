@@ -100,6 +100,8 @@ class TestDynamicCategoryScoringMySQL(unittest.TestCase):
             ("mysql_80", mysql_80),
             ("mysql_comm_84", mysql_comm_84),
             ("mysql_comm_97", mysql_comm_97),
+            ("mysql_ent_84", mysql_ent_84),
+            ("mysql_ent_97", mysql_ent_97),
         ]
 
     def test_dynamic_custom_category_discovery(self):

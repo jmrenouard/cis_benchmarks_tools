@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-062 — feat(engines): dynamic rule category scoring in MySQL Enterprise engines (Finding 10 Part 3/4, Issue `#582`)
+- **Date**: `2026-10-30T21:24+01:00` | **Status**: `COMPLETED` | **Issue**: `#582`
+- **Request**: Remediate Ponytail Audit Finding 10 (Part 3/4): refactor `calculate_scores(results)` to dynamically discover categories from `results` across MySQL Enterprise 8.4 and 9.7 audit engines (`audit_cis_mysql_enterprise_84.py`, `audit_cis_mysql_enterprise_97.py`).
+- **Changes**: Updated `calculate_scores()` in MySQL Enterprise engines (`audit_cis_mysql_enterprise_84.py`, `audit_cis_mysql_enterprise_97.py`) to discover categories dynamically from `results` dictionary or list; expanded unit test suite `tests/test_category_scoring.py` with Enterprise MySQL engines.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 247/247 unit tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-061 — feat(engines): dynamic rule category scoring in MySQL 8.0 & Community engines (Finding 10 Part 2/4, Issue `#580`)
 - **Date**: `2026-10-30T21:20+01:00` | **Status**: `COMPLETED` | **Issue**: `#580`
 - **Request**: Remediate Ponytail Audit Finding 10 (Part 2/4): refactor `calculate_scores(results)` to dynamically discover categories from `results` across MySQL 8.0 and MySQL Community audit engines (`audit_cis_mysql_80.py`, `audit_cis_mysql_community_84.py`, `audit_cis_mysql_community_97.py`).
