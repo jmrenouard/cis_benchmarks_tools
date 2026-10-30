@@ -313,7 +313,7 @@ class LocalExecutor(BaseExecutor):
             cmd_str = str(command)
 
         if as_user and getattr(os, "getuid", lambda: 1000)() != 0:
-            cmd_str = f"sudo -n -u {shlex.quote(as_user)} /bin/bash -c {json.dumps(cmd_str)}"
+            cmd_str = f"sudo -n -u {shlex.quote(str(as_user))} /bin/bash -c {shlex.quote(cmd_str)}"
 
         masked_cmd = SecretSanitizer.sanitize(cmd_str) if mask_secrets else cmd_str
 
@@ -418,13 +418,17 @@ class DockerExecutor(BaseExecutor):
             parts.extend(["-u", str(as_user)])
         if cwd:
             parts.extend(["-w", str(cwd)])
-        parts.extend([self.container_name, "/bin/bash", "-c", json.dumps(command)])
-        cmd_string = " ".join(parts)
+        if isinstance(command, (list, tuple)):
+            cmd_arg = " ".join(shlex.quote(str(x)) for x in command)
+        else:
+            cmd_arg = str(command)
+        parts.extend([self.container_name, "/bin/bash", "-c", cmd_arg])
+        cmd_string = " ".join(shlex.quote(p) for p in parts)
         masked_cmd = SecretSanitizer.sanitize(cmd_string) if mask_secrets else cmd_string
 
         try:
             p = subprocess.run(
-                ["/bin/bash", "-c", cmd_string],
+                parts,
                 capture_output=True,
                 text=True,
                 timeout=timeout,
@@ -517,7 +521,7 @@ class SSHExecutor(BaseExecutor):
 
         prefix_str = ("export " + " ".join(env_prefixes) + "; ") if env_prefixes else ""
         if as_user:
-            target_cmd = f"{prefix_str}sudo -n -u {as_user} /bin/bash -c {shlex.quote(command)}"
+            target_cmd = f"{prefix_str}sudo -n -u {shlex.quote(str(as_user))} /bin/bash -c {shlex.quote(command)}"
         else:
             target_cmd = f"{prefix_str}{command}"
 
@@ -624,10 +628,15 @@ class RemoteSSHContainerExecutor(BaseExecutor):
                 docker_env.extend(["-e", f"{k}={v}"])
 
         env_flags = " ".join(docker_env) if docker_env else ""
-        user_flags = f"-u {as_user} " if as_user else ""
-        workdir_flags = f"-w {cwd} " if cwd else ""
+        user_flags = f"-u {shlex.quote(str(as_user))} " if as_user else ""
+        workdir_flags = f"-w {shlex.quote(str(cwd))} " if cwd else ""
 
-        remote_docker_cmd = f"{self.container_cli} exec -i {env_flags} {user_flags}{workdir_flags}{self.container_name} /bin/bash -c {json.dumps(command)}".replace("  ", " ").strip()
+        if isinstance(command, (list, tuple)):
+            cmd_arg = " ".join(shlex.quote(str(x)) for x in command)
+        else:
+            cmd_arg = str(command)
+
+        remote_docker_cmd = f"{shlex.quote(self.container_cli)} exec -i {env_flags} {user_flags}{workdir_flags}{shlex.quote(self.container_name)} /bin/bash -c {shlex.quote(cmd_arg)}".replace("  ", " ").strip()
         ssh_args = self._build_ssh_prefix() + ["/bin/bash", "-c", shlex.quote(remote_docker_cmd)]
         masked_cmd = SecretSanitizer.sanitize(f"ssh {self.remote_host} '{remote_docker_cmd}'") if mask_secrets else f"ssh {self.remote_host} '{remote_docker_cmd}'"
 

@@ -42,10 +42,10 @@ class TestInContainerIsolation(unittest.TestCase):
         res = executor.execute("whoami && pwd")
 
         self.assertTrue(res.is_success)
-        # Verify subprocess was called with docker exec, not baremetal
+        # Verify subprocess was called with direct docker exec, not baremetal or host shell
         called_args = mock_run.call_args[0][0]
-        self.assertIn("docker exec -i", called_args[2])
-        self.assertIn("mariadb106-test", called_args[2])
+        self.assertEqual(called_args[:3], ["docker", "exec", "-i"])
+        self.assertIn("mariadb106-test", called_args)
 
     @patch("subprocess.run")
     def test_non_root_user_execution(self, mock_run):
@@ -60,7 +60,8 @@ class TestInContainerIsolation(unittest.TestCase):
 
         self.assertTrue(res.is_success)
         called_args = mock_run.call_args[0][0]
-        self.assertIn("-u 999:999", called_args[2])
+        self.assertIn("-u", called_args)
+        self.assertIn("999:999", called_args)
 
     @patch("subprocess.run")
     def test_working_directory_isolation(self, mock_run):
@@ -75,7 +76,8 @@ class TestInContainerIsolation(unittest.TestCase):
 
         self.assertTrue(res.is_success)
         called_args = mock_run.call_args[0][0]
-        self.assertIn("-w /etc/mysql", called_args[2])
+        self.assertIn("-w", called_args)
+        self.assertIn("/etc/mysql", called_args)
 
     @patch("subprocess.run")
     def test_stopped_container_error_classification(self, mock_run):

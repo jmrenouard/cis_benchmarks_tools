@@ -11,6 +11,18 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-016 — Shell Injection and Host Variable Expansion in Execution Drivers (Finding 5)
+- **Date / Linked Action**: `2026-10-30` (`ACT-023` / Issue `#506`)
+- **Observed Symptom**: DockerExecutor invoked host `/bin/bash -c` wrapping `docker exec` with `json.dumps(command)`, causing host shell variable expansion (`$VAR`, `$(...)`, backticks) and shell injection, and failing on Windows hosts lacking `/bin/bash`; RemoteSSHContainerExecutor evaluated commands inside double quotes on remote host before container entry; SSHExecutor and LocalExecutor did not quote `as_user` or `cmd_str` with `shlex.quote`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did host variable expansion occur?* `DockerExecutor` passed command arguments to host `/bin/bash -c` which evaluated them before starting the container.
+  2. *Why was host `/bin/bash` invoked?* The executor stringified the docker exec command line instead of invoking `subprocess.run(parts, ...)` directly.
+  3. *Why did remote SSH container execution leak variables?* Container command was double-quoted in `remote_docker_cmd` without single-quote protection.
+- **Applied Change / Fix**: In `execution_drivers.py`, updated `DockerExecutor.execute` to pass `parts` argument list directly to `subprocess.run(parts, ...)`, bypassing host shell completely; updated `RemoteSSHContainerExecutor` to use `shlex.quote` for container CLI, container name, flags, and command; quoted `as_user` in `SSHExecutor`; replaced `json.dumps` with `shlex.quote` in `LocalExecutor`; added dedicated security unit tests in `tests/test_execution_drivers.py`.
+- **Result & Non-Regression Test**: `tests/test_execution_drivers.py` verifies host shell bypass, absence of `/bin/bash` on host CLI, and safe quoting across all drivers; 231/231 tests pass with 100% success.
+
+---
+
 ### RCA-015 — MariaDB Sudo Drop and Orchestrator Export Mismatch
 - **Date / Linked Action**: `2026-10-30` (`ACT-022` / Issue `#504`)
 - **Observed Symptom**: MariaDB 10.6/10.11 dropped `sudo=True` commands without `sudo -n`; `audit_orchestrator.py` raised `TypeError` on 15 targets lacking `execution_context` in `export_results`; orchestrator CLI rejected DB args.

@@ -158,9 +158,10 @@ class TestExecutors(unittest.TestCase):
         self.assertEqual(res.stdout, "ACTIVE")
         self.assertEqual(res.driver_type, "LOCAL_DOCKER")
         self.assertTrue(mock_run.called)
-        called_cmd = mock_run.call_args[0][0][2]
-        self.assertIn("docker exec -i", called_cmd)
-        self.assertIn("mariadb106-test", called_cmd)
+        called_args = mock_run.call_args[0][0]
+        self.assertEqual(called_args[:3], ["docker", "exec", "-i"])
+        self.assertIn("mariadb106-test", called_args)
+        self.assertIn("systemctl is-active mariadb", called_args)
 
     @patch("subprocess.run")
     def test_local_executor_escalation(self, mock_run):
@@ -230,6 +231,59 @@ class TestExecutors(unittest.TestCase):
         self.assertTrue(res.is_success)
         self.assertEqual(res.stdout, "CONTAINER_REMOTE_OK")
         self.assertEqual(res.driver_type, "REMOTE_SSH_DOCKER")
+
+    @patch("subprocess.run")
+    def test_docker_executor_bypasses_host_shell(self, mock_run):
+        """Finding 5: verify DockerExecutor does not invoke /bin/bash on host and passes parts directly."""
+        mock_proc = MagicMock(stdout="ok\n", stderr="", returncode=0)
+        mock_run.return_value = mock_proc
+
+        executor = DockerExecutor(container_name="test_cont")
+        dangerous_cmd = 'echo $USER $(id) `whoami` && cat /tmp/test'
+        res = executor.execute(dangerous_cmd)
+
+        self.assertTrue(res.is_success)
+        called_cmd = mock_run.call_args[0][0]
+        # Must be invoked directly without host bash
+        self.assertEqual(called_cmd[0], "docker")
+        self.assertEqual(called_cmd[1], "exec")
+        self.assertNotIn("/bin/bash", called_cmd[0:2])
+        # The command must be passed verbatim to in-container bash without host shell evaluation
+        self.assertIn(dangerous_cmd, called_cmd)
+
+    @patch("subprocess.run")
+    def test_ssh_executor_as_user_quoting(self, mock_run):
+        """Finding 5: verify SSHExecutor quotes as_user safely."""
+        mock_proc = MagicMock(stdout="ok\n", stderr="", returncode=0)
+        mock_run.return_value = mock_proc
+
+        executor = SSHExecutor(remote_host="user@host")
+        executor.execute("id", as_user="test user; rm -rf /")
+
+        called_cmd = mock_run.call_args[0][0]
+        # In ssh_args, target_cmd is quoted for remote /bin/bash -c
+        ssh_payload = called_cmd[-1]
+        self.assertIn("sudo -n -u", ssh_payload)
+        self.assertIn("test user; rm -rf /", ssh_payload)
+        # Verify semicolon does not terminate command
+        self.assertNotIn("; rm -rf / /bin/bash", ssh_payload)
+
+    @patch("subprocess.run")
+    def test_remote_ssh_container_executor_quoting(self, mock_run):
+        """Finding 5: verify RemoteSSHContainerExecutor quotes command and flags safely."""
+        mock_proc = MagicMock(stdout="ok\n", stderr="", returncode=0)
+        mock_run.return_value = mock_proc
+
+        executor = RemoteSSHContainerExecutor(remote_host="user@host", container_name="my_cont")
+        executor.execute("echo $HOST_VAR", as_user="app user", cwd="/var/my dir")
+
+        called_cmd = mock_run.call_args[0][0]
+        ssh_payload = called_cmd[-1]
+        self.assertIn("-u", ssh_payload)
+        self.assertIn("app user", ssh_payload)
+        self.assertIn("-w", ssh_payload)
+        self.assertIn("/var/my dir", ssh_payload)
+        self.assertIn("echo $HOST_VAR", ssh_payload)
 
     @patch("subprocess.run")
     def test_base_executor_read_file_and_exists(self, mock_run):
