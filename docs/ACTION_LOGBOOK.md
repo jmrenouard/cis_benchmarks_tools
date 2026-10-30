@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-073 — fix(mysql-enterprise): safe key access and hardening in MySQL Enterprise engines (Part 2B, Issue `#604`)
+- **Date**: `2026-10-30T22:28+01:00` | **Status**: `COMPLETED` | **Issue**: `#604`
+- **Request**: Remediate Challenger M3-1 empirical finding in MySQL Enterprise 8.4 and Enterprise 9.7 audit engines: replace raw dictionary subscripts (`check["type"]`, `check["status"]`) in `calculate_scores()` with safe getters, guard non-dict items, add fallback support for untyped checks, and support case-insensitive status matching.
+- **Changes**: Updated `calculate_scores()` in `audit_cis_mysql_enterprise_84.py` and `audit_cis_mysql_enterprise_97.py` with defensive key access (`check.get()`), non-dict item guard, untyped fallback scoring, and case-insensitive status evaluation; updated `tests/test_category_scoring.py` to assert all MySQL test cases across Enterprise engines.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 267/267 unit tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-072 — fix(mysql): safe key access and hardening in MySQL Community engines (Part 2A, Issue `#602`)
 - **Date**: `2026-10-30T22:25+01:00` | **Status**: `COMPLETED` | **Issue**: `#602`
 - **Request**: Remediate Challenger M3-1 finding in MySQL 8.0, Community 8.4/9.7 engines: replace raw subscripts with safe getters in `calculate_scores()`, guard non-dict items, add untyped check fallback, and support case-insensitive status.
