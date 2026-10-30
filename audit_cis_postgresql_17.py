@@ -922,66 +922,72 @@ def calculate_scores(results):
     """Calcule les scores globaux et par catégorie."""
     overall = {"total_automated": 0, "passed_automated": 0, "failed_automated": 0, "manual": 0, "error": 0, "na": 0}
     categories_scores = {}
-    # Initialize category counts
-    for category in list(dict.fromkeys(rec["category"] for rec in RECOMMENDATIONS_DATA)):
-        categories_scores[category] = {
-            "score": 0,
-            "total_automated": 0,
-            "passed_automated": 0,
-            "failed_automated": 0,
-            "manual_checks": 0,
-            "error_checks": 0,
-            "na_checks": 0,
-            "pass_count": 0,
-            "fail_count": 0,
-            "error_count": 0,
-            "na_count": 0
-        }
+    category_order = []
+    if isinstance(results, dict):
+        items_to_process = list(results.items())
+    elif isinstance(results, (list, tuple)):
+        grouped = {}
+        for check in results:
+            cat = check.get("category", "General")
+            grouped.setdefault(cat, []).append(check)
+        items_to_process = list(grouped.items())
+    else:
+        items_to_process = []
 
-
-    for category, checks in results.items():
+    for category, checks in items_to_process:
+        if category not in categories_scores:
+            category_order.append(category)
+            categories_scores[category] = {
+                "name": category,
+                "score": 0,
+                "total_automated": 0,
+                "passed_automated": 0,
+                "failed_automated": 0,
+                "manual_checks": 0,
+                "error_checks": 0,
+                "na_checks": 0,
+                "pass_count": 0,
+                "fail_count": 0,
+                "error_count": 0,
+                "na_count": 0
+            }
         for check in checks:
-            if check["type"] == "Automated":
+            if check.get("type") == "Automated":
                 overall["total_automated"] += 1
-                categories_scores[category]["total_automated"] += 1 # Count attempted automated checks per category
+                categories_scores[category]["total_automated"] += 1
 
-                if check["status"] == "Pass":
+                if check.get("status") in ("Pass", "PASS"):
                     overall["passed_automated"] += 1
                     categories_scores[category]["passed_automated"] += 1
                     categories_scores[category]["pass_count"] += 1
-                elif check["status"] == "Fail":
+                elif check.get("status") in ("Fail", "FAIL"):
                     overall["failed_automated"] += 1
                     categories_scores[category]["failed_automated"] += 1
                     categories_scores[category]["fail_count"] += 1
-                elif check["status"] == "Error":
-                     overall["error"] += 1
-                     categories_scores[category]["error_checks"] += 1
-                     categories_scores[category]["error_count"] += 1
-                elif check["status"] == "Not Applicable":
-                     overall["na"] += 1
-                     categories_scores[category]["na_checks"] += 1
-                     categories_scores[category]["na_count"] += 1
-             # Manual checks are just counted
-            elif check["type"] == "Manual":
+                elif check.get("status") in ("Error", "ERROR"):
+                    overall["error"] += 1
+                    categories_scores[category]["error_checks"] += 1
+                    categories_scores[category]["error_count"] += 1
+                elif check.get("status") in ("Not Applicable", "N/A", "NA", "NOT APPLICABLE"):
+                    overall["na"] += 1
+                    categories_scores[category]["na_checks"] += 1
+                    categories_scores[category]["na_count"] += 1
+            elif check.get("type") == "Manual" or check.get("status") in ("Manual", "MANUAL"):
                 overall["manual"] += 1
                 categories_scores[category]["manual_checks"] += 1
 
-
-        # Calculate category score based on attempted automated checks (Pass + Fail)
         cat_attempted_automated = categories_scores[category]["passed_automated"] + categories_scores[category]["failed_automated"]
-        categories_scores[category]["total_automated"] = cat_attempted_automated # Update total_automated to be attempted
+        categories_scores[category]["total_automated"] = cat_attempted_automated
         categories_scores[category]["score"] = (categories_scores[category]["passed_automated"] / cat_attempted_automated * 100) if cat_attempted_automated > 0 else 0
 
-
-    overall_attempted_automated = overall["passed_automated"] + overall["failed_automated"] # Only count Pass and Fail for the percentage base
+    overall_attempted_automated = overall["passed_automated"] + overall["failed_automated"]
     overall_score = (overall["passed_automated"] / overall_attempted_automated * 100) if overall_attempted_automated > 0 else 0
 
-    # Prepare data for category bar chart
-    category_labels = json.dumps(list(categories_scores.keys()))
-    category_pass_counts = json.dumps([cat_info["pass_count"] for cat_info in categories_scores.values()])
-    category_fail_counts = json.dumps([cat_info["fail_count"] for cat_info in categories_scores.values()])
-    category_error_counts = json.dumps([cat_info["error_count"] for cat_info in categories_scores.values()])
-    category_na_counts = json.dumps([cat_info["na_count"] for cat_info in categories_scores.values()])
+    category_labels = json.dumps(category_order)
+    category_pass_counts = json.dumps([categories_scores[cat]["pass_count"] for cat in category_order])
+    category_fail_counts = json.dumps([categories_scores[cat]["fail_count"] for cat in category_order])
+    category_error_counts = json.dumps([categories_scores[cat]["error_count"] for cat in category_order])
+    category_na_counts = json.dumps([categories_scores[cat]["na_count"] for cat in category_order])
 
 
     # Return counts for chart

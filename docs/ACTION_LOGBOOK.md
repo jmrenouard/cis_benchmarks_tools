@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-064 — feat(engines): dynamic rule category scoring in PostgreSQL 17 engine (Finding 10 Part 5, Issue `#586`)
+- **Date**: `2026-10-30T21:32+01:00` | **Status**: `COMPLETED` | **Issue**: `#586`
+- **Request**: Remediate Ponytail Audit Finding 10 (Part 5): refactor `calculate_scores(results)` to dynamically discover categories from `results` in PostgreSQL 17 audit engine (`audit_cis_postgresql_17.py`).
+- **Changes**: Updated `calculate_scores()` in PostgreSQL 17 engine (`audit_cis_postgresql_17.py`) to discover categories dynamically from `results` dictionary or list without relying on static `RECOMMENDATIONS_DATA`; expanded unit test suite `tests/test_category_scoring.py` with PostgreSQL 17.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 251/251 unit tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-063 — feat(engines): dynamic rule category scoring in PostgreSQL 16 engine (Finding 10 Part 4, Issue `#584`)
 - **Date**: `2026-10-30T21:28+01:00` | **Status**: `COMPLETED` | **Issue**: `#584`
 - **Request**: Remediate Ponytail Audit Finding 10 (Part 4): refactor `calculate_scores(results)` to dynamically discover categories from `results` in PostgreSQL 16 audit engine (`audit_cis_postgresql_16.py`).
