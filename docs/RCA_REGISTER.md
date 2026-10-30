@@ -11,15 +11,18 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
-### RCA-017 — Database Passwords Exposed in Process Tables via CLI Args (Finding 6 Part A)
-- **Date / Linked Action**: `2026-10-30` (`ACT-024` / Issue `#508`)
-- **Observed Symptom**: Plaintext database passwords were visible to all OS users in `ps aux` and `/proc/<pid>/cmdline`: `DockerExecutor` and `RemoteSSHContainerExecutor` passed `-e MYSQL_PWD=<pass>` and `-e PGPASSWORD=<pass>` on the CLI.
+### RCA-017 — Database Passwords Exposed in Process Tables via CLI Args (Finding 6 Parts A & B)
+- **Date / Linked Action**: `2026-10-30` (`ACT-024` & `ACT-025` / Issues `#508`, `#510`)
+- **Observed Symptom**: Plaintext database passwords were visible to all OS users in `ps aux` and `/proc/<pid>/cmdline`: `DockerExecutor` and `RemoteSSHContainerExecutor` passed `-e MYSQL_PWD=<pass>` and `-e PGPASSWORD=<pass>` on the CLI; `audit_cis.py` passed `--db-password <password>` when invoking child benchmark scripts; Cassandra automated check 3.2 embedded `-p cassandra` directly in shell command line.
 - **Root Cause Analysis (5 Whys)**:
-  1. *Why were passwords visible in ps aux?* Secrets were passed as explicit command line arguments to `docker exec`.
+  1. *Why were passwords visible in ps aux?* Secrets were passed as explicit command line arguments to `docker exec`, `python audit_cis_*.py`, and `cqlsh`.
   2. *Why does Docker expose -e KEY=VAL on CLI?* Passing `=VAL` on CLI stores the value in host `argv`, whereas passing bare `-e KEY` forwards the variable securely from the parent environment over the daemon socket.
-  3. *Why did RemoteSSHContainerExecutor leak?* Secret values were embedded directly in the docker exec command string.
-- **Applied Change / Fix**: In `execution_drivers.py`, updated `DockerExecutor.execute` to pass bare `-e MYSQL_PWD` / `-e PGPASSWORD` flags on CLI and pass passwords in `env=cmd_env`; updated `RemoteSSHContainerExecutor` to export variables in remote subshell; updated unit tests in `tests/test_credential_injection.py` and `tests/test_execution_drivers.py`.
-- **Result & Non-Regression Test**: `test_credential_injection.py` and `test_execution_drivers.py` assert zero secret strings in `called_cmd` argv and successful environment forwarding; 233/233 tests pass.
+  3. *Why did audit_cis.py pass --db-password?* The CLI runner converted parsed password arguments back into command line arguments rather than forwarding `CIS_DB_PASSWORD` via `env`.
+  4. *Why did Cassandra check 3.2 embed -p cassandra?* The rule checked if the default password worked by explicitly attempting authentication on the CLI with `-p cassandra`.
+- **Applied Change / Fix**:
+  - Part A: In `execution_drivers.py`, updated `DockerExecutor.execute` to pass bare `-e MYSQL_PWD` / `-e PGPASSWORD` flags on CLI and pass passwords in `env=cmd_env`; updated `RemoteSSHContainerExecutor` to export variables in remote subshell; updated unit tests in `tests/test_credential_injection.py` and `tests/test_execution_drivers.py`.
+  - Part B: In `scripts/bundle_audit_cis.py` and `audit_cis.py`, passed `CIS_DB_PASSWORD` in `cmd_env` to `subprocess.run` instead of appending `--db-password` to CLI argv; defaulted CLI `--db-password` to `os.environ.get('CIS_DB_PASSWORD')`; removed hardcoded `-p cassandra` from automated control 3.2 in `audit_cis_cassandra_40.py`, `41.py`, `50.py`, and JSON rules `rules/cassandra_40.json`, `41.json`, `50.json`; updated unit tests in `tests/test_audit_cis_cli.py` and `tests/test_e2e_docker_audits.py`.
+- **Result & Non-Regression Test**: `tests/test_audit_cis_cli.py`, `tests/test_e2e_docker_audits.py`, `tests/test_credential_injection.py`, and `tests/test_execution_drivers.py` assert zero secret strings in `called_cmd` argv and successful environment forwarding; 233/233 tests pass.
 
 ---
 
