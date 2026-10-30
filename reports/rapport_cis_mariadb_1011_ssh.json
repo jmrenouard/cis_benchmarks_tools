@@ -687,8 +687,8 @@
         "S'assurer que seuls les administrateurs l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
@@ -702,8 +702,8 @@
         "S'assurer que seuls les comptes de r\u00e9plication l'ont."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
@@ -717,8 +717,8 @@
         "S'assurer du principe du moindre privil\u00e8ge."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
@@ -732,8 +732,8 @@
         "V\u00e9rifier que les DEFINER sont appropri\u00e9s."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "5. Permissions MariaDB"
     },
     {
@@ -744,8 +744,8 @@
       "remediation": "D\u00e9finir log-error=/chemin/vers/mariadb.err dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -756,8 +756,8 @@
       "remediation": "D\u00e9placer les r\u00e9pertoires des journaux (log-bin, log-error) hors des partitions syst\u00e8me.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -768,8 +768,8 @@
       "remediation": "Ajouter log_warnings=2 dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -780,8 +780,8 @@
       "remediation": "Installer et configurer le plugin server_audit : plugin_load_add=server_audit, server_audit_logging=ON dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -792,8 +792,8 @@
       "remediation": "Ajouter server_audit=FORCE_PLUS_PERMANENT dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -804,8 +804,8 @@
       "remediation": "Ajouter encrypt_binlog=ON dans mariadb.cnf (n\u00e9cessite un plugin de gestion de cl\u00e9s).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "6. Audit & Journalisation"
     },
     {
@@ -816,8 +816,8 @@
       "remediation": "Configurer old_passwords=0 et secure_auth=ON dans mariadb.cnf et red\u00e9marrer.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -828,8 +828,8 @@
       "remediation": "Utiliser des fichiers .my.cnf priv\u00e9s ou mysql_config_editor avec permissions restreintes.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -840,8 +840,8 @@
       "remediation": "Migrer les comptes vers ed25519, unix_socket ou d'autres plugins d'authentification forte.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -852,8 +852,8 @@
       "remediation": "Installer et configurer simple_password_check et cracklib_password_check. INSTALL SONAME 'simple_password_check';",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -864,8 +864,8 @@
       "remediation": "ALTER USER '<user>'@'%' ... ou supprimer le compte.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -876,8 +876,8 @@
       "remediation": "DROP USER ''@'<host>'; ou utiliser mariadb-secure-installation.",
       "manual_steps": [],
       "status": "Pass",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -892,8 +892,8 @@
         "V\u00e9rifier que strict_password_validation est ON."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "7. Authentification"
     },
     {
@@ -904,8 +904,8 @@
       "remediation": "Configurer les certificats SSL/TLS, puis ajouter require_secure_transport=ON dans mariadb.cnf.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -916,8 +916,8 @@
       "remediation": "ALTER USER '<user>'@'<host>' REQUIRE SSL; ou REQUIRE X509;",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -931,8 +931,8 @@
         "S'assurer que des limites raisonnables sont d\u00e9finies."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "8. S\u00e9curit\u00e9 r\u00e9seau"
     },
     {
@@ -947,8 +947,8 @@
         "Configurer TLS pour la r\u00e9plication si n\u00e9cessaire."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "9. R\u00e9plication"
     },
     {
@@ -986,8 +986,8 @@
         "S'assurer qu'un cipher fort est configur\u00e9."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "9. R\u00e9plication"
     },
     {
@@ -1001,8 +1001,8 @@
         "V\u00e9rifier ssl_type=X509 pour les utilisateurs de r\u00e9plication sur le primary."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "9. R\u00e9plication"
     }
   ]
