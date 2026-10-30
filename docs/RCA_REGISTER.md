@@ -17,7 +17,7 @@
 - **Root Cause Analysis (5 Whys)**:
   1. *Why had arguments no effect?* `__main__` called `perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target)` omitting parsed `args.db_*`.
   2. *Why were SSH flags dropped?* `audit_orchestrator.py` omitted `ssh_port`, `ssh_key`, `sudo` from check invocation; engines did not propagate `ssh_port`, `ssh_key`, `sudo` to `run_command`.
-- **Applied Change / Fix**: Updated `__main__` across all 12 database engines to pass `db_*` kwargs; added `check_kwargs` property and forwarded `ssh_port`, `ssh_key`, `sudo` in `audit_orchestrator.py` and `audit_cis_rhel_8/9/10.py`; added non-regression tests in `tests/test_credential_and_flag_propagation.py`.
+- **Applied Change / Fix**: Updated `__main__` across all 12 database engines to pass `db_*` kwargs; added `check_kwargs` property and forwarded `ssh_port`, `ssh_key`, `sudo` in `audit_orchestrator.py`, `audit_cis_rhel_8/9/10.py`, and `audit_cis_postgresql_16.py`; added non-regression tests in `tests/test_credential_and_flag_propagation.py`.
 - **Result & Non-Regression Test**: `tests/test_credential_and_flag_propagation.py` verifies all 15 database engines pass `db_*` kwargs in `__main__`, and verifies SSH flag propagation in orchestrator and RHEL engines.
 
 ---
