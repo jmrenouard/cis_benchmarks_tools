@@ -57,9 +57,9 @@ class TestMariaDBAuditEngine(unittest.TestCase):
         out, err, ret = mariadb_1011.run_command("SELECT @@datadir;", docker_container="my_mariadb")
         self.assertEqual(ret, 0)
         self.assertEqual(out, "1")
-        # Check command args passed to subprocess.run
         called_args = mock_sub.call_args[0][0]
-        self.assertIn("docker exec -i my_mariadb", called_args[2])
+        called_cmd = " ".join(called_args) if isinstance(called_args, list) else str(called_args)
+        self.assertIn("docker exec -i my_mariadb", called_cmd)
 
     @patch("audit_cis_mariadb_1011.run_command")
     def test_perform_checks_zero_execution_errors(self, mock_run):

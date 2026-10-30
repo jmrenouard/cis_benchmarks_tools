@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-023 — Shell Injection & Host Variable Expansion Elimination in Execution Drivers (Issue `#506`)
+- **Date**: `2026-10-30T19:35+01:00` | **Status**: `COMPLETED` | **Issue**: `#506`
+- **Request**: Remediate Ponytail Audit Finding 5: Eliminate host variable expansion and shell injection in `DockerExecutor`, `RemoteSSHContainerExecutor`, `SSHExecutor`, and `LocalExecutor`.
+- **Changes**: In `execution_drivers.py`, updated `DockerExecutor.execute` to pass `parts` argument list directly to `subprocess.run(parts, ...)`, completely bypassing the host shell; in `RemoteSSHContainerExecutor.execute`, quoted `as_user`, `cwd`, and `command` with `shlex.quote`; in `SSHExecutor.execute`, quoted `as_user` with `shlex.quote`; in `LocalExecutor.execute`, replaced `json.dumps` with `shlex.quote`; updated unit tests in `tests/test_execution_drivers.py`, `tests/test_in_container_isolation.py`, `tests/test_mariadb_audit_engine.py`, and `tests/test_credential_injection.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 231/231 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-022 — MariaDB Sudo Propagation, Orchestrator Export Adaptation & CLI DB Args (Issue `#504`)
 - **Date**: `2026-10-30T19:15+01:00` | **Status**: `COMPLETED` | **Issue**: `#504`
 - **Request**: Resolve Challenger 2 findings: MariaDB 10.6/10.11 sudo drop, orchestrator export adaptation for 7-argument engines, and missing orchestrator CLI DB arguments.
