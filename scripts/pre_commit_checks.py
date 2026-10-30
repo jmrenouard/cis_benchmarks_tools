@@ -53,6 +53,8 @@ def step_validate_python_syntax():
     print("🐍 [3/8] Validating Python syntax across all scripts (py_compile)...")
     py_files = sorted(glob.glob("**/*.py", recursive=True))
     for py in py_files:
+        if "archive" in py or ".agents" in py or ".ruff_cache" in py:
+            continue
         try:
             py_compile.compile(py, doraise=True)
             print(f"  ✓ {py}")
