@@ -99,6 +99,85 @@ class TestDynamicCategoryScoringMariaDB(unittest.TestCase):
                 self.assertEqual(overall_score, 0.0)
                 self.assertEqual(cat_scores, {})
 
+    def test_arbitrary_category_missing_type_key(self):
+        """Verify arbitrary/custom category with checks omitting 'type' (e.g. scored=True, status='Pass') is discovered and scored."""
+        custom_results = {
+            "Cyber_Defense_Custom": [
+                {"number": "C.1", "name": "Custom Scored Pass", "status": "Pass", "scored": True, "category": "Cyber_Defense_Custom"},
+                {"number": "C.2", "name": "Custom Scored Fail", "status": "Fail", "scored": True, "category": "Cyber_Defense_Custom"},
+            ]
+        }
+        for name, mod in self.mariadb_modules:
+            with self.subTest(engine=name):
+                overall_score, cat_scores, *rest = mod.calculate_scores(custom_results)
+                self.assertIn("Cyber_Defense_Custom", cat_scores, f"{name} failed to discover custom category")
+                cat_data = cat_scores["Cyber_Defense_Custom"]
+                self.assertEqual(cat_data["passed_automated"], 1)
+                self.assertEqual(cat_data["failed_automated"], 1)
+                self.assertEqual(cat_data["total_automated"], 2)
+                self.assertAlmostEqual(cat_data["score"], 50.0)
+                self.assertAlmostEqual(overall_score, 50.0)
+
+    def test_missing_status_key(self):
+        """Verify check results with missing 'status' key do not raise KeyError and yield safe zero scores."""
+        missing_status_results = {
+            "Incomplete_Category": [
+                {"number": "I.1", "name": "No Status Check", "type": "Automated"}
+            ]
+        }
+        for name, mod in self.mariadb_modules:
+            with self.subTest(engine=name):
+                overall_score, cat_scores, *rest = mod.calculate_scores(missing_status_results)
+                self.assertIn("Incomplete_Category", cat_scores)
+                cat_data = cat_scores["Incomplete_Category"]
+                self.assertEqual(cat_data["passed_automated"], 0)
+                self.assertEqual(cat_data["failed_automated"], 0)
+                self.assertEqual(cat_data["score"], 0.0)
+                self.assertEqual(overall_score, 0.0)
+
+    def test_empty_check_item(self):
+        """Verify empty check item dictionary ({}) does not raise KeyError and produces safe baseline scores."""
+        empty_item_results = {
+            "Empty_Item_Category": [
+                {}
+            ]
+        }
+        for name, mod in self.mariadb_modules:
+            with self.subTest(engine=name):
+                overall_score, cat_scores, *rest = mod.calculate_scores(empty_item_results)
+                self.assertIn("Empty_Item_Category", cat_scores)
+                cat_data = cat_scores["Empty_Item_Category"]
+                self.assertEqual(cat_data["passed_automated"], 0)
+                self.assertEqual(cat_data["total_automated"], 0)
+                self.assertEqual(cat_data["score"], 0.0)
+                self.assertEqual(overall_score, 0.0)
+
+    def test_case_insensitive_status(self):
+        """Verify status values are case-insensitive ('PASS', 'FAIL', 'ERROR', 'NOT APPLICABLE', 'MANUAL')."""
+        case_results = {
+            "Case_Insensitive_Category": [
+                {"number": "CI.1", "type": "Automated", "status": "PASS"},
+                {"number": "CI.2", "type": "Automated", "status": "FAIL"},
+                {"number": "CI.3", "type": "Automated", "status": "ERROR"},
+                {"number": "CI.4", "type": "Automated", "status": "NOT APPLICABLE"},
+                {"number": "CI.5", "type": "Manual", "status": "MANUAL"},
+            ]
+        }
+        for name, mod in self.mariadb_modules:
+            with self.subTest(engine=name):
+                overall_score, cat_scores, *rest = mod.calculate_scores(case_results)
+                self.assertIn("Case_Insensitive_Category", cat_scores)
+                cat_data = cat_scores["Case_Insensitive_Category"]
+                self.assertEqual(cat_data["passed_automated"], 1)
+                self.assertEqual(cat_data["failed_automated"], 1)
+                self.assertEqual(cat_data["error_checks"], 1)
+                self.assertEqual(cat_data["na_checks"], 1)
+                self.assertEqual(cat_data["manual_checks"], 1)
+                # MariaDB/MySQL formula: (1 Pass + 1 NA) / (1 Pass + 1 Fail + 1 NA) * 100 = 66.666...
+                self.assertAlmostEqual(cat_data["score"], 66.6666, places=2)
+                self.assertAlmostEqual(overall_score, 66.6666, places=2)
+
+
 
 class TestDynamicCategoryScoringMySQL(unittest.TestCase):
     """Test dynamic category discovery and scoring across MySQL engines."""
