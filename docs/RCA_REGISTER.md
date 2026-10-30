@@ -11,6 +11,19 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-019 — Windows Console Crashes on UTF-8 Output & Report Cleaning Syntax Breaks (Finding 8)
+- **Date / Linked Action**: `2026-10-30` (`ACT-028` / Issue `#515`)
+- **Observed Symptom**: Audit scripts crashed on Windows console with `UnicodeEncodeError: 'charmap'` when emitting emoji or accented text (e.g. `✓`, `❌`, `🚀`, `é`); legacy regex in `clean_ssh_warnings_from_reports.py` lacked validation and boundary containment.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did print() crash on Windows?* Python on Windows defaults standard streams to OEM/ANSI codepages (e.g. cp1252) when not explicitly set to UTF-8.
+  2. *Why were non-ASCII characters emitted?* CIS benchmarks rules and diagnostic summaries use French accents and unicode compliance badges.
+  3. *Why did engines lack UTF-8 reconfigure?* UTF-8 stream reconfiguration was previously only present in RHEL engines and orchestrator, omitted from database engines.
+  4. *Why did report cleaning corrupt files?* Regex replacements on structured files (JSON/XML) operated without post-substitution syntax validation.
+- **Applied Change / Fix**: Configured `os.environ.setdefault('PYTHONUTF8', '1')` and `sys.stdout/sys.stderr.reconfigure(encoding='utf-8', errors='replace')` across all 18 benchmark audit engines; in `scripts/clean_ssh_warnings_from_reports.py`, added post-cleaning syntax verification preventing corrupted files from being saved; added unit test `test_all_audit_engines_have_utf8_stream_reconfiguration` in `tests/test_benchmark_sync_and_report_quality.py`.
+- **Result & Non-Regression Test**: `tests/test_benchmark_sync_and_report_quality.py` asserts all 18 engines reconfigure stdout and stderr; pre-commit checks pass 8/8; 235/235 tests pass with 100% success.
+
+---
+
 ### RCA-018 — Fake Docker Container Synthesis on Bare-Metal Hosts (Finding 7)
 - **Date / Linked Action**: `2026-10-30` (`ACT-027` / Issue `#513`)
 - **Observed Symptom**: Bare-metal local audits executed via `audit_orchestrator.py` were routed through `docker exec <default_container>` even when Docker daemon was down or no containers existed, failing audits on bare-metal systems.

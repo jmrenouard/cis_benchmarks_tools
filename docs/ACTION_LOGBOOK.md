@@ -19,6 +19,14 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-028 — UTF-8 Console Streams Across All Engines & SSH Warning Script Hardening (Finding 8 Part A, Issue `#515`)
+- **Date**: `2026-10-30T20:18+01:00` | **Status**: `COMPLETED` | **Issue**: `#515`
+- **Request**: Remediate Ponytail Audit Finding 8 (Part A): prevent Windows console crashes (`UnicodeEncodeError: 'charmap'`) across all benchmark engines and harden SSH warning cleaning script.
+- **Changes**: Added `os.environ.setdefault('PYTHONUTF8', '1')` and `sys.stdout/sys.stderr.reconfigure(encoding='utf-8', errors='replace')` across all 18 benchmark audit engines; in `scripts/clean_ssh_warnings_from_reports.py`, reconfigured stderr and added post-cleaning syntax verification preventing corrupted files from being saved; added unit test `test_all_audit_engines_have_utf8_stream_reconfiguration` in `tests/test_benchmark_sync_and_report_quality.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 235/235 tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-027 — Prevent Fake Docker Container Synthesis on Bare-Metal Hosts (Finding 7, Issue `#513`)
 - **Date**: `2026-10-30T20:06+01:00` | **Status**: `COMPLETED` | **Issue**: `#513`
 - **Request**: Remediate Ponytail Audit Finding 7: prevent `audit_orchestrator.py` from synthesizing fake Docker containers on bare-metal hosts and routing audits through `docker exec`.
