@@ -247,6 +247,18 @@
 - **Why It Is a Dead-End**: Automated review gates (Sourcery AI) and human reviewers reject oversized PRs (`> 15,000` diff chars).
 - **Adopted Decision**: Enforce `< 15,000` diff characters per PR (`git diff main...HEAD | wc -c`) via atomic PR splitting.
 
+### IMP-005 — Retention of One-Off Migration and Hotfix Scripts in Production Tooling (Finding 12)
+- **Observed Finding / Debt**: Finding 12 of the Ponytail Audit identified 65 historical one-off migration and hotfix scripts (~289 KB) accumulated in `scripts/`.
+- **Why It Is a Dead-End**:
+  1. *CI Lint Bloat*: Compiling 65 dead files during pre-commit checks adds unnecessary overhead.
+  2. *Maintenance Confusion*: Unclear distinction between 13 active production tools and historical artifacts.
+  3. *Bitrot Hazard*: Outdated schemas in one-off scripts risk corrupting current rules if accidentally re-run.
+  4. *Diff Limit Hazard*: Pure deletion (`git rm`) produces ~305,000 diff chars; single files like `build_full_roadmap_phases.py` (20,805 bytes) exceed the 15,000-char PR diff limit (`IMP-004`).
+- **Adopted Decision & Archiving Standard**:
+  1. **Decommissioning via Archiving**: Relocated all 65 obsolete scripts to `archive/scripts/` via `git mv`, leveraging Git rename detection to keep PR diffs under 15,000 chars.
+  2. **Preservation of 13 Essential Tools**: Whitelisted active tooling in `scripts/`: `bundle_audit_cis.py`, `pre_commit_checks.py`, `pre-commit.sh`, `download_cis_benchmarks.py`, `verify_benchmarks_and_reports.py`, `clean_ssh_warnings_from_reports.py`, `run_e2e_tests.py`, `analyze_e2e_reports.py`, and the 5 container entrypoints `start_*.sh`.
+  3. **Automated Inventory Governance Test**: Enforced in `tests/test_script_inventory_and_governance.py` that only the 13 essential tools exist in `scripts/` and compile cleanly.
+
 ### IMP-006 — OpenSSH `ControlMaster` Connection Multiplexing for Remote Audits (Finding 14)
 - **Observed Finding / Proposed Optimization**: Finding 14 of the Ponytail Audit highlighted the connection overhead of establishing separate SSH connections for each of the 70+ (or up to 180+) individual CIS control checks per audit target, proposing OpenSSH connection multiplexing (`ControlMaster auto`, `ControlPath /tmp/ssh_mux_%h_%p_%r`, `ControlPersist 10m`) to reuse a single persistent TCP connection.
 - **Why It Is a Dead-End**:
