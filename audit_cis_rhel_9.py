@@ -18,6 +18,8 @@ import re
 import subprocess
 import sys
 
+if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 RECOMMENDATIONS_DATA = [
     {
         "id": "1.1.1.1",
@@ -321,8 +323,10 @@ def build_inline_svg_donut_chart(passed, failed, errors, na, score):
     """
 
 
-def build_inline_svg_category_chart(categories_scores):
+def build_inline_svg_category_chart(categories_scores, *args):
     """Generate 100% self-contained Inline SVG/HTML5 Horizontal Stacked Bar Charts per category (PSL ONLY, Zero JS)."""
+    if args:
+        categories_scores = {n: {"passed_automated": p, "failed_automated": f, "error_checks": e, "na_checks": na, "score": (p / (p + f + e + na) * 100) if (p + f + e + na) else 0} for n, p, f, e, na in zip(categories_scores, *args)}
     if not categories_scores or not isinstance(categories_scores, dict):
         return ""
     items_html = []
@@ -593,10 +597,9 @@ def perform_checks(recommendations, remote_host=None):
 
 def calculate_scores(results):
     """Calculate compliance score statistics."""
-    passed = sum(1 for r in results if r["status"] == "PASS")
-    total = len(results) if results else 1
-    overall_score = (passed / total) * 100
-    return overall_score, {}
+    flat = [c for s in results.values() for c in s] if isinstance(results, dict) else list(results)
+    passed = sum(1 for r in flat if r.get("status") in ("PASS", "Pass"))
+    return (passed / (len(flat) or 1)) * 100, {}
 
 
 
@@ -890,13 +893,13 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
     bar_svg = build_inline_svg_category_chart(cat_names, cat_pass, cat_fail, cat_err, cat_na)
 
     html_template = load_html_template()
-    html_content = html_template.format(
+    html_content = html_template.format_map(type("SafeDict", (dict,), {"__missing__": lambda s, k: f"{{{k}}}"})(
         benchmark_title=target_name,
         lang=lang,
         report_date=report_date,
         suite_version="2.1.0",
         target_version="1.4.0",
-        overall_score=overall_score,
+        overall_score=float(overall_score),
         passed_automated_count=passed_count,
         failed_automated_count=failed_count,
         manual_checks=manual_count,
@@ -904,7 +907,7 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
         donut_svg=donut_svg,
         bar_svg=bar_svg,
         categories_reports=categories_reports_html
-    )
+    ))
 
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_content)

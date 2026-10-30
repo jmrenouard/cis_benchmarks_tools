@@ -53,6 +53,23 @@ class TestBenchmarkSyncAndReportQuality(unittest.TestCase):
         self.assertTrue(analyze_report_quality("t.txt", content_str=valid_t)[0])
         self.assertFalse(analyze_report_quality("t.txt", content_str="Invalid text")[0])
 
+    def test_rhel_engines_and_ssh_warn_regex(self):
+        import audit_cis_rhel_8, audit_cis_rhel_9, audit_cis_rhel_10, re, tempfile, xml.etree.ElementTree as ET
+        from scripts.clean_ssh_warnings_from_reports import SSH_WARN_PAT
+        res = [{"id": "1", "category": "A", "status": "PASS"}, {"id": "2", "category": "A", "status": "FAIL"}]
+        for mod in (audit_cis_rhel_8, audit_cis_rhel_9, audit_cis_rhel_10):
+            score, cats = mod.calculate_scores(res)
+            self.assertEqual(score, 50.0)
+            with tempfile.TemporaryDirectory() as td:
+                out = os.path.join(td, "r.html")
+                mod.generate_html_report(res, score, cats, filename=out)
+                with open(out, encoding="utf-8") as f:
+                    self.assertIn("<svg", f.read())
+        j = json.loads(re.sub(SSH_WARN_PAT, "", '{"e": "Warning: Permanently added \'127.0.0.1\' (ED25519) to the list of known hosts.", "c": 0}'))
+        self.assertEqual(j["e"], "")
+        x = ET.fromstring(re.sub(SSH_WARN_PAT, "", '<testsuite><testcase><error>Warning: Permanently added \'10.0.0.1\' (ED25519) to the list of known hosts.</error></testcase></testsuite>'))
+        self.assertEqual(x.tag, "testsuite")
+
 
 if __name__ == "__main__":
     unittest.main()

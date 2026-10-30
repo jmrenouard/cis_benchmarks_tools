@@ -19,6 +19,13 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-017 — UTF-8 Console & RHEL Exporter Fixes (Issue `#453`)
+- **Date**: `2026-10-30T01:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#453`
+- **Changes**: Reconfigured UTF-8 streams, fixed RHEL 8/9/10 `calculate_scores` and `generate_html_report`, safe-guarded SSH regex in `scripts/clean_ssh_warnings_from_reports.py`, and added unit tests.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 216/216 tests pass, PR diff < 15,000 chars.
+
+---
+
 ### ACT-016 — Robust CIS Downloader & CLI Sync Forwarding (Issue `#470`)
 - **Date**: `2026-10-25T23:05+01:00` | **Status**: `COMPLETED` | **Issue**: `#470`
 - **Changes**: Defaulted sync to `md`, added comma type parsing, unknown target check, OpenerDirector support, and forwarded CLI sync flags.

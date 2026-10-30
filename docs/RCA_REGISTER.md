@@ -11,6 +11,15 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-010 — Windows CP1252 UnicodeEncodeError & RHEL HTML Exporter Regression
+- **Date / Linked Action**: `2026-10-30` (`ACT-017` / Issue `#453`)
+- **Observed Symptom**: `verify_benchmarks_and_reports.py` and RHEL engines failed on Windows with `UnicodeEncodeError: 'charmap'`; RHEL `generate_html_report` crashed with `TypeError` and `KeyError`; `clean_ssh_warnings_from_reports.py` regex truncated quotes/tags.
+- **Root Cause Analysis**: Missing `sys.stdout.reconfigure(encoding="utf-8")`; RHEL engines passed 5 args to 1-arg `build_inline_svg_category_chart` and used `.format()` without SafeDict; SSH regex matched `[^\n\r]+` past delimiters.
+- **Applied Change / Fix**: Added UTF-8 stdout reconfiguration; fixed RHEL category scores and HTML generation using SafeDict; safe-guarded SSH warnings regex; added regression tests in `test_benchmark_sync_and_report_quality.py`.
+- **Result & Non-Regression Test**: `verify_benchmarks_and_reports.py --all` passes; 216/216 unit tests and 8/8 pre-commit checks pass.
+
+---
+
 ### RCA-009 — CIS Downloader 404 Remote PDFs, Silent Skips & Opener Crash
 - **Date / Linked Action**: `2026-10-25` (`ACT-016` / Issue `#470`)
 - **Observed Symptom**: Sync defaulted to 404 remote PDFs; comma-types and unknown targets silently skipped; `OpenerDirector` crashed.
