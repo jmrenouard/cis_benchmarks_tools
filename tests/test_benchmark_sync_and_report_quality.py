@@ -70,6 +70,17 @@ class TestBenchmarkSyncAndReportQuality(unittest.TestCase):
         x = ET.fromstring(re.sub(SSH_WARN_PAT, "", '<testsuite><testcase><error>Warning: Permanently added \'10.0.0.1\' (ED25519) to the list of known hosts.</error></testcase></testsuite>'))
         self.assertEqual(x.tag, "testsuite")
 
+    def test_relational_audit_engines_have_utf8_stream_reconfiguration(self):
+        """Verify MariaDB, MySQL, and PostgreSQL audit engines reconfigure stdout and stderr for UTF-8."""
+        import glob
+        engines = [e for e in sorted(glob.glob("audit_cis_*.py")) if any(k in e for k in ("mariadb", "mysql", "postgresql"))]
+        self.assertEqual(len(engines), 10)
+        for eng in engines:
+            with open(eng, "r", encoding="utf-8") as f:
+                content = f.read()
+            self.assertIn("sys.stdout.reconfigure", content, f"{eng} missing stdout.reconfigure")
+            self.assertIn("sys.stderr.reconfigure", content, f"{eng} missing stderr.reconfigure")
+
 
 if __name__ == "__main__":
     unittest.main()
