@@ -1117,6 +1117,17 @@ if __name__ == "__main__":
 
     rules_data = load_recommendations("cassandra_50")
     docker_target = detect_docker_container(remote_host=remote_target, docker_name=args.docker_container)
-    check_results = perform_checks(rules_data, remote_host=remote_target, docker_container=docker_target)
+    check_results = perform_checks(
+        rules_data,
+        remote_host=remote_target,
+        docker_container=docker_target,
+        db_user=args.db_user,
+        db_password=args.db_password,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        defaults_file=args.defaults_file,
+        auth_db=args.auth_db
+    )
     (overall_score, categories_scores, *rest) = calculate_scores(check_results)
     export_results(check_results, overall_score, categories_scores, target_name="cassandra_50", filename=args.output, fmt=args.format, lang=args.lang)
