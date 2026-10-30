@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-076 — feat(scripts): decommission remaining obsolete scripts, add inventory test, document IMP-005 (Finding 12 Part 2/2, Issue `#610`)
+- **Date**: `2026-10-30T23:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#610`
+- **Request**: Remediate Finding 12 (Part 2/2): relocate remaining 33 obsolete scripts to `archive/scripts/` via git mv, add inventory test `tests/test_script_inventory_and_governance.py`, and document `IMP-005`.
+- **Changes**: Moved 33 scripts via git mv; added `test_script_inventory_and_governance.py`; added `IMP-005` to `docs/RCA_REGISTER.md`.
+- **Result**: `pre_commit_checks.py` 8/8 pass, 272/272 tests pass, PR diff < 15,000 chars.
+
+---
+
 ### ACT-075 — feat(scripts): decommission obsolete migration scripts (Finding 12 Part 1/2, Issue `#608`)
 - **Date**: `2026-10-30T23:20+01:00` | **Status**: `COMPLETED` | **Issue**: `#608`
 - **Request**: Remediate Ponytail Audit Finding 12 (Part 1/2): decommission first batch of 32 obsolete one-off migration and hotfix scripts from `scripts/` to `archive/scripts/` via git mv to comply strictly with the `< 15,000` PR diff character ceiling, and update `scripts/pre_commit_checks.py` to skip `archive/` during syntax validation.
