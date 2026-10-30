@@ -116,7 +116,7 @@
     "number": "3.2",
     "name": "S'assurer que le mot de passe par défaut du rôle cassandra est changé",
     "type": "Automated",
-    "test_procedure": "cqlsh -e \"SELECT * FROM system_auth.roles WHERE role='cassandra';\" -u cassandra -p cassandra 2>&1 | grep -c 'AuthenticationFailed\\|Unauthorized\\|Bad credentials'",
+    "test_procedure": "cqlsh -e \"SELECT * FROM system_auth.roles WHERE role='cassandra';\" -u cassandra 2>&1 | grep -c 'AuthenticationFailed\\|Unauthorized\\|Bad credentials'",
     "expected_output": {
       "type": "stdout_regex_match",
       "pattern": "[1-9]"

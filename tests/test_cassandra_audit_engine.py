@@ -30,6 +30,21 @@ class TestCassandraAuditEngine(unittest.TestCase):
         container = cassandra_40.detect_docker_container()
         self.assertEqual(container, "cassandra-test-container")
 
+    def test_control_3_2_no_hardcoded_password_in_command(self):
+        """Verify control 3.2 does not leak default password on CLI."""
+        import audit_cis_cassandra_41 as cassandra_41
+        import audit_cis_cassandra_50 as cassandra_50
+
+        for mod in (cassandra_40, cassandra_41, cassandra_50):
+            rule_32 = next(r for r in mod.RECOMMENDATIONS_DATA if r.get("number") == "3.2")
+            self.assertNotIn("-p cassandra", rule_32["test_procedure"])
+
+        for path in ("rules/cassandra_40.json", "rules/cassandra_41.json", "rules/cassandra_50.json"):
+            with open(path, "r", encoding="utf-8") as f:
+                rules = json.load(f)
+            rule_32 = next(r for r in rules if r.get("number") == "3.2")
+            self.assertNotIn("-p cassandra", rule_32["test_procedure"])
+
 
 if __name__ == "__main__":
     unittest.main()
