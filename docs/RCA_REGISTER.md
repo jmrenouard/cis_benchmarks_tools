@@ -11,6 +11,17 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-012 — Automated Checks Omitting `docker_container` in PostgreSQL, MongoDB, and Cassandra (Finding 2)
+- **Date / Linked Action**: `2026-10-30` (`ACT-020` / Issue `#481`)
+- **Observed Symptom**: Auditing containerized instances of PostgreSQL (16, 17, 18), MongoDB (7, 8), and Cassandra (4.0, 4.1, 5.0) via `audit_cis.py --docker <name>` executed commands on the local host rather than inside the specified container, resulting in `returncode 127` (`psql: command not found` / `cqlsh: command not found`).
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why were commands executed on host?* `perform_checks()` in those 8 engine scripts invoked `run_command(cmd, remote_host=remote_host)` without passing the `docker_container` keyword argument.
+  2. *Why was `docker_container` omitted?* Internal loops across automated rules extracted commands from JSON rule specs and called `run_command` forwarding only `remote_host`.
+- **Applied Change / Fix**: Updated `perform_checks()` across PostgreSQL, MongoDB, and Cassandra audit engines to explicitly forward `docker_container=docker_container` to `run_command()`.
+- **Result & Non-Regression Test**: Verified via `tests/test_container_parameter_forwarding.py` asserting that mocked `run_command` receives `docker_container` across all 8 targets.
+
+---
+
 ### RCA-011 — RHEL 8, 9, 10 HTML Report Exporter Crash & Unpopulated Category Scores (Finding 1)
 - **Date / Linked Action**: `2026-10-30` (`ACT-019` / Issue `#479`)
 - **Observed Symptom**: When running `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, or `audit_cis_rhel_10.py` with `--format html`, execution crashed with `TypeError: build_inline_svg_category_chart() takes 1 positional argument but 5 were given`, and the HTML category breakdown section displayed empty/NaN score metrics.

@@ -696,7 +696,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                  # For path_command, run it first
                  if rec.get("path_command"):
                      path_cmd = rec["path_command"]
-                     path_cmd_output, path_cmd_error, path_cmd_returncode = run_command(path_cmd, remote_host=remote_host)
+                     path_cmd_output, path_cmd_error, path_cmd_returncode = run_command(path_cmd, remote_host=remote_host, docker_container=docker_container)
                      aggregated_output.append(f"--- Command pour obtenir le chemin: {path_cmd} ---\nStdout:\n{path_cmd_output}\nStderr:\n{path_cmd_error}\nReturn Code: {path_cmd_returncode}\n---")
                      aggregated_error.append(path_cmd_error)
 
@@ -737,7 +737,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                              break # Cannot proceed with this sub-check
 
 
-                        stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host)
+                        stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host, docker_container=docker_container)
                         aggregated_output.append(f"--- Command {i+1}: {cmd_to_run} ---\nStdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}\n---")
                         aggregated_error.append(stderr)
 
@@ -801,7 +801,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                               all_sub_checks_passed = False
                               break # Cannot proceed with this sub-check
 
-                         stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host)
+                         stdout, stderr, returncode = run_command(cmd_to_run, remote_host=remote_host, docker_container=docker_container)
                          aggregated_output.append(f"--- Command {i+1}: {cmd_to_run} ---\nStdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}\n---")
                          aggregated_error.append(stderr)
 
@@ -851,7 +851,7 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
             elif all_sub_checks_passed: # Run single test procedure if no sub_checks or sub_checks setup passed
                 cmd = check_result.get("test_procedure", rec.get("test_procedure", "")) # Use the formatted procedure if available
                 command_executed_display = cmd
-                stdout, stderr, returncode = run_command(cmd, remote_host=remote_host)
+                stdout, stderr, returncode = run_command(cmd, remote_host=remote_host, docker_container=docker_container)
                 check_result["output"] = f"Stdout:\n{stdout}\nStderr:\n{stderr}\nReturn Code: {returncode}"
                 check_result["error"] = stderr
                 check_result["test_procedure"] = command_executed_display # Store the command that was run

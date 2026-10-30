@@ -19,6 +19,13 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-020 — Docker Container Forwarding in Automated Database Checks (Issue `#481`)
+- **Date**: `2026-10-30T17:15+01:00` | **Status**: `COMPLETED` | **Issue**: `#481`
+- **Changes**: Forwarded `docker_container=docker_container` in all automated check `run_command()` calls across 8 database audit engines (`postgresql_16/17/18`, `mongodb_7/8`, `cassandra_40/41/50`); added unit test suite `tests/test_container_parameter_forwarding.py`.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 222/222 tests pass, PR diff < 15,000 chars.
+
+---
+
 ### ACT-019 — RHEL HTML Report & Category Score Population (Issue `#479`)
 - **Date**: `2026-10-30T17:05+01:00` | **Status**: `COMPLETED` | **Issue**: `#479`
 - **Changes**: Updated `calculate_scores()` in `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, and `audit_cis_rhel_10.py` to calculate full category breakdown scores; standardized `build_inline_svg_category_chart()` invocation in `generate_html_report()`; added comprehensive unit test suite `tests/test_rhel_html_export_quality.py`.
