@@ -12,8 +12,8 @@
       "remediation": "Sauvegarder la base, d\u00e9placer les fichiers de donn\u00e9es vers une partition d\u00e9di\u00e9e, mettre \u00e0 jour datadir dans la configuration MySQL, red\u00e9marrer le service.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -24,8 +24,8 @@
       "remediation": "Configurer le service MySQL pour qu'il s'ex\u00e9cute sous un utilisateur d\u00e9di\u00e9 (ex: 'mysql') avec les privil\u00e8ges minimaux.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -36,8 +36,8 @@
       "remediation": "Supprimer les fichiers d'historique, cr\u00e9er un lien symbolique vers /dev/null, ou configurer MYSQL_HISTFILE.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -48,8 +48,8 @@
       "remediation": "Modifier les scripts/utilisateurs pour \u00e9viter MYSQL_PWD, utiliser mysql_config_editor ou authentification certifi\u00e9e.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -60,8 +60,8 @@
       "remediation": "Modifier le shell de l'utilisateur mysql pour utiliser /bin/false ou /sbin/nologin (ex: usermod -s /sbin/nologin mysql).",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\nTry `getent --help' or `getent --usage' for more information.\nStderr:\n
-      "error": "
+      "output": "Stdout:\nTry `getent --help' or `getent --usage' for more information.\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -72,8 +72,8 @@
       "remediation": "Nettoyer les fichiers de login des utilisateurs pour supprimer MYSQL_PWD.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -84,8 +84,8 @@
       "remediation": "Configurer chroot, utiliser un service systemd avec un utilisateur sp\u00e9cifique, ou d\u00e9ployer MySQL sous Docker.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\nNOT_SANDBOX\nStderr:\n
-      "error": "
+      "output": "Stdout:\nNOT_SANDBOX\nStderr:",
+      "error": "",
       "category": "1. Configuration Syst\u00e8me d'exploitation"
     },
     {
@@ -96,8 +96,8 @@
       "remediation": "Cr\u00e9er une politique de sauvegarde et planifier des sauvegardes automatiques.",
       "manual_steps": [],
       "status": "Fail",
-      "output": "Stdout:\n\nStderr:\n
-      "error": "
+      "output": "Stdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -158,8 +158,8 @@
       "remediation": "Activer log_bin (log-bin=mysql-bin dans my.cnf), configurer l'expiration (expire_logs_days ou binlog_expire_logs_seconds), tester les restaurations PITR.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "2. Installation et Planification"
     },
     {
@@ -201,8 +201,8 @@
       "remediation": "chown -R mysql:mysql <datadir> && chmod 700 <datadir>",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@datadir;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -213,8 +213,8 @@
       "remediation": "Appliquer chmod 600 sur les fichiers binaires.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_bin_basename;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -225,8 +225,8 @@
       "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@log_error;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -237,8 +237,8 @@
       "remediation": "Limiter l'acc\u00e8s aux utilisateurs autoris\u00e9s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@slow_query_log_file;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@slow_query_log_file;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -249,8 +249,8 @@
       "remediation": "Appliquer chmod 600.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@relay_log_basename;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@relay_log_basename;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -261,8 +261,8 @@
       "remediation": "Restreindre les droits d'acc\u00e8s (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@general_log_file;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@general_log_file;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -273,8 +273,8 @@
       "remediation": "Restreindre l'acc\u00e8s aux cl\u00e9s priv\u00e9es (ex: chmod 600) et s'assurer que le propri\u00e9taire est mysql.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -285,8 +285,8 @@
       "remediation": "chown -R mysql:mysql <plugin_dir> && chmod 755 <plugin_dir>",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@plugin_dir;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@plugin_dir;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -297,8 +297,8 @@
       "remediation": "Appliquer des permissions restrictives (ex: 640 ou 600).",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@audit_log_file;\"`\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error lors de l'obtention du chemin via:\n`mysql -N -B -e \"SELECT @@audit_log_file;\"`\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -309,8 +309,8 @@
       "remediation": "Chiffrer et restreindre l'acc\u00e8s au fichier keyring.",
       "manual_steps": [],
       "status": "Error",
-      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "Error: Acc\u00e8s refus\u00e9. V\u00e9rifiez les identifiants/privil\u00e8ges MySQL.\nStdout:\n\nStderr:",
+      "error": "",
       "category": "3. Permissions Fichiers"
     },
     {
@@ -325,8 +325,8 @@
         "V\u00e9rifier les CVE critiques."
       ],
       "status": "Manual",
-      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:\n
-      "error": "
+      "output": "This control requires manual verification.\n\nR\u00e9sultat de l'extraction automatique pour aide:\nStdout:\n\nStderr:",
+      "error": "",
       "category": "4. G\u00e9n\u00e9ral"
     },
     {
