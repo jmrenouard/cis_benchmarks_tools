@@ -19,6 +19,13 @@
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-018 — Orchestrator RHEL Module & Rule Spec Alignment (Issue `#477`)
+- **Date**: `2026-10-30T16:55+01:00` | **Status**: `COMPLETED` | **Issue**: `#477`
+- **Changes**: Updated `CANONICAL_TARGETS` in `audit_orchestrator.py` to map RHEL targets to `audit_cis_rhel_8`, `audit_cis_rhel_9`, `audit_cis_rhel_10` and rule specs `rhel_8`, `rhel_9`, `rhel_10`; added inspect-based signature filtering for `perform_checks`; updated `tests/test_audit_orchestrator.py` to verify module importability and rule file existence across all 18 targets.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 216/216 tests pass, PR diff < 15,000 chars.
+
+---
+
 ### ACT-017 — UTF-8 Console & RHEL Exporter Fixes (Issue `#453`)
 - **Date**: `2026-10-30T01:30+01:00` | **Status**: `COMPLETED` | **Issue**: `#453`
 - **Changes**: Reconfigured UTF-8 streams, fixed RHEL 8/9/10 `calculate_scores` and `generate_html_report`, safe-guarded SSH regex in `scripts/clean_ssh_warnings_from_reports.py`, and added unit tests.

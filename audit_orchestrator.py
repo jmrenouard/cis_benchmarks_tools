@@ -6,6 +6,7 @@ Discovers, executes, and coordinates CIS benchmark audits across all database an
 
 import argparse
 import importlib
+import inspect
 import json
 import os
 import sys
@@ -44,9 +45,9 @@ CANONICAL_TARGETS: Dict[str, Dict[str, Any]] = {
     "cassandra40": {"title": "Apache Cassandra 4.0", "module": "audit_cis_cassandra_40", "category": "database", "default_container": "cassandra40-test", "rule_spec": "cassandra_40"},
     "cassandra41": {"title": "Apache Cassandra 4.1", "module": "audit_cis_cassandra_41", "category": "database", "default_container": "cassandra41-test", "rule_spec": "cassandra_41"},
     "cassandra50": {"title": "Apache Cassandra 5.0", "module": "audit_cis_cassandra_50", "category": "database", "default_container": "cassandra50-test", "rule_spec": "cassandra_50"},
-    "rhel8": {"title": "Red Hat Enterprise Linux 8", "module": "audit_cis_rhel8", "category": "os", "default_container": "rhel8-test", "rule_spec": "rhel8"},
-    "rhel9": {"title": "Red Hat Enterprise Linux 9", "module": "audit_cis_rhel9", "category": "os", "default_container": "rhel9-test", "rule_spec": "rhel9"},
-    "rhel10": {"title": "Red Hat Enterprise Linux 10", "module": "audit_cis_rhel10", "category": "os", "default_container": "rhel10-test", "rule_spec": "rhel10"},
+    "rhel8": {"title": "Red Hat Enterprise Linux 8", "module": "audit_cis_rhel_8", "category": "os", "default_container": "rhel8-test", "rule_spec": "rhel_8"},
+    "rhel9": {"title": "Red Hat Enterprise Linux 9", "module": "audit_cis_rhel_9", "category": "os", "default_container": "rhel9-test", "rule_spec": "rhel_9"},
+    "rhel10": {"title": "Red Hat Enterprise Linux 10", "module": "audit_cis_rhel_10", "category": "os", "default_container": "rhel10-test", "rule_spec": "rhel_10"},
 }
 
 
@@ -235,7 +236,11 @@ class AuditOrchestrator:
         generated_reports: Dict[str, str] = {}
 
         try:
-            mod = importlib.import_module(module_name)
+            try:
+                mod = importlib.import_module(module_name)
+            except ModuleNotFoundError:
+                alt_module = module_name.replace("rhel", "rhel_") if "rhel" in module_name and "rhel_" not in module_name else module_name
+                mod = importlib.import_module(alt_module)
             rules_data = mod.load_recommendations(rule_spec_name) if hasattr(mod, "load_recommendations") else getattr(mod, "RECOMMENDATIONS_DATA", [])
 
             exec_ctx = None
@@ -264,9 +269,18 @@ class AuditOrchestrator:
                 if self.auth_db: check_kwargs["auth_db"] = self.auth_db
 
                 try:
-                    results = mod.perform_checks(rules_data, **check_kwargs)
+                    sig = inspect.signature(mod.perform_checks)
+                    has_var_keyword = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values())
+                    if has_var_keyword:
+                        call_kwargs = check_kwargs
+                    else:
+                        call_kwargs = {k: v for k, v in check_kwargs.items() if k in sig.parameters}
+                    results = mod.perform_checks(rules_data, **call_kwargs)
                 except TypeError:
-                    results = mod.perform_checks(rules_data, remote_host=self.remote_host, docker_container=active_container)
+                    try:
+                        results = mod.perform_checks(rules_data, remote_host=self.remote_host, docker_container=active_container)
+                    except TypeError:
+                        results = mod.perform_checks(rules_data, remote_host=self.remote_host)
             else:
                 raise AttributeError(f"Module {module_name} does not implement perform_checks()")
 

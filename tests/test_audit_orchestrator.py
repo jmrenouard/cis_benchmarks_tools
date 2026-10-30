@@ -3,6 +3,8 @@
 Unit tests for audit_orchestrator.py Multi-Product Orchestration Engine (PSL ONLY).
 """
 
+import importlib
+import json
 import os
 import tempfile
 import unittest
@@ -19,7 +21,7 @@ from audit_diagnostics import FailureCategory, AuditDiagnosticSummary
 class TestAuditOrchestrator(unittest.TestCase):
 
     def test_canonical_targets_catalog_completeness(self):
-        """Assert all 18 canonical targets are cataloged."""
+        """Assert all 18 canonical targets are cataloged, modules are importable, and rule specs exist."""
         self.assertEqual(len(CANONICAL_TARGETS), 18)
         expected_keys = [
             "mariadb106", "mariadb1011",
@@ -30,8 +32,20 @@ class TestAuditOrchestrator(unittest.TestCase):
             "cassandra40", "cassandra41", "cassandra50",
             "rhel8", "rhel9", "rhel10"
         ]
+        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         for k in expected_keys:
             self.assertIn(k, CANONICAL_TARGETS)
+            meta = CANONICAL_TARGETS[k]
+            # Ensure module is genuinely importable
+            mod = importlib.import_module(meta["module"])
+            self.assertIsNotNone(mod)
+            # Ensure rule specification file exists on disk and is non-empty
+            rule_path = os.path.join(repo_root, "rules", f"{meta['rule_spec']}.json")
+            self.assertTrue(os.path.exists(rule_path), f"Rule spec file missing: {rule_path}")
+            with open(rule_path, "r", encoding="utf-8") as f:
+                rules = json.load(f)
+                self.assertIsInstance(rules, list)
+                self.assertGreater(len(rules), 0)
 
     def test_normalize_target_key(self):
         """Test target normalization and aliases."""
@@ -62,6 +76,20 @@ class TestAuditOrchestrator(unittest.TestCase):
             self.assertIn("txt", res.generated_reports)
             self.assertTrue(os.path.exists(res.generated_reports["json"]))
             self.assertTrue(os.path.exists(res.generated_reports["txt"]))
+
+    @patch("audit_cis_rhel_8.run_command", return_value=("active", "", 0))
+    def test_orchestrator_execute_rhel8_target(self, mock_cmd):
+        """Test orchestrator execution on rhel8 target."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            orchestrator = AuditOrchestrator(
+                mode="local",
+                output_dir=tmp_dir,
+                formats=["json", "txt"]
+            )
+            res = orchestrator.execute_single_target("rhel8")
+            self.assertTrue(res.success)
+            self.assertEqual(res.target_key, "rhel8")
+            self.assertGreater(res.total_controls, 0)
 
     def test_orchestrator_execute_unknown_target_fault_isolation(self):
         """Test orchestrator handles unknown target gracefully without crash."""
