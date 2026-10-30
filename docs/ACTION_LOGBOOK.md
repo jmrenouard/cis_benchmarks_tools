@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-066 — feat(engines): dynamic rule category scoring in MongoDB 7 engine (Finding 10 Part 7, Issue `#590`)
+- **Date**: `2026-10-30T21:40+01:00` | **Status**: `COMPLETED` | **Issue**: `#590`
+- **Request**: Remediate Ponytail Audit Finding 10 (Part 7): refactor `calculate_scores(results)` to dynamically discover categories from `results` in MongoDB 7 audit engine (`audit_cis_mongodb_7.py`).
+- **Changes**: Updated `calculate_scores()` in MongoDB 7 engine (`audit_cis_mongodb_7.py`) to discover categories dynamically from `results` dictionary or list without relying on static `RECOMMENDATIONS_DATA`; expanded unit test suite `tests/test_category_scoring.py` with MongoDB 7.
+- **Result**: `pre_commit_checks.py` 8/8 checks pass, 255/255 unit tests pass with 100% success, PR diff < 15,000 chars.
+
+---
+
 ### ACT-065 — feat(engines): dynamic rule category scoring in PostgreSQL 18 engine (Finding 10 Part 6, Issue `#588`)
 - **Date**: `2026-10-30T21:36+01:00` | **Status**: `COMPLETED` | **Issue**: `#588`
 - **Request**: Remediate Ponytail Audit Finding 10 (Part 6): refactor `calculate_scores(results)` to dynamically discover categories from `results` in PostgreSQL 18 audit engine (`audit_cis_postgresql_18.py`).
