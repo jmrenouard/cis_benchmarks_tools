@@ -13,6 +13,8 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
+if hasattr(sys.stdout, "reconfigure"): sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 TARGET_MAP = [
     ("cassandra", "cassandra"), ("mariadb", "mariadb"),
     ("mongodb", "mongodb"), ("mysql", "mysql"),
