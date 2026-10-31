@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-079 — feat(core): implement shared core engine foundation and phased roadmap (Finding 9, Issue `#616`)
+- **Date**: `2026-10-31T00:35+01:00` | **Status**: `COMPLETED` | **Issue**: `#616`
+- **Request**: Remediate Finding 9: implement shared core engine `cis_core_engine.py`, unit tests `tests/test_cis_core_engine.py`, and 6-phase roadmap `IDEA-006`.
+- **Changes**: Created `cis_core_engine.py`, `tests/test_cis_core_engine.py`, updated `docs/RCA_REGISTER.md` and `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 pass, 292/292 tests pass, PR diff < 15,000 chars.
+
+---
+
 ### ACT-078 — test(coverage): implement target catalog and CLI argument matrix test suite (Finding 13, Issue `#614`)
 - **Date**: `2026-10-31T00:15+01:00` | **Status**: `COMPLETED` | **Issue**: `#614`
 - **Request**: Remediate Ponytail Audit Finding 13: implement comprehensive target catalog and CLI argument matrix test suite `tests/test_target_catalog_and_cli_matrix.py` covering canonical target resolution, interface contracts across all 18 targets, rule specification integrity, CLI argument parsing, parameter forwarding without secret leakage, and error isolation on invalid targets, and document `IDEA-007`.
