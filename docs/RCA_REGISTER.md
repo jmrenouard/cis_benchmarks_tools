@@ -341,6 +341,10 @@
 - **Priority / Target**: `Medium` · `.github/workflows/ci.yml` & `.agents/rules/`
 - **Description**: Enforcement of the rule requiring every task to be tracked by an issue closed with an explicit summary comment upon PR merge.
 
+### IDEA-006 — Shared Core Engine Architecture & Phased Adoption Roadmap (Finding 9)
+- **Priority / Target**: `Completed Baseline ✅` · `cis_core_engine.py` & All 18 Standalone Engines (`audit_cis_*.py`)
+- **Description**: Pure PSL shared core engine `cis_core_engine.py` with `BaseAuditEngine`, `AuditScoresTuple` (dual-unpacking), dynamic scoring, inline SVG charting, condition evaluation, execution drivers, and 6-phase roadmap (implemented in ACT-079).
+
 ### IDEA-007 — Canonical Target Catalog & CLI Argument Forwarding Matrix Test Coverage (Finding 13)
 - **Priority / Target**: `Completed ✅` · `tests/test_target_catalog_and_cli_matrix.py`, `audit_cis.py`, & `audit_orchestrator.py`
 - **Description**: Exhaustive matrix test suite validating canonical target resolution across all 18 targets (`CANONICAL_TARGETS` vs `TARGET_MAP`), rule specification presence in `rules/`, interface contracts (`perform_checks`, `calculate_scores`, `build_inline_svg_category_chart`, `build_inline_svg_donut_chart`, `export_results`), CLI parsing, and argument forwarding without secret leakage (implemented in ACT-078).
