@@ -83,6 +83,20 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
             self.assertIn("actions/checkout@", content)
             self.assertIn("actions/setup-python@", content)
 
+    def test_ci_and_unit_tests_python_matrix_excludes_eol_versions(self) -> None:
+        """Verify CI workflows exclude EOL Python versions (<= 3.9) and test active versions (3.10-3.13)."""
+        for wf_name in ("ci.yml", "unit-tests.yml"):
+            wf_path = WORKFLOWS_DIR / wf_name
+            content = wf_path.read_text(encoding="utf-8")
+            self.assertNotIn('"3.9"', content, f"{wf_name} must not test EOL Python 3.9 on modern runners")
+            self.assertNotIn('"3.8"', content, f"{wf_name} must not test EOL Python 3.8 on modern runners")
+            for active_ver in ("3.10", "3.11", "3.12", "3.13"):
+                self.assertIn(
+                    f'"{active_ver}"',
+                    content,
+                    f"{wf_name} must include active Python version {active_ver}",
+                )
+
     def test_pypi_publish_workflow_configured_correctly(self) -> None:
         """Verify pypi-publish.yml builds distribution and publishes with token secret."""
         pypi_path = WORKFLOWS_DIR / "pypi-publish.yml"
