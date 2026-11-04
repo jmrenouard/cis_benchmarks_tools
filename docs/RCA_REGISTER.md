@@ -11,6 +11,23 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-023 — Python 3.9 Deprecation & Absence on Modern CI Runner (Ubuntu 26.04)
+- **Date / Linked Action**: `2026-11-05` (`ACT-080` / Issue `#620`)
+- **Observed Symptom**: GitHub Actions CI workflow `ci.yml` failed on run `41923567716` (and Dependabot PRs `#618`, `#619`) during step `Set up Python 3.9` with error: `##[error]The version '3.9' with architecture 'x64' was not found for Ubuntu 26.04`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did the CI job fail?* `actions/setup-python@v5` failed to locate Python 3.9 binaries for the Ubuntu runner environment.
+  2. *Why was Python 3.9 missing from the runner?* The workflow specifies `runs-on: ubuntu-latest`, which recently rolled over to Ubuntu 26.04 in the GitHub Actions runner pool.
+  3. *Why does Ubuntu 26.04 not provide Python 3.9?* Python 3.9 reached official End-of-Life (EOL) in October 2025. Modern Ubuntu 26.04 runner toolchains do not build or cache deprecated EOL Python versions.
+  4. *Why did unit-tests.yml not fail?* `unit-tests.yml` had already removed Python 3.9 from its test matrix, covering only `["3.10", "3.11", "3.12"]`.
+  5. *Why was Python 3.9 still in ci.yml?* `ci.yml` had not been synchronized when Python 3.9 reached EOL, creating a drift between `ci.yml` and `unit-tests.yml`.
+- **Applied Change / Fix**:
+  - Updated `.github/workflows/ci.yml` matrix from `["3.9", "3.10", "3.11", "3.12"]` to `["3.10", "3.11", "3.12", "3.13"]`.
+  - Updated `.github/workflows/unit-tests.yml` matrix to include `3.13` (`["3.10", "3.11", "3.12", "3.13"]`).
+  - Added unit test assertion `test_ci_and_unit_tests_python_matrix_excludes_eol_versions` in `tests/test_github_actions_workflows.py` ensuring CI matrices exclude EOL versions (<= 3.9) and test active versions (3.10-3.13).
+- **Result & Non-Regression Test**: All 293 unit tests pass (100%); `scripts/pre_commit_checks.py` 8/8 pass; CI runs on supported Python versions without setup errors.
+
+---
+
 ### RCA-022 — Unexcluded Archive Directory in Bandit SAST Scan & Script Governance Blind Spots
 - **Date / Linked Action**: `2026-10-30` (`ACT-077` / Issue `#612`)
 - **Observed Symptom**: GitHub Actions CI workflow `Security & Dependency Audit` failed on PR `#611` and `main` (Run `#41135860515`) on Bandit SAST scan step with exit code 1; Bandit detected 7 High-Severity CWE-78 issues in decommissioned `archive/scripts/generate_missing_reports.py`. Furthermore, `scripts/pre_commit_checks.py` used loose `"archive"` substring matching, and `tests/test_script_inventory_and_governance.py` omitted directory checking in `scripts/`.

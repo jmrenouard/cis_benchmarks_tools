@@ -15,6 +15,19 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-080 — fix(ci): align Python matrix with active versions and remove EOL Python 3.9 on Ubuntu 26.04 (Issue `#620`)
+- **Date**: `2026-11-05T00:14+01:00` | **Status**: `COMPLETED` | **Issue**: `#620` | **Branch**: `fix/issue-620-ci-python-matrix-eol-39`
+- **Request**: Fix failing GitHub Actions CI workflow run `41923567716` by removing EOL Python 3.9 from `.github/workflows/ci.yml` and testing against active supported Python versions (`3.10`, `3.11`, `3.12`, `3.13`) across `ci.yml` and `unit-tests.yml`.
+- **Changes**:
+  - Updated `.github/workflows/ci.yml` matrix from `["3.9", "3.10", "3.11", "3.12"]` to `["3.10", "3.11", "3.12", "3.13"]`.
+  - Updated `.github/workflows/unit-tests.yml` matrix to include `3.13` (`["3.10", "3.11", "3.12", "3.13"]`).
+  - Added unit test assertion `test_ci_and_unit_tests_python_matrix_excludes_eol_versions` in `tests/test_github_actions_workflows.py`.
+  - Added entry `RCA-023` to `docs/RCA_REGISTER.md`.
+  - Updated `docs/ACTION_LOGBOOK.md` (`ACT-080`).
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 293 unit tests passed (100%), PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-079 — feat(core): implement shared core engine foundation and phased roadmap (Finding 9, Issue `#616`)
 - **Date**: `2026-10-31T00:35+01:00` | **Status**: `COMPLETED` | **Issue**: `#616`
 - **Request**: Remediate Finding 9: implement shared core engine `cis_core_engine.py`, unit tests `tests/test_cis_core_engine.py`, and 6-phase roadmap `IDEA-006`.
