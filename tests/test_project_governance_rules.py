@@ -114,6 +114,17 @@ class TestProjectGovernanceRules(unittest.TestCase):
                 "## 3. Dual-Mode Architecture",
                 "## 4. Component Interaction Diagram",
             ],
+            "benchmark-targets.md": [
+                "# CIS Benchmark Targets Specification",
+                "## 1. Target Catalog",
+                "## 2. Target Naming Conventions",
+            ],
+            "execution-contexts.md": [
+                "# Execution Contexts & Transports Specification",
+                "## 1. 4-Tier Polymorphic Execution Transports",
+                "## 2. Zero-Credential Exposure & Process Table Security",
+                "## 3. Rejection of OpenSSH `ControlMaster`",
+            ],
         }
 
         for filename, headers in expected_specs.items():
