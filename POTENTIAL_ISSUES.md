@@ -352,18 +352,46 @@ This document tracks technical debt, security considerations, active quality con
 - [x] **PR #551**: `fix(reports): repair syntax in MySQL Enterprise 9.7 SSH JSON report (Part 1/3) (#550)`
 - [x] **PR #553**: `fix(reports): repair syntax in MySQL Enterprise 9.7 SSH JSON report (Part 2/3) (#552)`
 - [x] **PR #555**: `fix(reports): repair syntax in MySQL Enterprise 9.7 SSH JSON report (Part 3/3) (#554)`
-- [x] **PR #576**: `test(rules): add comprehensive syntax validation suite for all JSON rule specifications` — *Added tests/test_rule_syntax_validation.py validating JSON schema and command syntax for all 887 controls (Finding 12, closes #575).*
-- [x] **PR #610**: `ci(security): add Bandit SAST security scanning workflow` — *Added .github/workflows/security.yml running Bandit SAST scanner on every push (Finding 13, closes #609).*
-- [x] **PR #612**: `fix(security): resolve Bandit SAST findings in archive scripts and test fixtures` — *Resolved Bandit security warnings across archive scripts and test fixtures (Finding 13, closes #611).*
-- [x] **PR #617**: `feat(core): create cis_core_engine.py with BaseAuditEngine and dynamic scoring` — *Implemented cis_core_engine.py providing BaseAuditEngine, AuditScoresTuple, and shared scoring algorithms (Finding 9, closes #616).*
-- [x] **PR #621**: `ci(workflows): remove EOL Python 3.9 from CI testing matrix` — *Removed Python 3.9 from CI matrix and updated testing configs to Python 3.10, 3.11, 3.12, 3.13 (closes #620).*
-- [x] **PR #623**: `docs(specs): initialize core architecture and engineering specifications suite` — *Created documentation/specifications/core-architecture.md, execution-context-and-drivers.md, and scoring-and-compliance.md (Milestone 1, Part 1/4, Refs #622).*
-- [x] **PR #624**: `docs(specs): add reporting, security, and quality assurance specifications` — *Created documentation/specifications/reporting-and-visualization.md, security-and-secret-management.md, and testing-and-quality-assurance.md (Milestone 1, Part 2/4, Refs #622).*
-- [x] **PR #625**: `docs(specs): add benchmark coverage, script inventory, and index specifications` — *Created documentation/specifications/benchmark-target-catalog.md, script-inventory-and-lifecycle.md, and INDEX.md (Milestone 1, Part 3/4, Refs #622).*
-- [x] **PR #626**: `docs(specs): harmonize workspace execution rules and finalize specifications suite` — *Harmonized .agents/rules/ execution rules with core specifications (Milestone 1, Part 4/4, Closes #622).*
-
-
-
-
-
-
+- [x] **PR #557**: `fix(reports): repair syntax in MariaDB 10.6 SSH JSON report (Part 1/3) (#556)`
+- [x] **PR #559**: `fix(reports): repair syntax in MariaDB 10.6 SSH JSON report (Part 2/3) (#558)`
+- [x] **PR #561**: `fix(reports): repair syntax in MariaDB 10.6 SSH JSON report (Part 3/3) (#560)`
+- [x] **PR #563**: `fix(reports): repair syntax in MariaDB 10.11 SSH JSON report (Part 1/3) (#562)`
+- [x] **PR #565**: `fix(reports): repair syntax in MariaDB 10.11 SSH JSON report (Part 2/3) (#564)`
+- [x] **PR #567**: `fix(reports): repair syntax in MariaDB 10.11 SSH JSON report (Part 3/3) (#566)`
+- [x] **PR #569**: `fix(reports): repair syntax in MySQL Community 8.4 SSH JSON report (Part 1/3) (#568)`
+- [x] **PR #571**: `fix(reports): repair syntax in MySQL Community 8.4 SSH JSON report (Part 2/3) (#570)`
+- [x] **PR #573**: `fix(reports): repair syntax in MySQL Community 8.4 SSH JSON report (Part 3/3) (#572)`
+- [x] **PR #575**: `test(reports): add automated regression test for SSH JSON report syntax and quality (#574)`
+- [x] **PR #577**: `fix(engines): remove unreachable duplicate code in run_command (#576)`
+- [x] **PR #579**: `feat(engines): dynamic rule category scoring in MariaDB engines (#578)`
+- [x] **PR #581**: `feat(engines): dynamic rule category scoring in MySQL 8.0 & Community engines (#580)`
+- [x] **PR #583**: `feat(engines): dynamic rule category scoring in MySQL Enterprise engines (#582)`
+- [x] **PR #585**: `feat(postgresql): dynamic rule category scoring in PostgreSQL 16 (#584)`
+- [x] **PR #587**: `feat(postgresql): dynamic rule category scoring in PostgreSQL 17 (#586)`
+- [x] **PR #589**: `feat(postgresql): dynamic rule category scoring in PostgreSQL 18 (#588)`
+- [x] **PR #591**: `feat(mongodb): dynamic rule category scoring in MongoDB 7 (#590)`
+- [x] **PR #593**: `feat(mongodb): dynamic rule category scoring in MongoDB 8 (#592)`
+- [x] **PR #595**: `feat(cassandra): dynamic rule category scoring in Cassandra 4.0 (#594)`
+- [x] **PR #597**: `feat(cassandra): dynamic rule category scoring in Cassandra 4.1 (#596)`
+- [x] **PR #599**: `feat(cassandra): dynamic rule category scoring in Cassandra 5.0 and APP-004 (#598)`
+- [x] **PR #601**: `fix(mariadb): safe key access and hardening in calculate_scores (#600)`
+- [x] **PR #603**: `fix(mysql): safe key access and hardening in MySQL Community engines (#602)`
+- [x] **PR #605**: `fix(mysql-enterprise): safe key access and hardening in calculate_scores (#604)`
+- [x] **PR #607**: `feat(transport): harden SSH timeouts and document ControlMaster trade-offs (#606)`
+- [x] **PR #609**: `feat(scripts): decommission obsolete migration scripts (Finding 12 Part 1/2) (#608)`
+- [x] **PR #611**: `feat(scripts): decommission remaining obsolete scripts, add inventory test, document IMP-005 (Finding 12 Part 2/2) (#610)`
+- [x] **PR #613**: `fix(ci): exclude archive from Bandit SAST scan and harden inventory governance (#612)`
+- [x] **PR #615**: `test(coverage): implement target catalog and CLI argument matrix test suite (#614)`
+- [x] **PR #617**: `feat(core): implement shared core engine foundation and phased roadmap (#616)`
+- [x] **PR #621**: `fix(ci): align Python matrix with active versions and remove EOL Python 3.9 (#620)`
+- [x] **PR #623**: `docs: harmonize execution rules and best practices (Part 1/4) (#622)`
+- [x] **PR #624**: `docs: establish governance and architecture specifications (Part 2/4) (#622)`
+- [x] **PR #625**: `docs: establish targets and execution contexts specifications (Part 3/4) (#622)`
+- [x] **PR #626**: `docs: update project specifications and execution rules (#622)`
+- [x] **PR #628**: `docs: synchronize ROADMAP v2.9.1 dashboard and translate Phase 12 (Part 1/5) (#627)`
+- [x] **PR #629**: `docs: establish detailed milestones for Phase 28, Phase 30 and future roadmap (Part 2/5) (#627)`
+- [x] **PR #630**: `docs: synchronize POTENTIAL_ISSUES resolved backlog and quality controls (Part 3/5) (#627)`
+- [x] **PR #631**: `docs: renumber backlog items 7 to 14 and translate PR header (Part 4/6) (#627)`
+- [x] **PR #632**: `docs: renumber backlog items 15 to 23 sequentially (Part 5/7) (#627)`
+- [x] **PR #633**: `docs: append resolved PR history entries #476-#626 (Part 6/7) (#627)`
+- [x] **PR #634**: `docs: synchronize READMEs and QA testing specification (Part 7/7) (#627)`
