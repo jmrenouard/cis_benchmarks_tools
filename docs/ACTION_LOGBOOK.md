@@ -15,6 +15,17 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-083 — docs: normalize action logbook and close issue (Part 4/4, Closes `#635`)
+- **Date**: `2026-11-09T00:50+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **Branch**: `docs/issue-635-part4-action-logbook-and-closing`
+- **Request**: Milestone 2 Iteration 2 (Part 4/4): Normalize ACT-082 part denominators across all entries to `(Part X/7, Issue #627)` and record their PR numbers (#628–#634) in `docs/ACTION_LOGBOOK.md`, and close Issue `#635`.
+- **Changes**:
+  - Normalized part denominators for all 7 ACT-082 entries to `(Part X/7, Issue #627)` in `docs/ACTION_LOGBOOK.md`.
+  - Added explicit PR numbers (`| **PR**: #628` through `#634`) across all 7 ACT-082 entries.
+  - Finalized remediation of PR history, broken links, and roadmap milestone attributions across PRs #636, #637, #638, and #639.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-083 — docs: finalize authentic PR history #557-#634 in POTENTIAL_ISSUES (Part 3/4, Issue `#635`)
 - **Date**: `2026-11-09T00:45+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **Branch**: `docs/issue-635-part3-potential-issues-prs-557-634`
 - **Request**: Milestone 2 Iteration 2 (Part 3/4): Replace remaining phantom PR entries in `POTENTIAL_ISSUES.md` with authentic merged PR records #557 to #634 and remove trailing blank lines at EOF.
@@ -37,7 +48,7 @@ _None._
 ---
 
 ### ACT-082 — docs: synchronize READMEs and QA testing specification (Part 7/7, Closes `#627`)
-- **Date**: `2026-11-09T00:16+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part7-readmes-and-specs-sync`
+- **Date**: `2026-11-09T00:16+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **PR**: `#634` | **Branch**: `docs/issue-627-part7-readmes-and-specs-sync`
 - **Request**: Milestone 2 (Part 7/7): Synchronize `README.md` and `README_fr.md` with v2.9.1 architecture (`cis_core_engine.py`, execution drivers, secret scrubbing, script inventory governance `IMP-005`, and PyPI installation), and polish `documentation/specifications/testing-and-quality-assurance.md` (49 modules, 295 tests, exact 8-step pre-commit list).
 - **Changes**:
   - Bumped version to `v2.9.1` and added PyPI badge and `### 0. Installation Rapide depuis PyPI` in `README_fr.md`.
@@ -49,7 +60,7 @@ _None._
 ---
 
 ### ACT-082 — docs: append resolved PR history entries #476-#626 (Part 6/7, Issue `#627`)
-- **Date**: `2026-11-09T00:13+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part6-potential-issues-resolved-prs-history`
+- **Date**: `2026-11-09T00:13+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **PR**: `#633` | **Branch**: `docs/issue-627-part6-potential-issues-resolved-prs-history`
 - **Request**: Milestone 2 (Part 6/7): Append resolved PR history entries from PR #476 through PR #626 (Findings 1–14 across M1–M5 and Core Specifications M1) to `POTENTIAL_ISSUES.md`.
 - **Changes**:
   - Appended 32 resolved PR entries from PR #476 to PR #626 in `POTENTIAL_ISSUES.md`.
@@ -59,7 +70,7 @@ _None._
 ---
 
 ### ACT-082 — docs: renumber backlog items 15 to 23 sequentially (Part 5/7, Issue `#627`)
-- **Date**: `2026-11-09T00:10+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part5-potential-issues-items-15-23-and-pr-history`
+- **Date**: `2026-11-09T00:10+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **PR**: `#632` | **Branch**: `docs/issue-627-part5-potential-issues-items-15-23-and-pr-history`
 - **Request**: Milestone 2 (Part 5/7): Renumber older backlog items 15 to 23 sequentially in `POTENTIAL_ISSUES.md` (Phase 9 down to Subprocess Command Injection).
 - **Changes**:
   - Renumbered backlog items 15 to 23 sequentially in `POTENTIAL_ISSUES.md`.
@@ -68,9 +79,9 @@ _None._
 
 ---
 
-### ACT-082 — docs: renumber backlog items 7 to 14 and translate PR header (Part 4/6, Issue `#627`)
-- **Date**: `2026-11-09T00:06+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part4-potential-issues-renumbering-and-pr-history`
-- **Request**: Milestone 2 (Part 4/6): Renumber older backlog items 7 to 14 sequentially in `POTENTIAL_ISSUES.md` (Phases 24 down to 10) and translate French section header on resolved PRs to English.
+### ACT-082 — docs: renumber backlog items 7 to 14 and translate PR header (Part 4/7, Issue `#627`)
+- **Date**: `2026-11-09T00:06+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **PR**: `#631` | **Branch**: `docs/issue-627-part4-potential-issues-renumbering-and-pr-history`
+- **Request**: Milestone 2 (Part 4/7): Renumber older backlog items 7 to 14 sequentially in `POTENTIAL_ISSUES.md` (Phases 24 down to 10) and translate French section header on resolved PRs to English.
 - **Changes**:
   - Renumbered backlog items 7 to 14 sequentially in `POTENTIAL_ISSUES.md`.
   - Translated French header `Historique Exhaustif des Pull Requests Résolues` to English `Exhaustive History of Resolved Pull Requests`.
@@ -79,9 +90,9 @@ _None._
 
 ---
 
-### ACT-082 — docs: synchronize POTENTIAL_ISSUES resolved backlog and quality controls (Part 3/5, Issue `#627`)
-- **Date**: `2026-11-08T23:58+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part3-potential-issues-backlog-and-controls`
-- **Request**: Milestone 2 (Part 3/5): Update `POTENTIAL_ISSUES.md` version header to `v2.9.1`, fix broken heading numbering from repeated `### 2.` to sequential 1 to 23, add resolved backlog items for Phases 25 to 30 (including Ponytail Audit Findings 1–14 M1–M5), and update Active Quality Controls to reflect 295 unit tests across 49 test modules.
+### ACT-082 — docs: synchronize POTENTIAL_ISSUES resolved backlog and quality controls (Part 3/7, Issue `#627`)
+- **Date**: `2026-11-08T23:58+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **PR**: `#630` | **Branch**: `docs/issue-627-part3-potential-issues-backlog-and-controls`
+- **Request**: Milestone 2 (Part 3/7): Update `POTENTIAL_ISSUES.md` version header to `v2.9.1`, fix broken heading numbering from repeated `### 2.` to sequential 1 to 23, add resolved backlog items for Phases 25 to 30 (including Ponytail Audit Findings 1–14 M1–M5), and update Active Quality Controls to reflect 295 unit tests across 49 test modules.
 - **Changes**:
   - Bumped version header to `v2.9.1` in `POTENTIAL_ISSUES.md`.
   - Added resolved backlog items for Phases 25, 26, 27, 28, 29, 30 in `POTENTIAL_ISSUES.md`.
@@ -92,9 +103,9 @@ _None._
 
 ---
 
-### ACT-082 — docs: establish ROADMAP Detailed Milestones and re-position RCA-014 (Part 2/5, Issue `#627`)
-- **Date**: `2026-11-08T23:55+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part2-roadmap-detailed-milestones-and-rca`
-- **Request**: Milestone 2 (Part 2/5): Add detailed milestones for Phase 28 (English Governance & Windows Hardening), Phase 30 (14 Ponytail Audit remediations M1-M5, PRs #476-#621, Specifications M1 PRs #623-#626), and Future Roadmap (Phases 31-32, IDEA-001, IDEA-003, IDEA-006) to `ROADMAP.md`. Re-position RCA-014 into descending numerical order in `docs/RCA_REGISTER.md`.
+### ACT-082 — docs: establish ROADMAP Detailed Milestones and re-position RCA-014 (Part 2/7, Issue `#627`)
+- **Date**: `2026-11-08T23:55+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **PR**: `#629` | **Branch**: `docs/issue-627-part2-roadmap-detailed-milestones-and-rca`
+- **Request**: Milestone 2 (Part 2/7): Add detailed milestones for Phase 28 (English Governance & Windows Hardening), Phase 30 (14 Ponytail Audit remediations M1-M5, PRs #476-#621, Specifications M1 PRs #623-#626), and Future Roadmap (Phases 31-32, IDEA-001, IDEA-003, IDEA-006) to `ROADMAP.md`. Re-position RCA-014 into descending numerical order in `docs/RCA_REGISTER.md`.
 - **Changes**:
   - Added Phase 28 in Detailed Milestones in `ROADMAP.md`.
   - Added Phase 30 detailing all 14 Ponytail Audit findings across M1–M5 in `ROADMAP.md`.
@@ -105,9 +116,9 @@ _None._
 
 ---
 
-### ACT-082 — docs: synchronize ROADMAP and POTENTIAL_ISSUES with v2.9.1 architecture (Part 1/5, Issue `#627`)
-- **Date**: `2026-11-08T23:50+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part1-roadmap-and-backlog-sync`
-- **Request**: Milestone 2 (Part 1/2): Synchronize `ROADMAP.md` (v2.9.1, missing phases in dashboard, translate Phase 12 to English, add Phase 28, Phase 30 with 14 Ponytail audit findings, and Future Roadmap) and `POTENTIAL_ISSUES.md` (v2.9.1, fix sequential numbering 1-23, add resolved backlog items for Phases 25-30, update Active Quality Controls to 295 unit tests / 49 test modules, translate French header to English, and append resolved PRs #476-#626). Re-position RCA-014 in `docs/RCA_REGISTER.md`.
+### ACT-082 — docs: synchronize ROADMAP and POTENTIAL_ISSUES with v2.9.1 architecture (Part 1/7, Issue `#627`)
+- **Date**: `2026-11-08T23:50+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **PR**: `#628` | **Branch**: `docs/issue-627-part1-roadmap-and-backlog-sync`
+- **Request**: Milestone 2 (Part 1/7): Synchronize `ROADMAP.md` (v2.9.1, missing phases in dashboard, translate Phase 12 to English, add Phase 28, Phase 30 with 14 Ponytail audit findings, and Future Roadmap) and `POTENTIAL_ISSUES.md` (v2.9.1, fix sequential numbering 1-23, add resolved backlog items for Phases 25-30, update Active Quality Controls to 295 unit tests / 49 test modules, translate French header to English, and append resolved PRs #476-#626). Re-position RCA-014 in `docs/RCA_REGISTER.md`.
 - **Changes**:
   - Bumped version headers to `v2.9.1` in `ROADMAP.md` and `POTENTIAL_ISSUES.md`.
   - Added missing rows for Phases 25, 26, 27, and 30 in Executive Dashboard in `ROADMAP.md`.
