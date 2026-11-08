@@ -15,6 +15,18 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-082 — docs: synchronize READMEs and QA testing specification (Part 7/7, Closes `#627`)
+- **Date**: `2026-11-09T00:16+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part7-readmes-and-specs-sync`
+- **Request**: Milestone 2 (Part 7/7): Synchronize `README.md` and `README_fr.md` with v2.9.1 architecture (`cis_core_engine.py`, execution drivers, secret scrubbing, script inventory governance `IMP-005`, and PyPI installation), and polish `documentation/specifications/testing-and-quality-assurance.md` (49 modules, 295 tests, exact 8-step pre-commit list).
+- **Changes**:
+  - Bumped version to `v2.9.1` and added PyPI badge and `### 0. Installation Rapide depuis PyPI` in `README_fr.md`.
+  - Synchronized Architecture section in `README.md` and `README_fr.md` to document core engine, polymorphic execution drivers, secret scrubbing, and script inventory governance.
+  - Polished `documentation/specifications/testing-and-quality-assurance.md` with 49 modules (295 tests) and exact 8-step pre-commit checks.
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-082 — docs: append resolved PR history entries #476-#626 (Part 6/7, Issue `#627`)
 - **Date**: `2026-11-09T00:13+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part6-potential-issues-resolved-prs-history`
 - **Request**: Milestone 2 (Part 6/7): Append resolved PR history entries from PR #476 through PR #626 (Findings 1–14 across M1–M5 and Core Specifications M1) to `POTENTIAL_ISSUES.md`.

@@ -1,11 +1,12 @@
-# 🛡️ Suite CIS Benchmarks Tools (v2.3.1)
+# 🛡️ Suite CIS Benchmarks Tools (v2.9.1)
 
 > **Moteur d'Audit de Conformité et de Sécurité Automatisé pour Bases de Données et Systèmes Linux (100% Python Standard Library - PSL ONLY).**
 
+[![PyPI version](https://img.shields.io/pypi/v/cis-benchmarks-tools.svg)](https://pypi.org/project/cis-benchmarks-tools/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
-[![Release](https://img.shields.io/badge/Release-v2.3.1-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
+[![Release](https://img.shields.io/badge/Release-v2.9.1-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
 
 ---
 
@@ -71,6 +72,16 @@
 
 ## 🚀 Guide d'Utilisation & Exemples
 
+### 0. Installation Rapide depuis PyPI
+```bash
+# Installation directe via pip
+pip install cis-benchmarks-tools
+
+# Exécution immédiate via le point d'entrée officiel
+audit-cis --list-targets
+audit-cis --target postgresql16 --local --format html
+```
+
 ### 1. Lister les Référentiels
 ```bash
 python3 audit_cis.py --list-targets
@@ -110,10 +121,14 @@ python3 audit_cis.py --all
 
 ## 🏗️ Architecture & Règles de Conception
 
-1. **100% Python Standard Library (PSL ONLY)** : Aucun recours aux bibliothèques tierces (`pip`, `requests`, `jinja2`, etc.).
-2. **Découplage des Règles (`rules/*.json`)** : Contrôles, pré-conditions, regex et remédiations externalisés.
-3. **Préservation de la Télémétrie** : Sorties d'erreur `stderr` conservées sans `2>/dev/null`.
-4. **Indépendance Réseau (Offline First)** : Rapports HTML complets sans CDN externe.
+1. **100% Python Standard Library (PSL ONLY)** : Aucun recours aux bibliothèques tierces (`pip`, `requests`, `jinja2`, etc.). S'exécute dans tout environnement contraint ou air-gappé.
+2. **Moteur Central Partagé (`cis_core_engine.py`)** : Classe `BaseAuditEngine`, `AuditScoresTuple`, et algorithmes de scoring dynamiques unifiés pour l'ensemble des cibles.
+3. **Pilotes d'Exécution Polymorphiques (`execution_drivers.py`)** : Hiérarchie `BaseExecutor` (`LocalExecutor`, `DockerExecutor`, `SSHExecutor`, `RemoteSSHContainerExecutor`) avec détection heuristique 6 sondes (`RuntimeDetector`) et restitution du contexte.
+4. **Zéro Secret en Clair dans les Processus** : Injection des mots de passe de bases de données via variables d'environnement (`MYSQL_PWD`, `PGPASSWORD`, `CIS_DB_PASSWORD`) et masquage dans la table des processus (`ps aux`) et les logs (`SecretSanitizer`).
+5. **Découplage des Règles (`rules/*.json`)** : Contrôles, pré-conditions, regex et remédiations externalisés en fichiers JSON autonomes.
+6. **Préservation de la Télémétrie** : Sorties d'erreur `stderr` conservées sans `2>/dev/null`.
+7. **Indépendance Réseau (Offline First)** : Rapports HTML autonomes avec graphiques SVG natifs (donut et barres) sans CDN ni JavaScript externe.
+8. **Gouvernance de l'Inventaire d'Outils (`IMP-005`)** : Maintien strict de 13 outils actifs dans `scripts/` ; archivage des scripts historiques dans `archive/scripts/`.
 
 ---
 

@@ -139,12 +139,20 @@ python3 audit_cis.py --all
 1. **Python Standard Library (PSL ONLY)**:
    - Absolutely no third-party package dependencies (`requests`, `jinja2`, `yaml`, `paramiko`, etc.).
    - Guaranteed to execute seamlessly in air-gapped, hardened, or restricted enterprise environments.
-2. **Decoupled Architecture (`rules/*.json`)**:
+2. **Shared Core Engine (`cis_core_engine.py`)**:
+   - Centralized `BaseAuditEngine`, `AuditScoresTuple`, and dynamic scoring algorithms shared across all benchmark targets.
+3. **Polymorphic Execution Drivers (`execution_drivers.py`)**:
+   - Decoupled `BaseExecutor` hierarchy (`LocalExecutor`, `DockerExecutor`, `SSHExecutor`, `RemoteSSHContainerExecutor`) with 6-probe `RuntimeDetector` and execution context metadata cards.
+4. **Zero Plaintext Secret Exposure**:
+   - Sensitive database credentials are systematically injected via environment variables (`MYSQL_PWD`, `PGPASSWORD`, `CIS_DB_PASSWORD`) and masked in process tables (`ps aux`) and output logs (`SecretSanitizer`).
+5. **Decoupled Rule Specifications (`rules/*.json`)**:
    - Every benchmark's check definitions, preconditions, regexes, and remediation steps are stored in standalone JSON files under `rules/`.
-3. **Diagnostic Telemetry Integrity**:
+6. **Diagnostic Telemetry Integrity**:
    - `stderr` streams are systematically preserved without destructive `2>/dev/null` masking.
-4. **Offline First**:
-   - Complete visual reports without requiring Internet access or external CDNs.
+7. **Offline First (Pure Inline SVG)**:
+   - Complete visual reports with native inline SVG donut and category charts without requiring Internet access or external CDNs.
+8. **Script Inventory Governance (`IMP-005`)**:
+   - Strictly maintained 13 active production tools in `scripts/`; all superseded migration and generator scripts archived under `archive/scripts/`.
 
 ---
 
