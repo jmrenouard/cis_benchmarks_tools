@@ -272,6 +272,8 @@
 ### IMP-002 — External CDN JavaScript (`Chart.js`) for HTML Compliance Charts
 - **Why It Is a Dead-End**: Offline security workstations block external CDNs, leaving blank charts.
 - **Adopted Decision**: Generate **100% Pure Inline SVG Donut and Category Bar Charts** directly in Python PSL.
+- **Linked Action / Harmonization**: Purged legacy Chart.js guidelines from `04_best_practices.md` and codified 100% offline inline SVG specifications across `documentation/specifications/` (`ACT-081` / Issue `#622`).
+
 
 ### IMP-003 — Destructive `2>/dev/null` Error Masking in CIS Rule Checks
 - **Why It Is a Dead-End**: Masks root causes (`Permission denied`, `command not found`), conflating tooling errors with security outcomes.

@@ -74,6 +74,27 @@ class TestProjectGovernanceRules(unittest.TestCase):
         self.assertIn("APP-001", content)
         self.assertIn("IDEA-001", content)
 
+    def test_execution_rules_and_best_practices_aligned_with_core_pillars(self) -> None:
+        """Verify 03_execution_rules.md and 04_best_practices.md enforce PSL, offline SVG, and diff limits."""
+        exec_rules = ROOT / "03_execution_rules.md"
+        best_practices = ROOT / "04_best_practices.md"
+
+        self.assertTrue(exec_rules.is_file(), "03_execution_rules.md must exist")
+        self.assertTrue(best_practices.is_file(), "04_best_practices.md must exist")
+
+        exec_content = exec_rules.read_text(encoding="utf-8")
+        bp_content = best_practices.read_text(encoding="utf-8")
+
+        self.assertIn("15,000 characters", exec_content)
+        self.assertIn("100% Python Standard Library", exec_content)
+        self.assertIn("4-Tier Execution Contexts", exec_content)
+
+        self.assertIn("100% Offline Inline SVG Reporting", bp_content)
+        self.assertIn("Chart.js is permanently prohibited", bp_content)
+        self.assertIn("SecretSanitizer", bp_content)
+
 
 if __name__ == "__main__":
     unittest.main()
+
+

@@ -15,6 +15,19 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-081 — docs: harmonize execution rules and best practices (Part 1/4, Issue `#622`)
+- **Date**: `2026-11-08T23:15+01:00` | **Status**: `COMPLETED` | **Issue**: `#622` | **Branch**: `docs/issue-622-part1-execution-rules-harmonization`
+- **Request**: Milestone 1 (Part 1/4): Harmonize `03_execution_rules.md` and `04_best_practices.md` with core pillars (purging Chart.js/CDN rules, aligning with 18 targets, 4 transports, PSL-only, offline inline SVG, and diff limits < 15,000 characters).
+- **Changes**:
+  - Harmonized `03_execution_rules.md` with dual-mode architecture, PSL-only, 4 transports, and diff limits.
+  - Harmonized `04_best_practices.md` by purging Chart.js/CDN rules and codifying offline inline SVG reporting.
+  - Added unit test `test_execution_rules_and_best_practices_aligned_with_core_pillars` in `tests/test_project_governance_rules.py`.
+  - Updated `docs/RCA_REGISTER.md` with harmonization cross-reference under `IMP-002`.
+  - Updated `docs/ACTION_LOGBOOK.md` (`ACT-081`).
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 294 unit tests passed (100%), PR diff strictly < 15,000 characters (~11,000 chars).
+
+---
+
 ### ACT-080 — fix(ci): align Python matrix with active versions and remove EOL Python 3.9 on Ubuntu 26.04 (Issue `#620`)
 - **Date**: `2026-11-05T00:14+01:00` | **Status**: `COMPLETED` | **Issue**: `#620` | **Branch**: `fix/issue-620-ci-python-matrix-eol-39`
 - **Request**: Fix failing GitHub Actions CI workflow run `41923567716` by removing EOL Python 3.9 from `.github/workflows/ci.yml` and testing against active supported Python versions (`3.10`, `3.11`, `3.12`, `3.13`) across `ci.yml` and `unit-tests.yml`.
