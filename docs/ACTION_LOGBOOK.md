@@ -15,7 +15,20 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
-### ACT-082 — docs: synchronize ROADMAP and POTENTIAL_ISSUES with v2.9.1 architecture (Part 1/2, Issue `#627`)
+### ACT-082 — docs: establish ROADMAP Detailed Milestones and re-position RCA-014 (Part 2/5, Issue `#627`)
+- **Date**: `2026-11-08T23:55+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part2-roadmap-detailed-milestones-and-rca`
+- **Request**: Milestone 2 (Part 2/5): Add detailed milestones for Phase 28 (English Governance & Windows Hardening), Phase 30 (14 Ponytail Audit remediations M1-M5, PRs #476-#621, Specifications M1 PRs #623-#626), and Future Roadmap (Phases 31-32, IDEA-001, IDEA-003, IDEA-006) to `ROADMAP.md`. Re-position RCA-014 into descending numerical order in `docs/RCA_REGISTER.md`.
+- **Changes**:
+  - Added Phase 28 in Detailed Milestones in `ROADMAP.md`.
+  - Added Phase 30 detailing all 14 Ponytail Audit findings across M1–M5 in `ROADMAP.md`.
+  - Added Future Roadmap section (Phases 31 and 32) in `ROADMAP.md`.
+  - Re-positioned RCA-014 after RCA-015 in `docs/RCA_REGISTER.md`.
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
+
+---
+
+### ACT-082 — docs: synchronize ROADMAP and POTENTIAL_ISSUES with v2.9.1 architecture (Part 1/5, Issue `#627`)
 - **Date**: `2026-11-08T23:50+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part1-roadmap-and-backlog-sync`
 - **Request**: Milestone 2 (Part 1/2): Synchronize `ROADMAP.md` (v2.9.1, missing phases in dashboard, translate Phase 12 to English, add Phase 28, Phase 30 with 14 Ponytail audit findings, and Future Roadmap) and `POTENTIAL_ISSUES.md` (v2.9.1, fix sequential numbering 1-23, add resolved backlog items for Phases 25-30, update Active Quality Controls to 295 unit tests / 49 test modules, translate French header to English, and append resolved PRs #476-#626). Re-position RCA-014 in `docs/RCA_REGISTER.md`.
 - **Changes**:
