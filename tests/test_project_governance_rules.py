@@ -93,8 +93,8 @@ class TestProjectGovernanceRules(unittest.TestCase):
         self.assertIn("Chart.js is permanently prohibited", bp_content)
         self.assertIn("SecretSanitizer", bp_content)
 
-    def test_core_specifications_governance_and_architecture(self) -> None:
-        """Verify project-governance.md and architecture.md exist with expected sections."""
+    def test_core_specifications_exist_and_cover_key_sections(self) -> None:
+        """Verify all 6 core specification files exist under documentation/specifications/ with expected sections."""
         specs_dir = ROOT / "documentation" / "specifications"
         self.assertTrue(specs_dir.is_dir(), "documentation/specifications must exist")
 
@@ -124,6 +124,19 @@ class TestProjectGovernanceRules(unittest.TestCase):
                 "## 1. 4-Tier Polymorphic Execution Transports",
                 "## 2. Zero-Credential Exposure & Process Table Security",
                 "## 3. Rejection of OpenSSH `ControlMaster`",
+            ],
+            "reporting-and-metrics.md": [
+                "# Reporting & Compliance Metrics Specification",
+                "## 1. 5-State Compliance Taxonomy",
+                "## 2. Scoring Formulas",
+                "## 3. 100% Offline Inline SVG Graphics",
+                "## 4. Multi-Format Output Support",
+            ],
+            "testing-and-quality-assurance.md": [
+                "# Testing & Quality Assurance Specification",
+                "## 1. Quality Assurance Pipeline",
+                "## 2. Pull Request Diff Limit",
+                "## 3. Tooling Inventory & Archiving Standard",
             ],
         }
 
