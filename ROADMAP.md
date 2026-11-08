@@ -7,7 +7,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 ## 🔒 Governance & Core Standards
 
 > [!NOTE]
-> All development, git release lifecycles, PR size limits (< 15K diff chars), and Python Standard Library (PSL ONLY) enforcement rules strictly follow workspace governance defined in [.agents/AGENTS.md](file:///.agents/AGENTS.md).
+> All development, git release lifecycles, PR size limits (< 15K diff chars), and Python Standard Library (PSL ONLY) enforcement rules strictly follow workspace governance defined in [.agents/AGENTS.md](.agents/AGENTS.md).
 
 ---
 
@@ -515,33 +515,34 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 ---
 
 ### Phase 30: Ponytail Audit Remediations & Shared Core Engine Foundation (`Completed ✅ - v2.9.1`)
-**Summary**: Remediate all 14 Ponytail Audit findings across Milestones M1–M5 (PRs #476–#621), establish the shared core audit engine foundation (`cis_core_engine.py`), eliminate script bloat (`IMP-005`), enhance process security (`ps aux` credential protection), and harmonize core specifications (PRs #623–#626).
+**Summary**: Remediate all 14 Ponytail Audit findings across Milestones M1–M5 (PRs #476–#621), establish the shared core audit engine foundation (`cis_core_engine.py`), eliminate script bloat (`IMP-005`), enhance process security (`ps aux` credential protection), harmonize core specifications (PRs #623–#626), and synchronize documentation and roadmap (PRs #628–#634).
 
-#### 30.1 Milestone M1: Execution Integrity & RHEL Fixes (PRs #476–#486)
-- [x] **Finding 1 (`RCA-011`)**: Fix RHEL 8/9/10 HTML report SVG category chart argument signature mismatch and populate dynamic category scores (PRs #476, #478).
-- [x] **Finding 2 (`RCA-012`)**: Propagate `docker_container` parameter to `run_command()` in PostgreSQL, MongoDB, and Cassandra engines (PRs #480, #482).
-- [x] **Finding 4 (`RCA-014`)**: Normalize RHEL module names with underscores in orchestrator imports and rule file mappings (`audit_cis_rhel_8.py`, etc.) (PRs #484, #486).
+#### 30.1 Milestone M1: Execution Integrity & RHEL Fixes (PRs #476–#483)
+- [x] **Finding 4 (`RCA-014`)**: Normalize RHEL module names with underscores in orchestrator imports and rule file mappings (`audit_cis_rhel_8.py`, etc.) (PR #478).
+- [x] **Finding 1 (`RCA-011`)**: Fix RHEL 8/9/10 HTML report SVG category chart argument signature mismatch and populate dynamic category scores (PRs #476, #480).
+- [x] **Finding 2 (`RCA-012`)**: Propagate `docker_container` parameter to `run_command()` in PostgreSQL, MongoDB, and Cassandra engines (PRs #482, #483).
 
-#### 30.2 Milestone M2: Security, Credentials & Isolation (PRs #488–#500)
-- [x] **Finding 3 (`RCA-013`)**: Prevent dropping database credentials and SSH options across CLI dispatch, `perform_checks()`, and `run_command()` (PRs #488, #490).
-- [x] **Finding 5 (`RCA-016`)**: Mitigate shell injection and host variable expansion in Docker and SSH execution drivers using typed argument lists (PRs #492, #494).
-- [x] **Finding 6 (`RCA-017`)**: Protect database passwords against process table (`ps aux`) inspection by passing credentials via environment variables (`MYSQL_PWD`, `PGPASSWORD`, `CIS_DB_PASSWORD`) (PRs #496, #498).
-- [x] **Finding 7 (`RCA-018`)**: Eliminate fake Docker container synthesis on bare-metal local mode audits (PR #500).
+#### 30.2 Milestone M2: Security, Credentials & Isolation (PRs #485–#514)
+- [x] **Finding 3 (`RCA-013`)**: Prevent dropping database credentials and SSH options across CLI dispatch, `perform_checks()`, and `run_command()` (PRs #485–#503, #505).
+- [x] **Finding 5 (`RCA-016`)**: Mitigate shell injection and host variable expansion in Docker and SSH execution drivers using typed argument lists (PR #507).
+- [x] **Finding 6 (`RCA-017`)**: Protect database passwords against process table (`ps aux`) inspection by passing credentials via environment variables (`MYSQL_PWD`, `PGPASSWORD`, `CIS_DB_PASSWORD`) (PRs #509, #511).
+- [x] **Finding 7 (`RCA-018`)**: Eliminate fake Docker container synthesis on bare-metal local mode audits (PR #514).
 
-#### 30.3 Milestone M3: Engine Robustness & Syntax Integrity (PRs #502–#514)
-- [x] **Finding 8 (`RCA-019`, `RCA-020`)**: Fix Windows console UTF-8 crashes and repair SSH warning-cleaning regex that corrupted JSON/XML reports (PRs #502, #504).
-- [x] **Finding 10 (`APP-004`)**: Replace hardcoded recommendation dictionaries with dynamic rule category discovery and safe key access across 15 database engines (PRs #506, #508).
-- [x] **Finding 11 (`RCA-021`)**: Eliminate unreachable duplicate `subprocess.run` and exception handling blocks in MariaDB audit scripts (PRs #510, #512).
+#### 30.3 Milestone M3: Engine Robustness, Syntax Integrity & Dynamic Scoring (PRs #516–#605)
+- [x] **Finding 8 (`RCA-019`, `RCA-020`)**: Fix Windows console UTF-8 crashes and repair SSH warning-cleaning regex that corrupted JSON/XML reports across all 18 targets (PRs #516, #517, #519–#575).
+- [x] **Finding 11 (`RCA-021`)**: Eliminate unreachable duplicate `subprocess.run` and exception handling blocks in MariaDB audit scripts (PR #577).
+- [x] **Finding 10 (`APP-004`)**: Replace hardcoded recommendation dictionaries with dynamic rule category discovery and safe key access across 15 database engines (PRs #579–#605).
 
-#### 30.4 Milestone M4: Maintenance, Governance & Architecture (PRs #516–#528)
-- [x] **Finding 12 (`IMP-005`)**: Decommission 65 legacy scripts to `archive/scripts/`, whitelist 13 essential production tools in `scripts/`, and add automated inventory governance tests (PRs #516, #518).
-- [x] **Finding 13 (`IDEA-007`)**: Catalog all 18 canonical targets and achieve 100% CLI matrix parameter forwarding test coverage (PRs #520, #522).
-- [x] **Finding 14 (`IMP-006`)**: Document SSH audit connection overhead and formalize the deliberate architectural trade-off rejecting `ControlMaster` in favor of stateless robustness (PRs #524, #526).
+#### 30.4 Milestone M4: Maintenance, Governance & Architecture (PRs #607–#615)
+- [x] **Finding 14 (`IMP-006`)**: Document SSH audit connection overhead and formalize the deliberate architectural trade-off rejecting `ControlMaster` in favor of stateless robustness (PR #607).
+- [x] **Finding 12 (`IMP-005`)**: Decommission 65 legacy scripts to `archive/scripts/`, whitelist 13 essential production tools in `scripts/`, and add automated inventory governance tests (PRs #609, #611).
+- [x] **Finding 13 (`IDEA-007`)**: Catalog all 18 canonical targets and achieve 100% CLI matrix parameter forwarding test coverage (PRs #613, #615).
 
-#### 30.5 Milestone M5 & Core Specifications M1: Shared Core Engine & Specifications Harmonization (PRs #530–#626)
-- [x] **Finding 9 (`IDEA-006`)**: Establish `cis_core_engine.py` providing `BaseAuditEngine`, `AuditScoresTuple`, dual-unpacking backwards compatibility, and shared offline SVG chart generators (PRs #530, #532).
-- [x] **CI Matrix & Security Hardening**: Remediate Bandit SAST scan on archive (`RCA-022`) and update Python matrix for Ubuntu 26.04 (`RCA-023`).
-- [x] **Core Specifications Harmonization**: Establish complete 6-file specification suite under `documentation/specifications/`, harmonize execution rules (`03_execution_rules.md`) and best practices (`04_best_practices.md`) (PRs #623–#626, Closes #622).
+#### 30.5 Milestone M5, Core Specifications M1 & Documentation M2 (PRs #617–#634)
+- [x] **Finding 9 (`IDEA-006`)**: Establish `cis_core_engine.py` providing `BaseAuditEngine`, `AuditScoresTuple`, dual-unpacking backwards compatibility, and shared offline SVG chart generators (PR #617).
+- [x] **CI Matrix & Security Hardening (`RCA-023`)**: Remediate Bandit SAST scan on archive (`RCA-022`) and update Python matrix for active versions (PR #621).
+- [x] **Milestone 1 Specifications**: Establish complete 6-file specification suite under `documentation/specifications/`, harmonize execution rules (`03_execution_rules.md`) and best practices (`04_best_practices.md`) (PRs #623–#626).
+- [x] **Milestone 2 Documentation**: Synchronize ROADMAP dashboard, translate Phase 12, renumber backlog items 1-23, update Active Quality Controls, and synchronize READMEs (PRs #628–#634).
 
 ---
 
