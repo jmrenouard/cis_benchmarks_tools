@@ -30,35 +30,35 @@ This document tracks technical debt, security considerations, active quality con
 - **Problem**: Multi-target auditing lacked centralized orchestration, normalized target aliases, structured diagnostic categorization, and fleet-wide root cause analysis (RCA) reporting.
 - **Resolution**: Created `audit_orchestrator.py` with parallel worker pool and normalized target catalog, `audit_diagnostics.py` for diagnostic classification, and `scripts/generate_rca_reports.py`. Added unit tests in `tests/test_audit_orchestrator.py`, `tests/test_audit_diagnostics.py`, and `tests/test_audit_resilience_and_rca.py` (PRs #386–#394).
 
-### 1. Phase 24 Unified Execution Drivers & Multi-Criteria Runtime Detection (Resolved in v2.6.8 ✅)
+### 7. Phase 24 Unified Execution Drivers & Multi-Criteria Runtime Detection (Resolved in v2.6.8 ✅)
 - **Problem**: Environment runtime detection was fragmented, container heuristics were minimal (relied solely on presence of `/.dockerenv`), and command execution lacked polymorphic driver abstraction, structured execution context restitution, and systematic zero-credential secret scrubbing.
 - **Resolution**: Created `execution_drivers.py` providing `RuntimeDetector` (6 inspection probes: cgroups v1/v2, containerenv, mountinfo, env vars, rootless UID, sandbox inodes), `SecretSanitizer`, polymorphic `BaseExecutor` hierarchy (`LocalExecutor`, `DockerExecutor`, `SSHExecutor`, `RemoteSSHContainerExecutor`), and factory `create_executor()`. Integrated execution context metadata cards into MariaDB 10.6 and 10.11 engines and report templates. Added comprehensive unit tests in `tests/test_execution_drivers.py`, `tests/test_mariadb_audit_engine.py`, and `tests/test_audit_cis_cli.py` (PR #374, Closes #373).
 
-### 2. Phase 23 PostgreSQL Command Safety & 100% E2E Multi-Format Compliance (Resolved in v2.6.7 ✅)
+### 8. Phase 23 PostgreSQL Command Safety & 100% E2E Multi-Format Compliance (Resolved in v2.6.7 ✅)
 - **Problem**: PostgreSQL rule specifications contained raw SQL queries (`SELECT`, `SHOW`) and invalid trailing expressions without `psql` wrappers, triggering bash error 127 command not found.
 - **Resolution**: Sanitized all PostgreSQL rule definitions and audit engines with proper `psql` wrappers, auto-wrap safety logic, and full parameter forwarding in `perform_checks()`. Added unit tests in `tests/test_postgresql_command_safety.py` and validated 100% pass across all 15 targets in HTML, JSON, XML, and TXT formats (PR #362, Closes #361).
 
-### 2. Phase 22 PostgreSQL, MongoDB & Cassandra Testing Hardening (Resolved in v2.6.6 ✅)
+### 9. Phase 22 PostgreSQL, MongoDB & Cassandra Testing Hardening (Resolved in v2.6.6 ✅)
 - **Problem**: Default configurations in PostgreSQL, MongoDB, and Cassandra container startup scripts did not enable CIS-mandated parameters (log verbosity, TLS mode, auth parameters, system.log creation).
 - **Resolution**: Enhanced `scripts/start_postgresql.sh`, `scripts/start_mongodb.sh`, and `scripts/start_cassandra.sh` with CIS-compliant settings (SSL/TLS, auditLog, password authentication, log_line_prefix with `%t`). Added unit tests in `tests/test_pg_mongo_cassandra_hardening.py` (PR #360, Closes #359).
 
-### 2. Phase 21 Database Dockerfile Non-Interactive Shell Hardening & Makefile Harmonization (Resolved in v2.6.5 ✅)
+### 10. Phase 21 Database Dockerfile Non-Interactive Shell Hardening & Makefile Harmonization (Resolved in v2.6.5 ✅)
 - **Problem**: Database service accounts (`mysql`) in MariaDB and MySQL Docker testing containers had interactive shells (`/bin/sh` or `/bin/bash`), triggering CIS Rule 1.5 audit failures. Makefile audit targets also missed output flags, preventing report retrieval.
 - **Resolution**: Hardened all MariaDB (10.6/10.11) and MySQL (8.0/8.4/9.7) Dockerfiles and startup scripts with `usermod -s /sbin/nologin mysql`. Synchronized Makefile audit commands with `-o /datas/$(REPORT)`. Added unit tests in `tests/test_docker_hardening_and_service_shells.py` (PR #357, Closes #356).
 
-### 2. Phase 20 History Check Command Exit Code & Empty Path_Command Handling (Resolved in v2.6.4 ✅)
+### 11. Phase 20 History Check Command Exit Code & Empty Path_Command Handling (Resolved in v2.6.4 ✅)
 - **Problem**: History file check procedures (.mysql_history, .psql_history) exited with returncode 1 when no history file was present, causing false negative test failures. Moreover, empty output from path_command with returncode 0 caused false positive command execution errors.
 - **Resolution**: Appended `; true` to history check loop procedures in rules across all MariaDB, MySQL, and PostgreSQL specifications. Updated `perform_checks()` in all database audit engines to cleanly return `Not Applicable` when `path_command` returns empty stdout with returncode 0. Added dedicated unit tests in `tests/test_mariadb_audit_engine.py` (PR #353, Closes #352).
 
-### 2. Phase 17 Automated E2E Text Export Generation, Parsing & Real-Time Analysis (Resolved in v2.6.0 ✅)
+### 12. Phase 17 Automated E2E Text Export Generation, Parsing & Real-Time Analysis (Resolved in v2.6.0 ✅)
 - **Problem**: Text export (.txt) formatting varied across engines and was not systematically parsed for real-time error detection during automated E2E test runs.
 - **Resolution**: Harmonized text exporter format across all 18 benchmark engines (PR #326-#336). Implemented comprehensive E2E text export testing suite in `tests/test_e2e_text_export_analysis.py` and `tests/test_e2e_docker_audits.py` (PR #338). Added real-time text parsing and zero-error verification in `scripts/run_e2e_tests.py` and dynamic versioning in `scripts/analyze_e2e_reports.py` (PR #340). Released v2.6.0 (PR #342).
 
-### 2. Phase 16 Authentic CIS Spec Sync & Zero Command Errors Guarantee (Resolved in v2.5.0 ✅)
+### 13. Phase 16 Authentic CIS Spec Sync & Zero Command Errors Guarantee (Resolved in v2.5.0 ✅)
 - **Problem**: Some CIS rules had drifted from official CIS benchmark specifications and could produce command execution errors in Docker environments.
 - **Resolution**: Synchronized 100% of rule definitions across all 18 targets with authentic CIS specifications in `CIS_DATA/` (564 Automated, 323 Manual, 0 Command Errors).
 
-### 2. Phase 10 MariaDB Zero-Error Engine, Docker Auto-Routing & Manual Automation (Resolved in v2.2.0 ✅)
+### 14. Phase 10 MariaDB Zero-Error Engine, Docker Auto-Routing & Manual Automation (Resolved in v2.2.0 ✅)
 - **Problem**: MariaDB audit scripts could produce raw execution error noise when services were stopped/unreachable, lacked native Docker container auto-routing, and contained manual checks that could be automated via SQL or system checks.
 - **Resolution**: Enhanced `audit_cis_mariadb_106.py`, `audit_cis_mariadb_1011.py`, and rule specifications `rules/mariadb_106.json` and `rules/mariadb_1011.json`. Implemented `detect_docker_container()` and automatic Docker container command routing via `--docker` CLI parameter and `docker exec`. Automated verifiable manual checks via SQL queries (user reuse, socket plugin, password_reuse_check, privilege checks). Generated detailed justification report [mariadb_manual_controls_justification.md](file:///home/jmren/GIT_REPOS/cis_benchmarks_tools/reports/mariadb_manual_controls_justification.md) for controls requiring human policy review. Added 42 automated unit tests in `tests/test_mariadb_audit_engine.py`.
 
@@ -129,7 +129,7 @@ This document tracks technical debt, security considerations, active quality con
 - [x] **PR #109 (v2.0.0)**: Phase 8 Advanced Formatting, Rule Exclusions & Visual UI Validation release.
 
 
-## 🔄 Historique Exhaustif des Pull Requests Résolues (Sourcery AI Validated)
+## 🔄 Exhaustive History of Resolved Pull Requests (Sourcery AI Validated)
 - [x] **PR #72**: `docs: Synchronize VERSION v1.2.4 and format ROADMAP.md Phase 2 checkboxes [x]` — *This PR bumps the project version to v1.2.4 across code/docs and adjusts ROADMAP Phase 2 checkbox formatting for consistency.*
 - [x] **PR #74**: `docs: Finalize VERSION v1.2.4 sync and update ROADMAP.md formatting` — *Synchronizes the project version to v1.2.4 in the main audit engine and version file, aligning code metadata with the new release tag and related documentation updates.*
 - [x] **PR #76**: `docs: Format all Phase 2 items in ROADMAP.md with completed task checkboxes [x]` — *Updates roadmap and related docs to mark Phase 2 items as completed using checkbox syntax and bumps the project version from 1.2.3 to 1.2.5 across documentation and code metadata.*
@@ -301,4 +301,6 @@ This document tracks technical debt, security considerations, active quality con
 - [x] **PR #461**: `fix(ci): fix ruff lint undefined names, CI benchmark document inventory, and PyPI preflight` — *Fixed missing imports, initialized env, CI benchmark document scanning, and PyPI preflight resilience (closes #460).*
 - [x] **PR #463**: `fix(lint): add explicit type annotations in post_execution_publisher.py for mypy` — *Added explicit Mypy type annotations in post_execution_publisher.py (closes #462).*
 - [x] **PR (Issue #464)**: `fix(release): bump v2.9.1, fix PyPI OIDC publishing config, and publish stable release with assets` — *Bumped version v2.9.1, removed conflicting password in OIDC step, added wheel structure tests, and verified stable release (closes #464).*
+
+
 

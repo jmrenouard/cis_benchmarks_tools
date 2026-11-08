@@ -15,6 +15,17 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-082 — docs: renumber backlog items 7 to 14 and translate PR header (Part 4/6, Issue `#627`)
+- **Date**: `2026-11-09T00:06+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part4-potential-issues-renumbering-and-pr-history`
+- **Request**: Milestone 2 (Part 4/6): Renumber older backlog items 7 to 14 sequentially in `POTENTIAL_ISSUES.md` (Phases 24 down to 10) and translate French section header on resolved PRs to English.
+- **Changes**:
+  - Renumbered backlog items 7 to 14 sequentially in `POTENTIAL_ISSUES.md`.
+  - Translated French header `Historique Exhaustif des Pull Requests Résolues` to English `Exhaustive History of Resolved Pull Requests`.
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters (11,068 chars).
+
+---
+
 ### ACT-082 — docs: synchronize POTENTIAL_ISSUES resolved backlog and quality controls (Part 3/5, Issue `#627`)
 - **Date**: `2026-11-08T23:58+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part3-potential-issues-backlog-and-controls`
 - **Request**: Milestone 2 (Part 3/5): Update `POTENTIAL_ISSUES.md` version header to `v2.9.1`, fix broken heading numbering from repeated `### 2.` to sequential 1 to 23, add resolved backlog items for Phases 25 to 30 (including Ponytail Audit Findings 1–14 M1–M5), and update Active Quality Controls to reflect 295 unit tests across 49 test modules.
