@@ -15,6 +15,18 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-081 — docs: establish targets and execution contexts specifications (Part 3/4, Issue `#622`)
+- **Date**: `2026-11-08T23:25+01:00` | **Status**: `COMPLETED` | **Issue**: `#622` | **Branch**: `docs/issue-622-part3-targets-and-execution-contexts`
+- **Request**: Milestone 1 (Part 3/4): Establish `documentation/specifications/benchmark-targets.md` (cataloging 18 targets and 887 controls) and `documentation/specifications/execution-contexts.md` (documenting 4 execution transports, SecretSanitizer, and rejection of ControlMaster).
+- **Changes**:
+  - Created `documentation/specifications/benchmark-targets.md` with full 18-target matrix and naming conventions.
+  - Created `documentation/specifications/execution-contexts.md` with polymorphic transport specs, process table security, and IMP-006 rationale.
+  - Added unit test assertions in `tests/test_project_governance_rules.py`.
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters (~8,000 chars).
+
+---
+
 ### ACT-081 — docs: establish governance and architecture specifications (Part 2/4, Issue `#622`)
 - **Date**: `2026-11-08T23:22+01:00` | **Status**: `COMPLETED` | **Issue**: `#622` | **Branch**: `docs/issue-622-part2-governance-and-architecture`
 - **Request**: Milestone 1 (Part 2/4): Replace legacy hey-agent stub in `documentation/specifications/project-governance.md` with complete project governance specification and establish `documentation/specifications/architecture.md` (100% PSL, dual-mode architecture, component interaction diagram).
