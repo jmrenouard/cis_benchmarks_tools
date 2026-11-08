@@ -15,6 +15,19 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-082 — docs: synchronize POTENTIAL_ISSUES resolved backlog and quality controls (Part 3/5, Issue `#627`)
+- **Date**: `2026-11-08T23:58+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part3-potential-issues-backlog-and-controls`
+- **Request**: Milestone 2 (Part 3/5): Update `POTENTIAL_ISSUES.md` version header to `v2.9.1`, fix broken heading numbering from repeated `### 2.` to sequential 1 to 23, add resolved backlog items for Phases 25 to 30 (including Ponytail Audit Findings 1–14 M1–M5), and update Active Quality Controls to reflect 295 unit tests across 49 test modules.
+- **Changes**:
+  - Bumped version header to `v2.9.1` in `POTENTIAL_ISSUES.md`.
+  - Added resolved backlog items for Phases 25, 26, 27, 28, 29, 30 in `POTENTIAL_ISSUES.md`.
+  - Renumbered all 23 resolved backlog items sequentially in `POTENTIAL_ISSUES.md`.
+  - Updated Active Quality Controls in `POTENTIAL_ISSUES.md` to reflect 295 unit tests across 49 test modules.
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-082 — docs: establish ROADMAP Detailed Milestones and re-position RCA-014 (Part 2/5, Issue `#627`)
 - **Date**: `2026-11-08T23:55+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part2-roadmap-detailed-milestones-and-rca`
 - **Request**: Milestone 2 (Part 2/5): Add detailed milestones for Phase 28 (English Governance & Windows Hardening), Phase 30 (14 Ponytail Audit remediations M1-M5, PRs #476-#621, Specifications M1 PRs #623-#626), and Future Roadmap (Phases 31-32, IDEA-001, IDEA-003, IDEA-006) to `ROADMAP.md`. Re-position RCA-014 into descending numerical order in `docs/RCA_REGISTER.md`.

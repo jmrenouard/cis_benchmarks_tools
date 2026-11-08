@@ -1,10 +1,34 @@
-# 🛠️ CIS Benchmarks Tools - Technical Backlog & Resolved Debt (v2.6.0)
+# 🛠️ CIS Benchmarks Tools - Technical Backlog & Resolved Debt (v2.9.1)
 
 This document tracks technical debt, security considerations, active quality controls, and resolved architectural backlog items.
 
 ---
 
 ## 🔒 Resolved Architectural Backlog
+
+### 1. Phase 30 Ponytail Audit Remediations & Shared Core Engine Foundation (Resolved in v2.9.1 ✅)
+- **Problem**: Comprehensive code audit revealed 14 quality and security issues: RHEL SVG category chart argument mismatches (`RCA-011`), omitted `docker_container` parameter forwarding (`RCA-012`), dropped database credentials and SSH options (`RCA-013`), RHEL module import mismatches in orchestrator (`RCA-014`), shell injection / host variable expansion in execution drivers (`RCA-016`), plaintext password exposure in process tables (`ps aux`, `RCA-017`), synthetic fake Docker containers on bare-metal audits (`RCA-018`), Windows console UTF-8 crashes and SSH report syntax corruption (`RCA-019`, `RCA-020`), unreachable dead subprocess code in MariaDB engines (`RCA-021`), script bloat with 65 obsolete scripts in `scripts/` (`IMP-005`), and lack of shared core engine abstraction (`IDEA-006`).
+- **Resolution**: Remediated all 14 findings across Milestones M1–M5 (PRs #476–#621): created `cis_core_engine.py` (`BaseAuditEngine`, `AuditScoresTuple`, dynamic scoring), decommissioned 65 obsolete scripts to `archive/scripts/`, enforced secret scrubbing via environment variables (`MYSQL_PWD`, `PGPASSWORD`, `CIS_DB_PASSWORD`), hardened Docker/SSH execution drivers with typed argument lists, and established complete core specification suite (`documentation/specifications/`) and harmonized execution rules (PRs #623–#626, Closes #622).
+
+### 2. Phase 29 Commit Testing CI, PyPI Distribution Pipeline & Stable Release (Resolved in v2.9.1 ✅)
+- **Problem**: Repository lacked automated commit-level CI validation, standardized PyPI packaging (`pyproject.toml`), automated PyPI publishing workflows, and formal post-merge issue closure documentation.
+- **Resolution**: Configured standardized `pyproject.toml` and `MANIFEST.in` with entrypoints `audit-cis` and `audit_cis`, updated all GitHub Actions workflows to test every push on all branches, created automated `.github/workflows/pypi-publish.yml` with OIDC and token publishing, and published stable release v2.9.1 (PRs #455, #457, #459, #461, #463, #464).
+
+### 3. Phase 28 English Governance & Cross-Platform Windows Execution (Resolved in v2.8.1 ✅)
+- **Problem**: Governance documentation contained mixed languages, lacked systematic action logging and root cause registers, and exhibited cross-platform UTF-8 console and bytecode locking discrepancies on Windows hosts.
+- **Resolution**: Adopted strict English-only repository policy across documentation, issues, and PRs; created living registers `docs/ACTION_LOGBOOK.md` and `docs/RCA_REGISTER.md`; added `tests/test_project_governance_rules.py`; resolved Windows console UTF-8 stream handling and test suite compatibility (PRs #437, #439, #441, #443).
+
+### 4. Phase 27 Dynamic Real-Time Timestamping, Post-Execution Publishing & MariaDB 10.6 (Resolved in v2.8.0 ✅)
+- **Problem**: HTML reports contained hardcoded mock percentage values, execution timestamps did not reflect timezone-aware system time, and interrupted audits could leave partial reports on disk.
+- **Resolution**: Implemented `temporal_metadata.py` providing timezone-aware start/end timing and duration, `post_execution_publisher.py` with atomic disk replacement (`atomic_write_text`), refactored `templates/report_template.html` to eliminate mock data in favor of dynamic thematic cards, and integrated publishing hooks into `audit_cis_mariadb_106.py`, orchestrator, and E2E engine (PRs #405–#412).
+
+### 5. Phase 26 In-Container Docker Transport Driver & E2E Audit Execution Engine (Resolved in v2.7.0 ✅)
+- **Problem**: Auditing Docker containers required host-level binary execution or volume mounts, lacking direct in-container inspection, POSIX metadata queries, or deterministic container discovery.
+- **Resolution**: Created `docker_transport.py` (`DockerDaemonProbe`, `DockerContainerDiscovery`, `DockerTransportResolver`), `in_container_inspector.py` (`InContainerInspector`, `PosixStatResult`), and `docker_e2e_engine.py` (`DockerE2EOrchestrator`). Added adversarial isolation test suite in `tests/test_in_container_isolation.py` (PRs #396–#403).
+
+### 6. Phase 25 Multi-Product Audit Orchestrator, RCA Diagnostics & Report Persistence (Resolved in v2.6.9 ✅)
+- **Problem**: Multi-target auditing lacked centralized orchestration, normalized target aliases, structured diagnostic categorization, and fleet-wide root cause analysis (RCA) reporting.
+- **Resolution**: Created `audit_orchestrator.py` with parallel worker pool and normalized target catalog, `audit_diagnostics.py` for diagnostic classification, and `scripts/generate_rca_reports.py`. Added unit tests in `tests/test_audit_orchestrator.py`, `tests/test_audit_diagnostics.py`, and `tests/test_audit_resilience_and_rca.py` (PRs #386–#394).
 
 ### 1. Phase 24 Unified Execution Drivers & Multi-Criteria Runtime Detection (Resolved in v2.6.8 ✅)
 - **Problem**: Environment runtime detection was fragmented, container heuristics were minimal (relied solely on presence of `/.dockerenv`), and command execution lacked polymorphic driver abstraction, structured execution context restitution, and systematic zero-credential secret scrubbing.
@@ -78,10 +102,11 @@ This document tracks technical debt, security considerations, active quality con
 
 ## 📝 Active Quality Controls
 
-- **PSL Compliance**: AST pre-commit checks (`scripts/pre_commit_checks.py`) verify zero external non-standard library imports.
-- **Unit Tests**: 100% passing PSL `unittest` suite (`tests/test_evaluate_condition.py`).
-- **Pre-Commit Routine**: 8-step automated checker (`make pre-commit`) enforcing syntax, permissions, structure, and test integrity.
-- **PR Diff Size Limit**: Mandatory `< 15,000` diff character check (`git diff main...HEAD | wc -c`).
+- **PSL Compliance**: AST pre-commit checks (`scripts/pre_commit_checks.py`) verify zero external non-standard library imports across all engines and CLI.
+- **Unit Tests**: 100% passing PSL `unittest` suite: **295 unit tests across 49 test modules** in `tests/` (`python -m unittest discover -s tests -v`).
+- **Pre-Commit Routine**: 8-step automated quality routine (`python scripts/pre_commit_checks.py`) enforcing versioning, bundling, syntax (`py_compile`, `bash -n`), PSL AST imports, structure, permissions, and test integrity.
+- **PR Diff Size Limit**: Mandatory `< 15,000` diff character check (`git diff main...HEAD | wc -c`) preventing AI review bot truncation.
+- **Living Registers Governance**: Systematic updates of `docs/ACTION_LOGBOOK.md` and `docs/RCA_REGISTER.md` across every request, change, and result.
 
 ---
 
