@@ -15,6 +15,18 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-081 — docs: establish reporting, metrics and QA specifications (Part 4/4, Issue `#622`)
+- **Date**: `2026-11-08T23:28+01:00` | **Status**: `COMPLETED` | **Issue**: `#622` | **Branch**: `docs/issue-622-part4-reporting-metrics-and-qa`
+- **Request**: Milestone 1 (Part 4/4): Establish `documentation/specifications/reporting-and-metrics.md` (5-state compliance taxonomy, formulas, 100% offline inline SVG charts) and `documentation/specifications/testing-and-quality-assurance.md` (QA pipeline, diff limit < 15k chars, IMP-005 tooling standard), complete full 6-specification test suite in `tests/test_project_governance_rules.py`, and close Issue `#622`.
+- **Changes**:
+  - Created `documentation/specifications/reporting-and-metrics.md` with 5-state taxonomy, scoring formulas, and pure PSL inline SVG specifications.
+  - Created `documentation/specifications/testing-and-quality-assurance.md` with 8-step pre-commit routine, PR diff limit, and 13 essential tools whitelist.
+  - Completed `test_core_specifications_exist_and_cover_key_sections` in `tests/test_project_governance_rules.py` verifying all 6 core specification files.
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters (~8,000 chars).
+
+---
+
 ### ACT-081 — docs: establish targets and execution contexts specifications (Part 3/4, Issue `#622`)
 - **Date**: `2026-11-08T23:25+01:00` | **Status**: `COMPLETED` | **Issue**: `#622` | **Branch**: `docs/issue-622-part3-targets-and-execution-contexts`
 - **Request**: Milestone 1 (Part 3/4): Establish `documentation/specifications/benchmark-targets.md` (cataloging 18 targets and 887 controls) and `documentation/specifications/execution-contexts.md` (documenting 4 execution transports, SecretSanitizer, and rejection of ControlMaster).
