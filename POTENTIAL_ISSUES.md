@@ -301,28 +301,57 @@ This document tracks technical debt, security considerations, active quality con
 - [x] **PR #461**: `fix(ci): fix ruff lint undefined names, CI benchmark document inventory, and PyPI preflight` — *Fixed missing imports, initialized env, CI benchmark document scanning, and PyPI preflight resilience (closes #460).*
 - [x] **PR #463**: `fix(lint): add explicit type annotations in post_execution_publisher.py for mypy` — *Added explicit Mypy type annotations in post_execution_publisher.py (closes #462).*
 - [x] **PR (Issue #464)**: `fix(release): bump v2.9.1, fix PyPI OIDC publishing config, and publish stable release with assets` — *Bumped version v2.9.1, removed conflicting password in OIDC step, added wheel structure tests, and verified stable release (closes #464).*
-- [x] **PR #476**: `fix(reports): resolve RCA-011 SVG category chart argument mismatch in RHEL engines` — *Fixed argument signature mismatch in RHEL 8, 9, 10 build_inline_svg_category_chart calls, eliminating TypeError crashes (Finding 1, closes #475).*
-- [x] **PR #478**: `test(reports): add regression test suite for RHEL category chart SVG generation` — *Added tests/test_rhel_category_chart_regression.py covering RHEL 8, 9, 10 chart generation (Finding 1, closes #477).*
-- [x] **PR #480**: `fix(cli): forward docker_container parameter across all database audit engines` — *Propagated docker_container CLI parameter to perform_checks in MariaDB, MySQL, and PostgreSQL engines (Finding 2, closes #479).*
-- [x] **PR #482**: `test(cli): add unit tests for docker_container parameter forwarding` — *Added tests/test_docker_container_forwarding.py verifying parameter propagation across all engines (Finding 2, closes #481).*
-- [x] **PR #484**: `fix(cli): forward database credentials and SSH options to audit engines` — *Passed db_password, ssh_key, ssh_port, and sudo options to all audit engines in audit_cis.py (Finding 4, closes #483).*
-- [x] **PR #486**: `test(cli): add unit tests for db credentials and SSH option propagation` — *Added tests/test_cli_credentials_propagation.py validating end-to-end credential forwarding (Finding 4, closes #485).*
-- [x] **PR #488**: `fix(orchestrator): align RHEL module imports and target function names` — *Aligned target catalog import mapping in audit_orchestrator.py with canonical RHEL audit module exports (Finding 3, closes #487).*
-- [x] **PR #490**: `test(orchestrator): add unit tests for RHEL module dispatch and orchestrator mapping` — *Added tests/test_orchestrator_rhel_dispatch.py testing target dispatch across all 18 benchmarks (Finding 3, closes #489).*
-- [x] **PR #492**: `fix(execution): eliminate shell injection risks and prevent host variable expansion` — *Replaced string concatenation with parameter lists and escaped variables in execution_drivers.py (Finding 5, closes #491).*
-- [x] **PR #494**: `test(execution): add adversarial test suite for execution driver shell safety` — *Added tests/test_execution_driver_shell_safety.py with command injection edge cases (Finding 5, closes #493).*
-- [x] **PR #496**: `fix(security): scrub plaintext passwords from process tables using environment variables` — *Passed database passwords via MYSQL_PWD, PGPASSWORD, and CIS_DB_PASSWORD instead of CLI arguments (Finding 6, closes #495).*
-- [x] **PR #498**: `test(security): add test suite for secret scrubbing and environment variable credentials` — *Added tests/test_secret_scrubbing_credentials.py testing zero plaintext exposure in process table (Finding 6, closes #497).*
-- [x] **PR #500**: `fix(execution): eliminate synthetic fake Docker container fallback on bare-metal audits` — *Removed mock container generation in execution_drivers.py and runtime detection (Finding 7, closes #499).*
-- [x] **PR #502**: `fix(execution): resolve Windows console UTF-8 crashes with safe stream wrapper` — *Added safe stream encoding fallback in execution_drivers.py and audit_diagnostics.py for Windows (Finding 8, closes #501).*
-- [x] **PR #504**: `test(execution): add test suite for Windows console UTF-8 stream resilience` — *Added tests/test_windows_utf8_resilience.py validating safe encoding on non-UTF8 terminals (Finding 8, closes #503).*
-- [x] **PR #506**: `fix(mariadb): eliminate unreachable dead subprocess code in audit engines` — *Removed unreachable dead subprocess execution branches in MariaDB 10.6 and 10.11 engines (Finding 10, closes #505).*
-- [x] **PR #508**: `test(mariadb): add test suite verifying execution driver delegation without dead code` — *Added tests/test_mariadb_dead_code_elimination.py (Finding 10, closes #507).*
-- [x] **PR #510**: `refactor(scripts): decommission 65 obsolete scripts to archive/scripts/` — *Relocated 65 superseded generation and migration scripts to archive/scripts/ per IMP-005 (Finding 11, closes #509).*
-- [x] **PR #512**: `test(scripts): add script inventory and archive regression tests` — *Added tests/test_script_inventory_governance.py ensuring scripts/ contains only active utilities (Finding 11, closes #511).*
-- [x] **PR #514**: `chore(ci): modernize GitHub Actions actions/upload-artifact to v4` — *Upgraded upload-artifact from v3 to v4 across all GitHub Actions workflows (Finding 14, closes #513).*
-- [x] **PR #516**: `fix(rules): repair bash command syntax errors in database rule specifications (Part 1)` — *Fixed unescaped quotes, missing command wrappers, and syntax errors in rules/ (Finding 12, closes #515).*
-- [x] **PR #518–#574**: `fix(reports): resolve syntax errors and invalid commands in SSH reports across all 18 targets` — *Systematically remediated command syntax and invalid parameters in SSH audit execution across all 18 targets (Finding 12, PRs #518–#574).*
+- [x] **PR #476**: `fix(reports): resolve UTF-8 console encoding and RHEL exporter regressions (#453)`
+- [x] **PR #478**: `fix: resolve orchestrator ModuleNotFoundError on RHEL targets (#477)`
+- [x] **PR #480**: `fix: resolve RHEL HTML report crashes and unpopulated category scores (#479)`
+- [x] **PR #482**: `fix: propagate docker_container in postgresql automated checks (Part A) (#481)`
+- [x] **PR #483**: `fix: propagate docker_container in mongodb and cassandra automated checks (Part B) (#481)`
+- [x] **PR #485**: `fix: propagate database credentials in mysql and postgresql engines (Part A1) (#484)`
+- [x] **PR #486**: `fix: propagate database credentials in cassandra and mongodb engines (Part A2) (#484)`
+- [x] **PR #487**: `fix: propagate ssh flags and sudo in orchestrator and rhel8 (Refs #484)`
+- [x] **PR #488**: `fix: propagate ssh flags and sudo in rhel9 and rhel10 (Refs #484)`
+- [x] **PR #489**: `fix: propagate ssh flags and sudo in postgresql16 (Refs #484)`
+- [x] **PR #490**: `fix: propagate ssh flags and sudo in postgresql17 (Refs #484)`
+- [x] **PR #491**: `fix: propagate ssh flags and sudo in postgresql18 (Refs #484)`
+- [x] **PR #492**: `fix: propagate ssh flags and sudo in mariadb106 (Refs #484)`
+- [x] **PR #493**: `fix: propagate ssh flags and sudo in mariadb1011 (Refs #484)`
+- [x] **PR #494**: `fix: propagate ssh flags and sudo in mysql80 (Refs #484)`
+- [x] **PR #495**: `fix: propagate ssh flags and sudo in mysql community 84 (Refs #484)`
+- [x] **PR #496**: `fix: propagate ssh flags and sudo in mysql enterprise 84 (Refs #484)`
+- [x] **PR #497**: `fix: propagate ssh flags and sudo in mysql community 97 (Refs #484)`
+- [x] **PR #498**: `fix: propagate ssh flags and sudo in mysql enterprise 97 (Refs #484)`
+- [x] **PR #499**: `fix: propagate ssh flags and sudo in cassandra 40 (Refs #484)`
+- [x] **PR #500**: `fix: propagate ssh flags and sudo in cassandra 41 (Refs #484)`
+- [x] **PR #501**: `fix: propagate ssh flags and sudo in cassandra 50 (Refs #484)`
+- [x] **PR #502**: `fix: propagate ssh flags and sudo in mongodb 7 (Refs #484)`
+- [x] **PR #503**: `fix: propagate ssh flags and sudo in mongodb 8 (Refs #484)`
+- [x] **PR #505**: `fix: remediate MariaDB sudo drop, orchestrator export adaptation, and CLI DB args (#504)`
+- [x] **PR #507**: `fix(transport): eliminate host shell bypass and quote execution drivers safely (#506)`
+- [x] **PR #509**: `fix(security): eliminate database password exposure in Docker and SSH executor argv (#508)`
+- [x] **PR #511**: `fix(security): forward CIS_DB_PASSWORD via child env in audit runner (#510)`
+- [x] **PR #512**: `fix(security): remove hardcoded cassandra password from control 3.2 (#508)`
+- [x] **PR #514**: `fix(orchestrator): prevent fake docker container synthesis on bare metal (#513)`
+- [x] **PR #516**: `fix(cli): reconfigure UTF-8 console output and harden SSH warning regex (#515)`
+- [x] **PR #517**: `fix(cli): reconfigure UTF-8 console output on Cassandra, Mongo, RHEL (#515)`
+- [x] **PR #519**: `fix(reports): repair syntax corruption in MariaDB SSH XML reports (#518)`
+- [x] **PR #521**: `fix(reports): repair syntax in PostgreSQL 16 SSH JSON report (Part 1/2) (#520)`
+- [x] **PR #523**: `fix(reports): repair syntax in PostgreSQL 16 SSH JSON report (Part 2/2) (#522)`
+- [x] **PR #525**: `fix(reports): repair syntax in PostgreSQL 17 SSH JSON report (Part 1/2) (#524)`
+- [x] **PR #527**: `fix(reports): repair syntax in PostgreSQL 17 SSH JSON report (Part 2/2) (#526)`
+- [x] **PR #529**: `fix(reports): repair syntax in PostgreSQL 18 SSH JSON report (Part 1/2) (#528)`
+- [x] **PR #531**: `fix(reports): repair syntax in PostgreSQL 18 SSH JSON report (Part 2/2) (#530)`
+- [x] **PR #533**: `fix(reports): repair syntax in MySQL 8.0 SSH JSON report (Part 1/3) (#532)`
+- [x] **PR #535**: `fix(reports): repair syntax in MySQL 8.0 SSH JSON report (Part 2/3) (#534)`
+- [x] **PR #537**: `fix(reports): repair syntax in MySQL 8.0 SSH JSON report (Part 3/3) (#536)`
+- [x] **PR #539**: `fix(reports): repair syntax in MySQL Community 9.7 SSH JSON report (Part 1/3) (#538)`
+- [x] **PR #541**: `fix(reports): repair syntax in MySQL Community 9.7 SSH JSON report (Part 2/3) (#540)`
+- [x] **PR #543**: `fix(reports): repair syntax in MySQL Community 9.7 SSH JSON report (Part 3/3) (#542)`
+- [x] **PR #545**: `fix(reports): repair syntax in MySQL Enterprise 8.4 SSH JSON report (Part 1/3) (#544)`
+- [x] **PR #547**: `fix(reports): repair syntax in MySQL Enterprise 8.4 SSH JSON report (Part 2/3) (#546)`
+- [x] **PR #549**: `fix(reports): repair syntax in MySQL Enterprise 8.4 SSH JSON report (Part 3/3) (#548)`
+- [x] **PR #551**: `fix(reports): repair syntax in MySQL Enterprise 9.7 SSH JSON report (Part 1/3) (#550)`
+- [x] **PR #553**: `fix(reports): repair syntax in MySQL Enterprise 9.7 SSH JSON report (Part 2/3) (#552)`
+- [x] **PR #555**: `fix(reports): repair syntax in MySQL Enterprise 9.7 SSH JSON report (Part 3/3) (#554)`
 - [x] **PR #576**: `test(rules): add comprehensive syntax validation suite for all JSON rule specifications` — *Added tests/test_rule_syntax_validation.py validating JSON schema and command syntax for all 887 controls (Finding 12, closes #575).*
 - [x] **PR #610**: `ci(security): add Bandit SAST security scanning workflow` — *Added .github/workflows/security.yml running Bandit SAST scanner on every push (Finding 13, closes #609).*
 - [x] **PR #612**: `fix(security): resolve Bandit SAST findings in archive scripts and test fixtures` — *Resolved Bandit security warnings across archive scripts and test fixtures (Finding 13, closes #611).*

@@ -15,6 +15,16 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-083 — docs: update authentic PR history #476-#555 in POTENTIAL_ISSUES (Part 2/3, Issue `#635`)
+- **Date**: `2026-11-09T00:40+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **Branch**: `docs/issue-635-part2-potential-issues-prs-476-555`
+- **Request**: Milestone 2 Iteration 2 (Part 2/3): Replace fabricated and phantom PR entries in `POTENTIAL_ISSUES.md` with authentic merged PR records #476 to #555 retrieved directly from GitHub API.
+- **Changes**:
+  - Replaced fabricated PR entries #476–#516 and collapsed range #518–#574 in `POTENTIAL_ISSUES.md` with 51 authentic merged PR records (#476 to #555).
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-082 — docs: synchronize READMEs and QA testing specification (Part 7/7, Closes `#627`)
 - **Date**: `2026-11-09T00:16+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part7-readmes-and-specs-sync`
 - **Request**: Milestone 2 (Part 7/7): Synchronize `README.md` and `README_fr.md` with v2.9.1 architecture (`cis_core_engine.py`, execution drivers, secret scrubbing, script inventory governance `IMP-005`, and PyPI installation), and polish `documentation/specifications/testing-and-quality-assurance.md` (49 modules, 295 tests, exact 8-step pre-commit list).
