@@ -479,6 +479,22 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **Execution Timeline Header**: Rendered explicit scan start date, execution duration, and timezone badge for clear human validation.
 - [x] **MariaDB 10.6 & Orchestrator Integration**: Fully connected `audit_cis_mariadb_106.py`, `audit_orchestrator.py`, and `docker_e2e_engine.py` (closes #404).
 
+---
+
+### Phase 28: English Governance & Cross-Platform Windows Execution (`Completed ✅ - v2.8.1`)
+**Summary**: Establish strict English-only repository policy across documentation, issues, and PRs, implement the living governance registers (`docs/ACTION_LOGBOOK.md` and `docs/RCA_REGISTER.md`), and ensure cross-platform compatibility on Windows platforms.
+
+#### 28.1 Mandatory English-Only Governance & Living Registers
+- [x] **Living Action Logbook (`docs/ACTION_LOGBOOK.md`)**: Track ongoing and completed actions with full traceability across issues, branches, and PRs.
+- [x] **RCA Register (`docs/RCA_REGISTER.md`)**: Document root cause analyses, technical dead-ends, approximations, and future roadmap ideas in English.
+- [x] **English-Only Policy Enforcement**: Systematically enforce English across GitHub issues, PRs, commit messages, and source code docstrings.
+
+#### 28.2 Cross-Platform Execution & Windows Hardening
+- [x] **Windows Bytecode & Console Resilience**: Address Windows UTF-8 console output and filesystem locking during pre-commit routines (`RCA-005`, `RCA-019`).
+- [x] **CI/CD Quality Gates Alignment**: Enforce pre-commit validation and test suite execution across Windows and Linux environments.
+
+---
+
 ### Phase 29: Commit Testing CI, PyPI Distribution Pipeline & Stable Release (`Completed ✅ - v2.9.1`)
 **Summary**: Implement GitHub Actions commit testing on pushes to all branches and pull requests, configure standardized `pyproject.toml` packaging with console entrypoints (`audit-cis`, `audit_cis`), create automated GitHub Actions PyPI publishing workflow (`pypi-publish.yml`) supporting repository secrets, enforce the post-merge issue closure with comment governance rule, and publish a verified stable release (`v2.9.1`).
 
@@ -495,3 +511,45 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 #### 29.3 Release Quality, Asset Integrity & PyPI OIDC Publishing Fix (`v2.9.1`)
 - [x] **OIDC Publishing Correction**: Removed conflicting password argument in `pypi-publish.yml` OIDC step to allow unhindered OIDC minting when API token is omitted.
 - [x] **Distribution Asset Attachment**: Verified and attached full release assets (wheel, sdist, standalone script, and complete archive) for v2.9.1.
+
+---
+
+### Phase 30: Ponytail Audit Remediations & Shared Core Engine Foundation (`Completed ✅ - v2.9.1`)
+**Summary**: Remediate all 14 Ponytail Audit findings across Milestones M1–M5 (PRs #476–#621), establish the shared core audit engine foundation (`cis_core_engine.py`), eliminate script bloat (`IMP-005`), enhance process security (`ps aux` credential protection), and harmonize core specifications (PRs #623–#626).
+
+#### 30.1 Milestone M1: Execution Integrity & RHEL Fixes (PRs #476–#486)
+- [x] **Finding 1 (`RCA-011`)**: Fix RHEL 8/9/10 HTML report SVG category chart argument signature mismatch and populate dynamic category scores (PRs #476, #478).
+- [x] **Finding 2 (`RCA-012`)**: Propagate `docker_container` parameter to `run_command()` in PostgreSQL, MongoDB, and Cassandra engines (PRs #480, #482).
+- [x] **Finding 4 (`RCA-014`)**: Normalize RHEL module names with underscores in orchestrator imports and rule file mappings (`audit_cis_rhel_8.py`, etc.) (PRs #484, #486).
+
+#### 30.2 Milestone M2: Security, Credentials & Isolation (PRs #488–#500)
+- [x] **Finding 3 (`RCA-013`)**: Prevent dropping database credentials and SSH options across CLI dispatch, `perform_checks()`, and `run_command()` (PRs #488, #490).
+- [x] **Finding 5 (`RCA-016`)**: Mitigate shell injection and host variable expansion in Docker and SSH execution drivers using typed argument lists (PRs #492, #494).
+- [x] **Finding 6 (`RCA-017`)**: Protect database passwords against process table (`ps aux`) inspection by passing credentials via environment variables (`MYSQL_PWD`, `PGPASSWORD`, `CIS_DB_PASSWORD`) (PRs #496, #498).
+- [x] **Finding 7 (`RCA-018`)**: Eliminate fake Docker container synthesis on bare-metal local mode audits (PR #500).
+
+#### 30.3 Milestone M3: Engine Robustness & Syntax Integrity (PRs #502–#514)
+- [x] **Finding 8 (`RCA-019`, `RCA-020`)**: Fix Windows console UTF-8 crashes and repair SSH warning-cleaning regex that corrupted JSON/XML reports (PRs #502, #504).
+- [x] **Finding 10 (`APP-004`)**: Replace hardcoded recommendation dictionaries with dynamic rule category discovery and safe key access across 15 database engines (PRs #506, #508).
+- [x] **Finding 11 (`RCA-021`)**: Eliminate unreachable duplicate `subprocess.run` and exception handling blocks in MariaDB audit scripts (PRs #510, #512).
+
+#### 30.4 Milestone M4: Maintenance, Governance & Architecture (PRs #516–#528)
+- [x] **Finding 12 (`IMP-005`)**: Decommission 65 legacy scripts to `archive/scripts/`, whitelist 13 essential production tools in `scripts/`, and add automated inventory governance tests (PRs #516, #518).
+- [x] **Finding 13 (`IDEA-007`)**: Catalog all 18 canonical targets and achieve 100% CLI matrix parameter forwarding test coverage (PRs #520, #522).
+- [x] **Finding 14 (`IMP-006`)**: Document SSH audit connection overhead and formalize the deliberate architectural trade-off rejecting `ControlMaster` in favor of stateless robustness (PRs #524, #526).
+
+#### 30.5 Milestone M5 & Core Specifications M1: Shared Core Engine & Specifications Harmonization (PRs #530–#626)
+- [x] **Finding 9 (`IDEA-006`)**: Establish `cis_core_engine.py` providing `BaseAuditEngine`, `AuditScoresTuple`, dual-unpacking backwards compatibility, and shared offline SVG chart generators (PRs #530, #532).
+- [x] **CI Matrix & Security Hardening**: Remediate Bandit SAST scan on archive (`RCA-022`) and update Python matrix for Ubuntu 26.04 (`RCA-023`).
+- [x] **Core Specifications Harmonization**: Establish complete 6-file specification suite under `documentation/specifications/`, harmonize execution rules (`03_execution_rules.md`) and best practices (`04_best_practices.md`) (PRs #623–#626, Closes #622).
+
+---
+
+## 🔮 Future Roadmap (Upcoming Phases)
+
+### Phase 31: CIS GitHub Benchmark & Code Scanning Exporters (`Planned`)
+- [ ] **`IDEA-001` CIS GitHub Benchmark v1.2.0**: Implement `audit_cis_github.py` auditing repository settings, branch protection rules, permissions, and GitHub Actions workflow security against official CIS GitHub Benchmark recommendations.
+- [ ] **`IDEA-003` SARIF v2.1.0 Exporter**: Add `--format sarif` native exporter to `cis_core_engine.py` and standalone engines, enabling direct ingestion into GitHub Advanced Security Code Scanning.
+
+### Phase 32: Phased Core Engine Adoption (`Planned`)
+- [ ] **`IDEA-006` Phased Migration**: Incrementally refactor all 18 standalone audit engines to inherit from `BaseAuditEngine` in `cis_core_engine.py`, reducing ~19,000 lines of duplicated logic while preserving standalone script portability through embedded PSL fallbacks.

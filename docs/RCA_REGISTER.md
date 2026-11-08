@@ -140,6 +140,18 @@
 
 ---
 
+### RCA-014 — Orchestrator `ModuleNotFoundError` on RHEL Targets Caused by Missing Underscores (Finding 4)
+- **Date / Linked Action**: `2026-10-30` (`ACT-018` / Issue `#477`)
+- **Observed Symptom**: Running `audit_orchestrator.py` against `rhel8`, `rhel9`, or `rhel10` failed immediately with `ModuleNotFoundError: No module named 'audit_cis_rhel8'`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did import fail?* `CANONICAL_TARGETS` in `audit_orchestrator.py` mapped RHEL keys to `"module": "audit_cis_rhel8"`, `"audit_cis_rhel9"`, and `"audit_cis_rhel10"`.
+  2. *Why did that filename not exist?* The actual script files on disk were created with underscores: `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, and `audit_cis_rhel_10.py`.
+  3. *Why did unit tests not catch this?* `test_canonical_targets_catalog_completeness` only checked dictionary keys, never attempting to import the referenced module.
+- **Applied Change / Fix**: Corrected module and rule specification names in `audit_orchestrator.py` to `audit_cis_rhel_8`, `audit_cis_rhel_9`, `audit_cis_rhel_10` (and `rhel_8`, `rhel_9`, `rhel_10`); added inspect-based signature adaptation and fallback normalization; updated unit tests to assert module importability and rule file presence for all 18 canonical targets.
+- **Result & Non-Regression Test**: `tests/test_audit_orchestrator.py` dynamically verifies that `importlib.import_module()` succeeds and rule files exist for all 18 canonical targets.
+
+---
+
 ### RCA-013 — Database Credentials and SSH Flags Dropped Across Engines and Orchestrator (Finding 3)
 - **Date / Linked Action**: `2026-10-30` (`ACT-021` / Issue `#484`)
 - **Observed Symptom**: CLI arguments `-u/--db-user`, `-p/--db-password`, `-H/--db-host`, `-P/--db-port`, `-D/--db-name`, `--defaults-file`, `--auth-db` had no effect on 12 database engines, and `--ssh-port`, `-i/--ssh-key`, `--sudo` were not propagated in orchestrator and engines.
@@ -171,18 +183,6 @@
   3. *Why were category scores unpopulated?* RHEL's `calculate_scores()` returned an empty dictionary `{}`, leaving category statistics uncalculated.
 - **Applied Change / Fix**: Standardized `calculate_scores()` across `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, and `audit_cis_rhel_10.py` to populate category metrics dictionary; updated `generate_html_report()` to pass `categories_scores` dict to `build_inline_svg_category_chart()`; added unit tests in `tests/test_rhel_html_export_quality.py`.
 - **Result & Non-Regression Test**: Unit test `tests/test_rhel_html_export_quality.py` passes 100%; HTML reports generate valid inline SVGs with category breakdowns.
-
----
-
-### RCA-014 — Orchestrator `ModuleNotFoundError` on RHEL Targets Caused by Missing Underscores (Finding 4)
-- **Date / Linked Action**: `2026-10-30` (`ACT-018` / Issue `#477`)
-- **Observed Symptom**: Running `audit_orchestrator.py` against `rhel8`, `rhel9`, or `rhel10` failed immediately with `ModuleNotFoundError: No module named 'audit_cis_rhel8'`.
-- **Root Cause Analysis (5 Whys)**:
-  1. *Why did import fail?* `CANONICAL_TARGETS` in `audit_orchestrator.py` mapped RHEL keys to `"module": "audit_cis_rhel8"`, `"audit_cis_rhel9"`, and `"audit_cis_rhel10"`.
-  2. *Why did that filename not exist?* The actual script files on disk were created with underscores: `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, and `audit_cis_rhel_10.py`.
-  3. *Why did unit tests not catch this?* `test_canonical_targets_catalog_completeness` only checked dictionary keys, never attempting to import the referenced module.
-- **Applied Change / Fix**: Corrected module and rule specification names in `audit_orchestrator.py` to `audit_cis_rhel_8`, `audit_cis_rhel_9`, `audit_cis_rhel_10` (and `rhel_8`, `rhel_9`, `rhel_10`); added inspect-based signature adaptation and fallback normalization; updated unit tests to assert module importability and rule file presence for all 18 canonical targets.
-- **Result & Non-Regression Test**: `tests/test_audit_orchestrator.py` dynamically verifies that `importlib.import_module()` succeeds and rule files exist for all 18 canonical targets.
 
 ---
 
