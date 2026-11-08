@@ -15,6 +15,25 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-082 — docs: synchronize ROADMAP and POTENTIAL_ISSUES with v2.9.1 architecture (Part 1/2, Issue `#627`)
+- **Date**: `2026-11-08T23:50+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part1-roadmap-and-backlog-sync`
+- **Request**: Milestone 2 (Part 1/2): Synchronize `ROADMAP.md` (v2.9.1, missing phases in dashboard, translate Phase 12 to English, add Phase 28, Phase 30 with 14 Ponytail audit findings, and Future Roadmap) and `POTENTIAL_ISSUES.md` (v2.9.1, fix sequential numbering 1-23, add resolved backlog items for Phases 25-30, update Active Quality Controls to 295 unit tests / 49 test modules, translate French header to English, and append resolved PRs #476-#626). Re-position RCA-014 in `docs/RCA_REGISTER.md`.
+- **Changes**:
+  - Bumped version headers to `v2.9.1` in `ROADMAP.md` and `POTENTIAL_ISSUES.md`.
+  - Added missing rows for Phases 25, 26, 27, and 30 in Executive Dashboard in `ROADMAP.md`.
+  - Translated Phase 12 title and all 5 subsections from French to English in `ROADMAP.md`.
+  - Added Detailed Milestones for Phase 28, Phase 30 (M1-M5, Findings 1-14, PRs #476-#626), and Future Roadmap (Phases 31-32, IDEA-001, IDEA-003, IDEA-006) in `ROADMAP.md`.
+  - Fixed broken heading numbering in `POTENTIAL_ISSUES.md` to sequential 1-23.
+  - Added resolved backlog entries for Phases 25, 26, 27, 28, 29, 30 in `POTENTIAL_ISSUES.md`.
+  - Updated Active Quality Controls in `POTENTIAL_ISSUES.md` to reflect 295 unit tests across 49 test modules.
+  - Translated French header on resolved PRs to English in `POTENTIAL_ISSUES.md`.
+  - Appended resolved PR history entries from PR #476 to PR #626 in `POTENTIAL_ISSUES.md`.
+  - Re-positioned RCA-014 in `docs/RCA_REGISTER.md` into descending order.
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-081 — docs: establish reporting, metrics and QA specifications (Part 4/4, Issue `#622`)
 - **Date**: `2026-11-08T23:28+01:00` | **Status**: `COMPLETED` | **Issue**: `#622` | **Branch**: `docs/issue-622-part4-reporting-metrics-and-qa`
 - **Request**: Milestone 1 (Part 4/4): Establish `documentation/specifications/reporting-and-metrics.md` (5-state compliance taxonomy, formulas, 100% offline inline SVG charts) and `documentation/specifications/testing-and-quality-assurance.md` (QA pipeline, diff limit < 15k chars, IMP-005 tooling standard), complete full 6-specification test suite in `tests/test_project_governance_rules.py`, and close Issue `#622`.

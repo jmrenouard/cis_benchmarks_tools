@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.6.0)
+# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.9.1)
 
 This document outlines the strategic roadmap, architecture principles, phase-level milestones, and task-level execution status for the CIS Benchmarks Tools suite.
 
@@ -26,7 +26,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 9**  | Verification Commands & Remediation Procedures in Reports            | `v2.1.0`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 10** | MariaDB Zero-Error Engine, Docker Auto-Routing & Manual Automation   | `v2.2.0`       | `Completed ✅` | 5/5   | 100%     |
 | **Phase 11** | Universal Product Hardening, Docker Auto-Routing & Info Maximization | `v2.3.0`       | `Completed ✅` | 6/6   | 100%     |
-| **Phase 12** | Traçabilité Git Stricte, Revues Sourcery AI & Qualité Industrielle    | `v2.3.0`       | `Completed ✅` | 5/5   | 100%     |
+| **Phase 12** | Strict Git Traceability, Sourcery AI Reviews & Industrial Quality    | `v2.3.0`       | `Completed ✅` | 5/5   | 100%     |
 | **Phase 13** | Universal Credential Injection, Multi-Distro Packages & Rule 1.5 Sync| `v2.4.0`       | `Completed ✅` | 5/5   | 100%     |
 | **Phase 14** | 100% Deterministic Rule Automation & Expanded Test Suite Coverage    | `v2.4.1`       | `Completed ✅` | 6/6   | 100%     |
 | **Phase 15** | Error Masking Elimination (`2>/dev/null`) & Engine Resilience        | `v2.4.2`       | `Completed ✅` | 6/6   | 100%     |
@@ -39,8 +39,12 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 22** | PostgreSQL, MongoDB & Cassandra Testing Hardening                 | `v2.6.6`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 23** | PostgreSQL Command Safety & 100% E2E Multi-Format Compliance      | `v2.6.7`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 24** | Unified Execution Drivers & Multi-Criteria Runtime Detection     | `v2.6.8`       | `Completed ✅` | 4/4   | 100%     |
-| **Phase 28** | English Governance (`ACTION_LOGBOOK` & `RCA_REGISTER`) & CI/CD   | `v2.8.1`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 25** | Multi-Product Audit Orchestrator, RCA Diagnostics & Reporting        | `v2.6.9`       | `Completed ✅` | 5/5   | 100%     |
+| **Phase 26** | In-Container Docker Transport Driver & E2E Audit Execution Engine   | `v2.7.0`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 27** | Dynamic Real-Time Timestamping, Post-Execution Publishing & MariaDB  | `v2.8.0`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 28** | English Governance (`ACTION_LOGBOOK` & `RCA_REGISTER`) & CI/CD       | `v2.8.1`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 29** | Commit Testing CI, PyPI Distribution Pipeline & Stable Release     | `v2.9.1`       | `Completed ✅` | 4/4   | 100%     |
+| **Phase 30** | Ponytail Audit Remediations & Shared Core Engine Foundation          | `v2.9.1`       | `Completed ✅` | 14/14 | 100%     |
 
 
 ---
@@ -225,34 +229,34 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 
 ---
 
-### Phase 12: Traçabilité Git Stricte, Revues Sourcery AI & Suivi de la Qualité Industrielle (`Completed ✅ - v2.3.0`)
-**Summary**: Intégrer les revues de code automatisées Sourcery AI, formaliser le cycle de vie des PRs à 6 étapes, assainir les spécifications de commandes, préserver la télémétrie `stderr` sans masquage et assurer la séparation complète des 4 contextes d'exécution.
+### Phase 12: Strict Git Traceability, Sourcery AI Reviews & Industrial Quality (`Completed ✅ - v2.3.0`)
+**Summary**: Integrate automated Sourcery AI code reviews, formalize the multi-step PR lifecycle, sanitize command specifications, preserve unmasked `stderr` telemetry, and establish complete separation across the 4 execution contexts.
 
-#### 12.1 Cycle de Vie Git & Règle Obligatoire Issue-PR (Validé PR #110, #112)
-- [x] **Cycle de vie strict à 6 étapes** : Issue (`gh issue create`) -> Feature Branch (`git checkout -b`) -> PR atomique < 15K diff (`gh pr create`) -> Merge (`gh pr merge`) -> Commentaire & Fermeture Issue (`gh issue comment/close`) -> Synchronisation locale.
-- [x] **Automatisation du cycle de vie GitHub** : Création d'un script PSL d'automatisation des ouvertures, merges et résolutions d'issues via GitHub REST API (PR #110).
-- [x] **Gouvernance d'équipe dans `.agents/AGENTS.md`** : Inscription formelle des règles de diff max (<15 000 caractères) et de l'architecture Python Standard Library ONLY (PR #112).
+#### 12.1 Git Lifecycle & Mandatory Issue-PR Rule (Validated PR #110, #112)
+- [x] **Strict 6-Step Lifecycle**: Issue (`gh issue create`) -> Dedicated Branch (`git checkout -b`) -> Atomic PR < 15K diff (`gh pr create`) -> Merge (`gh pr merge`) -> Comment & Issue Closure (`gh issue comment/close`) -> Local synchronization.
+- [x] **GitHub Lifecycle Automation**: Built PSL automation script for issue opening, merging, and closing via GitHub REST API (PR #110).
+- [x] **Team Governance in `.agents/AGENTS.md`**: Formalized rules for maximum PR diff size (< 15,000 characters) and 100% Python Standard Library (PSL ONLY) architecture (PR #112).
 
-#### 12.2 Télémétrie Diagnostique & Préservation Intégrale de `stderr` (Validé PR #128)
-- [x] **Élimination systématique de `2>/dev/null`** : Nettoyage de l'ensemble des 18 fichiers `rules/*.json` pour éliminer le masquage des erreurs système et autoriser l'affichage transparent des codes d'erreur.
-- [x] **Exécution non bloquante en sous-processus** : Utilisation de `stdin=subprocess.DEVNULL` au niveau Python pour prévenir les blocages interactifs sans supprimer les flux d'erreur bruts.
+#### 12.2 Diagnostic Telemetry & Unmasked `stderr` Preservation (Validated PR #128)
+- [x] **Systematic Elimination of `2>/dev/null`**: Cleaned all 18 `rules/*.json` specification files to eliminate system error masking and allow transparent exit code inspection.
+- [x] **Non-Blocking Subprocess Execution**: Used `stdin=subprocess.DEVNULL` at the Python level to prevent interactive hangs without suppressing raw error output.
 
-#### 12.3 Classification des 4 Contextes & Taxonomie 5 États (Validé PR #114, #116, #118, #120)
-- [x] **Moteur `detect_execution_context()`** : Catégorisation formelle en 4 contextes (`LOCAL_BAREMETAL`, `LOCAL_DOCKER`, `REMOTE_SSH_BAREMETAL`, `REMOTE_SSH_DOCKER`) avec suite de tests dédiés `tests/test_execution_context.py` (PR #116).
-- [x] **Taxonomie des 5 états de contrôle** : Distinction formelle entre `Pass` (Conforme), `Fail` (Non-conforme), `Error` / `Erreur Commande` (Échec technique), `Manual` (Revue procédurale) et `Not Applicable` (PR #114, #118).
-- [x] **Tableau de bord HTML à 5 cartes** : Ajout de la carte `Échecs d'exécution technique` (`border-l-orange-500`) et liaison de la variable `error_count` dans SafeDict (PR #120).
+#### 12.3 4 Execution Contexts Classification & 5-State Taxonomy (Validated PR #114, #116, #118, #120)
+- [x] **`detect_execution_context()` Engine**: Formalized 4 contexts (`LOCAL_BAREMETAL`, `LOCAL_DOCKER`, `REMOTE_SSH_BAREMETAL`, `REMOTE_SSH_DOCKER`) with dedicated test suite `tests/test_execution_context.py` (PR #116).
+- [x] **5-State Compliance Taxonomy**: Formal distinction between `Pass` (Compliant), `Fail` (Non-compliant), `Error` (Technical execution failure), `Manual` (Procedural review), and `Not Applicable` (PR #114, #118).
+- [x] **5-Card HTML Dashboard**: Added `Technical Execution Errors` metric card (`border-l-orange-500`) and bound `error_count` variable in SafeDict (PR #120).
 
-#### 12.4 Assainissement des Spécifications JSON & Garde Moteur (Validé PR #122, #124, #126)
-- [x] **Garde d'exécution `is_valid_executable_command()`** : Validation dynamique empêchant l'exécution shell accidentelle de phrases descriptives en langage naturel (PR #124).
-- [x] **Élimination des erreurs de syntaxe bash** : Élimination des apostrophes et textes non protégés provoquant des `unexpected EOF` dans les contrôles manuels (PR #124).
-- [x] **Harmonisation des en-têtes & élimination des doublons** : Correction des titres produits (`Rapport d'Audit CIS - <Produit>`), contextualisation des badges avec icônes FontAwesome et élimination des versions dupliquées (PR #122).
-- [x] **Résolution des imports datetime RHEL** : Harmonisation des imports sur RHEL 8, 9, 10 (PR #126).
+#### 12.4 JSON Specifications Sanitization & Engine Guard (Validated PR #122, #124, #126)
+- [x] **Execution Guard `is_valid_executable_command()`**: Dynamic validation preventing unintended shell execution of descriptive natural language text (PR #124).
+- [x] **Elimination of Bash Syntax Errors**: Removed unescaped apostrophes and text causing `unexpected EOF` in manual controls (PR #124).
+- [x] **Header Harmonization & Duplicate Removal**: Cleaned report titles, contextualized status badges with FontAwesome icons, and purged duplicate versions (PR #122).
+- [x] **RHEL Datetime Import Alignment**: Standardized datetime imports across RHEL 8, 9, 10 (PR #126).
 
-#### 12.5 Validations & Évolutions Issues des Revues Sourcery AI (Validé PR #70-#132)
-- [x] **Sécurisation des sous-processus (PR #80, #84, #90)** : Élimination de `shell=True` au profit de listes d'arguments typées et sécurisation des appels Docker/SSH.
-- [x] **Internationalisation i18n & documentation (PR #92, #94, #96)** : Traduction intégrale en anglais avec miroir français `README_fr.md` et support `--lang {en,fr}`.
-- [x] **Architecture modulaire & Graphiques SVG natifs (PR #103, #105, #108)** : Externalisation des règles JSON et moteur vectoriel 100% hors-ligne sans Chart.js.
-- [x] **Validation continue de la suite de tests** : 60/60 tests unitaires passés avec succès sous Python Standard Library uniquement (PR #131, #132).
+#### 12.5 Sourcery AI Code Reviews & Quality Enhancements (Validated PR #70-#132)
+- [x] **Subprocess Security Hardening (PR #80, #84, #90)**: Eliminated `shell=True` in favor of typed argument lists and hardened Docker/SSH invocations.
+- [x] **Internationalization (i18n) & Documentation (PR #92, #94, #96)**: Complete English translation with French mirror `README_fr.md` and `--lang {en,fr}` support.
+- [x] **Modular Architecture & Native SVG Charts (PR #103, #105, #108)**: Externalized JSON rules and 100% offline vector chart generation without Chart.js.
+- [x] **Continuous Test Suite Validation**: 60/60 unit tests passing successfully using Python Standard Library only (PR #131, #132).
 
 ---
 
