@@ -15,6 +15,18 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-081 — docs: establish governance and architecture specifications (Part 2/4, Issue `#622`)
+- **Date**: `2026-11-08T23:22+01:00` | **Status**: `COMPLETED` | **Issue**: `#622` | **Branch**: `docs/issue-622-part2-governance-and-architecture`
+- **Request**: Milestone 1 (Part 2/4): Replace legacy hey-agent stub in `documentation/specifications/project-governance.md` with complete project governance specification and establish `documentation/specifications/architecture.md` (100% PSL, dual-mode architecture, component interaction diagram).
+- **Changes**:
+  - Rewrote `documentation/specifications/project-governance.md` with 7 core pillars, 9-step GitHub lifecycle, and living registers.
+  - Created `documentation/specifications/architecture.md` with zero-dependency philosophy, dual-mode engine pattern, and ASCII architecture diagram.
+  - Added unit test `test_core_specifications_governance_and_architecture` in `tests/test_project_governance_rules.py`.
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters (~11,500 chars).
+
+---
+
 ### ACT-081 — docs: harmonize execution rules and best practices (Part 1/4, Issue `#622`)
 - **Date**: `2026-11-08T23:15+01:00` | **Status**: `COMPLETED` | **Issue**: `#622` | **Branch**: `docs/issue-622-part1-execution-rules-harmonization`
 - **Request**: Milestone 1 (Part 1/4): Harmonize `03_execution_rules.md` and `04_best_practices.md` with core pillars (purging Chart.js/CDN rules, aligning with 18 targets, 4 transports, PSL-only, offline inline SVG, and diff limits < 15,000 characters).

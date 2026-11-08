@@ -93,8 +93,40 @@ class TestProjectGovernanceRules(unittest.TestCase):
         self.assertIn("Chart.js is permanently prohibited", bp_content)
         self.assertIn("SecretSanitizer", bp_content)
 
+    def test_core_specifications_governance_and_architecture(self) -> None:
+        """Verify project-governance.md and architecture.md exist with expected sections."""
+        specs_dir = ROOT / "documentation" / "specifications"
+        self.assertTrue(specs_dir.is_dir(), "documentation/specifications must exist")
+
+        expected_specs = {
+            "project-governance.md": [
+                "# Project Governance Specification",
+                "## 1. Overview & Rationale",
+                "## 2. Core Architectural Pillars",
+                "## 3. Mandatory 9-Step GitHub Lifecycle",
+                "## 4. Mandatory Living Registers",
+                "## 5. Strict English-Only Policy",
+            ],
+            "architecture.md": [
+                "# System Architecture Specification",
+                "## 1. Architectural Philosophy",
+                "## 2. 100% Python Standard Library",
+                "## 3. Dual-Mode Architecture",
+                "## 4. Component Interaction Diagram",
+            ],
+        }
+
+        for filename, headers in expected_specs.items():
+            file_path = specs_dir / filename
+            self.assertTrue(file_path.is_file(), f"{filename} must exist under documentation/specifications/")
+            content = file_path.read_text(encoding="utf-8")
+            self.assertGreater(len(content.strip()), 100, f"{filename} must not be empty")
+            for header in headers:
+                self.assertIn(header, content, f"{filename} missing required header: {header}")
+
 
 if __name__ == "__main__":
     unittest.main()
+
 
 
