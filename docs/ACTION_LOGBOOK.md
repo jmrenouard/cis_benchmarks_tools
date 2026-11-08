@@ -15,6 +15,16 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-082 — docs: renumber backlog items 15 to 23 sequentially (Part 5/7, Issue `#627`)
+- **Date**: `2026-11-09T00:10+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part5-potential-issues-items-15-23-and-pr-history`
+- **Request**: Milestone 2 (Part 5/7): Renumber older backlog items 15 to 23 sequentially in `POTENTIAL_ISSUES.md` (Phase 9 down to Subprocess Command Injection).
+- **Changes**:
+  - Renumbered backlog items 15 to 23 sequentially in `POTENTIAL_ISSUES.md`.
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-082 — docs: renumber backlog items 7 to 14 and translate PR header (Part 4/6, Issue `#627`)
 - **Date**: `2026-11-09T00:06+01:00` | **Status**: `COMPLETED` | **Issue**: `#627` | **Branch**: `docs/issue-627-part4-potential-issues-renumbering-and-pr-history`
 - **Request**: Milestone 2 (Part 4/6): Renumber older backlog items 7 to 14 sequentially in `POTENTIAL_ISSUES.md` (Phases 24 down to 10) and translate French section header on resolved PRs to English.
