@@ -15,6 +15,15 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-099 — refactor: purge dead inline HTML templates in Cassandra 4.0 & 4.1 (Sub-Milestone 4D Part 1, Issue `#670`)
+- **Date**: `2026-11-09T18:05:00Z` | **Status**: `COMPLETED` | **Issue**: `#670` | **Branch**: `refactor/issue-670-cassandra-template-cleanup`
+- **Request**: Sub-Milestone 4D (Part 1): Purge obsolete dead inline HTML templates referencing external CDNs across Cassandra audit engines (`audit_cis_cassandra_40.py`, `audit_cis_cassandra_41.py`), replacing them with clean minimal air-gapped fallback strings and loading from `templates/report_template.html`.
+- **Changes**: Replaced legacy 50-line inline `HTML_TEMPLATE` blocks containing external CDN links (`cdn.jsdelivr.net`) with clean minimal offline fallback HTML templates in `audit_cis_cassandra_40.py` and `audit_cis_cassandra_41.py`. Preserved dynamic loader from `templates/report_template.html`.
+- **Result**: `python -m unittest discover -s tests -v`: **314/314 passed**; `scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15,000 characters.
+
+---
+
+
 ### ACT-098 — refactor: delegate PostgreSQL, MongoDB, and Cassandra engines to core framework (Sub-Milestone 4C, Issue `#668`)
 - **Date**: `2026-11-09T17:45:00Z` | **Status**: `COMPLETED` | **Issue**: `#668` | **Branch**: `refactor/issue-668-postgres-mongo-cassandra-core-delegation`
 - **Request**: Sub-Milestone 4C: Remediate Finding 7 across the remaining 8 database target engines (`audit_cis_postgresql_16.py`, `audit_cis_postgresql_17.py`, `audit_cis_postgresql_18.py`, `audit_cis_mongodb_7.py`, `audit_cis_mongodb_8.py`, `audit_cis_cassandra_40.py`, `audit_cis_cassandra_41.py`, `audit_cis_cassandra_50.py`) by delegating duplicated SVG chart builders, score calculations, condition evaluations, and command validations to `cis_core_engine.py`.
