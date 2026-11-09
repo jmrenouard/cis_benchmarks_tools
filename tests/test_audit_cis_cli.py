@@ -147,7 +147,7 @@ class TestAuditCisCliEngine(unittest.TestCase):
             with open(path, "r", encoding="utf-8") as f:
                 content = f.read()
             self.assertIn("custom_flag = 42", content)
-            self.assertIn('return "2.9.1"', content)
+            self.assertIn('return "2.10.0"', content)
         finally:
             if os.path.exists(path):
                 os.remove(path)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unified CIS Benchmark Audit Engine v2.9.1
+Unified CIS Benchmark Audit Engine v2.10.0
 Automated security audit suite for databases and Linux operating systems (Local & SSH Remote Modes).
 100% Python Standard Library (PSL ONLY).
 """
@@ -35,7 +35,7 @@ def _resolve_version() -> str:
                     return v
         except OSError:
             pass
-    return "2.9.1"
+    return "2.10.0"
 
 
 __version__ = _resolve_version()
