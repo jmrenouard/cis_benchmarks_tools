@@ -11,6 +11,15 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-034 — False PASS on Broken SSH & Missing Status Triage in RHEL Engines (Finding 4)
+- **Date / Linked Action**: `2026-11-09` (`ACT-095` / Issue `#662`)
+- **Observed Symptom**: RHEL 8/9/10 `perform_checks()` forced PASS/FAIL with no Manual/error code triage; broken SSH (`rc=255`, empty stdout) gave false PASS on negative controls; `evaluate_condition()` crashed on None/int.
+- **Root Cause Analysis (5 Whys)**: Binary status assignment ignored rule type and fatal exit codes (-1, 126, 127, 255); raw `.lower()` crashed on non-strings; engines lacked delegation to `cis_core_engine`.
+- **Applied Change / Fix**: Imported `core_evaluate_condition`; triaged `Manual` to `MANUAL`, exit codes `-1, 126, 127, 255` to `ERROR` keeping rc=1 for negative checks; guarded None/int; added tests.
+- **Result & Non-Regression Test**: All 314 tests pass; asserts `MANUAL`, `ERROR`, negative control safety, None/int robustness, score tallying; pre-commit checks pass 8/8.
+
+---
+
 ### RCA-033 — Duplicate Uncast `stdout_not_contains` Branch in Mongo & Cassandra (Finding 12)
 - **Date / Linked Action**: `2026-11-09` (`ACT-094` / Issue `#660`)
 - **Observed Symptom**: Integer values (`0`, `1`) raised `TypeError` in `evaluate_condition` for `stdout_not_contains`.
