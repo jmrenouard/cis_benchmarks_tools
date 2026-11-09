@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-095 — fix(targets): harden error handling, returncode triage, None safety in RHEL 8/9/10 (Finding 4, Issue `#662`)
+- **Date**: `2026-11-09T15:30:00Z` | **Status**: `COMPLETED` | **Issue**: `#662` | **Branch**: `fix/issue-662-rhel-error-handling-and-conditions`
+- **Request**: Milestone 3C: Remediate Finding 4 in RHEL engines.
+- **Changes**: In `audit_cis_rhel_*.py`, imported `core_evaluate_condition`, mapped `Manual` to `MANUAL`, exit codes `-1, 126, 127, 255` to `ERROR` preventing false PASS on broken SSH, guarded None/int; added `tests/test_rhel_error_handling_and_conditions.py`.
+- **Result**: `python -m unittest discover -s tests -v`: **314/314 passed**; `scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15k chars.
+
+---
+
 ### ACT-094 — fix(targets): prevent credential exposure and eliminate dead code in Postgres, Mongo, and Cassandra (Issue `#660`)
 - **Date**: `2026-11-09T15:00:00Z` | **Status**: `COMPLETED` | **Issue**: `#660` | **Branch**: `fix/issue-660-pg-mongo-cassandra-security-deadcode`
 - **Request**: Milestone 3B: Remediate Finding 1 and Finding 12 across 8 PostgreSQL, MongoDB, and Cassandra engines.

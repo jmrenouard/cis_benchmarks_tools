@@ -23,6 +23,8 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
+try: from cis_core_engine import evaluate_condition as core_evaluate_condition
+except ImportError: core_evaluate_condition = None
 
 RECOMMENDATIONS_DATA = [
     {
@@ -593,15 +595,18 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, ssh
     """Execute all RHEL CIS & STIG security audit controls locally or remotely over SSH."""
     results = []
     for rec in recommendations:
-        stdout, stderr, code = run_command(rec["audit"], remote_host=remote_host, docker_container=docker_container, ssh_port=ssh_port, ssh_key=ssh_key, sudo=sudo)
-        is_pass = evaluate_condition(rec["condition"], stdout, stderr, code)
-        status = "PASS" if is_pass else "FAIL"
+        cmd = rec.get("audit", rec.get("test_procedure", ""))
+        stdout, stderr, code = run_command(cmd, remote_host=remote_host, docker_container=docker_container, ssh_port=ssh_port, ssh_key=ssh_key, sudo=sudo)
+        if str(rec.get("type", "")).capitalize() == "Manual": status = "MANUAL"
+        elif code in (-1, 126, 127) or (remote_host and code == 255): status = "ERROR"
+        else: status = "PASS" if evaluate_condition(rec.get("condition"), stdout, stderr, code) else "FAIL"
 
         results.append({
             "id": rec.get("id", rec.get("number", "N/A")),
             "title": rec.get("title", rec.get("name", "N/A")),
             "category": rec.get("category", "General"),
             "status": status,
+            "type": rec.get("type", "Automated"),
             "stdout": stdout,
             "stderr": stderr,
             "code": code,
@@ -648,20 +653,20 @@ def calculate_scores(results):
 
 def evaluate_condition(condition, stdout, stderr, returncode):
     """Evaluate audit command output against condition rules."""
+    if core_evaluate_condition is not None: return core_evaluate_condition(condition, stdout, stderr, returncode)
     if not condition:
         return False
-    if stdout is None:
-        stdout = ""
-    if stderr is None:
-        stderr = ""
+    stdout = stdout or ""
+    stderr = stderr or ""
 
     c_type = condition.get("type")
     val = condition.get("value")
+    v = str(val).lower() if val is not None else None
 
     if c_type == "stdout_contains":
-        return val.lower() in stdout.lower()
+        return v is not None and v in stdout.lower()
     elif c_type == "stdout_not_contains":
-        return val.lower() not in stdout.lower()
+        return v is not None and v not in stdout.lower()
     elif c_type == "returncode_zero":
         return returncode == 0
     return False
