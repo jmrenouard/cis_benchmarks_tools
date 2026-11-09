@@ -52,9 +52,9 @@ class TestDynamicCategoryScoringMariaDB(unittest.TestCase):
                 self.assertEqual(cat_data["failed_automated"], 1)
                 self.assertEqual(cat_data["na_checks"], 1)
                 self.assertEqual(cat_data["manual_checks"], 1)
-                # In MariaDB/MySQL formula: (Pass + NA) / (Pass + Fail + NA) * 100 = 2 / 3 * 100 = 66.666...
-                self.assertAlmostEqual(cat_data["score"], 66.6666, places=2)
-                self.assertAlmostEqual(overall_score, 66.6666, places=2)
+                # Standardized CIS core formula: Pass / (Pass + Fail) * 100 = 1 / 2 * 100 = 50.0
+                self.assertEqual(cat_data["score"], 50.0)
+                self.assertEqual(overall_score, 50.0)
 
                 # Ensure category_labels JSON contains the dynamic category
                 cat_labels_json = rest[7]  # category_labels
@@ -173,9 +173,9 @@ class TestDynamicCategoryScoringMariaDB(unittest.TestCase):
                 self.assertEqual(cat_data["error_checks"], 1)
                 self.assertEqual(cat_data["na_checks"], 1)
                 self.assertEqual(cat_data["manual_checks"], 1)
-                # MariaDB/MySQL formula: (1 Pass + 1 NA) / (1 Pass + 1 Fail + 1 NA) * 100 = 66.666...
-                self.assertAlmostEqual(cat_data["score"], 66.6666, places=2)
-                self.assertAlmostEqual(overall_score, 66.6666, places=2)
+                # Standardized CIS core formula: Pass / (Pass + Fail) * 100 = 1 / 2 * 100 = 50.0
+                self.assertEqual(cat_data["score"], 50.0)
+                self.assertEqual(overall_score, 50.0)
 
 
 
@@ -212,8 +212,9 @@ class TestDynamicCategoryScoringMySQL(unittest.TestCase):
                 self.assertEqual(cat_data["failed_automated"], 1)
                 self.assertEqual(cat_data["na_checks"], 1)
                 self.assertEqual(cat_data["manual_checks"], 1)
-                self.assertAlmostEqual(cat_data["score"], 66.6666, places=2)
-                self.assertAlmostEqual(overall_score, 66.6666, places=2)
+                # Standardized CIS core formula: Pass / (Pass + Fail) * 100 = 1 / 2 * 100 = 50.0
+                self.assertEqual(cat_data["score"], 50.0)
+                self.assertEqual(overall_score, 50.0)
 
     def test_filtered_categories_only_contain_audited_categories(self):
         """Verify that when only a single category is audited, cat_scores only contains audited categories."""
@@ -327,9 +328,9 @@ class TestDynamicCategoryScoringMySQL(unittest.TestCase):
                 self.assertEqual(cat_data["error_checks"], 1)
                 self.assertEqual(cat_data["na_checks"], 1)
                 self.assertEqual(cat_data["manual_checks"], 1)
-                # MariaDB/MySQL formula: (1 Pass + 1 NA) / (1 Pass + 1 Fail + 1 NA) * 100 = 66.666...
-                self.assertAlmostEqual(cat_data["score"], 66.6666, places=2)
-                self.assertAlmostEqual(overall_score, 66.6666, places=2)
+                # Standardized CIS core formula: Pass / (Pass + Fail) * 100 = 1 / 2 * 100 = 50.0
+                self.assertEqual(cat_data["score"], 50.0)
+                self.assertEqual(overall_score, 50.0)
 
 
 
