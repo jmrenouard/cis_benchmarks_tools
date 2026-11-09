@@ -24,7 +24,21 @@ if hasattr(sys.stderr, "reconfigure"):
 
 
 
-__version__ = "2.9.1"
+def _resolve_version() -> str:
+    """Resolve version string dynamically from repository VERSION file with fallback."""
+    version_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "VERSION")
+    if os.path.exists(version_file):
+        try:
+            with open(version_file, "r", encoding="utf-8") as f:
+                v = f.read().strip()
+                if v:
+                    return v
+        except OSError:
+            pass
+    return "2.9.1"
+
+
+__version__ = _resolve_version()
 
 TARGET_MAP = {
     "mariadb106": ("audit_cis_mariadb_106.py", "MariaDB 10.6", 74),
