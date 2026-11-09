@@ -15,6 +15,18 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-118 — feat: configure Docker Hub automated publishing architecture (Issue `#708`)
+- **Date**: `2026-11-10T00:10:00Z` | **Status**: `COMPLETED` | **Issue**: `#708` | **Branch**: `feat/issue-708-dockerhub-publishing-workflow`
+- **Request**: Configure Docker packaging and GitHub Actions workflow publishing multi-platform images to Docker Hub under `jmrenouard/cis-benchmarks-tools` on release publication or manual dispatch (Issue #708).
+- **Changes**:
+  - `Dockerfile` & `.dockerignore`: Non-root container with `python:3.12-slim`, `cisuser:cisgroup`, `/app/reports` volume, and CLI healthcheck.
+  - `.github/workflows/docker-publish.yml`: Multi-platform workflow targeting `jmrenouard/cis-benchmarks-tools` with preflight check.
+  - `tests/`: Added `test_docker_packaging_and_workflow.py` (10 tests) and updated `test_github_actions_workflows.py`.
+  - `docs/`: Documented Docker Hub in `docs/PUBLISHING.md` and `README.md`; logged `ACT-118` and `IDEA-010`.
+- **Result**: `unittest`: 326/326 passed; `pre_commit_checks.py`: 8/8 passed; PR diff < 15,000 characters; PR merged.
+
+---
+
 ### ACT-117 — feat: configure PyPI packaging and automated GitHub Actions release publishing (Issue `#706`)
 - **Date**: `2026-11-09T22:35:00Z` | **Status**: `COMPLETED` | **Issue**: `#706` | **Branch**: `feat/issue-706-pypi-packaging-publishing`
 - **Request**: Configure PyPI packaging and automated GitHub Actions release publishing workflow (Issue #706).

@@ -21,6 +21,7 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
             "security.yml",
             "release.yml",
             "pypi-publish.yml",
+            "docker-publish.yml",
         ]
         for wf_name in expected_workflows:
             wf_path = WORKFLOWS_DIR / wf_name
@@ -114,6 +115,13 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         self.assertIn("cancel-in-progress: false", content)
         self.assertNotIn("tags:", content, "pypi-publish.yml must not trigger on tag pushes (push: tags: removed)")
         self.assertNotIn("push:", content, "pypi-publish.yml must not trigger on push events")
+
+    def test_docker_publish_workflow_configured_correctly(self) -> None:
+        """Verify docker-publish.yml triggers on published release and publishes to Docker Hub."""
+        c = (WORKFLOWS_DIR / "docker-publish.yml").read_text(encoding="utf-8")
+        self.assertIn("docker/build-push-action@", c)
+        self.assertIn("secrets.DOCKERHUB_USERNAME", c)
+        self.assertNotIn("tags:", c.split("jobs:")[0])
 
 
 if __name__ == "__main__":

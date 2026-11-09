@@ -3,6 +3,7 @@
 > **Enterprise-Grade Automated Security Compliance Audit Engine for Databases and Linux Systems (100% Python Standard Library - PSL ONLY).**
 
 [![PyPI version](https://img.shields.io/pypi/v/cis-benchmarks-tools.svg)](https://pypi.org/project/cis-benchmarks-tools/)
+[![Docker Image Version](https://img.shields.io/docker/v/jmrenouard/cis-benchmarks-tools?sort=semver&logo=docker&label=Docker%20Hub)](https://hub.docker.com/r/jmrenouard/cis-benchmarks-tools)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
@@ -80,6 +81,12 @@
 ```bash
 pip install cis-benchmarks-tools
 audit-cis --list-targets
+```
+
+### 0b. Quickstart with Docker Hub
+```bash
+docker run --rm jmrenouard/cis-benchmarks-tools --list-targets
+docker run --rm -v $(pwd)/reports:/app/reports jmrenouard/cis-benchmarks-tools --target mariadb106 -o /app/reports/audit.html
 ```
 
 ### 1. List Available Targets
