@@ -66,3 +66,32 @@ Automated publication is orchestrated by `.github/workflows/pypi-publish.yml`:
    ```
 3. **Workflow Execution**: Monitor **Actions** → **Publish to PyPI**.
 4. **PyPI Verification**: Verify live installation via `pip install --upgrade cis-benchmarks-tools`.
+
+---
+
+## 6. Docker Hub Container Packaging & Release Publishing
+
+Multi-platform container published to Docker Hub at [`jmrenouard/cis-benchmarks-tools`](https://hub.docker.com/r/jmrenouard/cis-benchmarks-tools).
+
+### Architecture & Standards
+- **Base Image**: `python:3.12-slim`.
+- **Non-Root**: `cisuser:cisgroup` (UID/GID 10001).
+- **PSL ONLY**: Zero external dependencies.
+- **Assets**: Bundles 18 CIS rule specs (`rules/*.json`) and HTML templates (`templates/*.html`).
+- **Volume**: `/app/reports`.
+
+### Local Container Build & Verification
+```bash
+docker build -t jmrenouard/cis-benchmarks-tools:latest .
+docker run --rm jmrenouard/cis-benchmarks-tools --list-targets
+docker run --rm -v $(pwd)/reports:/app/reports jmrenouard/cis-benchmarks-tools --target mariadb106 -o /app/reports/audit.html
+```
+
+### Automated GitHub Actions Workflow
+Orchestrated by `.github/workflows/docker-publish.yml`:
+- **Triggers**: `release: types: [published]` and manual `workflow_dispatch`.
+- **Platforms**: `linux/amd64` and `linux/arm64` (Buildx/QEMU).
+- **Tags**: `latest`, `vX.Y.Z`, and `X.Y.Z`.
+- **Secrets**: `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`.
+
+
