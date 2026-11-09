@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-089 — chore(bundler): purge remaining deprecated template stub from bundle_audit_cis (Issue `#650`)
+- **Date**: `2026-11-09T11:42:00Z` | **Status**: `COMPLETED` | **Issue**: `#650` | **Branch**: `chore/issue-650-purge-deprecated-template-stub`
+- **Request**: Milestone 1B (Part 2C): Final cleanup of remaining ~90 line deprecated template stub from `scripts/bundle_audit_cis.py`.
+- **Changes**: In `scripts/bundle_audit_cis.py`, completely purged `_DEPRECATED_TEMPLATE`, finalizing module at 59 lines of clean PSL code.
+- **Result**: `python -m unittest discover -s tests -v`: **303 / 303 unit tests passed (100%)**; `python scripts/pre_commit_checks.py`: **8 / 8 checks passed**; PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-088 — chore(bundler): remove dead legacy template string from bundle_audit_cis (Issue `#648`)
 - **Date**: `2026-11-09T11:35:00Z` | **Status**: `COMPLETED` | **Issue**: `#648` | **Branch**: `chore/issue-648-remove-dead-template-code`
 - **Request**: Milestone 1B (Part 2B): Remove 222-line dead legacy `_DEPRECATED_TEMPLATE` string from `scripts/bundle_audit_cis.py` following PR #647.
