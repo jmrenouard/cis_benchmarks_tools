@@ -44,7 +44,7 @@ def evaluate_condition(cond, stdout, stderr, code):
     if not cond or any(w in (stderr or "") for w in ("No such file", "Permission denied")): return False
     out, exp, v, t = stdout or "", cond.get("value"), cond.get("values") or [], cond.get("type")
     lines = [ln.strip() for ln in out.splitlines() if ln.strip()]
-    num_m = re.search(r"^\s*(-?\d+)\s*$", lines[-1]) if lines else None
+    num_m = re.search(r"^\s*(-?\d+)", lines[-1]) if lines else None
     val = int(num_m.group(1)) if num_m else None
     try: exp_int = int(exp) if exp is not None else None
     except (ValueError, TypeError): exp_int = None

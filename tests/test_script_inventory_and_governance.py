@@ -36,7 +36,9 @@ class TestScriptInventoryAndGovernance(unittest.TestCase):
             self.assertTrue(os.path.exists(path))
             self.assertGreater(os.path.getsize(path), 0)
             if name.endswith(".py"):
-                py_compile.compile(path, doraise=True)
+                import tempfile
+                cfile = os.path.join(tempfile.gettempdir(), f"test_{name}c")
+                py_compile.compile(path, cfile=cfile, doraise=True)
 
     def test_archived_scripts_relocated(self):
         archive_dir = os.path.join(REPO_ROOT, "archive", "scripts")

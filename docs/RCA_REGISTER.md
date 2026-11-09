@@ -11,6 +11,19 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-037 — Numeric Prefix Parsing with Unit Suffixes in CIS Core Engine (Finding 7)
+- **Date / Linked Action**: `2026-11-09` (`ACT-098` / Issue `#668`)
+- **Observed Symptom**: When delegating `evaluate_condition` in `audit_cis_postgresql_18.py` to `cis_core_engine.py`, `test_stdout_is_numeric_greater_than` failed (`AssertionError: False is not true` for `evaluate_condition(cond, "200MB", "", 0)`).
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did evaluation fail?* `cis_core_engine.py` extracted numeric values with strict end-of-string anchors `re.search(r"^\s*(-?\d+)\s*$", lines[-1])`.
+  2. *Why was that an issue?* PostgreSQL and system metrics frequently report values with units attached (e.g. `200MB`, `8GB`, `100ms`).
+  3. *Why did postgresql_18 pass previously?* Local `evaluate_condition` in `audit_cis_postgresql_18.py` used `re.match(r"^(\d+)", stdout)` to extract digits at the start of output.
+  4. *What resolution?* Update `cis_core_engine.py` to parse numeric prefixes without end-of-line anchors `re.search(r"^\s*(-?\d+)", lines[-1])`, safely extracting the numeric portion while preserving sign and integer conversions.
+- **Applied Change / Fix**: Updated numeric extraction regex in `cis_core_engine.py` to support unit suffixes; aligned test assertion in `tests/test_evaluate_condition.py` with Finding 10 core None-safety standard; verified all 8 database engines via clean namespace re-binding.
+- **Result & Non-Regression Test**: All 314 tests pass; `scripts/pre_commit_checks.py` passes 8/8; PR diff strictly < 15,000 characters.
+
+---
+
 ### RCA-036 — Missing Status Handling and Standardized Scoring in MariaDB/MySQL Core Delegation (Finding 7)
 - **Date / Linked Action**: `2026-11-09` (`ACT-097` / Issue `#666`)
 - **Observed Symptom**: Delegating MariaDB/MySQL engines to `cis_core_engine.py` caused `test_missing_status_key` to fail (`failed_automated = 1` instead of 0) and dynamic category tests to fail with score mismatch (`66.67%` vs `50.0%`).
