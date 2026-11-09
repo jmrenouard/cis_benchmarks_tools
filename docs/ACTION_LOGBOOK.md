@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-107 — refactor: purge dead inline HTML template in MariaDB 10.6 (Sub-Milestone 4D Part 9, Issue `#686`)
+- **Date**: `2026-11-09T18:34:00Z` | **Status**: `COMPLETED` | **Issue**: `#686` | **Branch**: `refactor/issue-686-mariadb106-template-cleanup`
+- **Request**: Sub-Milestone 4D (Part 9): Purge dead inline HTML template in `audit_cis_mariadb_106.py`.
+- **Changes**: Replaced legacy 160-line inline HTML fallback string with minimal offline fallback HTML template in `audit_cis_mariadb_106.py`.
+- **Result**: `unittest`: 314/314 passed; `pre_commit_checks.py`: 8/8 passed; diff < 15,000 chars.
+
+---
+
 ### ACT-106 — refactor: purge dead inline HTML template in PostgreSQL 18 (Sub-Milestone 4D Part 8, Issue `#684`)
 - **Date**: `2026-11-09T18:31:00Z` | **Status**: `COMPLETED` | **Issue**: `#684` | **Branch**: `refactor/issue-684-pg18-template-cleanup`
 - **Request**: Sub-Milestone 4D (Part 8): Purge obsolete dead inline HTML template referencing external CDNs in `audit_cis_postgresql_18.py`, replacing it with clean minimal air-gapped fallback string while preserving dynamic template loader from `templates/report_template.html`.
