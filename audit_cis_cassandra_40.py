@@ -439,7 +439,7 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
         if db_password:
             env["MYSQL_PWD"] = str(db_password)
             env["PGPASSWORD"] = str(db_password)
-            docker_env.extend(["-e", f"MYSQL_PWD={db_password}", "-e", f"PGPASSWORD={db_password}"])
+            docker_env.extend(["-e", "MYSQL_PWD", "-e", "PGPASSWORD"])
         if db_user:
             env["MYSQL_USER"] = str(db_user)
             env["PGUSER"] = str(db_user)
@@ -522,8 +522,6 @@ def evaluate_condition(condition, stdout, stderr, returncode):
         return returncode == expected_value
     elif condition_type == "stdout_not_equals":
         return stdout != expected_value
-    elif condition_type == "stdout_not_contains":
-        return expected_value not in stdout
     elif condition_type == "stdout_equals":
         # L'output peut contenir des espaces/retours à la ligne supplémentaires, on le nettoie.
         return stdout.strip() == str(expected_value) # Convertir l'attendu en chaîne pour comparaison

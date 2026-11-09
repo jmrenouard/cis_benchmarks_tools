@@ -91,6 +91,15 @@ class TestEvaluateConditionEngine(unittest.TestCase):
         cond = {"type": "unknown_operator_xyz"}
         self.assertFalse(evaluate_condition(cond, "data", "", 0))
 
+    def test_finding_12_stdout_not_contains_with_integer_value(self):
+        """Finding 12: verify evaluate_condition with stdout_not_contains handles integer values without raising TypeError."""
+        import audit_cis_mongodb_7 as mg7, audit_cis_mongodb_8 as mg8
+        import audit_cis_cassandra_40 as cas40, audit_cis_cassandra_41 as cas41, audit_cis_cassandra_50 as cas50
+        for mod in (mg7, mg8, cas40, cas41, cas50):
+            with self.subTest(module=mod.__name__):
+                self.assertTrue(mod.evaluate_condition({"type": "stdout_not_contains", "value": 0}, "result = 1", "", 0))
+                self.assertFalse(mod.evaluate_condition({"type": "stdout_not_contains", "value": 1}, "result = 1", "", 0))
+
 
 if __name__ == "__main__":
     unittest.main()
