@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-097 — refactor: delegate MariaDB and MySQL engines to core framework (Sub-Milestone 4B, Issue `#666`)
+- **Date**: `2026-11-09T17:30:00Z` | **Status**: `COMPLETED` | **Issue**: `#666` | **Branch**: `refactor/issue-666-mariadb-mysql-core-delegation`
+- **Request**: Sub-Milestone 4B: Remediate Finding 7 across 7 MariaDB and MySQL engines (`audit_cis_mariadb_106.py`, `audit_cis_mariadb_1011.py`, `audit_cis_mysql_80.py`, `audit_cis_mysql_community_84.py`, `audit_cis_mysql_enterprise_84.py`, `audit_cis_mysql_community_97.py`, `audit_cis_mysql_enterprise_97.py`) by delegating duplicated SVG chart builders, score calculations, condition evaluations, and command validations to `cis_core_engine.py`.
+- **Changes**: Delegated SVG charts, `calculate_scores`, `evaluate_condition`, and `is_valid_executable_command` to `cis_core_engine.py` across all 7 MariaDB and MySQL engines; guarded missing status keys in `cis_core_engine.calculate_scores()`; updated category test assertions in `tests/test_category_scoring.py` to match standardized CIS core formula `Pass / (Pass + Fail) * 100` (50.0%).
+- **Result**: `python -m unittest discover -s tests -v`: **314/314 passed**; `scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15,000 characters.
+
+---
+
 ### ACT-096 — refactor: delegate RHEL 8, 9, 10 engines to core framework and execution drivers (Sub-Milestone 4A, Issue `#664`)
 - **Date**: `2026-11-09T16:40:00Z` | **Status**: `COMPLETED` | **Issue**: `#664` | **Branch**: `refactor/issue-664-rhel-core-delegation`
 - **Request**: Sub-Milestone 4A: Remediate Finding 7 across RHEL 8, 9, 10 engines by delegating duplicated SVG chart builders, score calculations (with 2-tuple adapter), and command validation to `cis_core_engine.py`, and wiring `execution_drivers.py`, `temporal_metadata.py`, and `post_execution_publisher.py`.

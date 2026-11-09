@@ -11,6 +11,18 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-036 — Missing Status Handling and Standardized Scoring in MariaDB/MySQL Core Delegation (Finding 7)
+- **Date / Linked Action**: `2026-11-09` (`ACT-097` / Issue `#666`)
+- **Observed Symptom**: Delegating MariaDB/MySQL engines to `cis_core_engine.py` caused `test_missing_status_key` to fail (`failed_automated = 1` instead of 0) and dynamic category tests to fail with score mismatch (`66.67%` vs `50.0%`).
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did missing status increment fail count?* `calculate_scores` defaulted missing status (`st = ""`) to `"fail"` for automated checks instead of ignoring it.
+  2. *Why score mismatch?* Legacy MariaDB/MySQL formula counted NA in score (`(Pass + NA) / (Pass + Fail + NA)`), whereas Finding 3 standardized scoring on `Pass / (Pass + Fail) * 100`.
+  3. *What resolution?* Guard empty status for non-manual checks in `cis_core_engine.calculate_scores()` and update test assertions in `tests/test_category_scoring.py` to the standardized 50.0% CIS score.
+- **Applied Change / Fix**: In `cis_core_engine.py`, added empty status guard in `calculate_scores()`; in all 7 MariaDB and MySQL engines, delegated SVG charts, condition evaluation, command validation, and score calculation to `cis_core_engine.py`; updated score assertions in `tests/test_category_scoring.py`.
+- **Result & Non-Regression Test**: All 314 tests pass; `scripts/pre_commit_checks.py` passes 8/8; PR diff strictly < 15,000 characters.
+
+---
+
 ### RCA-035 — Duplicated Engine Logic & Score Unpacking Mismatch in RHEL Delegation (Finding 7)
 - **Date / Linked Action**: `2026-11-09` (`ACT-096` / Issue `#664`)
 - **Observed Symptom**: RHEL 8/9/10 engines duplicated SVG charts, score calculations, and command validation without delegating to `cis_core_engine.py`. Direct delegation of `calculate_scores` caused `ValueError: too many values to unpack (expected 2)` because `cis_core_engine` returns 14 values while RHEL callers expect 2 values `score, cats`.

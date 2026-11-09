@@ -85,7 +85,8 @@ def calculate_scores(results):
         if k not in cats:
             cat_order.append(k)
             cats[k] = dict({f: 0 for f in flds}, name=k, score=0.0)
-        st, t = str(c.get("status", "")).upper(), str(c.get("type", "")).capitalize()
+        st, t = str(c.get("status") or "").upper().strip(), str(c.get("type") or "").capitalize().strip()
+        if not st and t != "Manual": continue
         key = "manual" if t == "Manual" or "MANUAL" in st else ("pass" if st in ("PASS", "SUCCÈS") else ("error" if st in ("ERROR", "ERREUR") else ("na" if st in ("N/A", "NA", "NOT APPLICABLE") else "fail")))
         cnts[key] += 1
         s = cats[k]
