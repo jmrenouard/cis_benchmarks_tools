@@ -74,6 +74,7 @@ py-modules = [
     "temporal_metadata",
     "post_execution_publisher",
     "execution_drivers",
+    "cis_core_engine",
 ]
 
 [tool.setuptools.package-data]

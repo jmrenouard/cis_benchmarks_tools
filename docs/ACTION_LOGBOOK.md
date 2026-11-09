@@ -15,6 +15,17 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-116 — chore: official project release v2.10.0 with comprehensive enterprise release notes (Milestone 6, Issue `#704`)
+- **Date**: `2026-11-09T20:30:00Z` | **Status**: `COMPLETED` | **Issue**: `#704` | **Branch**: `chore/issue-704-release-v2.10.0`
+- **Request**: Milestone 6: Official release v2.10.0. Bump version, sync docs/registers, validate 314 tests, verify diff < 15,000 chars, merge PR, and publish release v2.10.0.
+- **Changes**:
+  - Bumped `VERSION` to `2.10.0`, stamped `audit_cis.py`, added `cis_core_engine` to `pyproject.toml`, updated `test_audit_cis_cli.py`, and bumped badges in `README.md` and `README_fr.md`.
+  - Synchronized `ROADMAP.md` (Phase 31), `POTENTIAL_ISSUES.md` (12 Ponytail findings), and `docs/RCA_REGISTER.md` (IDEA-008 Completed).
+  - Authored comprehensive enterprise release notes in `docs/RELEASE_NOTES_v2.10.0.md`.
+- **Result**: `python -m unittest discover -s tests -v`: **314/314 passed** (0 failures, 0 errors, 1 skipped); `scripts/pre_commit_checks.py`: **8/8 checks passed**; raw PR diff strictly < 15,000 characters; PR #705 merged; GitHub Release `v2.10.0` published.
+
+---
+
 ### ACT-115 — chore: end-to-end acceptance validation and test readiness (Milestone 5, Issue `#702`)
 - **Date**: `2026-11-09T20:00:00Z` | **Status**: `COMPLETED` | **Issue**: `#702` | **Branch**: `chore/issue-702-e2e-acceptance-validation`
 - **Request**: Milestone 5: E2E Acceptance & Governance Finalization. Validate all 314 tests, create `TEST_READY.md` certifying test readiness across 18 targets and 887 rules, and synchronize `docs/ACTION_LOGBOOK.md` (ACT-115) and `docs/RCA_REGISTER.md` (IDEA-008).

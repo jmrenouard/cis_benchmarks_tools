@@ -1,4 +1,4 @@
-# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.9.1)
+# 🗺️ CIS Benchmarks Tools - Strategic Roadmap & Backlog (v2.10.0)
 
 This document outlines the strategic roadmap, architecture principles, phase-level milestones, and task-level execution status for the CIS Benchmarks Tools suite.
 
@@ -45,6 +45,7 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 | **Phase 28** | English Governance (`ACTION_LOGBOOK` & `RCA_REGISTER`) & CI/CD       | `v2.8.1`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 29** | Commit Testing CI, PyPI Distribution Pipeline & Stable Release     | `v2.9.1`       | `Completed ✅` | 4/4   | 100%     |
 | **Phase 30** | Ponytail Audit Remediations & Shared Core Engine Foundation          | `v2.9.1`       | `Completed ✅` | 14/14 | 100%     |
+| **Phase 31** | Enterprise Hardening, Core Engine Delegation & v2.10.0 Release       | `v2.10.0`      | `Completed ✅` | 7/7   | 100%     |
 
 
 ---
@@ -543,6 +544,16 @@ This document outlines the strategic roadmap, architecture principles, phase-lev
 - [x] **CI Matrix & Security Hardening (`RCA-023`)**: Remediate Bandit SAST scan on archive (`RCA-022`) and update Python matrix for active versions (PR #621).
 - [x] **Milestone 1 Specifications**: Establish complete 6-file specification suite under `documentation/specifications/`, harmonize execution rules (`03_execution_rules.md`) and best practices (`04_best_practices.md`) (PRs #623–#626).
 - [x] **Milestone 2 Documentation**: Synchronize ROADMAP dashboard, translate Phase 12, renumber backlog items 1-23, update Active Quality Controls, and synchronize READMEs (PRs #628–#634).
+
+---
+
+### Phase 31: Enterprise Hardening, Core Engine Delegation & v2.10.0 Release (`Completed ✅ - v2.10.0`)
+**Summary**: Remediate 12 Ponytail findings (PRs #643–#703), certify test readiness (`TEST_READY.md`), and publish release `v2.10.0`.
+- [x] **M1A/B (PRs #643, #653)**: SSH `cwd`, single-probe detector, diagnostic timeout accuracy, relative links, bundling (`F5, 6, 8, 9, 11`).
+- [x] **M2 (PR #655)**: Scoring formula $\frac{\text{Pass}}{\text{Pass} + \text{Fail}} \times 100$, numeric regex, `None`-safe checks (`F3, 10`).
+- [x] **M3A-C (PRs #657–#663)**: Process credentials (`ps aux` clean), manual dedup, dead code removal, RHEL error taxonomy (`F1, 2, 4, 12`).
+- [x] **M4 (PRs #665–#701)**: `cis_core_engine.py` delegation and offline fallback templates across all 18 targets (`F7`).
+- [x] **M5/M6 (PRs #703, #705)**: Test readiness (314 tests, `TEST_READY.md`), release notes, and GitHub Release `v2.10.0` (Issue #704).
 
 ---
 
