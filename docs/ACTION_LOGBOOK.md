@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-106 — refactor: purge dead inline HTML template in PostgreSQL 18 (Sub-Milestone 4D Part 8, Issue `#684`)
+- **Date**: `2026-11-09T18:31:00Z` | **Status**: `COMPLETED` | **Issue**: `#684` | **Branch**: `refactor/issue-684-pg18-template-cleanup`
+- **Request**: Sub-Milestone 4D (Part 8): Purge obsolete dead inline HTML template referencing external CDNs in `audit_cis_postgresql_18.py`, replacing it with clean minimal air-gapped fallback string while preserving dynamic template loader from `templates/report_template.html`.
+- **Changes**: Replaced legacy 154-line inline HTML fallback string containing external CDN links (`jsdelivr`) with clean minimal offline fallback HTML template in `audit_cis_postgresql_18.py`. Preserved dynamic loader from `templates/report_template.html`.
+- **Result**: `python -m unittest discover -s tests -v`: **314/314 passed**; `scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15,000 characters.
+
+---
+
 ### ACT-105 — refactor: purge dead inline HTML template in PostgreSQL 17 (Sub-Milestone 4D Part 7, Issue `#682`)
 - **Date**: `2026-11-09T18:28:00Z` | **Status**: `COMPLETED` | **Issue**: `#682` | **Branch**: `refactor/issue-682-pg17-template-cleanup`
 - **Request**: Sub-Milestone 4D (Part 7): Purge obsolete dead inline HTML template referencing external CDNs in `audit_cis_postgresql_17.py`, replacing it with clean minimal air-gapped fallback string while preserving dynamic template loader from `templates/report_template.html`.
