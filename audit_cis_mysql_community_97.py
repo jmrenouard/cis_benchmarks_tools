@@ -562,7 +562,7 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
         if db_password:
             env["MYSQL_PWD"] = str(db_password)
             env["PGPASSWORD"] = str(db_password)
-            docker_env.extend(["-e", f"MYSQL_PWD={db_password}", "-e", f"PGPASSWORD={db_password}"])
+            docker_env.extend(["-e", "MYSQL_PWD", "-e", "PGPASSWORD"])
         if db_user:
             env["MYSQL_USER"] = str(db_user)
             env["PGUSER"] = str(db_user)
@@ -836,9 +836,8 @@ def perform_checks(recommendations, remote_host=None, docker_container=None, db_
                     if rec["type"] == "Manual":
                         check_result["status"] = "Manual"
                         tp = rec.get("test_procedure", "").strip()
-                        if tp and is_valid_executable_command(tp):
-                            diag_out, diag_err, diag_ret = run_command(tp, **common_run_kwargs)
-                            diag_disp = diag_out if diag_out else (diag_err or "")
+                        diag_disp = stdout if stdout else (stderr or "")
+                        if is_valid_executable_command(tp):
                             if diag_disp:
                                 check_result["output"] = f"--- [Contrôle Manuel - Diagnostic Système] ---\nCommande: {tp}\n\nRésultat capturé:\n{diag_disp}\n\nNote: L'auditeur doit valider la conformité selon la politique de sécurité de l'organisation."
                             else:

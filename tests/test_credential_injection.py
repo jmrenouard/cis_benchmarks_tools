@@ -9,7 +9,8 @@ from unittest.mock import MagicMock, patch
 
 import audit_cis_mariadb_106 as mariadb_106
 import audit_cis_mariadb_1011 as mariadb_1011
-import audit_cis_mysql_80 as mysql_80
+import audit_cis_mysql_80 as mysql_80, audit_cis_mysql_community_84 as mysql_c84
+import audit_cis_mysql_community_97 as mysql_c97, audit_cis_mysql_enterprise_84 as mysql_e84, audit_cis_mysql_enterprise_97 as mysql_e97
 import audit_cis_postgresql_16 as postgresql_16
 
 
@@ -91,8 +92,8 @@ class TestCredentialInjection(unittest.TestCase):
         self.assertEqual(called_env.get("MYSQL_PWD"), "MariaPassword789!")
 
     @patch("subprocess.run")
-    def test_mariadb_engines_docker_password_not_in_argv(self, mock_sub):
-        """Finding 1: verify docker exec fallback across MariaDB engines never exposes db_password in argv."""
+    def test_all_mariadb_mysql_engines_docker_password_not_in_argv(self, mock_sub):
+        """Finding 1: verify docker exec fallback across all MariaDB and MySQL engines never exposes db_password in argv."""
         mock_process = MagicMock()
         mock_process.stdout = "1\n"
         mock_process.stderr = ""
@@ -101,8 +102,8 @@ class TestCredentialInjection(unittest.TestCase):
 
         secret = "S3cr3t_P@ssw0rd!_WithSpaces"
         engines = [
-            (mariadb_106, True),   # sudo=True triggers legacy fallback
-            (mariadb_1011, True),  # sudo=True triggers legacy fallback
+            (mariadb_106, True), (mariadb_1011, True), (mysql_80, False),
+            (mysql_c84, False), (mysql_c97, False), (mysql_e84, False), (mysql_e97, False),
         ]
         for engine, sudo in engines:
             with self.subTest(engine=engine.__name__):

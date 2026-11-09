@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unit tests for Manual control single execution across MariaDB engines (PSL ONLY).
+Unit tests for Manual control single execution across MariaDB and MySQL engines (PSL ONLY).
 Finding 2: Ensures perform_checks executes Manual controls with shell commands exactly once.
 """
 
@@ -9,13 +9,17 @@ from unittest.mock import patch
 
 import audit_cis_mariadb_106 as m106
 import audit_cis_mariadb_1011 as m1011
+import audit_cis_mysql_80 as my80, audit_cis_mysql_community_84 as myc84, audit_cis_mysql_community_97 as myc97
+import audit_cis_mysql_enterprise_84 as mye84, audit_cis_mysql_enterprise_97 as mye97
 
 
 class TestManualCheckExecution(unittest.TestCase):
-    """Verify single execution of Manual controls across MariaDB engines."""
+    """Verify single execution of Manual controls across all MariaDB and MySQL engines."""
 
     def setUp(self):
-        self.engines = [("mariadb_106", m106), ("mariadb_1011", m1011)]
+        self.engines = [("mariadb_106", m106), ("mariadb_1011", m1011), ("mysql_80", my80),
+                        ("mysql_community_84", myc84), ("mysql_community_97", myc97),
+                        ("mysql_enterprise_84", mye84), ("mysql_enterprise_97", mye97)]
 
     def _run_rule(self, mod, tp):
         rule = [{"category": "1. Setup", "number": "1.1", "name": "Manual", "type": "Manual", "test_procedure": tp}]
