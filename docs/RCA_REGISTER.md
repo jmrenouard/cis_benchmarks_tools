@@ -12,15 +12,15 @@
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
 ### RCA-026 — Pre-Commit Overwrite of audit_cis.py from Template (Finding 8)
-- **Date / Linked Action**: `2026-11-09` (`ACT-087` / Issue `#646`)
-- **Observed Symptom**: Edits in `audit_cis.py` were overwritten on every `pre_commit_checks.py` run by `bundle_audit_cis.py`.
+- **Date / Linked Action**: `2026-11-09` (`ACT-087`, `ACT-088` / Issues `#646`, `#648`)
+- **Observed Symptom**: Edits in `audit_cis.py` were overwritten on every `pre_commit_checks.py` run by `bundle_audit_cis.py`, and `bundle_audit_cis.py` contained a 222-line redundant template.
 - **Root Cause Analysis (5 Whys)**:
   1. *Why overwritten?* `bundle_audit_cis.py` had a 222-line template copy of `audit_cis.py`.
   2. *Why run?* `pre_commit_checks.py` invoked `bundle_audit_cis.py` at step 2.
   3. *Why template?* Legacy generator script pattern.
   4. *Why version drift?* Forced manual duplication across both files.
-- **Applied Change / Fix**: Replaced template overwrite with in-place regex sync (`re.sub`); added dynamic `_resolve_version()` fallback in `audit_cis.py` reading `VERSION`; added CLI unit tests.
-- **Result & Non-Regression Test**: 303 tests pass (100%); `scripts/pre_commit_checks.py` 8/8 pass; custom code preserved.
+- **Applied Change / Fix**: Replaced template overwrite with in-place regex sync (`re.sub`) in `#646`; removed dead 222-line template string in `#648`; added dynamic `_resolve_version()` fallback in `audit_cis.py` reading `VERSION`; added CLI unit tests.
+- **Result & Non-Regression Test**: 303 tests pass (100%); `scripts/pre_commit_checks.py` 8/8 pass; custom code preserved and dead code eliminated.
 
 ---
 
