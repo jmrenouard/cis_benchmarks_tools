@@ -20,10 +20,14 @@ if REPO_ROOT not in sys.path:
 
 VERSION_FILE = os.path.join(REPO_ROOT, "VERSION")
 if os.path.exists(VERSION_FILE):
-    with open(VERSION_FILE, "r", encoding="utf-8") as f:
-        VERSION = f.read().strip()
+    try:
+        with open(VERSION_FILE, "r", encoding="utf-8") as f:
+            v = f.read().strip()
+            VERSION = v if v else "2.9.1"
+    except OSError:
+        VERSION = "2.9.1"
 else:
-    VERSION = "1.6.0"
+    VERSION = "2.9.1"
 
 
 def generate_unified_audit_script(target_file: str = None) -> bool:
@@ -38,9 +42,9 @@ def generate_unified_audit_script(target_file: str = None) -> bool:
     with open(target, "r", encoding="utf-8") as f:
         c = f.read()
 
-    nc = re.sub(r'Unified CIS Benchmark Audit Engine v[0-9.]+', f'Unified CIS Benchmark Audit Engine v{VERSION}', c)
-    nc = re.sub(r'(def _resolve_version\(\) -> str:[\s\S]*?return )["\'][0-9.]+["\']', rf'\g<1>"{VERSION}"', nc)
-    nc = re.sub(r'__version__\s*=\s*["\'][0-9.]+["\']', f'__version__ = "{VERSION}"', nc)
+    nc = re.sub(r'Unified CIS Benchmark Audit Engine v[^\r\n"\']+', f'Unified CIS Benchmark Audit Engine v{VERSION}', c)
+    nc = re.sub(r'(def _resolve_version\(\) -> str:[\s\S]*?return )["\'][^"\']+["\']', rf'\g<1>"{VERSION}"', nc)
+    nc = re.sub(r'__version__\s*=\s*["\'][^"\']+["\']', f'__version__ = "{VERSION}"', nc)
 
     if nc != c:
         with open(target, "w", encoding="utf-8") as f:

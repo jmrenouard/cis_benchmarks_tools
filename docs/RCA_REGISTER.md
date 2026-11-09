@@ -11,6 +11,23 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-027 — Bundler SemVer Pre-Release Regex Truncation & Version Desynchronization (Finding 8 Iteration 2)
+- **Date / Linked Action**: `2026-11-09` (`ACT-090` / Issue `#652`)
+- **Observed Symptom**: When `audit_cis.py` contained a SemVer pre-release or release-candidate version tag (e.g., `2.9.2-rc1`), running `scripts/bundle_audit_cis.py` to bump to `3.0.0.beta.1` corrupted the header docstring into `v3.0.0.beta.1-rc1` and silently failed to update `_resolve_version()` and `__version__`. Furthermore, an empty `VERSION` file caused empty version string injection (`return ""`), and `bundle_audit_cis.py` contained an obsolete fallback of `"1.6.0"`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did header docstring get corrupted?* The regex `r'Unified CIS Benchmark Audit Engine v[0-9.]+'` matched only `v2.9.2`, stopped before `-rc1`, and left the `-rc1` suffix behind.
+  2. *Why did return and version assignments fail to update?* The regexes `r'(def _resolve_version\(\) -> str:[\s\S]*?return )["\'][0-9.]+["\']'` and `r'__version__\s*=\s*["\'][0-9.]+["\']'` required closing quotes immediately after `[0-9.]`, failing to match any tag with hyphens or letters.
+  3. *Why did bundle_audit_cis report success?* Because the header docstring changed (`nc != c`), the script printed a success checkmark despite the executable return statement remaining frozen on the old version.
+  4. *Why did empty VERSION file inject empty string?* `f.read().strip()` returned `""`, which evaluated as valid string without fallback verification.
+  5. *Why did previous unit tests miss this?* The initial test only tested a single pass starting from pure numeric `v1.0.0` to `2.9.1`, omitting pre-release tags and multi-pass transitions.
+- **Applied Change / Fix**:
+  - In `scripts/bundle_audit_cis.py`, updated `VERSION` loading with whitespace guard and `try...except OSError:` defaulting to `"2.9.1"`.
+  - Replaced `[0-9.]+` with string-bounded matching: `r'Unified CIS Benchmark Audit Engine v[^\r\n"\']+'` for docstrings, and `["\'][^"\']+["\']` for return statements and `__version__`.
+  - In `tests/test_audit_cis_cli.py`, added `test_bundle_audit_cis_prerelease_and_multipass_semver_sync` verifying multi-pass synchronization across pre-release versions (`2.9.2-rc1` -> `3.0.0.beta.1` -> `3.0.0`) and custom code preservation; broadened regex in `test_audit_cis_dynamic_version_resolution_fallback`.
+- **Result & Non-Regression Test**: All 304 unit tests passed (100%); `scripts/pre_commit_checks.py` 8/8 checks passed; multi-pass pre-release synchronization confirmed clean and idempotent; PR diff strictly under 15,000 characters.
+
+---
+
 ### RCA-026 — Pre-Commit Overwrite of audit_cis.py from Template (Finding 8)
 - **Date / Linked Action**: `2026-11-09` (`ACT-087`, `ACT-088`, `ACT-089` / Issues `#646`, `#648`, `#650`)
 - **Observed Symptom**: Edits in `audit_cis.py` were overwritten on every `pre_commit_checks.py` run by `bundle_audit_cis.py`, and `bundle_audit_cis.py` contained a 222-line redundant template.
