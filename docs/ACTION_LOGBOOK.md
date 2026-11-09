@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-112 — refactor: purge dead inline HTML template in MySQL Community 9.7 (Sub-Milestone 4D Part 14, Issue `#696`)
+- **Date**: `2026-11-09T18:53:00Z` | **Status**: `COMPLETED` | **Issue**: `#696` | **Branch**: `refactor/issue-696-mysql-comm97-template-cleanup`
+- **Request**: Sub-Milestone 4D (Part 14): Purge dead inline HTML template in `audit_cis_mysql_community_97.py`.
+- **Changes**: Replaced legacy 160-line inline HTML fallback string with minimal offline fallback HTML template in `audit_cis_mysql_community_97.py`.
+- **Result**: `unittest`: 314/314 passed; `pre_commit_checks.py`: 8/8 passed; diff < 15,000 chars.
+
+---
+
 ### ACT-111 — refactor: purge dead inline HTML template in MySQL Enterprise 8.4 (Sub-Milestone 4D Part 13, Issue `#694`)
 - **Date**: `2026-11-09T18:50:00Z` | **Status**: `COMPLETED` | **Issue**: `#694` | **Branch**: `refactor/issue-694-mysql-ent84-template-cleanup`
 - **Request**: Sub-Milestone 4D (Part 13): Purge dead inline HTML template in `audit_cis_mysql_enterprise_84.py`.
