@@ -79,6 +79,19 @@ class TestAuditDiagnostics(unittest.TestCase):
         self.assertEqual(diag.category, FailureCategory.TIMEOUT)
         self.assertTrue(diag.is_environment_error)
 
+    def test_classify_finding_9_timeouts_and_slow_commands(self):
+        """Finding 9: verify driver timeouts (rc=-1) and non-timeout slow commands."""
+        cases = [
+            ("cat", "Permission denied", 1, 12.5, FailureCategory.PERMISSION_DENIED),
+            ("sh", "command not found", 127, 15.0, FailureCategory.MISSING_BINARY),
+            ("db", "authentication failed", 2, 11.0, FailureCategory.AUTH_FAILURE),
+            ("sleep", "timed out", -1, 15.0, FailureCategory.TIMEOUT),
+            ("hung", "", -1, 15.0, FailureCategory.TIMEOUT),
+        ]
+        for cmd, err, rc, el, cat in cases:
+            d = CommandFailureClassifier.classify(command=cmd, stdout="", stderr=err, returncode=rc, elapsed_sec=el)
+            self.assertEqual(d.category, cat)
+
     def test_classify_syntax_error(self):
         diag = CommandFailureClassifier.classify(
             command="mysql -e 'SELEC 1;'",

@@ -95,6 +95,17 @@ class TestRuntimeDetector(unittest.TestCase):
         self.assertFalse(res["is_container"])
         self.assertEqual(res["runtime"], "baremetal")
 
+    def test_detect_combined_single_probe_roundtrip(self):
+        """Finding 11: verify RuntimeDetector executes a single combined probe and parses boundary markers."""
+        call_count = [0]
+        def mock_runner(cmd, remote_host=None):
+            call_count[0] += 1
+            return "===PROBE_1_FILES===\nFOUND_DOCKERENV\n===PROBE_2_CGROUP===\n0::/docker-123\n===PROBE_3_MOUNT===\noverlay /var/lib/docker\n===PROBE_4_UID===\n1001\n===PROBE_END===", "", 0
+
+        res = RuntimeDetector.inspect(runner=mock_runner)
+        self.assertEqual((call_count[0], res["is_container"], res["runtime"], res["cgroup_version"], res["is_rootless"]), (1, True, "docker", "v2", True))
+        self.assertEqual(res["evidence"], ["file:/.dockerenv", "cgroup_v2:docker", "mountinfo:docker"])
+
 
 class TestExecutionResult(unittest.TestCase):
     def test_result_properties(self):
@@ -366,6 +377,20 @@ class TestExecutors(unittest.TestCase):
 
         meta = executor.get_metadata()
         self.assertEqual(meta["driver_type"], "LOCAL_BAREMETAL")
+
+    @patch("subprocess.run")
+    def test_ssh_executor_cwd_and_defaults(self, mock_run):
+        """Finding 5: verify SSHExecutor cwd, normalization, and default ssh_key=None."""
+        ex = SSHExecutor("user@host")
+        ex.execute("ls -la", cwd="/var/log")
+        self.assertIn("cd /var/log && ls -la", mock_run.call_args[0][0][-1])
+        ex.execute("whoami", cwd="/root", as_user="root")
+        self.assertIn("sudo -n -u root", mock_run.call_args[0][0][-1])
+        ex.execute(["echo", "hi"], cwd="/opt")
+        self.assertIn("cd /opt && echo hi", mock_run.call_args[0][0][-1])
+        for e in (ex, RemoteSSHContainerExecutor("h", "c"), create_executor(mode="ssh", remote_host="h", sudo=True)):
+            self.assertIsNone(e.ssh_key)
+            self.assertNotIn("-i", e._build_ssh_prefix())
 
 
 class TestExecutorFactory(unittest.TestCase):

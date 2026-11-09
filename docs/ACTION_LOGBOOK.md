@@ -15,6 +15,15 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-085 — fix(core): enhance execution drivers and diagnostics (Issue `#642`)
+- **Date**: `2026-11-09T10:35:00Z` | **Status**: `COMPLETED` | **Issue**: `#642` | **Branch**: `fix/issue-642-execution-drivers-and-diagnostics`
+- **Request**: Milestone 1A: Remediate Findings 5, 11, and 9 (cwd, ssh_key, combined probes, timeout classifier).
+- **Changes**:
+  - `execution_drivers.py`: Added `cwd` in `SSHExecutor`, default `ssh_key=None`, `**kwargs` in `create_executor()`, combined runtime probe in 1 round trip.
+  - `audit_diagnostics.py`: Removed duration threshold from pattern loop; checked `returncode == -1` for timeout.
+  - `tests/`: Added unit tests for driver features and diagnostic classification.
+- **Result**: 299 tests passed, pre_commit_checks passed, PR diff < 15k chars.
+
 ### ACT-084 — docs: resolve legacy file URLs in test report and complete ACT-083 logbook entries (Issue `#640`)
 - **Date**: `2026-11-09T01:10+01:00` | **Status**: `COMPLETED` | **Issue**: `#640` | **Branch**: `docs/issue-640-polish-urls-and-logbook`
 - **Request**: Resolve residual legacy file:/// URLs in `reports/analyse_tests_e2e.md` and complete ACT-083 logbook entries in `docs/ACTION_LOGBOOK.md`.
