@@ -11,6 +11,19 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-025 — Non-Portable file:// Links in Dashboards & Residual Status Accounting (Finding 6)
+- **Date / Linked Action**: `2026-11-09` (`ACT-086` / Issue `#644`)
+- **Observed Symptom**: Dashboards used non-portable local `file://` URLs with backslashes; `na_cnt` calculated via residual subtraction masked unknown statuses as `N/A`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *file:// links?* Absolute paths prepended with `file://` break across hosts.
+  2. *Backslashes?* Windows filesystem paths break standard Markdown URL links.
+  3. *Residual subtraction?* Masked unrecognized/empty statuses as `N/A`.
+  4. *Missing counter?* `TargetAuditExecutionResult` lacked `unknown_count`.
+- **Applied Change / Fix**: Used `os.path.relpath(path, dash_dir).replace('\\', '/')` with cross-drive fallback in dashboards; added normalized status sets (`PASS_STATUSES`, `FAIL_STATUSES`, `MANUAL_STATUSES`, `ERROR_STATUSES`, `NA_STATUSES`) and `unknown_count` on `TargetAuditExecutionResult`.
+- **Result & Non-Regression Test**: 301 tests pass (100%); `scripts/pre_commit_checks.py` 8/8 pass; relative links validated.
+
+---
+
 ### RCA-024 — Driver CWD, Probe Latency & Classifier Timeouts (Findings 5, 11, 9)
 - **Date / Linked Action**: `2026-11-09` (`ACT-085` / Issue `#642`)
 - **Observed Symptom**: `SSHExecutor.execute()` ignored `cwd`, default `ssh_key` was `/root/.ssh/id_rsa`, `RuntimeDetector` ran 4 sequential probes, and slow commands (>=10s) misclassified as `TIMEOUT`.

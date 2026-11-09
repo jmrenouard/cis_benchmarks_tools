@@ -213,10 +213,23 @@ class DockerE2EOrchestrator:
             "| :--- | :--- | :---: | :---: | :--- | :--- |",
         ]
 
+        dash_dir = os.path.dirname(os.path.abspath(output_file))
         for r in results:
             st = "✅ PASS" if r.success else "❌ FAIL"
             fmts_str = ", ".join(f"{k.upper()}: {'✓' if v[0] else '✗'}" for k, v in r.format_validations.items()) or (r.error_message or "N/A")
-            reps_str = ", ".join(f"[{k.upper()}](file://{p})" for k, p in r.extracted_reports.items()) or "N/A"
+            if r.extracted_reports:
+                links = []
+                for k, p in r.extracted_reports.items():
+                    if not p:
+                        continue
+                    try:
+                        rel_p = os.path.relpath(p, dash_dir).replace("\\", "/")
+                    except (ValueError, Exception):
+                        rel_p = str(p).replace("\\", "/")
+                    links.append(f"[{k.upper()}]({rel_p})")
+                reps_str = ", ".join(links) if links else "N/A"
+            else:
+                reps_str = "N/A"
             lines.append(f"| `{r.target_key}` | `{r.container_name}` | {st} | `{r.duration_sec:.2f}s` | {fmts_str} | {reps_str} |")
 
         with open(output_file, "w", encoding="utf-8") as f:

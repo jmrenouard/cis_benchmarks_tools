@@ -131,6 +131,7 @@ class TargetAuditExecutionResult:
         manual_count: int = 0,
         error_count: int = 0,
         na_count: int = 0,
+        unknown_count: int = 0,
         generated_reports: Optional[Dict[str, str]] = None,
         diagnostic_summary: Optional[AuditDiagnosticSummary] = None,
         exception_msg: Optional[str] = None,
@@ -148,6 +149,7 @@ class TargetAuditExecutionResult:
         self.manual_count = manual_count
         self.error_count = error_count
         self.na_count = na_count
+        self.unknown_count = unknown_count
         self.generated_reports = generated_reports or {}
         self.diagnostic_summary = diagnostic_summary
         self.exception_msg = exception_msg
@@ -167,6 +169,7 @@ class TargetAuditExecutionResult:
             "manual_count": self.manual_count,
             "error_count": self.error_count,
             "na_count": self.na_count,
+            "unknown_count": self.unknown_count,
             "generated_reports": self.generated_reports,
             "diagnostic": self.diagnostic_summary.to_dict() if self.diagnostic_summary else None,
             "exception_msg": self.exception_msg,
@@ -325,11 +328,22 @@ class AuditOrchestrator:
             else:
                 flat_results = results
 
-            pass_cnt = sum(1 for c in flat_results if str(c.get("status", "")).upper() in ["PASS", "SUCCESS"])
-            fail_cnt = sum(1 for c in flat_results if str(c.get("status", "")).upper() in ["FAIL", "FAILED"])
-            manual_cnt = sum(1 for c in flat_results if str(c.get("status", "")).upper() in ["MANUAL", "MANUEL"])
-            error_cnt = sum(1 for c in flat_results if str(c.get("status", "")).upper() in ["ERROR"])
-            na_cnt = len(flat_results) - (pass_cnt + fail_cnt + manual_cnt + error_cnt)
+            PASS_STATUSES = {"PASS", "PASSED", "SUCCESS", "SUCCÈS", "SUCCES"}
+            FAIL_STATUSES = {"FAIL", "FAILED"}
+            MANUAL_STATUSES = {"MANUAL", "MANUEL"}
+            ERROR_STATUSES = {"ERROR", "ERREUR"}
+            NA_STATUSES = {"N/A", "NA", "NOT APPLICABLE", "NOT_APPLICABLE", "NON APPLICABLE", "NON_APPLICABLE"}
+
+            def _norm_status(c: Dict[str, Any]) -> str:
+                return str(c.get("status", "") or "").strip().upper()
+
+            pass_cnt = sum(1 for c in flat_results if _norm_status(c) in PASS_STATUSES)
+            fail_cnt = sum(1 for c in flat_results if _norm_status(c) in FAIL_STATUSES)
+            manual_cnt = sum(1 for c in flat_results if _norm_status(c) in MANUAL_STATUSES)
+            error_cnt = sum(1 for c in flat_results if _norm_status(c) in ERROR_STATUSES)
+            na_cnt = sum(1 for c in flat_results if _norm_status(c) in NA_STATUSES)
+            all_known = PASS_STATUSES | FAIL_STATUSES | MANUAL_STATUSES | ERROR_STATUSES | NA_STATUSES
+            unknown_cnt = sum(1 for c in flat_results if _norm_status(c) not in all_known)
 
             for check in flat_results:
                 diag = CommandFailureClassifier.classify_control_result(check, target_hint=canonical_key)
@@ -374,6 +388,7 @@ class AuditOrchestrator:
                 manual_count=manual_cnt,
                 error_count=error_cnt,
                 na_count=na_cnt,
+                unknown_count=unknown_cnt,
                 generated_reports=generated_reports,
                 diagnostic_summary=diagnostic_summary,
                 container_info=c_info.to_dict() if c_info else None,
@@ -462,8 +477,21 @@ class AuditOrchestrator:
             "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |",
         ]
 
+        dash_dir = os.path.dirname(os.path.abspath(report_filename))
         for r in execution_results:
-            rep_links = ", ".join(f"[{fmt.upper()}](file://{path})" for fmt, path in r.generated_reports.items()) if r.generated_reports else "N/A"
+            if r.generated_reports:
+                links = []
+                for fmt, path in r.generated_reports.items():
+                    if not path:
+                        continue
+                    try:
+                        rel_path = os.path.relpath(path, dash_dir).replace("\\", "/")
+                    except (ValueError, Exception):
+                        rel_path = str(path).replace("\\", "/")
+                    links.append(f"[{fmt.upper()}]({rel_path})")
+                rep_links = ", ".join(links) if links else "N/A"
+            else:
+                rep_links = "N/A"
             dur = f"{r.duration_sec:.2f}s"
             score_str = f"{r.overall_score:.1f}%" if r.success else "ERR"
             lines.append(

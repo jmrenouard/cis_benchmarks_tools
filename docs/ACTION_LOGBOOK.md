@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-086 — fix(orchestrator): use portable relative links and explicit status accounting (Issue `#644`)
+- **Date**: `2026-11-09T11:15:00Z` | **Status**: `COMPLETED` | **Issue**: `#644` | **Branch**: `fix/issue-644-bundler-and-dashboard-portability`
+- **Request**: Milestone 1B (Part 1/2): Remediate Finding 6 (portable relative links in dashboards and explicit status set accounting).
+- **Changes**: In `audit_orchestrator.py` and `docker_e2e_engine.py`, replaced `file://` links with `os.path.relpath`; in `audit_orchestrator.py`, replaced residual `na_cnt` with explicit status sets and added `unknown_count` to `TargetAuditExecutionResult`; updated unit tests.
+- **Result**: `python -m unittest discover -s tests -v`: **301 / 301 unit tests passed (100%)**; `python scripts/pre_commit_checks.py`: **8 / 8 checks passed**; PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-085 — fix(core): enhance execution drivers and diagnostics (Issue `#642`)
 - **Date**: `2026-11-09T10:35:00Z` | **Status**: `COMPLETED` | **Issue**: `#642` | **Branch**: `fix/issue-642-execution-drivers-and-diagnostics`
 - **Request**: Milestone 1A: Remediate Findings 5, 11, and 9 (cwd, ssh_key, combined probes, timeout classifier).
