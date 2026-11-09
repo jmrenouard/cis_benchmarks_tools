@@ -47,10 +47,16 @@ jobs:
 
       - name: Resolve Image Tags
         id: resolve_tags
+        env:
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
         run: |
           VERSION=$(cat VERSION | tr -d '[:space:]')
           IMAGE="jmrenouard/cis-benchmarks-tools"
-          echo "tags=${IMAGE}:latest,${IMAGE}:v${VERSION},${IMAGE}:${VERSION}" >> "$GITHUB_OUTPUT"
+          TAGS="${IMAGE}:v${VERSION},${IMAGE}:${VERSION}"
+          if [ "$IS_PRERELEASE" != "true" ]; then
+            TAGS="${IMAGE}:latest,${TAGS}"
+          fi
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push multi-platform Docker image

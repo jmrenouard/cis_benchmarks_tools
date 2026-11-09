@@ -66,12 +66,13 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         self.assertIn("pip-audit", content)
 
     def test_release_workflow_bundles_and_attaches_artifacts(self) -> None:
-        """Verify release.yml triggers on v* tags and attaches standalone audit bundle."""
+        """Verify release.yml triggers on v* tags, generates SHA256SUMS.txt and attaches standalone audit bundle."""
         rel_path = WORKFLOWS_DIR / "release.yml"
         content = rel_path.read_text(encoding="utf-8")
         self.assertIn("tags:", content)
         self.assertIn("v*", content)
         self.assertIn("pre_commit_checks.py", content)
+        self.assertIn("sha256sum * > SHA256SUMS.txt", content)
         self.assertIn("softprops/action-gh-release@", content)
 
     def test_commit_testing_workflows_trigger_on_all_pushes_and_pull_requests(self) -> None:
@@ -117,10 +118,11 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         self.assertNotIn("push:", content, "pypi-publish.yml must not trigger on push events")
 
     def test_docker_publish_workflow_configured_correctly(self) -> None:
-        """Verify docker-publish.yml triggers on published release and publishes to Docker Hub."""
+        """Verify docker-publish.yml triggers on published release, gates :latest on prereleases, and publishes to Docker Hub."""
         c = (WORKFLOWS_DIR / "docker-publish.yml").read_text(encoding="utf-8")
         self.assertIn("docker/build-push-action@", c)
         self.assertIn("secrets.DOCKERHUB_USERNAME", c)
+        self.assertIn("IS_PRERELEASE", c)
         self.assertNotIn("tags:", c.split("jobs:")[0])
 
 
