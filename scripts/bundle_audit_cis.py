@@ -68,12 +68,18 @@ import os
 import subprocess
 import sys
 
-os.environ.setdefault("PYTHONUTF8", "1")
-if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-if hasattr(sys.stderr, "reconfigure"):
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
-
+os.environ.setdefault("PYTHONUTF8", "1")
+
+if hasattr(sys.stdout, "reconfigure"):
+
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+if hasattr(sys.stderr, "reconfigure"):
+
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+
+
 __version__ = "{VERSION}"
 
 TARGET_MAP = {{
@@ -137,146 +143,8 @@ def run_single_audit(target_key, output_file=None, fmt="html", lang="en", mode="
     if ssh_key:
         cmd.extend(["--ssh-key", ssh_key])
     if db_host:
-        cmd.extend(["--db-host", db_host])
-    if db_port:
-        cmd.extend(["--db-port", str(db_port)])
-    if db_user:
-        cmd.extend(["--db-user", db_user])
-    cmd_env = os.environ.copy()
-    if db_password:
-        cmd_env["CIS_DB_PASSWORD"] = str(db_password)
-    if db_name:
-        cmd.extend(["--db-name", db_name])
-    if defaults_file:
-        cmd.extend(["--defaults-file", defaults_file])
-    if auth_db:
-        cmd.extend(["--auth-db", auth_db])
-    if use_sudo:
-        cmd.append("--sudo")
-    if output_file:
-        cmd.extend(["--output", output_file])
-
-    try:
-        subprocess.run(cmd, check=True, env=cmd_env)
-        elapsed = (datetime.datetime.now() - start_time).total_seconds()
-        print(f"✅ {{label}} CIS Audit completed successfully in {{elapsed:.2f}}s")
-        return True
-    except subprocess.CalledProcessError as e:
-        print(f"❌ CIS Audit for {{label}} failed with exit code {{e.returncode}}", file=sys.stderr)
-        return False
-
-
-def auto_detect_and_run():
-    """Programmatic API & CLI: Detect running database containers and execute audits."""
-    print(f"🔍 [v{{__version__}}] Auto-detecting active database containers...")
-    detected = []
-
-    try:
-        ps_out = subprocess.check_output(["docker", "ps", "--format", "{{{{.Names}}}} {{{{.Image}}}}"], text=True)
-        for line in ps_out.splitlines():
-            line_norm = line.lower().replace(".", "").replace(":", "").replace("-", "").replace("_", "")
-            for key in TARGET_MAP:
-                key_norm = key.lower().replace(".", "").replace(":", "").replace("-", "").replace("_", "")
-                aliases = [
-                    key_norm,
-                    key_norm.replace("postgresql", "postgres"),
-                    key_norm.replace("mongodb", "mongo"),
-                    key.split("-")[0].lower().replace(".", "")
-                ]
-                if any(alias in line_norm for alias in aliases):
-                    if key not in detected:
-                        detected.append(key)
-    except Exception as e:
-        print(f"⚠️ Docker auto-detection note: {{e}}")
-
-    if not detected:
-        print("ℹ️ No specific containers auto-detected. Listing available targets.")
-        list_targets()
-        return
-
-    print(f"🎯 Auto-detected targets: {{', '.join(detected)}}")
-    for target in detected:
-        run_single_audit(target)
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description=f"Unified CIS Benchmark Audit Suite v{{__version__}} (Local & SSH Remote Modes, PSL ONLY)",
-        formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument("-t", "--target", choices=list(TARGET_MAP.keys()), help="Target database benchmark to audit")
-    parser.add_argument("-c", "--docker", "--container", dest="docker_container", default=None, help="Target Docker container name or ID")
-    parser.add_argument("-m", "--mode", choices=["local", "ssh"], default="local", help="Audit execution mode (local or ssh)")
-    parser.add_argument("-r", "--remote", "--ssh", dest="remote_host", default=None, help="Remote SSH server target (e.g. user@hostname)")
-    parser.add_argument("--ssh-port", type=int, default=22, help="SSH port for remote execution (default: 22)")
-    parser.add_argument("-i", "--ssh-key", dest="ssh_key", default=None, help="Path to SSH private key file")
-    parser.add_argument("--sudo", action="store_true", help="Execute remote/local commands with sudo privileges")
-    parser.add_argument("-H", "--host", "--db-host", dest="db_host", default="localhost", help="Database host address (default: localhost)")
-    parser.add_argument("-P", "--port", "--db-port", dest="db_port", type=int, default=None, help="Database port number")
-    parser.add_argument("-u", "--user", "--db-user", dest="db_user", default=None, help="Database username")
-    parser.add_argument("-p", "--password", "--db-password", dest="db_password", default=os.environ.get("CIS_DB_PASSWORD"), help="Database password")
-    parser.add_argument("-D", "-d", "--database", "--db-name", dest="db_name", default=None, help="Database name")
-    parser.add_argument("--defaults-file", "--config-file", dest="defaults_file", default=None, help="Path to database option/configuration file (.my.cnf, .pgpass, cqlshrc)")
-    parser.add_argument("--auth-db", dest="auth_db", default=None, help="Authentication database (MongoDB)")
-    parser.add_argument("--local", action="store_true", help="Force local audit execution mode")
-    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
-    parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Language for report and CLI output (en/fr)")
-    parser.add_argument("-o", "--output", dest="output", default=None, help="Path to save report output")
-    parser.add_argument("-j", "--output-json", help="Path to save JSON summary report")
-    parser.add_argument("--list-targets", action="store_true", help="List all supported database targets")
-    parser.add_argument("-a", "--all", action="store_true", help="Run CIS audits for ALL targets sequentially")
-    parser.add_argument("--auto-detect", action="store_true", help="Auto-detect running database containers and execute audits")
-    parser.add_argument("--sync-cis", action="store_true", help="Sync CIS data")
-    parser.add_argument("--verify-cis", action="store_true", help="Verify CIS integrity")
-    parser.add_argument("--cis-types", "--types", dest="cis_types", default=None, help="CIS types")
-    parser.add_argument("--force", action="store_true", help="Force sync")
-    parser.add_argument("--dry-run", action="store_true", help="Dry run")
-    parser.add_argument("--base-url", default=None, help="Base URL")
-    parser.add_argument("-v", "--version", action="version", version=f"CIS Benchmarks Suite v{{__version__}}")
-
-    args = parser.parse_args()
-
-    if args.list_targets:
-        list_targets()
-        sys.exit(0)
-
-    if args.auto_detect:
-        auto_detect_and_run()
-        sys.exit(0)
-
-    if args.sync_cis or args.verify_cis:
-        d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "download_cis_benchmarks.py")
-        cmd = [sys.executable, d] + (["--verify-only"] if args.verify_cis else []) + (["-t", args.target] if args.target else [])
-        for k, v in [("--types", getattr(args, "cis_types", None)), ("--base-url", getattr(args, "base_url", None))]:
-            if v: cmd.extend([k, v])
-        if getattr(args, "force", False): cmd.append("--force")
-        if getattr(args, "dry_run", False): cmd.append("--dry-run")
-        sys.exit(subprocess.run(cmd).returncode)
-
-    exec_mode = "ssh" if (args.mode == "ssh" or args.remote_host) else "local"
-
-    if args.all:
-        print(f"🌟 [v{{__version__}}] Executing CIS Audit for ALL targets [Mode: {{exec_mode}}]...")
-        success_count = 0
-        for target_key in TARGET_MAP:
-            if run_single_audit(target_key, fmt=args.format, lang=args.lang, mode=exec_mode, remote_host=args.remote_host, ssh_port=args.ssh_port, ssh_key=args.ssh_key, docker_container=args.docker_container, db_host=args.db_host, db_port=args.db_port, db_user=args.db_user, db_password=args.db_password, db_name=args.db_name, defaults_file=args.defaults_file, auth_db=args.auth_db, use_sudo=args.sudo):
-                success_count += 1
-        print(f"\\n🎉 Completed: {{success_count}}/{{len(TARGET_MAP)}} CIS audits succeeded.")
-        sys.exit(0 if success_count == len(TARGET_MAP) else 1)
-
-    if args.target:
-        out = args.output or args.output_json
-        fmt = "json" if args.output_json and not args.output else args.format
-        success = run_single_audit(args.target, output_file=out, fmt=fmt, lang=args.lang, mode=exec_mode, remote_host=args.remote_host, ssh_port=args.ssh_port, ssh_key=args.ssh_key, docker_container=args.docker_container, db_host=args.db_host, db_port=args.db_port, db_user=args.db_user, db_password=args.db_password, db_name=args.db_name, defaults_file=args.defaults_file, auth_db=args.auth_db, use_sudo=args.sudo)
-        sys.exit(0 if success else 1)
-
-    parser.print_help()
-
-
-if __name__ == "__main__":
-    main()
 '''
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     generate_unified_audit_script()
