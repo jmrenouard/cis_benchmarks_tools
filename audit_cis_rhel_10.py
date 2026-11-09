@@ -409,6 +409,7 @@ def load_recommendations(target_key):
 
 
 def load_html_template():
+    """Load common HTML report template from templates/ or minimal offline fallback."""
     template_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates", "report_template.html")
     if os.path.exists(template_path):
         try:
@@ -416,112 +417,7 @@ def load_html_template():
                 return f.read()
         except Exception:
             pass
-    return """<!DOCTYPE html>
-<html lang="{lang}" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIS Benchmark Audit Report - {benchmark_title}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
-        .status-pass { background-color: #DEF7EC; color: #03543F; }
-        .status-fail { background-color: #FDE8E8; color: #9B1C1C; }
-        .status-manual { background-color: #FEF3C7; color: #92400E; }
-        .status-error { background-color: #F3F4F6; color: #1F2937; }
-        .status-na { background-color: #E5E7EB; color: #4B5563; }
-        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 0.75rem; }
-        body.dark-mode { background-color: #0f172a; color: #f8fafc; }
-        body.dark-mode aside, body.dark-mode header, body.dark-mode footer, body.dark-mode .bg-white { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
-        body.dark-mode .text-gray-900, body.dark-mode .text-gray-800 { color: #f8fafc !important; }
-        body.dark-mode .text-gray-700, body.dark-mode .text-gray-600 { color: #cbd5e1 !important; }
-        body.dark-mode .text-gray-500, body.dark-mode .text-gray-400 { color: #94a3b8 !important; }
-        body.dark-mode .bg-gray-50, body.dark-mode .bg-gray-100 { background-color: #0f172a !important; }
-    </style>
-</head>
-<body class="bg-gray-50 flex">
-    <aside class="w-64 h-screen bg-white border-r border-gray-200 sticky top-0 overflow-y-auto hidden lg:block">
-        <div class="p-6">
-            <h2 class="text-xl font-bold text-blue-600 flex items-center gap-2"><i class="fas fa-shield-halved"></i>{benchmark_title}</h2>
-            <p class="text-xs text-gray-500 mt-1">Audit Security Report v2.1.0</p>
-        </div>
-        <nav class="px-4 pb-6">
-            <a href="#summary" class="flex items-center p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-1 font-medium">
-                <i class="fas fa-chart-pie w-5 mr-3 text-blue-500"></i> Synthèse & Métriques
-            </a>
-            <div class="mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase px-3">Catégories</div>
-            {sidebar_links}
-        </nav>
-    </aside>
-    <main class="flex-1 min-w-0">
-        <header class="bg-white border-b border-gray-200 p-6 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Benchmark CIS {benchmark_title}</h1>
-                <p class="text-sm text-gray-500">Date du rapport: {report_date}</p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <button id="themeToggle" onclick="toggleDarkMode()" class="px-3 py-1.5 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center gap-1.5">
-                    <i class="fas fa-moon"></i> Mode Sombre
-                </button>
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">{target_version}</span>
-            </div>
-        </header>
-        <div class="p-8 max-w-7xl mx-auto">
-            <section id="summary" class="mb-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
-                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Score Global</span>
-                        <div class="relative flex items-center justify-center">
-                            <span class="text-3xl font-black text-gray-900">{overall_score:.1f}%</span>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-green-500">
-                        <span class="text-xs font-bold text-green-600 uppercase tracking-widest">Succès</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">{passed_automated_count}</div>
-                        <p class="text-xs text-gray-500 mt-1">Vérifications conformes</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-red-500">
-                        <span class="text-xs font-bold text-red-600 uppercase tracking-widest">Échecs</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">{failed_automated_count}</div>
-                        <p class="text-xs text-gray-500 mt-1">Non-conformités détectées</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-l-amber-500">
-                        <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Manuels</span>
-                        <div class="text-3xl font-bold text-gray-900 mt-1">{manual_checks}</div>
-                        <p class="text-xs text-gray-500 mt-1">À vérifier manuellement</p>
-                    </div>
-                </div>
-                {donut_svg}
-                {bar_svg}
-            </section>
-            <section id="details">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-gray-900">Détails des Contrôles d'Audit</h2>
-                    <div class="flex gap-2">
-                        <button onclick="filterStatus('all')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors">Tous</button>
-                        <button onclick="filterStatus('PASS')" class="px-3 py-1.5 bg-green-100 text-green-800 rounded-lg text-xs font-semibold hover:bg-green-200 transition-colors">Succès</button>
-                        <button onclick="filterStatus('FAIL')" class="px-3 py-1.5 bg-red-100 text-red-800 rounded-lg text-xs font-semibold hover:bg-red-200 transition-colors">Échecs</button>
-                        <button onclick="filterStatus('MANUAL')" class="px-3 py-1.5 bg-amber-100 text-amber-800 rounded-lg text-xs font-semibold hover:bg-amber-200 transition-colors">Manuels</button>
-                        <button onclick="filterStatus('ERROR')" class="px-3 py-1.5 bg-gray-100 text-gray-800 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors">Erreurs</button>
-                    </div>
-                </div>
-                {categories_reports}
-            </section>
-        </div>
-    </main>
-    <script>
-        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
-        function filterStatus(status) {
-            document.querySelectorAll('tr[data-status]').forEach(row => {
-                if (status === 'all' || row.getAttribute('data-status') === status) { row.style.display = ''; }
-                else { row.style.display = 'none'; }
-            });
-        }
-    </script>
-</body>
-</html>"""
+    return "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>{benchmark_title}</title></head><body><h1>CIS Report: {benchmark_title}</h1>{donut_svg}{bar_svg}{categories_reports}</body></html>"
 
 
 
