@@ -1119,6 +1119,12 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
         print(f"Error writing report file '{filename}': {e}")
 
 
+try:
+    from cis_core_engine import evaluate_condition, calculate_scores, build_inline_svg_donut_chart, build_inline_svg_category_chart, is_valid_executable_command
+except Exception:
+    pass
+
+
 # --- Main Execution ---
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

@@ -73,7 +73,7 @@ class TestEvaluateConditionEngine(unittest.TestCase):
         cond = {"type": "stdout_not_contains_any", "values": ["root", "admin"]}
         self.assertTrue(evaluate_condition(cond, "postgres", "", 0))
         self.assertFalse(evaluate_condition(cond, "root", "", 0))
-        self.assertTrue(evaluate_condition({"type": "stdout_not_contains_any", "values": None}, "output", "", 0))
+        self.assertFalse(evaluate_condition({"type": "stdout_not_contains_any", "values": None}, "output", "", 0))
 
     def test_stdout_regex_match(self):
         cond = {"type": "stdout_regex_match", "pattern": r"^mysql:mysql\s+7[05][05]$"}

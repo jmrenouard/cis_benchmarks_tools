@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-098 — refactor: delegate PostgreSQL, MongoDB, and Cassandra engines to core framework (Sub-Milestone 4C, Issue `#668`)
+- **Date**: `2026-11-09T17:45:00Z` | **Status**: `COMPLETED` | **Issue**: `#668` | **Branch**: `refactor/issue-668-postgres-mongo-cassandra-core-delegation`
+- **Request**: Sub-Milestone 4C: Remediate Finding 7 across the remaining 8 database target engines (`audit_cis_postgresql_16.py`, `audit_cis_postgresql_17.py`, `audit_cis_postgresql_18.py`, `audit_cis_mongodb_7.py`, `audit_cis_mongodb_8.py`, `audit_cis_cassandra_40.py`, `audit_cis_cassandra_41.py`, `audit_cis_cassandra_50.py`) by delegating duplicated SVG chart builders, score calculations, condition evaluations, and command validations to `cis_core_engine.py`.
+- **Changes**: Delegated SVG charts (`build_inline_svg_donut_chart`, `build_inline_svg_category_chart`), `calculate_scores`, `evaluate_condition`, and `is_valid_executable_command` to `cis_core_engine.py` across all 8 target engines via compact namespace re-binding; enhanced `cis_core_engine.py` numeric parsing in `stdout_is_numeric_greater_than` to support unit suffixes (e.g., `200MB`); aligned `tests/test_evaluate_condition.py` with Finding 10 core standard for None values; updated `tests/test_script_inventory_and_governance.py` to compile essential scripts into temp cfile preventing WinError 5 write locks.
+- **Result**: `python -m unittest discover -s tests -v`: **314/314 passed**; `scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15,000 characters.
+
+---
+
 ### ACT-097 — refactor: delegate MariaDB and MySQL engines to core framework (Sub-Milestone 4B, Issue `#666`)
 - **Date**: `2026-11-09T17:30:00Z` | **Status**: `COMPLETED` | **Issue**: `#666` | **Branch**: `refactor/issue-666-mariadb-mysql-core-delegation`
 - **Request**: Sub-Milestone 4B: Remediate Finding 7 across 7 MariaDB and MySQL engines (`audit_cis_mariadb_106.py`, `audit_cis_mariadb_1011.py`, `audit_cis_mysql_80.py`, `audit_cis_mysql_community_84.py`, `audit_cis_mysql_enterprise_84.py`, `audit_cis_mysql_community_97.py`, `audit_cis_mysql_enterprise_97.py`) by delegating duplicated SVG chart builders, score calculations, condition evaluations, and command validations to `cis_core_engine.py`.
