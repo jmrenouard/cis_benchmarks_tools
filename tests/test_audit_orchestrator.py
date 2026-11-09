@@ -161,6 +161,65 @@ class TestAuditOrchestrator(unittest.TestCase):
             self.assertIn("docker_container", mock_cmd.call_args[1])
             self.assertIsNone(mock_cmd.call_args[1]["docker_container"])
 
+    def test_rca_dashboard_uses_portable_relative_links(self):
+        """Finding 6: Verify rca_dashboard.md uses relative paths and does not contain file:// URLs."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            sub_dir = os.path.join(tmp_dir, "sub")
+            os.makedirs(sub_dir, exist_ok=True)
+
+            rep_html = os.path.join(tmp_dir, "rapport_cis_mariadb106.html")
+            rep_json = os.path.join(sub_dir, "rapport_cis_mariadb106.json")
+            with open(rep_html, "w", encoding="utf-8") as f:
+                f.write("<html></html>")
+            with open(rep_json, "w", encoding="utf-8") as f:
+                f.write("{}")
+
+            res = TargetAuditExecutionResult(
+                target_key="mariadb106",
+                title="MariaDB 10.6",
+                success=True,
+                duration_sec=0.5,
+                overall_score=85.0,
+                total_controls=10,
+                pass_count=8,
+                fail_count=2,
+                generated_reports={"html": rep_html, "json": rep_json}
+            )
+
+            orchestrator = AuditOrchestrator(output_dir=tmp_dir)
+            dash_path = os.path.join(tmp_dir, "rca_dashboard.md")
+            orchestrator.generate_suite_rca_dashboard([res], report_filename=dash_path)
+
+            with open(dash_path, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            self.assertNotIn("file://", content)
+            self.assertIn("[HTML](rapport_cis_mariadb106.html)", content)
+            self.assertIn("[JSON](sub/rapport_cis_mariadb106.json)", content)
+
+    @patch("audit_cis_mariadb_106.perform_checks")
+    def test_explicit_na_and_unknown_status_counting(self, mock_checks):
+        """Finding 6: Verify explicit status counting separates genuine N/A from unknown statuses."""
+        statuses = ["PASS", "SUCCÈS", "FAIL", "MANUAL", "ERROR", "Not Applicable", "N/A", "UNKNOWN", "", None]
+        mock_checks.return_value = {"Cat 1": [{"id": str(i), "status": s} for i, s in enumerate(statuses)]}
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            orchestrator = AuditOrchestrator(mode="local", output_dir=tmp_dir, formats=[])
+            res = orchestrator.execute_single_target("mariadb106")
+
+            self.assertTrue(res.success)
+            self.assertEqual(res.total_controls, 10)
+            self.assertEqual(res.pass_count, 2)
+            self.assertEqual(res.fail_count, 1)
+            self.assertEqual(res.manual_count, 1)
+            self.assertEqual(res.error_count, 1)
+            self.assertEqual(res.na_count, 2)
+            self.assertEqual(res.unknown_count, 3)
+
+            d = res.to_dict()
+            self.assertEqual(d["na_count"], 2)
+            self.assertEqual(d["unknown_count"], 3)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -116,6 +116,34 @@ class TestDockerE2EEngine(unittest.TestCase):
             content = f.read()
         self.assertIn("mariadb106", content)
         self.assertIn("✅ PASS", content)
+        self.assertNotIn("file://", content)
+
+    def test_e2e_dashboard_uses_portable_relative_links(self):
+        """Finding 6: Verify E2E summary dashboard uses relative links and no file:// URLs."""
+        sub_dir = os.path.join(self.tmp_dir, "reports")
+        os.makedirs(sub_dir, exist_ok=True)
+        rep_html = os.path.join(self.tmp_dir, "rep.html")
+        rep_json = os.path.join(sub_dir, "rep.json")
+
+        results = [
+            E2ERunResult(
+                target_key="mariadb106",
+                container_name="mariadb106-test",
+                success=True,
+                duration_sec=1.5,
+                format_validations={"html": (True, "Valid"), "json": (True, "Valid")},
+                extracted_reports={"html": rep_html, "json": rep_json}
+            )
+        ]
+        out_file = os.path.join(self.tmp_dir, "test_dashboard.md")
+        self.orchestrator.generate_e2e_summary_dashboard(results, output_file=out_file)
+
+        with open(out_file, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        self.assertNotIn("file://", content)
+        self.assertIn("[HTML](rep.html)", content)
+        self.assertIn("[JSON](reports/rep.json)", content)
 
 
 if __name__ == "__main__":
