@@ -580,3 +580,8 @@
 ### IDEA-007 — Canonical Target Catalog & CLI Argument Forwarding Matrix Test Coverage (Finding 13)
 - **Priority / Target**: `Completed ✅` · `tests/test_target_catalog_and_cli_matrix.py`, `audit_cis.py`, & `audit_orchestrator.py`
 - **Description**: Exhaustive matrix test suite validating canonical target resolution across all 18 targets (`CANONICAL_TARGETS` vs `TARGET_MAP`), rule specification presence in `rules/`, interface contracts (`perform_checks`, `calculate_scores`, `build_inline_svg_category_chart`, `build_inline_svg_donut_chart`, `export_results`), CLI parsing, and argument forwarding without secret leakage (implemented in ACT-078).
+
+### IDEA-008 — Milestone 6 Official Project Release Automation & Distribution Packaging
+- **Priority / Target**: `High` · Repository Root (`VERSION`, `ROADMAP.md`, `POTENTIAL_ISSUES.md`, `docs/RELEASE_NOTES_v2.10.0.md`) & GitHub Release
+- **Description**: Milestone 6 final release packaging and automation for `v2.10.0`: bump repository version to `v2.10.0`, synchronize `ROADMAP.md` and `POTENTIAL_ISSUES.md`, formulate comprehensive English release notes covering all 12 Ponytail remediations, offline inline SVG engine consolidation, process credential isolation, and publish official GitHub Release via `gh release create`.
+
