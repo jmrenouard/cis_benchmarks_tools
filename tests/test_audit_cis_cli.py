@@ -125,6 +125,33 @@ class TestAuditCisCliEngine(unittest.TestCase):
             audit_cis.main()
         self.assertTrue(all(k in m2.call_args[0][0] for k in ["--force", "--dry-run", "--types", "md", "--base-url", "u"]))
 
+    def test_audit_cis_dynamic_version_resolution_fallback(self):
+        """Finding 8: Verify dynamic version resolution from VERSION file with fallback."""
+        import audit_cis
+        self.assertTrue(hasattr(audit_cis, "_resolve_version"))
+        resolved = audit_cis._resolve_version()
+        self.assertRegex(resolved, r"^\d+\.\d+\.\d+$")
+        self.assertEqual(audit_cis.__version__, resolved)
+
+    def test_bundle_audit_cis_preserves_custom_code_and_syncs_version(self):
+        """Finding 8: Verify bundle_audit_cis preserves custom code and syncs version."""
+        import tempfile
+        from scripts.bundle_audit_cis import generate_unified_audit_script
+
+        src = '#!/usr/bin/env python3\n"""Unified CIS Benchmark Audit Engine v1.0.0"""\ndef _resolve_version() -> str: return "1.0.0"\ncustom_flag = 42\n'
+        with tempfile.NamedTemporaryFile("w+", delete=False, encoding="utf-8") as tf:
+            tf.write(src)
+            path = tf.name
+        try:
+            self.assertTrue(generate_unified_audit_script(target_file=path))
+            with open(path, "r", encoding="utf-8") as f:
+                content = f.read()
+            self.assertIn("custom_flag = 42", content)
+            self.assertIn('return "2.9.1"', content)
+        finally:
+            if os.path.exists(path):
+                os.remove(path)
+
 
 if __name__ == "__main__":
     unittest.main()

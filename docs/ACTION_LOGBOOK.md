@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-087 — fix(bundler): ensure non-destructive sync and dynamic version loading (Issue `#646`)
+- **Date**: `2026-11-09T11:22:00Z` | **Status**: `COMPLETED` | **Issue**: `#646` | **Branch**: `fix/issue-646-bundler-non-destructive-sync`
+- **Request**: Milestone 1B (Part 2/2): Remediate Finding 8 (non-destructive regex version sync in `bundle_audit_cis.py` and dynamic version fallback in `audit_cis.py`).
+- **Changes**: In `scripts/bundle_audit_cis.py`, replaced template overwrite with in-place regex sync (`re.sub`) and retired unused template; in `audit_cis.py`, added dynamic `_resolve_version()` fallback from `VERSION` file; added unit tests in `tests/test_audit_cis_cli.py`.
+- **Result**: `python -m unittest discover -s tests -v`: **303 / 303 unit tests passed (100%)**; `python scripts/pre_commit_checks.py`: **8 / 8 checks passed**; PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-086 — fix(orchestrator): use portable relative links and explicit status accounting (Issue `#644`)
 - **Date**: `2026-11-09T11:15:00Z` | **Status**: `COMPLETED` | **Issue**: `#644` | **Branch**: `fix/issue-644-bundler-and-dashboard-portability`
 - **Request**: Milestone 1B (Part 1/2): Remediate Finding 6 (portable relative links in dashboards and explicit status set accounting).

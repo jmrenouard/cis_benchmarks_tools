@@ -11,6 +11,19 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-026 — Pre-Commit Overwrite of audit_cis.py from Template (Finding 8)
+- **Date / Linked Action**: `2026-11-09` (`ACT-087` / Issue `#646`)
+- **Observed Symptom**: Edits in `audit_cis.py` were overwritten on every `pre_commit_checks.py` run by `bundle_audit_cis.py`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why overwritten?* `bundle_audit_cis.py` had a 222-line template copy of `audit_cis.py`.
+  2. *Why run?* `pre_commit_checks.py` invoked `bundle_audit_cis.py` at step 2.
+  3. *Why template?* Legacy generator script pattern.
+  4. *Why version drift?* Forced manual duplication across both files.
+- **Applied Change / Fix**: Replaced template overwrite with in-place regex sync (`re.sub`); added dynamic `_resolve_version()` fallback in `audit_cis.py` reading `VERSION`; added CLI unit tests.
+- **Result & Non-Regression Test**: 303 tests pass (100%); `scripts/pre_commit_checks.py` 8/8 pass; custom code preserved.
+
+---
+
 ### RCA-025 — Non-Portable file:// Links in Dashboards & Residual Status Accounting (Finding 6)
 - **Date / Linked Action**: `2026-11-09` (`ACT-086` / Issue `#644`)
 - **Observed Symptom**: Dashboards used non-portable local `file://` URLs with backslashes; `na_cnt` calculated via residual subtraction masked unknown statuses as `N/A`.
