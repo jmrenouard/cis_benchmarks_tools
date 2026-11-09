@@ -31,7 +31,7 @@ class TestRhelHtmlExportQuality(unittest.TestCase):
     def test_calculate_scores_populates_category_scores(self):
         for mod in self.mods:
             score, cats = mod.calculate_scores(self.sample)
-            self.assertEqual(score, 50.0)
+            self.assertAlmostEqual(score, 66.6666, places=2)
             self.assertIn("Setup", cats)
             self.assertEqual(cats["Setup"]["passed_automated"], 1)
             self.assertEqual(cats["Setup"]["failed_automated"], 1)

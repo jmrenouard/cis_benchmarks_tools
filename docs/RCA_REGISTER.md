@@ -11,6 +11,19 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-035 — Duplicated Engine Logic & Score Unpacking Mismatch in RHEL Delegation (Finding 7)
+- **Date / Linked Action**: `2026-11-09` (`ACT-096` / Issue `#664`)
+- **Observed Symptom**: RHEL 8/9/10 engines duplicated SVG charts, score calculations, and command validation without delegating to `cis_core_engine.py`. Direct delegation of `calculate_scores` caused `ValueError: too many values to unpack (expected 2)` because `cis_core_engine` returns 14 values while RHEL callers expect 2 values `score, cats`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why duplicated?* Engines were standalone scripts prior to `cis_core_engine.py`.
+  2. *Why unpacking mismatch?* `cis_core_engine.calculate_scores` returns `AuditScoresTuple` (14 values) while RHEL callers expect `(overall_score, categories_scores)`.
+  3. *Why diff risk?* Wholesale deletion of duplicated templates in one PR exceeded 15k characters.
+  4. *What resolution?* Implement a 2-tuple adapter `sc[0], sc[1]` for `calculate_scores` and wire `create_executor`, `atomic_write_text`, and SVG chart builders while leaving template cleanup for a later pass.
+- **Applied Change / Fix**: In `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, `audit_cis_rhel_10.py`: delegated SVG charts, `calculate_scores` (via 2-tuple adapter), and `is_valid_executable_command` to `cis_core_engine.py`; wired `create_executor` in `run_command()`; accepted `temporal_metadata` in `export_results()`; updated score assertion in `tests/test_rhel_html_export_quality.py`.
+- **Result & Non-Regression Test**: All 314 tests pass; `scripts/pre_commit_checks.py` passes 8/8; PR diff strictly < 15,000 characters.
+
+---
+
 ### RCA-034 — False PASS on Broken SSH & Missing Status Triage in RHEL Engines (Finding 4)
 - **Date / Linked Action**: `2026-11-09` (`ACT-095` / Issue `#662`)
 - **Observed Symptom**: RHEL 8/9/10 `perform_checks()` forced PASS/FAIL with no Manual/error code triage; broken SSH (`rc=255`, empty stdout) gave false PASS on negative controls; `evaluate_condition()` crashed on None/int.

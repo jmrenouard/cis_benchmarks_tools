@@ -23,8 +23,13 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-try: from cis_core_engine import evaluate_condition as core_evaluate_condition
-except ImportError: core_evaluate_condition = None
+try:
+    from cis_core_engine import evaluate_condition as core_evaluate_condition, calculate_scores as core_calculate_scores, build_inline_svg_donut_chart as core_build_inline_svg_donut_chart, build_inline_svg_category_chart as core_build_inline_svg_category_chart, is_valid_executable_command as core_is_valid_executable_command
+    from execution_drivers import create_executor
+    from temporal_metadata import TemporalAuditMetadata
+    from post_execution_publisher import atomic_write_text
+except ImportError:
+    core_evaluate_condition = core_calculate_scores = core_build_inline_svg_donut_chart = core_build_inline_svg_category_chart = core_is_valid_executable_command = create_executor = TemporalAuditMetadata = atomic_write_text = None
 
 RECOMMENDATIONS_DATA = [
     {
@@ -545,6 +550,11 @@ def is_valid_executable_command(cmd_str):
 
 def run_command(command, remote_host=None, docker_container=None, ssh_port=22, ssh_key=None, sudo=False):
     """Execute command safely with timeout=10, stdin=DEVNULL, and clean SSH noise (PSL ONLY)."""
+    if create_executor and not sudo:
+        try:
+            r = create_executor(mode="ssh" if remote_host else "local", remote_host=remote_host, docker_container=docker_container, ssh_port=ssh_port, ssh_key=ssh_key).execute(command)
+            return r.stdout, r.stderr, r.returncode
+        except Exception: pass
     try:
         env = os.environ.copy()
         if isinstance(command, str):
@@ -678,8 +688,9 @@ def evaluate_condition(condition, stdout, stderr, returncode):
 
 
 
-def export_results(results, overall_score, categories_scores, target_name, filename, fmt="html", lang="en"):
+def export_results(results, overall_score, categories_scores, target_name, filename=None, fmt="html", lang="en", execution_context=None, temporal_metadata=None):
     """Export audit results into HTML, JSON, XML, or TXT formats using PSL ONLY."""
+    t_meta = temporal_metadata or (TemporalAuditMetadata.create_now() if TemporalAuditMetadata else None)
     import json
     import os
     import xml.etree.ElementTree as ET
@@ -963,6 +974,17 @@ def generate_html_report(results, overall_score, categories_scores, filename=Non
         f.write(html_content)
     print(f"📄 Unified HTML Report successfully generated: {filename}")
 
+
+
+if core_build_inline_svg_donut_chart:
+    build_inline_svg_donut_chart = core_build_inline_svg_donut_chart
+    build_inline_svg_category_chart = core_build_inline_svg_category_chart
+    is_valid_executable_command = core_is_valid_executable_command
+
+if core_calculate_scores:
+    def calculate_scores(results):
+        sc = core_calculate_scores(results)
+        return sc[0], sc[1]
 
 
 if __name__ == "__main__":

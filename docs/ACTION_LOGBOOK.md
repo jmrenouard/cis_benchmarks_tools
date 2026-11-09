@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-096 — refactor: delegate RHEL 8, 9, 10 engines to core framework and execution drivers (Sub-Milestone 4A, Issue `#664`)
+- **Date**: `2026-11-09T16:40:00Z` | **Status**: `COMPLETED` | **Issue**: `#664` | **Branch**: `refactor/issue-664-rhel-core-delegation`
+- **Request**: Sub-Milestone 4A: Remediate Finding 7 across RHEL 8, 9, 10 engines by delegating duplicated SVG chart builders, score calculations (with 2-tuple adapter), and command validation to `cis_core_engine.py`, and wiring `execution_drivers.py`, `temporal_metadata.py`, and `post_execution_publisher.py`.
+- **Changes**: In `audit_cis_rhel_8.py`, `audit_cis_rhel_9.py`, `audit_cis_rhel_10.py`: delegated `build_inline_svg_donut_chart`, `build_inline_svg_category_chart`, `calculate_scores` (with 2-tuple adapter), `is_valid_executable_command` to `cis_core_engine.py`; wired `create_executor` in `run_command()`; accepted `temporal_metadata` in `export_results()`; updated score assertion in `tests/test_rhel_html_export_quality.py`.
+- **Result**: `python -m unittest discover -s tests -v`: **314/314 passed**; `scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15,000 characters.
+
+---
+
 ### ACT-095 — fix(targets): harden error handling, returncode triage, None safety in RHEL 8/9/10 (Finding 4, Issue `#662`)
 - **Date**: `2026-11-09T15:30:00Z` | **Status**: `COMPLETED` | **Issue**: `#662` | **Branch**: `fix/issue-662-rhel-error-handling-and-conditions`
 - **Request**: Milestone 3C: Remediate Finding 4 in RHEL engines.
