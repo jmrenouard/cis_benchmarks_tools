@@ -12,7 +12,7 @@
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
 ### RCA-031 — Redundant Second Execution of Manual Controls with Shell Commands (Finding 2)
-- **Date / Linked Action**: `2026-11-09` (`ACT-092` / Issue `#656`)
+- **Date / Linked Action**: `2026-11-09` (`ACT-092`, `ACT-093` / Issues `#656`, `#658`)
 - **Observed Symptom**: In MariaDB engines, `Manual` controls with shell commands in `test_procedure` executed `run_command` twice (lines 830 and 865), doubling execution latency.
 - **Root Cause Analysis (5 Whys)**:
   1. *Why twice?* `should_run = True` executed command at line 830; line 865 called `run_command(tp)` again.
@@ -26,7 +26,7 @@
 ---
 
 ### RCA-030 — Plain-Text Database Password Exposure in OS Process List (Finding 1)
-- **Date / Linked Action**: `2026-11-09` (`ACT-092` / Issue `#656`)
+- **Date / Linked Action**: `2026-11-09` (`ACT-092`, `ACT-093` / Issues `#656`, `#658`)
 - **Observed Symptom**: Under container fallback/sudo, database passwords were interpolated directly into `docker exec` CLI arguments (`-e MYSQL_PWD=...`), exposing credentials in `ps aux` and breaking on spaces/special characters.
 - **Root Cause Analysis (5 Whys)**:
   1. *Why in process list?* `docker_env.extend(["-e", f"MYSQL_PWD={db_password}"])` formatted password into argv.

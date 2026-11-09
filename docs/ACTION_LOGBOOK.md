@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-093 — fix(targets): prevent credential exposure and eliminate duplicate manual execution in MySQL (Part 2/2, Issue `#658`)
+- **Date**: `2026-11-09T14:15:00Z` | **Status**: `COMPLETED` | **Issue**: `#658` | **Branch**: `fix/issue-658-mysql-security-dedup`
+- **Request**: Milestone 3A (Part 2/2): Remediate Finding 1 and Finding 2 across 5 MySQL engines.
+- **Changes**: In 5 MySQL engines (`audit_cis_mysql_*.py`), passed bare `-e MYSQL_PWD -e PGPASSWORD` and eliminated duplicate manual check; updated tests.
+- **Result**: `python -m unittest discover -s tests -v`: **310/310 passed**; `scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15k chars.
+
+---
+
 ### ACT-092 — fix(targets): prevent credential exposure and eliminate duplicate manual execution in MariaDB (Part 1/2, Issue `#656`)
 - **Date**: `2026-11-09T13:45:00Z` | **Status**: `COMPLETED` | **Issue**: `#656` | **Branch**: `fix/issue-656-mariadb-security-dedup`
 - **Request**: Milestone 3A (Part 1/2): Remediate Finding 1 (database password exposure in process list under docker exec) and Finding 2 (duplicate execution of manual controls in perform_checks) across the MariaDB audit engines (10.6, 10.11).
