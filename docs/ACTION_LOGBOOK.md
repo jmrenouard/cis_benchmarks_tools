@@ -15,6 +15,18 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-092 — fix(targets): prevent credential exposure and eliminate duplicate manual execution in MariaDB (Part 1/2, Issue `#656`)
+- **Date**: `2026-11-09T13:45:00Z` | **Status**: `COMPLETED` | **Issue**: `#656` | **Branch**: `fix/issue-656-mariadb-security-dedup`
+- **Request**: Milestone 3A (Part 1/2): Remediate Finding 1 (database password exposure in process list under docker exec) and Finding 2 (duplicate execution of manual controls in perform_checks) across the MariaDB audit engines (10.6, 10.11).
+- **Changes**:
+  - In `audit_cis_mariadb_106.py` and `audit_cis_mariadb_1011.py`, replaced `-e MYSQL_PWD={db_password}` with bare `-e MYSQL_PWD` in `run_command()` and reused captured `stdout, stderr` in `perform_checks()` for `Manual` controls, removing duplicate `run_command(tp)`.
+  - Added `tests/test_manual_check_execution.py` verifying single execution (`call_count == 1`) on MariaDB engines.
+  - In `tests/test_credential_injection.py`, added `test_mariadb_engines_docker_password_not_in_argv` asserting password isolation from argv.
+  - Updated `docs/ACTION_LOGBOOK.md` (`ACT-092`) and `docs/RCA_REGISTER.md` (`RCA-030`, `RCA-031`).
+- **Result**: `python -m unittest discover -s tests -v`: **310/310 passed (100%)**; `python scripts/pre_commit_checks.py`: **8/8 passed**; PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-091 — fix(core): standardize compliance scoring & harden numeric evaluation (Issue `#654`)
 - **Date**: `2026-11-09T13:30:00Z` | **Status**: `COMPLETED` | **Issue**: `#654` | **Branch**: `fix/issue-654-core-scoring-condition-evaluation`
 - **Request**: Milestone 2: Remediate Finding 10 (numeric regex, negative signs, None guards, `all_lines_match_regex`) and Finding 3 (`Pass / (Pass + Fail) * 100` scoring; normalize `"NOT APPLICABLE"`).
