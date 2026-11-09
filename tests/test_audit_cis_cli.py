@@ -130,7 +130,7 @@ class TestAuditCisCliEngine(unittest.TestCase):
         import audit_cis
         self.assertTrue(hasattr(audit_cis, "_resolve_version"))
         resolved = audit_cis._resolve_version()
-        self.assertRegex(resolved, r"^\d+\.\d+\.\d+$")
+        self.assertRegex(resolved, r"^\d+\.\d+\.\d+(?:[-.][a-zA-Z0-9.]+)?$")
         self.assertEqual(audit_cis.__version__, resolved)
 
     def test_bundle_audit_cis_preserves_custom_code_and_syncs_version(self):
@@ -148,6 +148,66 @@ class TestAuditCisCliEngine(unittest.TestCase):
                 content = f.read()
             self.assertIn("custom_flag = 42", content)
             self.assertIn('return "2.9.1"', content)
+        finally:
+            if os.path.exists(path):
+                os.remove(path)
+
+    def test_bundle_audit_cis_prerelease_and_multipass_semver_sync(self):
+        """Finding 8: Verify bundle_audit_cis supports pre-release and multi-pass semver tags without code loss."""
+        import tempfile
+        from unittest.mock import patch
+        import scripts.bundle_audit_cis as bundler
+
+        src = (
+            '#!/usr/bin/env python3\n'
+            '"""\n'
+            'Unified CIS Benchmark Audit Engine v2.9.2-rc1\n'
+            'Automated security audit suite.\n'
+            '"""\n\n'
+            'def _resolve_version() -> str:\n'
+            '    return "2.9.2-rc1"\n\n'
+            '__version__ = "2.9.2-rc1"\n'
+            'custom_payload = {"magic": 42, "status": "active"}\n'
+        )
+        with tempfile.NamedTemporaryFile("w+", delete=False, encoding="utf-8") as tf:
+            tf.write(src)
+            path = tf.name
+
+        try:
+            # Pass 1: Bump from 2.9.2-rc1 to 3.0.0.beta.1
+            with patch.object(bundler, "VERSION", "3.0.0.beta.1"):
+                self.assertTrue(bundler.generate_unified_audit_script(target_file=path))
+
+            with open(path, "r", encoding="utf-8") as f:
+                c1 = f.read()
+
+            self.assertIn('custom_payload = {"magic": 42, "status": "active"}', c1)
+            self.assertNotIn("-rc1", c1, "Residual -rc1 suffix left in docstring header")
+            self.assertIn("Unified CIS Benchmark Audit Engine v3.0.0.beta.1", c1)
+            self.assertIn('return "3.0.0.beta.1"', c1)
+            self.assertIn('__version__ = "3.0.0.beta.1"', c1)
+
+            # Pass 2: Verify idempotency on identical pre-release version
+            with patch.object(bundler, "VERSION", "3.0.0.beta.1"):
+                self.assertTrue(bundler.generate_unified_audit_script(target_file=path))
+
+            with open(path, "r", encoding="utf-8") as f:
+                c2 = f.read()
+
+            self.assertEqual(c1, c2, "Idempotency broken: same version modified content")
+
+            # Pass 3: Bump from 3.0.0.beta.1 to final 3.0.0
+            with patch.object(bundler, "VERSION", "3.0.0"):
+                self.assertTrue(bundler.generate_unified_audit_script(target_file=path))
+
+            with open(path, "r", encoding="utf-8") as f:
+                c3 = f.read()
+
+            self.assertIn('custom_payload = {"magic": 42, "status": "active"}', c3)
+            self.assertNotIn("beta", c3, "Residual beta suffix left in docstring header")
+            self.assertIn("Unified CIS Benchmark Audit Engine v3.0.0", c3)
+            self.assertIn('return "3.0.0"', c3)
+            self.assertIn('__version__ = "3.0.0"', c3)
         finally:
             if os.path.exists(path):
                 os.remove(path)

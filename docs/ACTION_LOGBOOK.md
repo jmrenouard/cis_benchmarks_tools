@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-090 — fix(bundler): ensure regex supports pre-release and multi-pass semver tags (Issue `#652`)
+- **Date**: `2026-11-09T12:03:00Z` | **Status**: `COMPLETED` | **Issue**: `#652` | **Branch**: `fix/issue-652-bundler-prerelease-regex`
+- **Request**: Milestone 1B Iteration 2 (Finding 8): Support SemVer pre-release and build metadata tags across multi-pass synchronization in `scripts/bundle_audit_cis.py` and harden VERSION fallback.
+- **Changes**: In `scripts/bundle_audit_cis.py`, hardened `VERSION` loading with whitespace guard and `try...except OSError:` defaulting to `"2.9.1"`, and replaced `[0-9.]+` with string-bounded regex patterns (`r'Unified CIS Benchmark Audit Engine v[^\r\n"\']+'`, `r'(def _resolve_version\(\) -> str:[\s\S]*?return )["\'][^"\']+["\']'`, `r'__version__\s*=\s*["\'][^"\']+["\']'`); in `tests/test_audit_cis_cli.py`, added `test_bundle_audit_cis_prerelease_and_multipass_semver_sync` asserting multi-pass pre-release synchronization (`2.9.2-rc1` -> `3.0.0.beta.1` -> `3.0.0`) and custom code preservation, and broadened version regex pattern in `test_audit_cis_dynamic_version_resolution_fallback`.
+- **Result**: `python -m unittest discover -s tests -v`: **304 / 304 unit tests passed (100%)**; `python scripts/pre_commit_checks.py`: **8 / 8 checks passed**; PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-089 — chore(bundler): purge remaining deprecated template stub from bundle_audit_cis (Issue `#650`)
 - **Date**: `2026-11-09T11:42:00Z` | **Status**: `COMPLETED` | **Issue**: `#650` | **Branch**: `chore/issue-650-purge-deprecated-template-stub`
 - **Request**: Milestone 1B (Part 2C): Final cleanup of remaining ~90 line deprecated template stub from `scripts/bundle_audit_cis.py`.
