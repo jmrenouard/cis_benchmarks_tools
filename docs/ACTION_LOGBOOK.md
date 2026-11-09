@@ -15,8 +15,20 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-084 — docs: resolve legacy file URLs in test report and complete ACT-083 logbook entries (Issue `#640`)
+- **Date**: `2026-11-09T01:10+01:00` | **Status**: `COMPLETED` | **Issue**: `#640` | **Branch**: `docs/issue-640-polish-urls-and-logbook`
+- **Request**: Resolve residual legacy file:/// URLs in `reports/analyse_tests_e2e.md` and complete ACT-083 logbook entries in `docs/ACTION_LOGBOOK.md`.
+- **Changes**:
+  - Converted 20 legacy `file:///` URLs in `reports/analyse_tests_e2e.md` to relative `./` links (`./analyse_tests_e2e_local.md` and `./analyse_tests_e2e_ssh.md`).
+  - Added missing ACT-083 Part 1/4 entry for PR #636 in `docs/ACTION_LOGBOOK.md`.
+  - Normalized ACT-083 part denominators to `(Part X/4, Issue #635)` and added explicit PR numbers (`| **PR**: #636` through `#639`).
+  - Recorded ACT-084 in `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), 0 `file:///` URLs across repo markdown files, PR diff strictly < 15,000 characters.
+
+---
+
 ### ACT-083 — docs: normalize action logbook and close issue (Part 4/4, Closes `#635`)
-- **Date**: `2026-11-09T00:50+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **Branch**: `docs/issue-635-part4-action-logbook-and-closing`
+- **Date**: `2026-11-09T00:50+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **PR**: `#639` | **Branch**: `docs/issue-635-part4-action-logbook-and-closing`
 - **Request**: Milestone 2 Iteration 2 (Part 4/4): Normalize ACT-082 part denominators across all entries to `(Part X/7, Issue #627)` and record their PR numbers (#628–#634) in `docs/ACTION_LOGBOOK.md`, and close Issue `#635`.
 - **Changes**:
   - Normalized part denominators for all 7 ACT-082 entries to `(Part X/7, Issue #627)` in `docs/ACTION_LOGBOOK.md`.
@@ -27,7 +39,7 @@ _None._
 ---
 
 ### ACT-083 — docs: finalize authentic PR history #557-#634 in POTENTIAL_ISSUES (Part 3/4, Issue `#635`)
-- **Date**: `2026-11-09T00:45+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **Branch**: `docs/issue-635-part3-potential-issues-prs-557-634`
+- **Date**: `2026-11-09T00:45+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **PR**: `#638` | **Branch**: `docs/issue-635-part3-potential-issues-prs-557-634`
 - **Request**: Milestone 2 Iteration 2 (Part 3/4): Replace remaining phantom PR entries in `POTENTIAL_ISSUES.md` with authentic merged PR records #557 to #634 and remove trailing blank lines at EOF.
 - **Changes**:
   - Replaced remaining phantom/fabricated PR entries in `POTENTIAL_ISSUES.md` with 43 authentic merged PR records (#557 to #634) from GitHub API.
@@ -37,11 +49,23 @@ _None._
 
 ---
 
-### ACT-083 — docs: update authentic PR history #476-#555 in POTENTIAL_ISSUES (Part 2/3, Issue `#635`)
-- **Date**: `2026-11-09T00:40+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **Branch**: `docs/issue-635-part2-potential-issues-prs-476-555`
-- **Request**: Milestone 2 Iteration 2 (Part 2/3): Replace fabricated and phantom PR entries in `POTENTIAL_ISSUES.md` with authentic merged PR records #476 to #555 retrieved directly from GitHub API.
+### ACT-083 — docs: update authentic PR history #476-#555 in POTENTIAL_ISSUES (Part 2/4, Issue `#635`)
+- **Date**: `2026-11-09T00:40+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **PR**: `#637` | **Branch**: `docs/issue-635-part2-potential-issues-prs-476-555`
+- **Request**: Milestone 2 Iteration 2 (Part 2/4): Replace fabricated and phantom PR entries in `POTENTIAL_ISSUES.md` with authentic merged PR records #476 to #555 retrieved directly from GitHub API.
 - **Changes**:
   - Replaced fabricated PR entries #476–#516 and collapsed range #518–#574 in `POTENTIAL_ISSUES.md` with 51 authentic merged PR records (#476 to #555).
+  - Updated `docs/ACTION_LOGBOOK.md`.
+- **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
+
+---
+
+### ACT-083 — docs: remediate ROADMAP Phase 30 PR ranges and broken links (Part 1/4, Issue `#635`)
+- **Date**: `2026-11-09T00:35+01:00` | **Status**: `COMPLETED` | **Issue**: `#635` | **PR**: `#636` | **Branch**: `docs/issue-635-part1-roadmap-and-links`
+- **Request**: Milestone 2 Iteration 2 (Part 1/4): Correct Phase 30 PR attributions in `ROADMAP.md` (Findings 1–14 across M1–M5, CI matrix, Specifications M1, and Documentation M2), eliminate broken `file:///` URLs in `ROADMAP.md` and `POTENTIAL_ISSUES.md`, and record ACT-083 in `docs/ACTION_LOGBOOK.md`.
+- **Changes**:
+  - Corrected Phase 30 PR attributions and ranges in `ROADMAP.md` across Findings 1–14 (PRs #476–#621), CI matrix (#622), Specifications M1 (#623–#626), and Documentation M2 (#628–#634).
+  - Replaced broken `file:///.agents/AGENTS.md` in `ROADMAP.md` with relative link `[.agents/AGENTS.md](.agents/AGENTS.md)`.
+  - Replaced broken `file:///home/jmren/...` in `POTENTIAL_ISSUES.md` with relative link `[mariadb_manual_controls_justification.md](reports/mariadb_manual_controls_justification.md)`.
   - Updated `docs/ACTION_LOGBOOK.md`.
 - **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
 
