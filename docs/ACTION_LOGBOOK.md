@@ -15,6 +15,15 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-100 — refactor: purge dead inline HTML templates in Cassandra 5.0 and MongoDB 7/8 (Sub-Milestone 4D Part 2, Issue `#672`)
+- **Date**: `2026-11-09T18:09:00Z` | **Status**: `COMPLETED` | **Issue**: `#672` | **Branch**: `refactor/issue-672-cassandra50-mongodb-templates`
+- **Request**: Sub-Milestone 4D (Part 2): Purge obsolete dead inline HTML templates referencing external CDNs across `audit_cis_cassandra_50.py`, `audit_cis_mongodb_7.py`, and `audit_cis_mongodb_8.py`, replacing them with clean minimal air-gapped fallback strings and loading from `templates/report_template.html`.
+- **Changes**: Replaced legacy 50-line inline `HTML_TEMPLATE` blocks containing external CDN links (`cdn.jsdelivr.net`) with clean minimal offline fallback HTML templates in `audit_cis_cassandra_50.py`, `audit_cis_mongodb_7.py`, and `audit_cis_mongodb_8.py`. Preserved dynamic loader from `templates/report_template.html`.
+- **Result**: `python -m unittest discover -s tests -v`: **314/314 passed**; `scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15,000 characters.
+
+---
+
+
 ### ACT-099 — refactor: purge dead inline HTML templates in Cassandra 4.0 & 4.1 (Sub-Milestone 4D Part 1, Issue `#670`)
 - **Date**: `2026-11-09T18:05:00Z` | **Status**: `COMPLETED` | **Issue**: `#670` | **Branch**: `refactor/issue-670-cassandra-template-cleanup`
 - **Request**: Sub-Milestone 4D (Part 1): Purge obsolete dead inline HTML templates referencing external CDNs across Cassandra audit engines (`audit_cis_cassandra_40.py`, `audit_cis_cassandra_41.py`), replacing them with clean minimal air-gapped fallback strings and loading from `templates/report_template.html`.
