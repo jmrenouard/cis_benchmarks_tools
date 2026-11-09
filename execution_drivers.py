@@ -142,12 +142,21 @@ class RuntimeDetector:
             except Exception:
                 return ""
 
-        # Probe 1: Direct container marker files
-        file_check_out = _exec(
-            "test -f /.dockerenv && echo FOUND_DOCKERENV; "
-            "test -f /run/.containerenv && echo FOUND_CONTAINERENV; "
-            "test -f /run/systemd/container && echo FOUND_SYSTEMD_CONTAINER"
+        M1, M2, M3, M4, ME = "===PROBE_1_FILES===", "===PROBE_2_CGROUP===", "===PROBE_3_MOUNT===", "===PROBE_4_UID===", "===PROBE_END==="
+        raw_output = _exec(
+            f"echo {M1}; test -f /.dockerenv && echo FOUND_DOCKERENV; test -f /run/.containerenv && echo FOUND_CONTAINERENV; test -f /run/systemd/container && echo FOUND_SYSTEMD_CONTAINER; "
+            f"echo {M2}; cat /proc/1/cgroup 2>/dev/null; echo {M3}; (cat /proc/self/mountinfo 2>/dev/null | grep -iE 'docker|overlay|container' | head -n 3); echo {M4}; id -u 2>/dev/null; echo {ME}"
         )
+        def _sec(s, e): return raw_output.split(s, 1)[1].split(e, 1)[0].strip() if s in raw_output and e in raw_output.split(s, 1)[1] else ""
+        if M1 in raw_output:
+            file_check_out, cgroup_content, mount_content, uid_out = _sec(M1, M2), _sec(M2, M3), _sec(M3, M4), _sec(M4, ME)
+        else:
+            file_check_out = raw_output if "FOUND_" in raw_output else ""
+            cgroup_content = raw_output if (":" in raw_output and any(k in raw_output for k in ("0::", "name=", "docker"))) else ""
+            mount_content = raw_output if any(k in raw_output.lower() for k in ("docker", "podman", "overlay")) else ""
+            uid_out = raw_output if raw_output.strip().isdigit() else ""
+
+        # Probe 1: Direct container marker files
         if "FOUND_DOCKERENV" in file_check_out:
             runtime = "docker"
             is_container = True
@@ -162,7 +171,6 @@ class RuntimeDetector:
             evidence.append("file:/run/systemd/container")
 
         # Probe 2: /proc/1/cgroup inspection (cgroups v1 & v2)
-        cgroup_content = _exec("cat /proc/1/cgroup 2>/dev/null")
         if cgroup_content:
             if "0::" in cgroup_content:
                 cgroup_version = "v2"
@@ -202,7 +210,6 @@ class RuntimeDetector:
                         evidence.append("cgroup_v1:lxc")
 
         # Probe 3: /proc/self/mountinfo inspection
-        mount_content = _exec("cat /proc/self/mountinfo 2>/dev/null | grep -iE 'docker|overlay|container' | head -n 3")
         if mount_content:
             if "docker" in mount_content.lower():
                 evidence.append("mountinfo:docker")
@@ -216,7 +223,6 @@ class RuntimeDetector:
                     is_container = True
 
         # Probe 4: Rootless environment detection
-        uid_out = _exec("id -u 2>/dev/null")
         if uid_out and uid_out.strip() != "0":
             is_rootless = True
 
@@ -479,7 +485,7 @@ DockerContainerExecutor = DockerExecutor
 class SSHExecutor(BaseExecutor):
     """Remote SSH execution transport driver with connection hardening and zero-hang configuration."""
 
-    def __init__(self, remote_host, ssh_key="/root/.ssh/id_rsa", ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None):
+    def __init__(self, remote_host, ssh_key=None, ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None):
         super().__init__(
             driver_type="REMOTE_SSH_BAREMETAL",
             db_user=db_user,
@@ -526,10 +532,10 @@ class SSHExecutor(BaseExecutor):
                 env_prefixes.append(f"{k}={shlex.quote(str(v))}")
 
         prefix_str = ("export " + " ".join(env_prefixes) + "; ") if env_prefixes else ""
-        if as_user:
-            target_cmd = f"{prefix_str}sudo -n -u {shlex.quote(str(as_user))} /bin/bash -c {shlex.quote(command)}"
-        else:
-            target_cmd = f"{prefix_str}{command}"
+        cmd_str = " ".join(shlex.quote(str(x)) for x in command) if isinstance(command, (list, tuple)) else str(command)
+        if cwd:
+            cmd_str = f"cd {shlex.quote(str(cwd))} && {cmd_str}"
+        target_cmd = f"{prefix_str}sudo -n -u {shlex.quote(str(as_user))} /bin/bash -c {shlex.quote(cmd_str)}" if as_user else f"{prefix_str}{cmd_str}"
 
         ssh_args = self._build_ssh_prefix() + ["/bin/bash", "-c", shlex.quote(target_cmd)]
         masked_cmd = SecretSanitizer.sanitize(f"ssh {self.remote_host} '{target_cmd}'") if mask_secrets else f"ssh {self.remote_host} '{target_cmd}'"
@@ -584,7 +590,7 @@ class SSHExecutor(BaseExecutor):
 class RemoteSSHContainerExecutor(BaseExecutor):
     """Hybrid transport driver: SSH into remote host and execute inside a Docker/Podman container."""
 
-    def __init__(self, remote_host, container_name, ssh_key="/root/.ssh/id_rsa", ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker"):
+    def __init__(self, remote_host, container_name, ssh_key=None, ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker"):
         super().__init__(
             driver_type="REMOTE_SSH_DOCKER",
             db_user=db_user,
@@ -698,7 +704,7 @@ class RemoteSSHContainerExecutor(BaseExecutor):
             )
 
 
-def create_executor(mode="local", remote_host=None, docker_container=None, ssh_key="/root/.ssh/id_rsa", ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker", product_hint=None):
+def create_executor(mode="local", remote_host=None, docker_container=None, ssh_key=None, ssh_port=22, db_user=None, db_password=None, db_host=None, db_port=None, db_name=None, defaults_file=None, container_cli="docker", product_hint=None, **kwargs):
     """
     Polymorphic factory function to instantiate the correct execution driver.
     """

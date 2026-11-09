@@ -11,6 +11,19 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-024 — Driver CWD, Probe Latency & Classifier Timeouts (Findings 5, 11, 9)
+- **Date / Linked Action**: `2026-11-09` (`ACT-085` / Issue `#642`)
+- **Observed Symptom**: `SSHExecutor.execute()` ignored `cwd`, default `ssh_key` was `/root/.ssh/id_rsa`, `RuntimeDetector` ran 4 sequential probes, and slow commands (>=10s) misclassified as `TIMEOUT`.
+- **Root Cause Analysis (5 Whys)**:
+  1. *CWD ignored?* Missing `cd <cwd> &&` prefix.
+  2. *Hardcoded key?* Assumed root default instead of agent key.
+  3. *4 probes?* Unbatched probe commands.
+  4. *False timeouts?* `elapsed_sec >= 10.0` in pattern loop triggered on non-timeout failures.
+- **Applied Change / Fix**: Added `cwd` in `SSHExecutor`, default `ssh_key=None`, `**kwargs` in `create_executor()`, combined probes in 1 round trip, isolated timeout check to `returncode == -1`.
+- **Result & Non-Regression Test**: 299 tests pass (100%); `pre_commit_checks.py` 8/8 pass; PR diff < 15k chars.
+
+---
+
 ### RCA-023 — Python 3.9 Deprecation & Absence on Modern CI Runner (Ubuntu 26.04)
 - **Date / Linked Action**: `2026-11-05` (`ACT-080` / Issue `#620`)
 - **Observed Symptom**: GitHub Actions CI workflow `ci.yml` failed on run `41923567716` (and Dependabot PRs `#618`, `#619`) during step `Set up Python 3.9` with error: `##[error]The version '3.9' with architecture 'x64' was not found for Ubuntu 26.04`.

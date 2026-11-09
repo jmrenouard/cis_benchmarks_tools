@@ -166,21 +166,21 @@ class CommandFailureClassifier:
                 returncode=returncode
             )
 
-        for pat in cls.TIMEOUT_PATTERNS:
-            m = re.search(pat, combined, re.IGNORECASE)
-            if m or elapsed_sec >= 10.0:
-                evidence = m.group(0) if m else f"Execution elapsed {elapsed_sec:.2f}s"
-                return FailureDiagnostic(
-                    category=FailureCategory.TIMEOUT,
-                    severity="HIGH",
-                    root_cause=f"Command execution timed out after {elapsed_sec:.1f}s",
-                    remediation_suggestion="Verify target responsiveness or check system load.",
-                    is_environment_error=True,
-                    evidence=evidence,
-                    raw_error=combined,
-                    command=command,
-                    returncode=returncode
-                )
+        timeout_match = next((m for pat in cls.TIMEOUT_PATTERNS if (m := re.search(pat, combined, re.IGNORECASE))), None)
+        is_driver_timeout = returncode == -1 and ("timed out" in combined.lower() or "timeoutexpired" in combined.lower() or not combined)
+        if timeout_match or is_driver_timeout:
+            evidence = timeout_match.group(0) if timeout_match else (combined[:120] if combined else f"Timeout (exit code {returncode})")
+            return FailureDiagnostic(
+                category=FailureCategory.TIMEOUT,
+                severity="HIGH",
+                root_cause=f"Command execution timed out after {elapsed_sec:.1f}s" if elapsed_sec > 0 else "Command execution timed out",
+                remediation_suggestion="Verify target responsiveness or check system load.",
+                is_environment_error=True,
+                evidence=evidence,
+                raw_error=combined,
+                command=command,
+                returncode=returncode
+            )
 
         for pat in cls.MISSING_BINARY_PATTERNS:
             m = re.search(pat, combined, re.IGNORECASE)
