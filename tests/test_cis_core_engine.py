@@ -13,10 +13,10 @@ class TestCisCoreEngine(unittest.TestCase):
         sc = core.calculate_scores(res)
         self.assertIsInstance(sc, (core.AuditScoresTuple, tuple))
         ov, cats = sc[:2]
-        self.assertEqual((ov, sc.overall_score, sc.categories_scores), (75.0, 75.0, cats))
+        self.assertAlmostEqual(ov, 200.0 / 3.0, places=4)
+        self.assertEqual((sc.overall_score, sc.categories_scores, cats["1. Log"]["score"], cats["2. Auth"]["score"]), (ov, cats, 50.0, 100.0))
         o, c, man, err, na, p, f, e2, na2, lj, pj, fj, ej, naj = sc
-        self.assertEqual((o, p, f, na), (75.0, 2, 1, 1))
-        self.assertEqual(json.loads(lj), ["1. Log", "2. Auth"])
+        self.assertEqual((o, p, f, na, json.loads(lj)), (ov, 2, 1, 1, ["1. Log", "2. Auth"]))
 
     def test_flat_list_results_rhel_style(self):
         sc = core.calculate_scores([{"category": "FS", "status": "PASS"}, {"category": "Log", "status": "FAIL"}])
@@ -58,6 +58,36 @@ class TestCisCoreEngine(unittest.TestCase):
         with patch("subprocess.run") as m:
             m.return_value = MagicMock(stdout="ok", stderr="", returncode=0)
             self.assertEqual(core.run_command("echo ok", db_password="secret"), ("ok", "", 0))
+
+    def test_finding_10_numeric_and_none_conditions(self):
+        tc = lambda t, v=None, **kw: dict(type=t, **({"value": v} if v is not None else {}), **kw)
+        gt, le = (lambda v: tc("stdout_is_numeric_greater_than", v)), (lambda v: tc("stdout_is_numeric_less_equal", v))
+        cases = [
+            (gt(0), "Warn 10.6\n0", False), (gt(0), "Warn 10.6\n5", True), (le(365), "Warn 10.6\n0", False), (le(365), "Warn 10.6\n90", True),
+            (gt(0), "error 404", False), (le(365), "HTTP/1.1 200 OK", False), (gt(-10), "-5", True), (gt(0), "-5", False),
+            (le(365), "-1", False), (le(365), "0", False), (tc("stdout_is_numeric_greater_than"), "10", False), (gt(None), "10", False),
+            (tc("stdout_is_numeric_less_equal"), "10", False), (le(None), "10", False), (gt("5"), "10", True), (gt("bad"), "10", False),
+            (gt(5), "bad", False), (gt(5), "", False), (tc("stdout_contains", None), "none", False),
+            (tc("stdout_not_contains", None), "ok", False), (tc("stdout_equals", None), "None", False),
+            (tc("stdout_not_equals", None), "ok", False), (tc("stdout_contains_any", values=None), "ok", False),
+            (tc("stdout_not_contains_any", values=None), "ok", False), (tc("stdout_regex_match", pattern="["), "ok", False),
+            (tc("all_lines_match_regex", patterns=[r"PEM:", r"CA:"]), "PEM: /ssl\nCA: /ca", True),
+            (tc("all_lines_match_regex", patterns=[r"PEM:", r"CA:"]), "PEM: /ssl\nother", False),
+            (tc("all_lines_match_regex", patterns=[]), "PEM: /ssl", False),
+        ]
+        for c, o, exp in cases: self.assertEqual(core.evaluate_condition(c, o, "", 0), exp)
+
+    def test_finding_3_compliance_scoring_standardization(self):
+        sc_a = core.calculate_scores({"1. Benchmark": [{"status": "FAIL"}] + [{"status": "N/A"}] * 9})
+        self.assertEqual((sc_a.overall_score, sc_a.categories_scores["1. Benchmark"]["score"], sc_a.categories_scores["1. Benchmark"]["total_automated"], sc_a.categories_scores["1. Benchmark"]["na_checks"]), (0.0, 0.0, 1, 9))
+        self.assertEqual((core.calculate_scores([{"status": "PASS"}, {"status": "FAIL"}] + [{"status": "NOT APPLICABLE"}] * 8).overall_score, core.calculate_scores([{"status": "N/A"}] * 10).overall_score), (50.0, 0.0))
+        sc_d = core.calculate_scores([{"status": "PASS"}, {"status": "FAIL"}, {"status": "MANUAL", "type": "Manual"}, {"status": "ERROR"}])
+        self.assertEqual((sc_d.overall_score, sc_d[2], sc_d[3], core.calculate_scores({}).overall_score), (50.0, 1, 1, 0.0))
+        p, f, na, m = {"status": "PASS"}, {"status": "FAIL"}, {"status": "N/A"}, {"status": "MANUAL", "type": "Manual"}
+        sc_f = core.calculate_scores({"Auth": [p]*8 + [f]*2 + [na]*5 + [m]*3, "Storage": [na]*4 + [m]*2, "Network": [p]*2 + [na]})
+        self.assertEqual((sc_f.categories_scores["Auth"]["score"], sc_f.categories_scores["Storage"]["score"], sc_f.categories_scores["Network"]["score"]), (80.0, 0.0, 100.0))
+        self.assertAlmostEqual(sc_f.overall_score, 1000.0 / 12.0, places=4)
+        self.assertIn("Auth: 50.0%", core.build_inline_svg_category_chart(["Auth"], [1], [1], [2], [5]))
 
 
 if __name__ == "__main__":

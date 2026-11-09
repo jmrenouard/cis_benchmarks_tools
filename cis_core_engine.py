@@ -42,21 +42,29 @@ def run_command(command, **kw):
 
 def evaluate_condition(cond, stdout, stderr, code):
     if not cond or any(w in (stderr or "") for w in ("No such file", "Permission denied")): return False
-    out, exp, v, t = stdout or "", cond.get("value"), cond.get("values", []), cond.get("type")
-    m, o, el = re.search(r"(\d+)", out), out.strip(), str(exp).lower()
-    val = int(m.group(1)) if m else None
+    out, exp, v, t = stdout or "", cond.get("value"), cond.get("values") or [], cond.get("type")
+    lines = [ln.strip() for ln in out.splitlines() if ln.strip()]
+    num_m = re.search(r"^\s*(-?\d+)\s*$", lines[-1]) if lines else None
+    val = int(num_m.group(1)) if num_m else None
+    try: exp_int = int(exp) if exp is not None else None
+    except (ValueError, TypeError): exp_int = None
+    o, el = out.strip(), (str(exp).lower() if exp is not None else None)
     ops = {
-        "returncode_zero": lambda: code == 0, "returncode_equals": lambda: code == exp,
-        "stdout_equals": lambda: o == str(exp), "stdout_not_equals": lambda: o != str(exp),
-        "stdout_contains": lambda: el in out.lower(), "stdout_not_contains": lambda: el not in out.lower(),
+        "returncode_zero": lambda: code == 0, "returncode_equals": lambda: exp_int is not None and code == exp_int,
+        "stdout_equals": lambda: exp is not None and o == str(exp), "stdout_not_equals": lambda: exp is not None and o != str(exp),
+        "stdout_contains": lambda: el is not None and el in out.lower(), "stdout_not_contains": lambda: el is not None and el not in out.lower(),
         "stdout_not_empty": lambda: bool(o), "stdout_is_empty": lambda: not bool(o),
-        "stdout_contains_any": lambda: any(str(x).lower() in out.lower() for x in v),
-        "stdout_not_contains_any": lambda: not any(str(x).lower() in out.lower() for x in v),
-        "stdout_regex_match": lambda: bool(cond.get("pattern") and re.search(cond["pattern"], out)),
-        "stdout_is_numeric_greater_than": lambda: val is not None and val > (exp or 0),
-        "stdout_is_numeric_less_equal": lambda: val is not None and 0 < val <= (exp or 0),
+        "stdout_contains_any": lambda: bool(v) and any(str(x).lower() in out.lower() for x in v),
+        "stdout_not_contains_any": lambda: bool(v) and not any(str(x).lower() in out.lower() for x in v),
+        "stdout_regex_match": lambda: bool(cond.get("pattern")) and bool(re.search(cond["pattern"], out)),
+        "stdout_is_numeric_greater_than": lambda: val is not None and exp_int is not None and val > exp_int,
+        "stdout_is_numeric_less_equal": lambda: val is not None and exp_int is not None and 0 < val <= exp_int,
+        "all_lines_match_regex": lambda: bool(cond.get("patterns")) and all(any(re.search(p, ln) for ln in out.splitlines()) for p in cond.get("patterns", [])),
     }
-    return ops[t]() if t in ops else False
+    try:
+        return ops[t]() if t in ops else False
+    except re.error:
+        return False
 
 
 class AuditScoresTuple(tuple):
@@ -78,17 +86,17 @@ def calculate_scores(results):
             cat_order.append(k)
             cats[k] = dict({f: 0 for f in flds}, name=k, score=0.0)
         st, t = str(c.get("status", "")).upper(), str(c.get("type", "")).capitalize()
-        key = "manual" if t == "Manual" or "MANUAL" in st else ("pass" if st in ("PASS", "SUCCÈS") else ("error" if st in ("ERROR", "ERREUR") else ("na" if st in ("N/A", "NA") else "fail")))
+        key = "manual" if t == "Manual" or "MANUAL" in st else ("pass" if st in ("PASS", "SUCCÈS") else ("error" if st in ("ERROR", "ERREUR") else ("na" if st in ("N/A", "NA", "NOT APPLICABLE") else "fail")))
         cnts[key] += 1
         s = cats[k]
         for f in {"manual": ("manual_checks",), "pass": ("passed_automated", "pass_count"), "error": ("error_checks", "error_count"), "na": ("na_checks", "na_count"), "fail": ("failed_automated", "fail_count")}[key]:
             s[f] += 1
-    att = cnts["pass"] + cnts["fail"] + cnts["na"]
-    ov = ((cnts["pass"] + cnts["na"]) / att * 100) if att else 0.0
+    att = cnts["pass"] + cnts["fail"]
+    ov = (cnts["pass"] / att * 100) if att else 0.0
     for k in cat_order:
         s = cats[k]
-        ca = s["passed_automated"] + s["failed_automated"] + s["na_checks"]
-        s["total_automated"], s["score"] = ca, (((s["passed_automated"] + s["na_checks"]) / ca * 100) if ca else 0.0)
+        ca = s["passed_automated"] + s["failed_automated"]
+        s["total_automated"], s["score"] = ca, ((s["passed_automated"] / ca * 100) if ca else 0.0)
     js = [json.dumps([cats[c][f] for c in cat_order]) for f in ("pass_count", "fail_count", "error_count", "na_count")]
     return AuditScoresTuple(ov, cats, cnts["manual"], cnts["error"], cnts["na"], cnts["pass"], cnts["fail"],
                             cnts["error"], cnts["na"], json.dumps(cat_order), *js)
@@ -102,7 +110,7 @@ def build_inline_svg_donut_chart(p, f, e, na, score):
 
 def build_inline_svg_category_chart(categories_scores, *args):
     if args:
-        categories_scores = {n: {"score": (p / (p + f + e + na) * 100) if (p + f + e + na) else 0} for n, p, f, e, na in zip(categories_scores, *args)}
+        categories_scores = {n: {"score": (p / (p + f) * 100) if (p + f) else 0.0} for n, p, f, e, na in zip(categories_scores, *args)}
     return "".join(f'<div>{html.escape(k)}: {v.get("score", 0):.1f}%</div>' for k, v in categories_scores.items()) if isinstance(categories_scores, dict) else ""
 
 

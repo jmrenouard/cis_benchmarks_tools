@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-091 — fix(core): standardize compliance scoring & harden numeric evaluation (Issue `#654`)
+- **Date**: `2026-11-09T13:30:00Z` | **Status**: `COMPLETED` | **Issue**: `#654` | **Branch**: `fix/issue-654-core-scoring-condition-evaluation`
+- **Request**: Milestone 2: Remediate Finding 10 (numeric regex, negative signs, None guards, `all_lines_match_regex`) and Finding 3 (`Pass / (Pass + Fail) * 100` scoring; normalize `"NOT APPLICABLE"`).
+- **Changes**: In `cis_core_engine.py`, hardened `evaluate_condition` and updated `calculate_scores` / `build_inline_svg_category_chart`; in `tests/test_cis_core_engine.py`, updated tests.
+- **Result**: `python -m unittest discover -s tests -v`: **306/306 passed (100%)**; `scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15,000 chars.
+
+---
+
 ### ACT-090 — fix(bundler): ensure regex supports pre-release and multi-pass semver tags (Issue `#652`)
 - **Date**: `2026-11-09T12:03:00Z` | **Status**: `COMPLETED` | **Issue**: `#652` | **Branch**: `fix/issue-652-bundler-prerelease-regex`
 - **Request**: Milestone 1B Iteration 2 (Finding 8): Support SemVer pre-release and build metadata tags across multi-pass synchronization in `scripts/bundle_audit_cis.py` and harden VERSION fallback.

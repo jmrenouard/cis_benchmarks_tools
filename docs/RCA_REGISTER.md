@@ -11,6 +11,34 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-029 — Conflicting Compliance Score Formulas & N/A Inflation (Finding 3)
+- **Date / Linked Action**: `2026-11-09` (`ACT-091` / Issue `#654`)
+- **Observed Symptom**: 0 Pass, 1 Fail, 9 N/A scored 90.0% instead of 0.0% in `cis_core_engine.py`; `"NOT APPLICABLE"` checks were treated as failures.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Formula?* `(Pass + NA) / (Pass + Fail + NA) * 100` added N/A to numerator.
+  2. *Why N/A?* Legacy formula inflated compliance toward 100%.
+  3. *Why divergence?* Targets developed independent scoring.
+  4. *Why "NOT APPLICABLE" failed?* Only checked `("N/A", "NA")`.
+  5. *Why SVG chart drift?* Included error and na in denominator.
+- **Applied Change / Fix**: Standardized `calculate_scores` and `build_inline_svg_category_chart` to `Pass / (Pass + Fail) * 100` (excluding Manual, N/A, Error; 0.0% fallback) and normalized `"NOT APPLICABLE"`.
+- **Result & Non-Regression Test**: All 306 tests pass (100%); benchmark asserts 0.0%; pre-commit checks pass 8/8.
+
+---
+
+### RCA-028 — Unanchored Numeric Regex Extraction & None Coercion (Finding 10)
+- **Date / Linked Action**: `2026-11-09` (`ACT-091` / Issue `#654`)
+- **Observed Symptom**: Commands printing warning banners before numbers extracted digits from line 1. Output `-5` lost negative sign. String conditions matched `"none"` when `exp=None`. Missing thresholds defaulted to 0 or raised TypeError.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Banner matched?* `re.search(r"(\d+)", out)` matched first digits in output.
+  2. *Negative sign?* `\d+` only matched unsigned digits.
+  3. *Why "none"?* `el = str(exp).lower()` turned `None` into `"none"`.
+  4. *Missing thresholds?* `val > (exp or 0)` coerced `None` to 0.
+  5. *Invalid regex?* Missing `re.error` handling.
+- **Applied Change / Fix**: Anchored integer regex `^\s*(-?\d+)\s*$` on last non-empty line; parsed `exp_int`; guarded string conditions against `None`; enforced `0 < val <= exp_int`; added `all_lines_match_regex` and `re.error` guard.
+- **Result & Non-Regression Test**: All 306 tests pass (100%); tests in `tests/test_cis_core_engine.py` verify banners, negative integers, and None guards; pre-commit checks pass 8/8.
+
+---
+
 ### RCA-027 — Bundler SemVer Pre-Release Regex Truncation & Version Desynchronization (Finding 8 Iteration 2)
 - **Date / Linked Action**: `2026-11-09` (`ACT-090` / Issue `#652`)
 - **Observed Symptom**: When `audit_cis.py` contained a SemVer pre-release or release-candidate version tag (e.g., `2.9.2-rc1`), running `scripts/bundle_audit_cis.py` to bump to `3.0.0.beta.1` corrupted the header docstring into `v3.0.0.beta.1-rc1` and silently failed to update `_resolve_version()` and `__version__`. Furthermore, an empty `VERSION` file caused empty version string injection (`return ""`), and `bundle_audit_cis.py` contained an obsolete fallback of `"1.6.0"`.
