@@ -11,6 +11,24 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-033 — Duplicate Uncast `stdout_not_contains` Branch in Mongo & Cassandra (Finding 12)
+- **Date / Linked Action**: `2026-11-09` (`ACT-094` / Issue `#660`)
+- **Observed Symptom**: Integer values (`0`, `1`) raised `TypeError` in `evaluate_condition` for `stdout_not_contains`.
+- **Root Cause Analysis (5 Whys)**: Uncast branch shadowed second cast branch (`str(expected_value) not in stdout`).
+- **Applied Change / Fix**: Deleted duplicate uncast branch across 5 engines; added non-regression tests in `tests/test_evaluate_condition.py`.
+- **Result & Non-Regression Test**: All 312 tests pass (100%); asserts integer expected values (`0`, `1`) evaluate correctly; pre-commit checks pass 8/8.
+
+---
+
+### RCA-032 — Password Exposure in Process List in Postgres, Mongo & Cassandra (Finding 1)
+- **Date / Linked Action**: `2026-11-09` (`ACT-094` / Issue `#660`)
+- **Observed Symptom**: Passwords interpolated into `docker exec` CLI args (`-e MYSQL_PWD=...`), exposing secrets in `ps aux`.
+- **Root Cause Analysis (5 Whys)**: Fallback formatted credentials into argv instead of relying on Docker env inheritance (`-e VAR`).
+- **Applied Change / Fix**: Passed bare `-e MYSQL_PWD -e PGPASSWORD` in `run_command()` across 8 target engines; updated `tests/test_credential_injection.py`.
+- **Result & Non-Regression Test**: All 312 tests pass (100%); asserts password absence from argv and presence in env; pre-commit checks pass 8/8.
+
+---
+
 ### RCA-031 — Redundant Second Execution of Manual Controls with Shell Commands (Finding 2)
 - **Date / Linked Action**: `2026-11-09` (`ACT-092`, `ACT-093` / Issues `#656`, `#658`)
 - **Observed Symptom**: In MariaDB engines, `Manual` controls with shell commands in `test_procedure` executed `run_command` twice (lines 830 and 865), doubling execution latency.

@@ -11,7 +11,8 @@ import audit_cis_mariadb_106 as mariadb_106
 import audit_cis_mariadb_1011 as mariadb_1011
 import audit_cis_mysql_80 as mysql_80, audit_cis_mysql_community_84 as mysql_c84
 import audit_cis_mysql_community_97 as mysql_c97, audit_cis_mysql_enterprise_84 as mysql_e84, audit_cis_mysql_enterprise_97 as mysql_e97
-import audit_cis_postgresql_16 as postgresql_16
+import audit_cis_postgresql_16 as postgresql_16, audit_cis_postgresql_17 as pg17, audit_cis_postgresql_18 as pg18
+import audit_cis_mongodb_7 as mg7, audit_cis_mongodb_8 as mg8, audit_cis_cassandra_40 as cas40, audit_cis_cassandra_41 as cas41, audit_cis_cassandra_50 as cas50
 
 
 class TestCredentialInjection(unittest.TestCase):
@@ -104,6 +105,8 @@ class TestCredentialInjection(unittest.TestCase):
         engines = [
             (mariadb_106, True), (mariadb_1011, True), (mysql_80, False),
             (mysql_c84, False), (mysql_c97, False), (mysql_e84, False), (mysql_e97, False),
+            (postgresql_16, False), (pg17, False), (pg18, False),
+            (mg7, False), (mg8, False), (cas40, False), (cas41, False), (cas50, False),
         ]
         for engine, sudo in engines:
             with self.subTest(engine=engine.__name__):
@@ -113,6 +116,7 @@ class TestCredentialInjection(unittest.TestCase):
                 called_cmd = " ".join(called_args) if isinstance(called_args, list) else str(called_args)
                 self.assertNotIn(secret, called_cmd, f"{engine.__name__} leaked password in process args: {called_cmd}")
                 self.assertNotIn(f"MYSQL_PWD={secret}", called_cmd)
+                self.assertNotIn(f"PGPASSWORD={secret}", called_cmd)
                 called_env = mock_sub.call_args[1].get("env", {})
                 self.assertEqual(called_env.get("MYSQL_PWD"), secret, f"{engine.__name__} failed to pass MYSQL_PWD in env")
 

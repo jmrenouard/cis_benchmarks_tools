@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-094 — fix(targets): prevent credential exposure and eliminate dead code in Postgres, Mongo, and Cassandra (Issue `#660`)
+- **Date**: `2026-11-09T15:00:00Z` | **Status**: `COMPLETED` | **Issue**: `#660` | **Branch**: `fix/issue-660-pg-mongo-cassandra-security-deadcode`
+- **Request**: Milestone 3B: Remediate Finding 1 and Finding 12 across 8 PostgreSQL, MongoDB, and Cassandra engines.
+- **Changes**: In 8 target engines (`audit_cis_postgresql_*.py`, `mongodb_*.py`, `cassandra_*.py`), passed bare `-e MYSQL_PWD -e PGPASSWORD`; in 5 MongoDB/Cassandra engines, deleted duplicate uncast `stdout_not_contains` branch; updated tests.
+- **Result**: `python -m unittest discover -s tests -v`: **312/312 passed (100%)**; `python scripts/pre_commit_checks.py`: **8/8 passed**; PR diff < 15k chars.
+
+---
+
 ### ACT-093 — fix(targets): prevent credential exposure and eliminate duplicate manual execution in MySQL (Part 2/2, Issue `#658`)
 - **Date**: `2026-11-09T14:15:00Z` | **Status**: `COMPLETED` | **Issue**: `#658` | **Branch**: `fix/issue-658-mysql-security-dedup`
 - **Request**: Milestone 3A (Part 2/2): Remediate Finding 1 and Finding 2 across 5 MySQL engines.

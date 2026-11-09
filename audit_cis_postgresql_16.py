@@ -548,7 +548,7 @@ def run_command(command, remote_host=None, docker_container=None, db_user=None, 
         if db_password:
             env["MYSQL_PWD"] = str(db_password)
             env["PGPASSWORD"] = str(db_password)
-            docker_env.extend(["-e", f"MYSQL_PWD={db_password}", "-e", f"PGPASSWORD={db_password}"])
+            docker_env.extend(["-e", "MYSQL_PWD", "-e", "PGPASSWORD"])
         if db_user:
             env["MYSQL_USER"] = str(db_user)
             env["PGUSER"] = str(db_user)
