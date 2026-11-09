@@ -122,56 +122,9 @@ RECOMMENDATIONS_DATA = [
      "expected_output": {"type": "stdout_contains", "value": "true"},
      "remediation": "Configurer client_encryption_options dans cassandra.yaml : enabled: true, et fournir les certificats SSL/TLS."},
 ]
-# --- Modèle HTML pour le rapport ---
-HTML_TEMPLATE = """
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIS Benchmark Audit Report Apache Cassandra 4.0.0 Benchmark</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
-    <style>
-        /* Styles personnalisés pour le rapport */
-        .status-pass {{ color: #10B981; }} /* green-500 */
-        .status-fail {{ color: #EF4444; }} /* red-500 */
-        .status-manual {{ color: #F59E0B; }} /* yellow-500 */
-        .status-error {{ color: #6B7280; }} /* gray-500 */
-        .status-na {{ color: #9CA3AF; }} /* gray-400 */
-        pre {{ white-space: pre-wrap; word-wrap: break-word; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.25rem; font-size: 0.875rem;}}
-        table {{ table-layout: fixed; width: 100%; }} /* Ajouté pour un meilleur contrôle de la largeur des colonnes */
-        td, th {{ word-break: break-word; }} /* Permettre la coupure des mots longs */
-        .chart-container {{ width: 300px; height: 300px; margin: 20px auto; }} /* Style pour le conteneur du graphique */
-        .category-chart-container {{ width: 80%; margin: 20px auto; }} /* Style pour le conteneur du graphique par catégorie */
-        code {{ background-color: #e5e7eb; padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace;}}
-    </style>
-</head>
-<body class="font-sans bg-gray-100 text-gray-800 p-6">
-    <div class="container mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold mb-6 text-gray-900">CIS Benchmark Audit Report Apache Cassandra 4.0.0 Benchmark</h1>
-        <p class="text-gray-600 mb-4">Report Date: {report_date}</p>
-        <p class="text-gray-600 mb-8">Généré par un script basé sur le document CIS Apache Cassandra 4.0.0 Benchmark (Version 1.3.0).</p>
+# Minimal air-gapped fallback HTML template
+HTML_TEMPLATE = "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>{benchmark_title}</title></head><body><h1>CIS Report: {benchmark_title}</h1>{donut_svg}{bar_svg}{categories_reports}</body></html>"
 
-        <div class="mb-8 p-4 bg-gray-50 rounded-md border border-gray-200">
-            <h2 class="text-2xl font-semibold mb-3 text-gray-800">Score Global</h2>
-            <p class="text-xl font-bold {overall_score_class}">{overall_score:.2f}%</p>
-            <p class="text-gray-700">des contrôles automatisés réussis ({passed_automated}/{total_automated} vérifiés).</p>
-            <p class="text-gray-700">{manual_checks} contrôles nécessitent une vérification manuelle.</p>
-            <p class="text-gray-700">{error_checks} controls encountered an execution error.</p>
-            <p class="text-gray-700">{na_checks} contrôles ne sont pas applicables (ex: plugin non installé, commande introuvable).</p>
-
-            {svg_global_chart_html}
-        </div>
-
-        {categories_reports}
-
-    </div>
-
-    
-</body>
-</html>
-"""
 
 # Modèle pour le rapport par catégorie
 def load_html_template():
