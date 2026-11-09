@@ -11,6 +11,34 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-031 — Redundant Second Execution of Manual Controls with Shell Commands (Finding 2)
+- **Date / Linked Action**: `2026-11-09` (`ACT-092` / Issue `#656`)
+- **Observed Symptom**: In MariaDB engines, `Manual` controls with shell commands in `test_procedure` executed `run_command` twice (lines 830 and 865), doubling execution latency.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why twice?* `should_run = True` executed command at line 830; line 865 called `run_command(tp)` again.
+  2. *Why second call?* Standalone manual diagnostic block was coded without reusing prior run.
+  3. *Why problematic?* Doubled SSH/Docker round-trips for every manual check.
+  4. *Template risk?* Line 865 executed un-evaluated `tp` rather than resolved `cmd_to_run`.
+  5. *Was second call needed?* No, `stdout`/`stderr` from line 830 were already captured and filtered.
+- **Applied Change / Fix**: In `perform_checks()`, removed duplicate `run_command(tp)` call and reused captured `stdout`/`stderr`. Added `tests/test_manual_check_execution.py` asserting `mock_run.call_count == 1`.
+- **Result & Non-Regression Test**: All 310 tests pass (100%); verifies `call_count == 1` across MariaDB engines; `scripts/pre_commit_checks.py` passes 8/8.
+
+---
+
+### RCA-030 — Plain-Text Database Password Exposure in OS Process List (Finding 1)
+- **Date / Linked Action**: `2026-11-09` (`ACT-092` / Issue `#656`)
+- **Observed Symptom**: Under container fallback/sudo, database passwords were interpolated directly into `docker exec` CLI arguments (`-e MYSQL_PWD=...`), exposing credentials in `ps aux` and breaking on spaces/special characters.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why in process list?* `docker_env.extend(["-e", f"MYSQL_PWD={db_password}"])` formatted password into argv.
+  2. *Why in CLI?* Fallback concatenated `docker_env` with `" ".join()` into `docker exec` command string.
+  3. *Why broke on spaces?* Raw strings in CLI flags split args and expand shell tokens.
+  4. *Why redundant?* Caller already sets `env["MYSQL_PWD"]` on Python `env` passed to `subprocess.run`.
+  5. *Docker behavior?* Bare flag `-e MYSQL_PWD` securely propagates variable from host env to container without argv exposure.
+- **Applied Change / Fix**: Replaced `-e MYSQL_PWD={db_password}` with bare `-e MYSQL_PWD` in `run_command()` in MariaDB engines. Added `test_mariadb_engines_docker_password_not_in_argv` in `tests/test_credential_injection.py`.
+- **Result & Non-Regression Test**: All 310 tests pass (100%); asserts password absence from argv and presence in env; `scripts/pre_commit_checks.py` passes 8/8.
+
+---
+
 ### RCA-029 — Conflicting Compliance Score Formulas & N/A Inflation (Finding 3)
 - **Date / Linked Action**: `2026-11-09` (`ACT-091` / Issue `#654`)
 - **Observed Symptom**: 0 Pass, 1 Fail, 9 N/A scored 90.0% instead of 0.0% in `cis_core_engine.py`; `"NOT APPLICABLE"` checks were treated as failures.

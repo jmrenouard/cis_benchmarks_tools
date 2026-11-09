@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import audit_cis_mariadb_106 as mariadb_106
+import audit_cis_mariadb_1011 as mariadb_1011
 import audit_cis_mysql_80 as mysql_80
 import audit_cis_postgresql_16 as postgresql_16
 
@@ -88,6 +89,31 @@ class TestCredentialInjection(unittest.TestCase):
         self.assertIn("mariadb-test-cont", called_cmd)
         called_env = mock_sub.call_args[1].get("env", {})
         self.assertEqual(called_env.get("MYSQL_PWD"), "MariaPassword789!")
+
+    @patch("subprocess.run")
+    def test_mariadb_engines_docker_password_not_in_argv(self, mock_sub):
+        """Finding 1: verify docker exec fallback across MariaDB engines never exposes db_password in argv."""
+        mock_process = MagicMock()
+        mock_process.stdout = "1\n"
+        mock_process.stderr = ""
+        mock_process.returncode = 0
+        mock_sub.return_value = mock_process
+
+        secret = "S3cr3t_P@ssw0rd!_WithSpaces"
+        engines = [
+            (mariadb_106, True),   # sudo=True triggers legacy fallback
+            (mariadb_1011, True),  # sudo=True triggers legacy fallback
+        ]
+        for engine, sudo in engines:
+            with self.subTest(engine=engine.__name__):
+                mock_sub.reset_mock()
+                engine.run_command("status", docker_container="test-cont", db_password=secret, sudo=sudo)
+                called_args = mock_sub.call_args[0][0]
+                called_cmd = " ".join(called_args) if isinstance(called_args, list) else str(called_args)
+                self.assertNotIn(secret, called_cmd, f"{engine.__name__} leaked password in process args: {called_cmd}")
+                self.assertNotIn(f"MYSQL_PWD={secret}", called_cmd)
+                called_env = mock_sub.call_args[1].get("env", {})
+                self.assertEqual(called_env.get("MYSQL_PWD"), secret, f"{engine.__name__} failed to pass MYSQL_PWD in env")
 
 
 if __name__ == "__main__":
