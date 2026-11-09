@@ -585,3 +585,8 @@
 - **Priority / Target**: `Completed ✅` · Repository Root (`VERSION`, `ROADMAP.md`, `POTENTIAL_ISSUES.md`, `docs/RELEASE_NOTES_v2.10.0.md`) & GitHub Release
 - **Description**: Milestone 6 final release packaging and automation for `v2.10.0`: bump repository version to `v2.10.0`, synchronize `ROADMAP.md` and `POTENTIAL_ISSUES.md`, formulate comprehensive English release notes covering all 12 Ponytail remediations, offline inline SVG engine consolidation, process credential isolation, and publish official GitHub Release via `gh release create`.
 
+### IDEA-009 — Automated PyPI Distribution Packaging & Release Publication Pipeline
+- **Priority / Target**: `Completed ✅` · `pyproject.toml`, `.github/workflows/pypi-publish.yml`, `audit_cis.py`, `docs/PUBLISHING.md`
+- **Description**: Robust PyPA packaging and GitHub Actions workflow: packaging `rules/*.json` and `templates/*.html` as data packages in wheels, PSL version fallback via `importlib.metadata`, publication triggered on `release: types: [published]` and `workflow_dispatch`, preflight `twine check --strict`, and documentation in `docs/PUBLISHING.md` (ACT-117, Issue `#706`).
+
+

@@ -3,9 +3,6 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
 
 permissions:
@@ -14,7 +11,7 @@ permissions:
 
 concurrency:
   group: pypi-publish-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   pypi-publish:
@@ -39,6 +36,9 @@ jobs:
 
       - name: Build sdist and wheel
         run: python -m build
+
+      - name: Validate distribution packages with Twine
+        run: python -m twine check --strict dist/*
 
       - name: Preflight PyPI authentication check
         id: pypi_preflight

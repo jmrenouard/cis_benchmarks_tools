@@ -108,6 +108,12 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         self.assertIn("secrets.PYPI_TOKEN", content)
         self.assertIn("pypi_preflight", content)
         self.assertIn("python -m build", content)
+        self.assertIn("twine check --strict", content)
+        self.assertIn("types: [published]", content)
+        self.assertIn("workflow_dispatch:", content)
+        self.assertIn("cancel-in-progress: false", content)
+        self.assertNotIn("tags:", content, "pypi-publish.yml must not trigger on tag pushes (push: tags: removed)")
+        self.assertNotIn("push:", content, "pypi-publish.yml must not trigger on push events")
 
 
 if __name__ == "__main__":

@@ -25,7 +25,7 @@ if hasattr(sys.stderr, "reconfigure"):
 
 
 def _resolve_version() -> str:
-    """Resolve version string dynamically from repository VERSION file with fallback."""
+    """Resolve version string dynamically from repository VERSION file or package metadata."""
     version_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "VERSION")
     if os.path.exists(version_file):
         try:
@@ -35,6 +35,11 @@ def _resolve_version() -> str:
                     return v
         except OSError:
             pass
+    try:
+        importlib_metadata = __import__("importlib.metadata", fromlist=["version"])
+        return importlib_metadata.version("cis-benchmarks-tools")
+    except Exception:
+        pass
     return "2.10.0"
 
 

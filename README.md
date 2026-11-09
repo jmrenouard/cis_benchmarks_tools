@@ -156,6 +156,12 @@ python3 audit_cis.py --all
 
 ---
 
+## 📦 Packaging & Release Pipeline
+
+The suite follows PyPA standards (100% PSL runtime) and publishes to PyPI automatically via GitHub Actions upon release publication. See the [PyPI Publishing Guide](docs/PUBLISHING.md).
+
+---
+
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

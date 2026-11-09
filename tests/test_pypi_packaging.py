@@ -26,6 +26,9 @@ class TestPyPIPackaging(unittest.TestCase):
         self.assertIn('build-backend = "setuptools.build_meta"', content)
         self.assertIn('audit-cis = "audit_cis:main"', content)
         self.assertIn('audit_cis = "audit_cis:main"', content)
+        self.assertIn('packages = ["rules", "templates"]', content)
+        self.assertIn('rules = ["*.json"]', content)
+        self.assertIn('templates = ["*.html"]', content)
 
     def test_manifest_in_includes_rules_templates_and_licenses(self) -> None:
         """Verify MANIFEST.in ensures distribution of JSON rules, templates, and licenses."""
@@ -73,12 +76,13 @@ class TestPyPIPackaging(unittest.TestCase):
         self.assertEqual(audit_cis.__version__, version, "audit_cis.__version__ must match VERSION")
 
     def test_wheel_archive_contains_required_modules_and_entrypoints(self) -> None:
-        """If distribution wheels are present in dist/, verify their archive layout."""
+        """If distribution wheels matching current version are present in dist/, verify their archive layout."""
         import zipfile
         dist_dir = ROOT / "dist"
         if not dist_dir.is_dir():
             return
-        wheels = list(dist_dir.glob("*.whl"))
+        version = VERSION_PATH.read_text(encoding="utf-8").strip()
+        wheels = list(dist_dir.glob(f"*{version}*.whl"))
         if not wheels:
             return
 
@@ -91,6 +95,21 @@ class TestPyPIPackaging(unittest.TestCase):
                 ep_content = z.read(entry_points[0]).decode("utf-8")
                 self.assertIn("audit-cis = audit_cis:main", ep_content)
                 self.assertIn("audit_cis = audit_cis:main", ep_content)
+                rules = [n for n in names if n.startswith("rules/") and n.endswith(".json")]
+                self.assertEqual(len(rules), 18, f"{whl.name} must bundle all 18 rule JSON specifications")
+                templates = [n for n in names if n.startswith("templates/") and n.endswith(".html")]
+                self.assertEqual(len(templates), 2, f"{whl.name} must bundle both report HTML templates")
+
+    def test_audit_cis_resolve_version_importlib_fallback(self) -> None:
+        """Verify _resolve_version falls back to importlib.metadata when VERSION file is not found."""
+        from unittest.mock import MagicMock, patch
+        import audit_cis
+        mock_meta = MagicMock()
+        mock_meta.version.return_value = "2.10.0"
+        with patch("os.path.exists", return_value=False):
+            with patch.dict("sys.modules", {"importlib.metadata": mock_meta}):
+                v = audit_cis._resolve_version()
+                self.assertEqual(v, "2.10.0")
 
 
 if __name__ == "__main__":
