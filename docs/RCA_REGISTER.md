@@ -11,6 +11,29 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-039 — Diff Size Measurement Discrepancy & PowerShell Measure-Object Newline Omission (Milestone 4 Gate Audit Remediation)
+- **Date / Linked Action**: `2026-11-09` (`ACT-111` / Issue `#694`, `ACT-112` / Issue `#696`, `ACT-114` / Issue `#700`)
+- **Observed Symptom**: Milestone 4 Gate failed audit: PR #695 diff size was measured at 15,016 characters and PR #697 diff size was measured at 15,130 characters (> 15,000 character limit); `docs/ACTION_LOGBOOK.md` recorded "diff < 15,000 chars" (ACT-111, ACT-112); and GitHub Issues #678, #680, #682, #684, #686, #688 were closed without completion comments.
+- **Root Cause Analysis (5 Whys)**:
+  1. *Why did PR #695 and PR #697 exceed 15,000 characters?* The PRs combined substantial target script refactoring (purging ~10,250 characters of dead inline templates in `audit_cis_mysql_enterprise_84.py` and `audit_cis_mysql_community_97.py`) with ~4,800 characters of cumulative governance updates in `docs/ACTION_LOGBOOK.md` and `docs/RCA_REGISTER.md`, reaching raw text diffs of 15,016 and 15,130 characters.
+  2. *Why did pre-merge verification logs report compliant character counts (14,774 and 14,888)?* On Windows PowerShell, the command executed to measure characters was `git diff <base>...<head> | Measure-Object -Character`.
+  3. *Why did PowerShell's `Measure-Object -Character` report fewer characters than the raw diff?* When external command stdout is piped in PowerShell (`| Measure-Object -Character`), PowerShell automatically parses the stream into an array of `System.String` objects by stripping newline delimiters (`\r\n` or `\n`). `Measure-Object -Character` only counts characters in the individual strings, completely omitting line termination bytes (exactly 242 bytes dropped per diff across 213 lines: 15,016 - 14,774 = 242; 15,130 - 14,888 = 242).
+  4. *Why did this cause a governance failure?* The project rule defines the diff limit as `git diff main...HEAD | wc -c`, which evaluates raw bytes/characters including line breaks. Relying on the newline-stripped count led to an inaccurate attestation in `docs/ACTION_LOGBOOK.md`. Additionally, batch-closing issues without calling `gh issue comment <id> --body "..."` skipped Step 8 of the workflow.
+  5. *What is the permanent resolution?* Standardize pre-merge diff measurement across all platforms and execution environments using a single Python Standard Library command that captures raw bytes/characters without line stripping:
+     `python -c "import subprocess; print(len(subprocess.run(['git', 'diff', 'main...HEAD'], capture_output=True).stdout))"`, and enforce retroactive issue completion comments.
+- **Applied Change / Fix**:
+  - Corrected historical diff records in `docs/ACTION_LOGBOOK.md` (ACT-111 and ACT-112) with true empirical measurements (15,016 and 15,130 chars) and referenced RCA-039.
+  - Added ACT-114 in `docs/ACTION_LOGBOOK.md` and RCA-039 in `docs/RCA_REGISTER.md`.
+  - Retroactively posted detailed completion comments in English referencing merged PRs on GitHub Issues #678, #680, #682, #684, #686, and #688.
+  - Mandated the Python Standard Library raw diff verification command across all workflows.
+- **Result & Non-Regression Test**:
+  - All 314 unit tests pass (`python -m unittest discover -s tests -v`).
+  - All 8/8 pre-commit validation checks pass (`python scripts/pre_commit_checks.py`).
+  - Verified Issues #678–#688 have >= 1 completion comments.
+  - Remediation PR diff strictly verified < 15,000 characters using `python -c "import subprocess; d = subprocess.run(['git', 'diff', 'main...HEAD'], capture_output=True, text=True).stdout; print(f'Diff chars: {len(d)}'); assert len(d) < 15000, f'Diff limit exceeded: {len(d)} >= 15000'"`.
+
+---
+
 ### RCA-038 — Obsolete CDN-Referencing Dead Inline HTML Templates across Audit Engines (Finding 7)
 - **Date / Linked Action**: `2026-11-09` (`ACT-099` / Issue `#670`, `ACT-100` / Issue `#672`, `ACT-101` / Issue `#674`, `ACT-102` / Issue `#676`, `ACT-103` / Issue `#678`, `ACT-104` / Issue `#680`, `ACT-105` / Issue `#682`, `ACT-106` / Issue `#684`, `ACT-107` / Issue `#686`, `ACT-108` / Issue `#688`, `ACT-109` / Issue `#690`, `ACT-110` / Issue `#692`, `ACT-111` / Issue `#694`, `ACT-112` / Issue `#696`, `ACT-113` / Issue `#698`)
 - **Observed Symptom**: Audit engines contained 50 to 160 lines of dead inline `HTML_TEMPLATE` strings referencing obsolete external CDNs (`cdn.tailwindcss.com`, `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`, `chart.js`), creating unnecessary code duplication (~117,000 characters total across 18 files) and violating offline air-gapped standards.

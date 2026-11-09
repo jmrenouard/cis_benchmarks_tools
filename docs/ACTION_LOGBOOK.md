@@ -15,6 +15,17 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-114 — fix: remediate audit integrity, diff measurement, and issue completion comments (Milestone 4 Remediation, Issue `#700`)
+- **Date**: `2026-11-09T19:30:00Z` | **Status**: `COMPLETED` | **Issue**: `#700` | **Branch**: `fix/issue-700-audit-integrity-remediation`
+- **Request**: Milestone 4 Remediation Iteration 2: Remediate Forensic Auditor findings: transparently correct ACT-111 and ACT-112 diff sizes in `docs/ACTION_LOGBOOK.md`, document RCA-039 in `docs/RCA_REGISTER.md`, and retroactively post completion comments on GitHub Issues #678, #680, #682, #684, #686, and #688.
+- **Changes**:
+  - Updated `docs/ACTION_LOGBOOK.md` entries ACT-111 and ACT-112 with exact empirical diff lengths (15,016 and 15,130 chars).
+  - Added RCA-039 to `docs/RCA_REGISTER.md` explaining the root cause (PowerShell Measure-Object newline omission undercounting diff size) and remediation.
+  - Retroactively commented on GitHub Issues #678, #680, #682, #684, #686, #688 with complete summaries referencing merged PRs #679, #681, #683, #685, #687, #689.
+- **Result**: `unittest`: 314/314 passed; `pre_commit_checks.py`: 8/8 passed; PR diff strictly < 15,000 characters; all 6 issues commented and confirmed; PR #701 merged.
+
+---
+
 ### ACT-113 — refactor: purge dead inline HTML template in MySQL Enterprise 9.7 (Sub-Milestone 4D Part 15, Issue `#698`)
 - **Date**: `2026-11-09T18:56:00Z` | **Status**: `COMPLETED` | **Issue**: `#698` | **Branch**: `refactor/issue-698-mysql-ent97-template-cleanup`
 - **Request**: Sub-Milestone 4D Part 15: Clean template in `audit_cis_mysql_enterprise_97.py`.
@@ -27,7 +38,7 @@ _None._
 - **Date**: `2026-11-09T18:53:00Z` | **Status**: `COMPLETED` | **Issue**: `#696` | **Branch**: `refactor/issue-696-mysql-comm97-template-cleanup`
 - **Request**: Sub-Milestone 4D (Part 14): Purge dead inline HTML template in `audit_cis_mysql_community_97.py`.
 - **Changes**: Replaced legacy 160-line inline HTML fallback string with minimal offline fallback HTML template in `audit_cis_mysql_community_97.py`.
-- **Result**: `unittest`: 314/314 passed; `pre_commit_checks.py`: 8/8 passed; diff < 15,000 chars.
+- **Result**: `unittest`: 314/314 passed; `pre_commit_checks.py`: 8/8 passed; PR #697 merged (`ef32ee7`). Raw diff size: 15,130 characters/bytes (+130 over ceiling due to PowerShell Measure-Object newline omission, where Measure-Object reported 14,888 chars; transparently documented in RCA-039 and remediated in ACT-114).
 
 ---
 
@@ -35,7 +46,7 @@ _None._
 - **Date**: `2026-11-09T18:50:00Z` | **Status**: `COMPLETED` | **Issue**: `#694` | **Branch**: `refactor/issue-694-mysql-ent84-template-cleanup`
 - **Request**: Sub-Milestone 4D (Part 13): Purge dead inline HTML template in `audit_cis_mysql_enterprise_84.py`.
 - **Changes**: Replaced legacy 160-line inline HTML fallback string with minimal offline fallback HTML template in `audit_cis_mysql_enterprise_84.py`.
-- **Result**: `unittest`: 314/314 passed; `pre_commit_checks.py`: 8/8 passed; diff < 15,000 chars.
+- **Result**: `unittest`: 314/314 passed; `pre_commit_checks.py`: 8/8 passed; PR #695 merged (`be9fb90`). Raw diff size: 15,016 characters/bytes (+16 over ceiling due to PowerShell Measure-Object newline omission, where Measure-Object reported 14,774 chars; transparently documented in RCA-039 and remediated in ACT-114).
 
 ---
 
