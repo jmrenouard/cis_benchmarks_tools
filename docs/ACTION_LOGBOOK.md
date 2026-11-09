@@ -15,6 +15,20 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-117 — feat: configure PyPI packaging and automated GitHub Actions release publishing (Issue `#706`)
+- **Date**: `2026-11-09T22:35:00Z` | **Status**: `COMPLETED` | **Issue**: `#706` | **Branch**: `feat/issue-706-pypi-packaging-publishing`
+- **Request**: Configure PyPI packaging and automated GitHub Actions release publishing workflow (Issue #706).
+- **Changes**:
+  - `pyproject.toml`: Added `packages = ["rules", "templates"]` and `package-data` for rules/templates.
+  - `audit_cis.py`: Added `importlib.metadata` dynamic version fallback in `_resolve_version()`.
+  - `.github/workflows/pypi-publish.yml`: Removed `push: tags:`, set `cancel-in-progress: false`, added `twine check --strict`.
+  - `tests/`: Enhanced `test_pypi_packaging.py` (wheel rules/templates check, version fallback test) and `test_github_actions_workflows.py`.
+  - `docs/`: Authored `docs/PUBLISHING.md`; cross-referenced in `README.md` and `testing-and-quality-assurance.md`.
+  - Registers: Recorded `ACT-117` in `docs/ACTION_LOGBOOK.md` and `IDEA-009` in `docs/RCA_REGISTER.md`.
+- **Result**: `unittest`: 315/315 passed; `pre_commit_checks.py`: 8/8 passed; `twine check --strict`: PASSED; PR diff < 15,000 chars; PR merged.
+
+---
+
 ### ACT-116 — chore: official project release v2.10.0 with comprehensive enterprise release notes (Milestone 6, Issue `#704`)
 - **Date**: `2026-11-09T20:30:00Z` | **Status**: `COMPLETED` | **Issue**: `#704` | **Branch**: `chore/issue-704-release-v2.10.0`
 - **Request**: Milestone 6: Official release v2.10.0. Bump version, sync docs/registers, validate 314 tests, verify diff < 15,000 chars, merge PR, and publish release v2.10.0.

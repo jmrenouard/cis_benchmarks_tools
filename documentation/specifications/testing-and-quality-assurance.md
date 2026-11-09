@@ -32,3 +32,11 @@ Code quality and compliance are maintained through multi-tier automated validati
   `bundle_audit_cis.py`, `pre_commit_checks.py`, `pre-commit.sh`, `download_cis_benchmarks.py`, `verify_benchmarks_and_reports.py`, `clean_ssh_warnings_from_reports.py`, `run_e2e_tests.py`, `analyze_e2e_reports.py`, and the 5 container entrypoints `start_*.sh`.
 - Historical one-off migration and patch scripts must reside in `archive/scripts/`.
 - Enforced automatically by `tests/test_script_inventory_and_governance.py`.
+
+## 4. Release & Distribution Packaging Pipeline
+- **PyPA Packaging**: Setuptools packaging in `pyproject.toml` bundling 18 `rules/*.json` and 2 `templates/*.html` into binary wheels alongside root modules.
+- **PSL ONLY**: Zero dependencies (`dependencies = []`). Dynamic version fallback via `importlib.metadata`.
+- **Twine Preflight**: Mandatory `python -m twine check --strict dist/*` validation step in `.github/workflows/pypi-publish.yml`.
+- **Workflow Triggers**: Triggered strictly on `release: types: [published]` and `workflow_dispatch` (`push: tags:` excluded).
+- **Reference**: Detailed operational release procedure in [`docs/PUBLISHING.md`](../../docs/PUBLISHING.md).
+

@@ -46,6 +46,7 @@ Changelog = "https://github.com/jmrenouard/cis_benchmarks_tools/blob/main/ROADMA
 version = { file = "VERSION" }
 
 [tool.setuptools]
+packages = ["rules", "templates"]
 py-modules = [
     "audit_cis",
     "audit_cis_mariadb_106",
@@ -78,4 +79,6 @@ py-modules = [
 ]
 
 [tool.setuptools.package-data]
-"*" = ["rules/*.json", "templates/*.html", "VERSION"]
+rules = ["*.json"]
+templates = ["*.html"]
+
