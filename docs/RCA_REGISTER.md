@@ -587,11 +587,11 @@
 
 ### IDEA-009 — Automated PyPI Distribution Packaging & Release Publication Pipeline
 - **Priority / Target**: `Completed ✅` · `pyproject.toml`, `.github/workflows/pypi-publish.yml`, `audit_cis.py`, `docs/PUBLISHING.md`
-- **Description**: Robust PyPA packaging and GitHub Actions workflow: packaging `rules/*.json` and `templates/*.html` as data packages in wheels, PSL version fallback via `importlib.metadata`, publication triggered on `release: types: [published]` and `workflow_dispatch`, preflight `twine check --strict`, and documentation in `docs/PUBLISHING.md` (ACT-117, Issue `#706`).
+- **Description**: Robust PyPA packaging and GitHub Actions workflow: packaging `rules/*.json` and `templates/*.html` as data packages in wheels, PSL version fallback via `importlib.metadata`, publication triggered on `release: types: [published]` and `workflow_dispatch` (with `pypi` / `testpypi` choice matching `MicroLLM`), preflight `twine check --strict`, and documentation in `docs/PUBLISHING.md` (ACT-117, ACT-119, Issues `#706`, `#714`).
 
 ### IDEA-010 — Automated Multi-Platform Docker Hub Container Packaging & Release Pipeline (`jmrenouard/cis-benchmarks-tools`)
-- **Priority / Target**: `Completed Baseline ✅` · `Dockerfile`, `.dockerignore`, `.github/workflows/docker-publish.yml`, `docs/PUBLISHING.md`
-- **Description**: Zero-dependency container packaging: official multi-platform container (`linux/amd64`, `linux/arm64`) on Docker Hub at `jmrenouard/cis-benchmarks-tools`, non-root execution (`cisuser:cisgroup`), preflight credential check, and publication on `release: types: [published]` and `workflow_dispatch` (ACT-118, Issue `#708`).
+- **Priority / Target**: `Completed ✅` · `Dockerfile`, `.dockerignore`, `.github/workflows/docker-publish.yml`, `docs/PUBLISHING.md`
+- **Description**: Zero-dependency container packaging: official multi-platform container (`linux/amd64`, `linux/arm64`) on Docker Hub at `jmrenouard/cis-benchmarks-tools`, non-root execution (`cisuser:cisgroup`), secret fallbacks (`DOCKERHUB_USERNAME || DOCKER_USER_LOGIN`, `DOCKERHUB_TOKEN || DOCKER_USER_PASSWORD` matching `MySQLTuner-perl` & `MicroLLM`), OCI/release-notes labels, and publication on `release: types: [published]` and `workflow_dispatch` (ACT-118, ACT-119, Issues `#708`, `#714`).
 
 
 

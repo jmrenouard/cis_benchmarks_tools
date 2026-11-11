@@ -56,7 +56,16 @@ class TestDockerPackagingAndWorkflow(unittest.TestCase):
         self.assertNotIn("push:", on_b)
 
     def test_docker_publish_workflow_targets_dockerhub_and_secrets(self) -> None:
-        for s in ("jmrenouard/cis-benchmarks-tools", "DOCKERHUB_USERNAME", "DOCKERHUB_TOKEN", "docker_preflight"):
+        for s in (
+            "jmrenouard/cis-benchmarks-tools",
+            "DOCKERHUB_USERNAME",
+            "DOCKER_USER_LOGIN",
+            "DOCKERHUB_TOKEN",
+            "DOCKER_USER_PASSWORD",
+            "docker_preflight",
+            "org.opencontainers.image.licenses",
+            "com.cis-benchmarks-tools.release-notes",
+        ):
             self.assertIn(s, WORKFLOW)
 
     def test_docker_publish_workflow_multiplatform_build(self) -> None:

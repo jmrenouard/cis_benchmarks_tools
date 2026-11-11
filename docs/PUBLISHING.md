@@ -47,12 +47,12 @@ Verifies `README.md` CommonMark syntax, metadata schema, and archive integrity w
 
 Automated publication is orchestrated by `.github/workflows/pypi-publish.yml`:
 
-- **Triggers**: Exclusively `release: types: [published]` and `workflow_dispatch`. Tag pushes (`push: tags:`) are excluded to prevent premature publishing.
+- **Triggers**: Exclusively `release: types: [published]` and `workflow_dispatch` (with `repository` choice: `pypi` or `testpypi`, matching `jmrenouard/MicroLLM`). Tag pushes (`push: tags:`) are excluded to prevent premature publishing.
 - **Concurrency**: `cancel-in-progress: false` ensures active uploads are never aborted mid-transmission.
 - **Preflight Twine Check**: Executes `python -m twine check --strict dist/*` right after `python -m build`.
 - **Authentication Modes**:
   1. **PyPI Trusted Publishing (OIDC)**: Passwordless OpenID Connect token minting via `id-token: write` and `pypa/gh-action-pypi-publish@release/v1`.
-  2. **API Token (`PYPI_API_TOKEN`)**: Repository secret using `twine upload --non-interactive --skip-existing dist/*`.
+  2. **API Token (`PYPI_API_TOKEN` / `PIPY_API_TOKEN` / `PYPI_TOKEN`, or `TEST_PYPI_API_TOKEN` / `TEST_PIPY_API_TOKEN` for TestPyPI)**: Repository secret using `twine upload --non-interactive --skip-existing dist/*`.
   3. **Graceful Notice**: Emits an informational notice if neither credential method is configured.
 
 ---
@@ -91,7 +91,8 @@ docker run --rm -v $(pwd)/reports:/app/reports jmrenouard/cis-benchmarks-tools -
 Orchestrated by `.github/workflows/docker-publish.yml`:
 - **Triggers**: `release: types: [published]` and manual `workflow_dispatch`.
 - **Platforms**: `linux/amd64` and `linux/arm64` (Buildx/QEMU).
-- **Tags**: `latest`, `vX.Y.Z`, and `X.Y.Z`.
-- **Secrets**: `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`.
+- **Tags**: `latest`, `vX.Y.Z`, and `X.Y.Z` (resolved dynamically from `github.event.release.tag_name` or `VERSION`).
+- **OCI Metadata & Release Notes**: Embeds `org.opencontainers.image.*` and `com.cis-benchmarks-tools.release-notes` labels (`major/MySQLTuner-perl` & `jmrenouard/MicroLLM` conventions).
+- **Secrets**: Supports `DOCKERHUB_USERNAME` (fallback: `DOCKER_USER_LOGIN` / `DOCKER_USERNAME`) and `DOCKERHUB_TOKEN` (fallback: `DOCKER_USER_PASSWORD` / `DOCKER_PASSWORD`).
 
 

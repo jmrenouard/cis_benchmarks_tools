@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-119 — feat: align Docker Hub and PyPI workflow conventions with MySQLTuner-perl and MicroLLM (Issue `#714`)
+- **Date**: `2026-11-11T10:23:00Z` | **Status**: `COMPLETED` | **Issue**: `#714` | **Branch**: `feat/issue-714-align-mysqltuner-microllm-workflows`
+- **Request**: Align `docker-publish.yml` and `pypi-publish.yml` with `MySQLTuner-perl` and `MicroLLM` conventions.
+- **Changes**: Added `DOCKER_USER_LOGIN`/`DOCKER_USER_PASSWORD` secret fallbacks, OCI/release-notes labels, and `testpypi` dispatch support; updated tests and docs.
+- **Result**: `unittest`: 326/326 passed; `pre_commit_checks.py`: 8/8 passed; PR diff < 15,000 chars.
+
+---
+
 ### ACT-118 — feat: configure Docker Hub automated publishing architecture (Issue `#708`)
 - **Date**: `2026-11-10T00:10:00Z` | **Status**: `COMPLETED` | **Issue**: `#708` | **Branch**: `feat/issue-708-dockerhub-publishing-workflow`
 - **Request**: Configure Docker packaging and GitHub Actions workflow publishing multi-platform images to Docker Hub under `jmrenouard/cis-benchmarks-tools` on release publication or manual dispatch (Issue #708).
