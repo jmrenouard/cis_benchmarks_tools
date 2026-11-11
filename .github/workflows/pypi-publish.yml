@@ -4,6 +4,15 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      repository:
+        description: "Target package index (pypi or testpypi)"
+        required: true
+        default: "pypi"
+        type: choice
+        options:
+          - pypi
+          - testpypi
 
 permissions:
   contents: read
@@ -41,6 +50,7 @@ jobs:
         run: python -m twine check --strict dist/*
 
       - name: Preflight PyPI authentication check
+        if: github.event_name != 'workflow_dispatch' || inputs.repository == 'pypi'
         id: pypi_preflight
         env:
           PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN || secrets.PIPY_API_TOKEN || secrets.PYPI_TOKEN }}
@@ -83,3 +93,11 @@ jobs:
         with:
           skip-existing: true
           verbose: true
+
+      - name: Publish package distributions to TestPyPI
+        if: github.event_name == 'workflow_dispatch' && inputs.repository == 'testpypi' && (secrets.TEST_PYPI_API_TOKEN != '' || secrets.TEST_PIPY_API_TOKEN != '')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN || secrets.TEST_PIPY_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true

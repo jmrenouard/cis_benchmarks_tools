@@ -103,7 +103,7 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
                 )
 
     def test_pypi_publish_workflow_configured_correctly(self) -> None:
-        """Verify pypi-publish.yml builds distribution and publishes with token secret."""
+        """Verify pypi-publish.yml builds distribution and publishes with token secret or OIDC, including TestPyPI choice."""
         pypi_path = WORKFLOWS_DIR / "pypi-publish.yml"
         self.assertTrue(pypi_path.is_file(), "pypi-publish.yml must exist")
         content = pypi_path.read_text(encoding="utf-8")
@@ -111,6 +111,9 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         self.assertIn("secrets.PYPI_API_TOKEN", content)
         self.assertIn("secrets.PIPY_API_TOKEN", content)
         self.assertIn("secrets.PYPI_TOKEN", content)
+        self.assertIn("secrets.TEST_PYPI_API_TOKEN", content)
+        self.assertIn("secrets.TEST_PIPY_API_TOKEN", content)
+        self.assertIn("testpypi", content)
         self.assertIn("pypi_preflight", content)
         self.assertIn("python -m build", content)
         self.assertIn("twine check --strict", content)
@@ -121,10 +124,12 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         self.assertNotIn("push:", content, "pypi-publish.yml must not trigger on push events")
 
     def test_docker_publish_workflow_configured_correctly(self) -> None:
-        """Verify docker-publish.yml triggers on published release, gates :latest on prereleases, and publishes to Docker Hub."""
+        """Verify docker-publish.yml triggers on published release, gates :latest on prereleases, and supports MySQLTuner/MicroLLM secrets."""
         c = (WORKFLOWS_DIR / "docker-publish.yml").read_text(encoding="utf-8")
         self.assertIn("docker/build-push-action@", c)
         self.assertIn("secrets.DOCKERHUB_USERNAME", c)
+        self.assertIn("secrets.DOCKER_USER_LOGIN", c)
+        self.assertIn("secrets.DOCKER_USER_PASSWORD", c)
         self.assertIn("IS_PRERELEASE", c)
         self.assertNotIn("tags:", c.split("jobs:")[0])
 
