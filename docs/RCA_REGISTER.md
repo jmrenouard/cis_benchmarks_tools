@@ -11,6 +11,19 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-040 — GitHub Actions `secrets.*` Parse Failure in `pypi-publish.yml`, Missing `cis_core_engine.py` in Release Tarball, and License Drift (Issue `#717`)
+- **Date / Linked Action**: `2026-11-12` (`ACT-120` / Issue `#717`)
+- **Observed Symptom**: `.github/workflows/pypi-publish.yml` failed immediately on every push/PR with `jobs: []` (0 jobs parsed) after PR #715; `v2.10.0` GitHub release tarball omitted `cis_core_engine.py` (breaking standalone execution of all 18 engines); `pyproject.toml`, `Dockerfile`, `README.md`, and `README_fr.md` claimed `MIT` while `LICENSE` is GNU GPLv3.
+- **Root Cause Analysis (5 Whys)**:
+  1. GitHub Actions forbids `secrets.*` expressions inside step/job `if:` conditionals and fails the workflow at YAML validation time when evaluating `secrets.TEST_PYPI_API_TOKEN` in step `if:`.
+  2. `.github/workflows/release.yml` maintained a manual `tar -czf` file list that was not updated when `cis_core_engine.py` and `README_fr.md` became runtime/documentation assets.
+  3. Static packaging metadata (`pyproject.toml`, `Dockerfile`, README badges/footers) retained boilerplate `MIT` labels after GNU GPLv3 `LICENSE` adoption.
+- **Applied Change / Fix**:
+  - Moved `TEST_PYPI_API_TOKEN` / `TEST_PIPY_API_TOKEN` inspection into the `pypi_preflight` `env:` script outputting `auth_mode=testpypi_token` in `.github/workflows/pypi-publish.yml`.
+  - Added `cis_core_engine.py` and `README_fr.md` to `.github/workflows/release.yml`.
+  - Aligned `pyproject.toml`, `Dockerfile`, `README.md`, and `README_fr.md` to `GPL-3.0-or-later` / `GPLv3`.
+- **Result & Non-Regression Test**: `test_no_workflow_if_condition_references_secrets`, `test_release_workflow_tarball_includes_core_engine_and_french_readme`, and `test_packaging_license_metadata_matches_gplv3` in `tests/test_github_actions_workflows.py` enforce all 3 invariants (`python -m unittest discover -s tests -v`).
+
 ### RCA-039 — Diff Size Measurement Discrepancy & PowerShell Measure-Object Newline Omission (Milestone 4 Gate Audit Remediation)
 - **Date / Linked Action**: `2026-11-09` (`ACT-111` / Issue `#694`, `ACT-112` / Issue `#696`, `ACT-114` / Issue `#700`)
 - **Observed Symptom**: Milestone 4 Gate failed audit: PR #695 diff size was measured at 15,016 characters and PR #697 diff size was measured at 15,130 characters (> 15,000 character limit); `docs/ACTION_LOGBOOK.md` recorded "diff < 15,000 chars" (ACT-111, ACT-112); and GitHub Issues #678, #680, #682, #684, #686, #688 were closed without completion comments.

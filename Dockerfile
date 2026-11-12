@@ -3,7 +3,7 @@ FROM python:3.12-slim
 
 LABEL org.opencontainers.image.title="CIS Benchmarks Tools Suite" \
       org.opencontainers.image.source="https://github.com/jmrenouard/cis_benchmarks_tools" \
-      org.opencontainers.image.licenses="MIT"
+      org.opencontainers.image.licenses="GPL-3.0-or-later"
 
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUTF8=1 PATH="/app:${PATH}"
 

@@ -15,6 +15,18 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-120 — fix: repair PyPI workflow if-secrets bug, release tarball, and license metadata (Issue `#717`)
+- **Date**: `2026-11-12T22:37:00Z` | **Status**: `COMPLETED` | **Issue**: `#717` | **Branch**: `fix/issue-717-verify-publishing-docker-pypi-docs`
+- **Request**: Verify and repair CI/CD publishing workflows, Docker packaging, PyPI delivery, and GitHub release tarball (`#717`).
+- **Changes**:
+  - `.github/workflows/pypi-publish.yml`: Moved `TEST_PYPI_API_TOKEN` / `TEST_PIPY_API_TOKEN` checks out of step `if:` into `pypi_preflight` (`RCA-040`).
+  - `.github/workflows/release.yml`: Added `cis_core_engine.py` and `README_fr.md` to `tar -czf`.
+  - `pyproject.toml` & `Dockerfile`: Aligned license metadata (`GPL-3.0-or-later`) with root `LICENSE`.
+  - `tests/test_github_actions_workflows.py`: Added 3 regression tests (`no secrets.* in if:`, release tarball core files, GPLv3 license).
+- **Result**: `unittest`: 329 tests (`328` passed, `1` skipped); `pre_commit_checks.py` and `twine check --strict` passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-119 — feat: align Docker Hub and PyPI workflow conventions with MySQLTuner-perl and MicroLLM (Issue `#714`)
 - **Date**: `2026-11-11T10:23:00Z` | **Status**: `COMPLETED` | **Issue**: `#714` | **Branch**: `feat/issue-714-align-mysqltuner-microllm-workflows`
 - **Request**: Align `docker-publish.yml` and `pypi-publish.yml` with `MySQLTuner-perl` and `MicroLLM` conventions.
