@@ -133,6 +133,31 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         self.assertIn("IS_PRERELEASE", c)
         self.assertNotIn("tags:", c.split("jobs:")[0])
 
+    def test_no_workflow_if_condition_references_secrets(self) -> None:
+        """GitHub Actions rejects secrets.* in if: conditionals (causes jobs: [] parse errors)."""
+        for wf_path in sorted(WORKFLOWS_DIR.glob("*.yml")):
+            for lineno, line in enumerate(wf_path.read_text(encoding="utf-8").splitlines(), 1):
+                if line.lstrip().startswith("if:"):
+                    self.assertNotIn(
+                        "secrets.",
+                        line,
+                        f"{wf_path.name}:{lineno} must not reference secrets.* inside an if: expression",
+                    )
+
+    def test_release_workflow_tarball_includes_core_engine_and_french_readme(self) -> None:
+        """Verify release.yml bundles cis_core_engine.py (required by all 18 audit engines) and README_fr.md."""
+        release_content = (WORKFLOWS_DIR / "release.yml").read_text(encoding="utf-8")
+        self.assertIn("cis_core_engine.py", release_content)
+        self.assertIn("README_fr.md", release_content)
+
+    def test_packaging_license_metadata_matches_gplv3(self) -> None:
+        """Verify pyproject.toml and Dockerfile declare GPL-3.0-or-later matching root LICENSE (GPLv3)."""
+        repo_root = WORKFLOWS_DIR.parent.parent
+        pyproject = (repo_root / "pyproject.toml").read_text(encoding="utf-8")
+        dockerfile = (repo_root / "Dockerfile").read_text(encoding="utf-8")
+        self.assertIn('license = "GPL-3.0-or-later"', pyproject)
+        self.assertIn('org.opencontainers.image.licenses="GPL-3.0-or-later"', dockerfile)
+
 
 if __name__ == "__main__":
     unittest.main()

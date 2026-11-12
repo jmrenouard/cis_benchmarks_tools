@@ -50,11 +50,25 @@ jobs:
         run: python -m twine check --strict dist/*
 
       - name: Preflight PyPI authentication check
-        if: github.event_name != 'workflow_dispatch' || inputs.repository == 'pypi'
         id: pypi_preflight
         env:
+          TARGET_REPOSITORY: ${{ github.event_name == 'workflow_dispatch' && inputs.repository || 'pypi' }}
           PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN || secrets.PIPY_API_TOKEN || secrets.PYPI_TOKEN }}
+          TEST_PYPI_API_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN || secrets.TEST_PIPY_API_TOKEN }}
         run: |
+          if [ "$TARGET_REPOSITORY" = "testpypi" ]; then
+            CLEAN_TEST_TOKEN=$(printf "%s" "$TEST_PYPI_API_TOKEN" | tr -d '\r\n ')
+            if [ -n "$CLEAN_TEST_TOKEN" ]; then
+              echo "can_publish=true" >> "$GITHUB_OUTPUT"
+              echo "auth_mode=testpypi_token" >> "$GITHUB_OUTPUT"
+              echo "TestPyPI API Token detected; proceeding with package upload."
+              exit 0
+            fi
+            echo "can_publish=false" >> "$GITHUB_OUTPUT"
+            echo "auth_mode=none" >> "$GITHUB_OUTPUT"
+            echo "::notice title=TestPyPI Credentials Not Configured::Distribution artifacts built cleanly, but TEST_PYPI_API_TOKEN / TEST_PIPY_API_TOKEN is not configured. Skipping TestPyPI upload."
+            exit 0
+          fi
           CLEAN_TOKEN=$(printf "%s" "$PYPI_API_TOKEN" | tr -d '\r\n ')
           if [ -n "$CLEAN_TOKEN" ]; then
             echo "can_publish=true" >> "$GITHUB_OUTPUT"
@@ -95,7 +109,7 @@ jobs:
           verbose: true
 
       - name: Publish package distributions to TestPyPI
-        if: github.event_name == 'workflow_dispatch' && inputs.repository == 'testpypi' && (secrets.TEST_PYPI_API_TOKEN != '' || secrets.TEST_PIPY_API_TOKEN != '')
+        if: steps.pypi_preflight.outputs.auth_mode == 'testpypi_token'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.TEST_PYPI_API_TOKEN || secrets.TEST_PIPY_API_TOKEN }}

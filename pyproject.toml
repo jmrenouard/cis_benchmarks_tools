@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "Enterprise-Grade Automated Security Compliance Audit Engine for Databases and Linux Systems (100% Python Standard Library - PSL ONLY)"
 readme = "README.md"
 requires-python = ">=3.8"
-license = "MIT"
+license = "GPL-3.0-or-later"
 authors = [
     { name = "Jean-Marie Renouard", email = "jmrenouard@gmail.com" }
 ]
