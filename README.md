@@ -4,7 +4,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/cis-benchmarks-tools.svg)](https://pypi.org/project/cis-benchmarks-tools/)
 [![Docker Image Version](https://img.shields.io/docker/v/jmrenouard/cis-benchmarks-tools?sort=semver&logo=docker&label=Docker%20Hub)](https://hub.docker.com/r/jmrenouard/cis-benchmarks-tools)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
 [![Release](https://img.shields.io/badge/Release-v2.10.0-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
@@ -165,10 +165,10 @@ python3 audit_cis.py --all
 
 ## 📦 Packaging & Release Pipeline
 
-The suite follows PyPA standards (100% PSL runtime) and publishes to PyPI automatically via GitHub Actions upon release publication. See the [PyPI Publishing Guide](docs/PUBLISHING.md).
+The suite follows PyPA standards (100% PSL runtime) and publishes automatically to **PyPI** (`pypi-publish.yml`) and **Docker Hub** (`jmrenouard/cis-benchmarks-tools` via `docker-publish.yml`) upon release publication or manual `workflow_dispatch` (including `testpypi` support). See the [Publishing Guide](docs/PUBLISHING.md).
 
 ---
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0-or-later) - see the [LICENSE](LICENSE) file for details.
