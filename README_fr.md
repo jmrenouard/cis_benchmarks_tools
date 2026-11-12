@@ -3,7 +3,8 @@
 > **Moteur d'Audit de Conformité et de Sécurité Automatisé pour Bases de Données et Systèmes Linux (100% Python Standard Library - PSL ONLY).**
 
 [![PyPI version](https://img.shields.io/pypi/v/cis-benchmarks-tools.svg)](https://pypi.org/project/cis-benchmarks-tools/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Docker Hub](https://img.shields.io/docker/v/jmrenouard/cis-benchmarks-tools?label=Docker%20Hub&logo=docker)](https://hub.docker.com/r/jmrenouard/cis-benchmarks-tools)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
 [![Release](https://img.shields.io/badge/Release-v2.10.0-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
@@ -82,6 +83,12 @@ audit-cis --list-targets
 audit-cis --target postgresql16 --local --format html
 ```
 
+### 0b. Démarrage Rapide avec Docker Hub (`jmrenouard/cis-benchmarks-tools`)
+```bash
+docker run --rm -v "$(pwd)/reports:/app/reports" jmrenouard/cis-benchmarks-tools --list-targets
+docker run --rm -v "$(pwd)/reports:/app/reports" jmrenouard/cis-benchmarks-tools --target mariadb106 --remote 192.168.1.50 --format html --output-dir /app/reports
+```
+
 ### 1. Lister les Référentiels
 ```bash
 python3 audit_cis.py --list-targets
@@ -132,6 +139,10 @@ python3 audit_cis.py --all
 
 ---
 
+## 📦 Packaging & Pipeline de Release
+
+La suite suit les standards PyPA (100% PSL) et publie automatiquement sur **PyPI** (`pypi-publish.yml`) et **Docker Hub** (`jmrenouard/cis-benchmarks-tools` via `docker-publish.yml`) lors de la publication d'une release ou par déclenchement manuel (`workflow_dispatch`). Consulter le [Guide de Publication](docs/PUBLISHING.md).
+
 ## 📜 Licence
 
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE).
+Ce projet est sous licence GNU General Public License v3.0 (`GPL-3.0-or-later`) - voir le fichier [LICENSE](LICENSE).

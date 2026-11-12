@@ -15,6 +15,16 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-121 — docs: align READMEs and QA specification with Docker Hub, PyPI, and GPLv3 (Issue `#719`)
+- **Date**: `2026-11-12T22:40:00Z` | **Status**: `COMPLETED` | **Issue**: `#719` | **Branch**: `docs/issue-719-align-publishing-docs`
+- **Request**: Align documentation with Docker Hub, PyPI `workflow_dispatch`, GNU GPLv3 license, and current test metrics (`#719`).
+- **Changes**:
+  - `README.md` & `README_fr.md`: Updated license badges/footers (`GPLv3` / `GPL-3.0-or-later`), added Docker Hub (`jmrenouard/cis-benchmarks-tools`) quickstart/badge and `workflow_dispatch` notes.
+  - `documentation/specifications/testing-and-quality-assurance.md`: Updated test count (`329+`) and Section 4 release/Docker Hub/PyPI preflight pipeline notes.
+- **Result**: `unittest`: 329 tests (`328` passed, `1` skipped); `pre_commit_checks.py` passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-120 — fix: repair PyPI workflow if-secrets bug, release tarball, and license metadata (Issue `#717`)
 - **Date**: `2026-11-12T22:37:00Z` | **Status**: `COMPLETED` | **Issue**: `#717` | **Branch**: `fix/issue-717-verify-publishing-docker-pypi-docs`
 - **Request**: Verify and repair CI/CD publishing workflows, Docker packaging, PyPI delivery, and GitHub release tarball (`#717`).
