@@ -1,4 +1,4 @@
-FROM mariadb:11.8
+FROM mariadb:12.2
 
 # Define environment variables to avoid interactions during installation
 ENV DEBIAN_FRONTEND=noninteractive \
