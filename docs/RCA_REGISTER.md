@@ -576,7 +576,7 @@
 
 ### IDEA-003 — SARIF v2.1.0 Exporter for GitHub Code Scanning (`--format sarif`)
 - **Priority / Target**: `In Progress` · `sarif_exporter.py`, `cis_core_engine.py`, `audit_cis.py`, `audit_cis_*.py`
-- **Description**: Native PSL `--format sarif` exporter (`ACT-122` `#721` core; `ACT-123` `#723` CLI/orchestrator/MariaDB; `release.yml` awaits `workflow` scope).
+- **Description**: Native PSL `--format sarif` exporter (`ACT-122` `#721` core; `ACT-123` `#723` CLI/MariaDB; `ACT-124` `#725` MySQL; `release.yml` awaits `workflow` scope).
 
 ### IDEA-004 — PyPI Distribution Pipeline with Trusted Publishing or API Token
 - **Priority / Target**: `Completed ✅` · `pyproject.toml`, `.github/workflows/pypi-publish.yml`, and `release.yml`

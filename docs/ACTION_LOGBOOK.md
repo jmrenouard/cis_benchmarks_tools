@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-124 — feat(engines): wire --format sarif into MySQL 8.0, 8.4, and 9.7 engines (Issue `#725`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#725` | **Branch**: `feat/issue-725-sarif-mysql-engines`
+- **Changes**: Added `sarif` export and `-f/--format sarif` CLI support to all 5 MySQL engines (`8.0`, Community/Enterprise `8.4`, Community/Enterprise `9.7`); extended SARIF test coverage in `tests/test_audit_cis_cli.py`.
+- **Result**: 332 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-123 — feat(cli): wire --format sarif into CLI, orchestrator, publisher, and MariaDB engines (Issue `#723`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#723` | **Branch**: `feat/issue-723-sarif-cli-mariadb-mysql`
 - **Changes**: Added `sarif` support to `audit_cis.py`, `audit_orchestrator.py`, `post_execution_publisher.py`, and MariaDB 10.6/10.11 engines (5 MySQL engines split into dedicated follow-up issue to keep PR diff < 15,000 bytes per `AGENTS.md` §1.2); added tests in `tests/test_audit_cis_cli.py`.

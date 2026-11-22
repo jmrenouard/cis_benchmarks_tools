@@ -234,7 +234,12 @@ class TestAuditCisCliEngine(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             pub = AuditReportPublisher("mariadb_106", output_dir=td, formats=["sarif"])
             self.assertTrue(pub.resolve_destination("sarif").endswith("rapport_cis_mariadb_106.sarif"))
-            for key, mod_name in (("mariadb106", "audit_cis_mariadb_106"), ("mariadb1011", "audit_cis_mariadb_1011")):
+            for key, mod_name in (
+                ("mariadb106", "audit_cis_mariadb_106"), ("mariadb1011", "audit_cis_mariadb_1011"),
+                ("mysql80", "audit_cis_mysql_80"), ("mysql-community84", "audit_cis_mysql_community_84"),
+                ("mysql-enterprise84", "audit_cis_mysql_enterprise_84"),
+                ("mysql-community97", "audit_cis_mysql_community_97"), ("mysql-enterprise97", "audit_cis_mysql_enterprise_97"),
+            ):
                 mod = importlib.import_module(mod_name)
                 out = os.path.join(td, f"{key}.sarif")
                 mod.export_results(sample, 0.0, {"1. Auth": {"score": 0.0}}, key, out, fmt="sarif")
