@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-130 — feat(remediation): add MongoDB, Cassandra, RHEL templates and wire --remediate-dry-run CLI (Issue `#737`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#737` | **Branch**: `feat/issue-737-remediation-templates-cli`
+- **Changes**: Added MongoDB (`2.1`, `4.3`, `5.4`), Cassandra (`2.1`, `2.2`), and RHEL (`1.1.1.1`, `1.3.1.2`, `5.2.1`, `5.2.2`, `5.3.1`) templates in `remediation_generator.py`, fixed unified diff line terminators and static template over-redaction, wired `--remediate-dry-run`/`--remediation-format`/`--remediation-output`/`--from-report` in `audit_cis.py` (PSL AST clean), and extended `tests/test_remediation_generator.py`.
+- **Result**: 336 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-129 — feat(remediation): add PSL deterministic dry-run remediation generator (Issue `#735`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#735` | **Branch**: `feat/issue-735-dry-run-remediation-generator`
 - **Changes**: Added `remediation_generator.py` (strict `dry_run=True`, deterministic diff/sql/shell/ansible/json outputs, MariaDB/MySQL/PostgreSQL templates, `SecretSanitizer`), registered in `pyproject.toml` and `Dockerfile`, added `tests/test_remediation_generator.py`.

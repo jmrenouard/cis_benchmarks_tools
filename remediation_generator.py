@@ -12,6 +12,17 @@ def _t(*a):
     return dict(zip(_K, a))
 
 
+_MC, _CC, _SC = "/etc/mongod.conf", "/etc/cassandra/cassandra.yaml", "/etc/ssh/sshd_config.d/99-cis.conf"
+
+
+def _cfg(cfg, bef, aft, sh, ver, rst=False, rsk="low"):
+    return _t("config", rst, rsk, cfg, bef, aft, "", sh, ver)
+
+
+def _ln(cfg, pat, line, bef, aft, ver, rst=False, rsk="low"):
+    return _cfg(cfg, bef, aft, f"grep -qE '{pat}' {cfg} 2>/dev/null || printf '{line}\\n' >> {cfg}", ver, rst, rsk)
+
+
 def _my(v, old, new, persist=False, rst=False, rsk="low", cli="mysql", cv=None, vv=None):
     c, val = "/etc/mysql/conf.d/cis-hardening.cnf", (new if cv is None else cv)
     sql = f"SET {'PERSIST' if persist else 'GLOBAL'} {v} = {new};" if cli else ""
@@ -42,6 +53,22 @@ TEMPLATES = {
         ("3.1.20", ("log_connections", "off", "on")), ("3.1.21", ("log_disconnections", "off", "on")),
         ("3.1.22", ("log_error_verbosity", "terse", "default")), ("3.1.23", ("log_hostname", "on", "off")),
     )},
+    "mongodb": {
+        "2.1": _ln(_MC, "^\\s*authorization:\\s*enabled", "\\nsecurity:\\n  authorization: enabled", "security:\n  authorization: disabled", "security:\n  authorization: enabled", f"grep -E 'authorization:\\s*enabled' {_MC}", True, "medium"),
+        "4.3": _ln(_MC, "^\\s*mode:\\s*requireTLS", "\\nnet:\\n  tls:\\n    mode: requireTLS", "net:\n  tls:\n    mode: disabled", "net:\n  tls:\n    mode: requireTLS", f"grep -E 'mode:\\s*requireTLS' {_MC}", True, "medium"),
+        "5.4": _ln(_MC, "^\\s*logAppend:\\s*true", "\\nsystemLog:\\n  logAppend: true", "systemLog:\n  logAppend: false", "systemLog:\n  logAppend: true", f"grep -E 'logAppend:\\s*true' {_MC}", True),
+    },
+    "cassandra": {
+        "2.1": _cfg(_CC, "authenticator: AllowAllAuthenticator", "authenticator: PasswordAuthenticator", f"grep -q '^authenticator: PasswordAuthenticator' {_CC} || sed -i 's/^authenticator:.*/authenticator: PasswordAuthenticator/' {_CC}", f"grep -E '^authenticator:\\s*PasswordAuthenticator' {_CC}", True, "medium"),
+        "2.2": _cfg(_CC, "authorizer: AllowAllAuthorizer", "authorizer: CassandraAuthorizer", f"grep -q '^authorizer: CassandraAuthorizer' {_CC} || sed -i 's/^authorizer:.*/authorizer: CassandraAuthorizer/' {_CC}", f"grep -E '^authorizer:\\s*CassandraAuthorizer' {_CC}", True, "medium"),
+    },
+    "rhel": {
+        "1.1.1.1": _ln("/etc/modprobe.d/cramfs.conf", "install cramfs /bin/false", "install cramfs /bin/false\\nblacklist cramfs", "# cramfs enabled", "install cramfs /bin/false\nblacklist cramfs", "modprobe -n -v cramfs"),
+        "1.3.1.2": _cfg("/etc/selinux/config", "SELINUX=permissive", "SELINUX=enforcing", "grep -q '^SELINUX=enforcing' /etc/selinux/config || sed -i 's/^SELINUX=.*/SELINUX=enforcing/' /etc/selinux/config", "getenforce", True, "medium"),
+        "5.2.1": _ln(_SC, "^PermitRootLogin no", "PermitRootLogin no", "PermitRootLogin yes", "PermitRootLogin no", "sshd -T | grep -i permitrootlogin", True, "medium"),
+        "5.2.2": _ln(_SC, "^PermitEmptyPasswords no", "PermitEmptyPasswords no", "PermitEmptyPasswords yes", "PermitEmptyPasswords no", "sshd -T | grep -i permitemptypasswords", True),
+        "5.3.1": _t("shell", True, "medium", "/etc/crypto-policies/config", "LEGACY", "DEFAULT", "", "update-crypto-policies --show | grep -qE '^(DEFAULT|FUTURE)$' || update-crypto-policies --set DEFAULT", "update-crypto-policies --show"),
+    },
 }
 
 
@@ -71,9 +98,10 @@ def build_remediation_plan(results, target_name="CIS Target", dry_run=True):
               "config_file": "", "sql": "", "shell": "", "diff": "", "verification_command": _clean(c["command"])}
         if t:
             cf = t["config_file"].lstrip("/")
-            d = "".join(difflib.unified_diff(t["before"].splitlines(True), t["after"].splitlines(True), f"a/{cf}", f"b/{cf}", lineterm="\n")).rstrip("\n")
-            it.update({k: t[k] for k in ("action_type", "requires_restart", "risk_level", "config_file")},
-                      sql=_clean(t["sql"]), shell=_clean(t["shell"]), diff=_clean(d), verification_command=_clean(t["verify"]))
+            bl, al = [ln + "\n" for ln in t["before"].splitlines()], [ln + "\n" for ln in t["after"].splitlines()]
+            d = "".join(difflib.unified_diff(bl, al, f"a/{cf}", f"b/{cf}", lineterm="\n")).rstrip("\n")
+            it.update({k: t[k] for k in ("action_type", "requires_restart", "risk_level", "config_file", "sql", "shell")},
+                      diff=d, verification_command=t["verify"])
         else:
             it["manual_guidance"] = _clean(c["remediation"] or f"Review CIS {cid} manually.")
         items.append(it)
@@ -102,7 +130,7 @@ def render_remediation(plan, fmt="diff"):
         if it["action_type"] == "manual_only":
             out.extend([f"    - name: {json.dumps(f'CIS {cid} [manual_only] {ttl}')}", "      ansible.builtin.debug:", f"        msg: {json.dumps(_clean(it.get('manual_guidance', ttl)))}"])
         else:
-            out.extend([f"    - name: {json.dumps(f'CIS {cid} {ttl}')}", "      ansible.builtin.shell:", f"        cmd: {json.dumps(_clean(it['shell'] or it['sql']))}", "      check_mode: true", "      changed_when: false"])
+            out.extend([f"    - name: {json.dumps(f'CIS {cid} {ttl}')}", "      ansible.builtin.shell:", f"        cmd: {json.dumps(it['shell'] or it['sql'])}", "      check_mode: true", "      changed_when: false"])
     return "\n".join(out) + "\n"
 
 

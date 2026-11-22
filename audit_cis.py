@@ -11,6 +11,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 
 os.environ.setdefault("PYTHONUTF8", "1")
 
@@ -204,6 +205,10 @@ def main():
     parser.add_argument("--cis-types", "--types", dest="cis_types", default=None, help="CIS types")
     parser.add_argument("--force", action="store_true", help="Force sync")
     parser.add_argument("--dry-run", action="store_true", help="Dry run")
+    parser.add_argument("--remediate-dry-run", action="store_true", help="Generate deterministic dry-run remediation plan without executing changes")
+    parser.add_argument("--remediation-format", choices=["diff", "sql", "shell", "ansible", "json"], default="diff", help="Dry-run remediation output format")
+    parser.add_argument("--remediation-output", default=None, help="Path to write dry-run remediation output")
+    parser.add_argument("--from-report", default=None, help="Existing JSON audit report for offline dry-run remediation")
     parser.add_argument("--base-url", default=None, help="Base URL")
     parser.add_argument("-v", "--version", action="version", version=f"CIS Benchmarks Suite v{__version__}")
 
@@ -227,6 +232,26 @@ def main():
         sys.exit(subprocess.run(cmd).returncode)
 
     exec_mode = "ssh" if (args.mode == "ssh" or args.remote_host) else "local"
+
+    if args.remediate_dry_run:
+        rem_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "remediation_generator.py")
+        if args.from_report:
+            cmd = [sys.executable, rem_script, "--from-report", args.from_report, "-f", args.remediation_format]
+            if args.target: cmd.extend(["-t", args.target])
+            if args.remediation_output: cmd.extend(["-o", args.remediation_output])
+            sys.exit(subprocess.run(cmd).returncode)
+        if not args.target:
+            print("❌ Error: --remediate-dry-run requires --from-report <json> or --target <key>.", file=sys.stderr)
+            sys.exit(2)
+        explicit_json = args.output_json or (args.output if args.format == "json" else None)
+        with tempfile.TemporaryDirectory() as td:
+            rep_path = explicit_json or os.path.join(td, f"{args.target}.json")
+            ok = run_single_audit(args.target, output_file=rep_path, fmt="json", lang=args.lang, mode=exec_mode, remote_host=args.remote_host, ssh_port=args.ssh_port, ssh_key=args.ssh_key, docker_container=args.docker_container, db_host=args.db_host, db_port=args.db_port, db_user=args.db_user, db_password=args.db_password, db_name=args.db_name, defaults_file=args.defaults_file, auth_db=args.auth_db, use_sudo=args.sudo)
+            if not ok or not os.path.exists(rep_path):
+                sys.exit(1)
+            cmd = [sys.executable, rem_script, "--from-report", rep_path, "-t", args.target, "-f", args.remediation_format]
+            if args.remediation_output: cmd.extend(["-o", args.remediation_output])
+            sys.exit(subprocess.run(cmd).returncode)
 
     if args.all:
         print(f"🌟 [v{__version__}] Executing CIS Audit for ALL targets [Mode: {exec_mode}]...")
