@@ -78,6 +78,7 @@ py-modules = [
     "cis_core_engine",
     "sarif_exporter",
     "remediation_generator",
+    "live_e2e_verifier",
 ]
 
 [tool.setuptools.package-data]

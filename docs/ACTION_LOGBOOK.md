@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-134 — chore(packaging): register live_e2e_verifier in PyPI, Docker, and release tarball (Issue `#745`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#745` | **Branch**: `chore/issue-745-live-e2e-verifier-packaging`
+- **Changes**: Registered `live_e2e_verifier` in `pyproject.toml`, `Dockerfile`, and `.github/workflows/release.yml` and added packaging assertions in `tests/test_live_multi_db_docker_e2e.py`.
+- **Result**: 341 tests passed (`2` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-133 — test(e2e): add live multi-db-docker-env before/after remediation verification harness (Issue `#743`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#743` | **Branch**: `test/issue-743-live-multi-db-e2e-verifier`
 - **Changes**: Added PSL module `live_e2e_verifier.py` (`MULTI_DB_PROFILES` aligned with `jmrenouard/multi-db-docker-env`, dual ephemeral-lab guard, `CIS_DB_PASSWORD` env-only isolation, before/after SARIF validation & compliance delta), added `tests/test_live_multi_db_docker_e2e.py`, and updated `APP-001` in `docs/RCA_REGISTER.md`.
