@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-132 — feat(orchestrator): wire dry-run remediation hook and release tarball packaging (Issue `#741`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#741` | **Branch**: `feat/issue-741-orchestrator-remediation-hook`
+- **Changes**: Added `FORMAT_EXTENSIONS` in `remediation_generator.py`, wired `--remediate-dry-run`/`--remediation-format` into `AuditOrchestrator` (`audit_orchestrator.py`), added `remediation_generator.py` to `.github/workflows/release.yml`, extended `tests/test_remediation_generator.py`, and marked `IDEA-011` `Completed ✅`.
+- **Result**: 339 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-131 — docs(mcp): define read-only CLI JSON/SARIF contract and presets for api_executor (Issue `#739`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#739` | **Branch**: `docs/issue-739-mcp-api-executor-contract`
 - **Changes**: Added `docs/MCP_API_EXECUTOR_CONTRACT.md` (`cis.mcp.contract.v1`), declarative preset catalog `conf/mcp_api_executor_presets.json`, programmatic contract test suite `tests/test_mcp_contract.py`, and cross-references in `README.md` and `README_fr.md`.

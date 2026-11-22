@@ -198,7 +198,9 @@ class AuditOrchestrator:
         auth_db: Optional[str] = None,
         ssh_port: int = 22,
         ssh_key: Optional[str] = None,
-        sudo: bool = False
+        sudo: bool = False,
+        remediate_dry_run: bool = False,
+        remediation_format: str = "diff"
     ):
         self.mode = mode
         self.remote_host = remote_host
@@ -216,6 +218,8 @@ class AuditOrchestrator:
         self.ssh_port = ssh_port
         self.ssh_key = ssh_key
         self.sudo = sudo
+        self.remediate_dry_run = remediate_dry_run
+        self.remediation_format = (remediation_format or "diff").strip().lower()
         os.makedirs(self.output_dir, exist_ok=True)
 
     @property
@@ -374,6 +378,18 @@ class AuditOrchestrator:
                     if os.path.exists(rep_path):
                         generated_reports[fmt] = rep_path
 
+            if self.remediate_dry_run:
+                import remediation_generator as rem_gen
+                from post_execution_publisher import atomic_write_text
+                target_slug = canonical_key.lower().replace("-", "_")
+                mode_suffix = "_ssh" if self.mode == "ssh" or self.remote_host else ""
+                rem_fmt = self.remediation_format if self.remediation_format in rem_gen.SUPPORTED_FORMATS else "diff"
+                rem_ext = rem_gen.FORMAT_EXTENSIONS.get(rem_fmt, rem_fmt)
+                rem_path = os.path.join(self.output_dir, f"rapport_cis_{target_slug}{mode_suffix}_remediation.{rem_ext}")
+                rem_plan = rem_gen.build_remediation_plan(results, target_name=canonical_key, dry_run=True)
+                atomic_write_text(rem_path, rem_gen.render_remediation(rem_plan, fmt=rem_fmt))
+                generated_reports[f"remediation_{rem_fmt}"] = rem_path
+
             elapsed = time.time() - start_time
             t_tracker.finish()
             return TargetAuditExecutionResult(
@@ -531,6 +547,8 @@ def build_cli_parser() -> argparse.ArgumentParser:
     parser.add_argument("-D", "--database", "--db-name", dest="db_name", default=None, help="Database name")
     parser.add_argument("--defaults-file", "--config-file", dest="defaults_file", default=None, help="Path to database options/configuration file")
     parser.add_argument("--auth-db", dest="auth_db", default=None, help="Authentication database (MongoDB)")
+    parser.add_argument("--remediate-dry-run", action="store_true", help="Generate deterministic dry-run remediation artifacts alongside reports")
+    parser.add_argument("--remediation-format", choices=["diff", "sql", "shell", "ansible", "json"], default="diff", help="Dry-run remediation output format")
     return parser
 
 
@@ -555,7 +573,9 @@ if __name__ == "__main__":
         db_port=args.db_port,
         db_name=args.db_name,
         defaults_file=args.defaults_file,
-        auth_db=args.auth_db
+        auth_db=args.auth_db,
+        remediate_dry_run=args.remediate_dry_run,
+        remediation_format=args.remediation_format
     )
 
     targets_to_run = list(CANONICAL_TARGETS.keys()) if (args.all or args.target == "all") else ([t.strip() for t in args.target.split(",")] if args.target else [])

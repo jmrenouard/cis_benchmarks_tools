@@ -41,7 +41,7 @@ class TestRemediationGenerator(unittest.TestCase):
             self.assertLess(sql.index("3.1.2"), sql.index("3.1.20"))
             self.assertIn("ALTER SYSTEM SET log_connections = 'on';", sql)
         self.assertIn("SET GLOBAL local_infile = OFF;", rem.render_remediation(rem.build_remediation_plan([{"number": "4.4", "status": "FAIL"}], "mariadb106"), "sql"))
-        for f, tok in (("pyproject.toml", '"remediation_generator"'), ("Dockerfile", "remediation_generator.py")):
+        for f, tok in (("pyproject.toml", '"remediation_generator"'), ("Dockerfile", "remediation_generator.py"), (".github/workflows/release.yml", "remediation_generator.py")):
             self.assertIn(tok, (pathlib.Path(ROOT) / f).read_text(encoding="utf-8"))
 
     def test_mongo_cassandra_rhel_and_audit_cli(self):
@@ -87,6 +87,20 @@ class TestRemediationGenerator(unittest.TestCase):
                 with self.assertRaises(SystemExit) as cm:
                     audit_cis.main()
             self.assertEqual(cm.exception.code, 1)
+
+    def test_orchestrator_remediation_hook_and_cli_parser(self):
+        import audit_orchestrator as orch
+        parsed = orch.build_cli_parser().parse_args(["-t", "mysql80", "--remediate-dry-run", "--remediation-format", "sql"])
+        self.assertTrue(parsed.remediate_dry_run and parsed.remediation_format == "sql")
+        with tempfile.TemporaryDirectory() as td:
+            o = orch.AuditOrchestrator(output_dir=td, formats=["json"], remediate_dry_run=True, remediation_format="ansible")
+            fake_mod = type("M", (), {"RECOMMENDATIONS_DATA": [], "perform_checks": staticmethod(lambda *a, **k: [{"number": "4.4", "status": "FAIL"}]), "export_results": staticmethod(lambda *a, **k: None)})
+            with patch("importlib.import_module", return_value=fake_mod), patch.object(orch.DockerTransportResolver, "resolve_transport", return_value=("local", None, {})):
+                res = o.execute_single_target("mysql80")
+            self.assertTrue(res.success and "remediation_ansible" in res.generated_reports)
+            rem_file = pathlib.Path(res.generated_reports["remediation_ansible"])
+            self.assertEqual(rem_file.suffix, ".yml")
+            self.assertIn("check_mode: true", rem_file.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
