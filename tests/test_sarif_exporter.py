@@ -48,6 +48,8 @@ class TestSarifExporter(unittest.TestCase):
 
         self.assertFalse(sarif.validate_sarif_document({})[0])
         self.assertFalse(sarif.validate_sarif_document({"version": "2.1.0", "runs": []})[0])
+        self.assertFalse(sarif.validate_sarif_document({"version": "2.1.0", "runs": [{"tool": "bad", "results": []}]})[0])
+        self.assertFalse(sarif.validate_sarif_document({"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "t", "rules": [{"id": "R1"}]}}, "results": [{"ruleId": "R1", "locations": [None], "partialFingerprints": {"k": "v"}}]}]})[0])
         self.assertFalse(sarif.validate_sarif_document({"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "t", "rules": []}}, "results": [{"ruleId": "X"}]}]})[0])
 
         with tempfile.TemporaryDirectory() as td:

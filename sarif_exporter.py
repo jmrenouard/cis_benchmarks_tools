@@ -109,14 +109,18 @@ def validate_sarif_document(doc):
     runs = doc.get("runs")
     if not isinstance(runs, list) or not runs or not isinstance(runs[0], dict):
         return False, "Missing SARIF runs[0]"
-    drv, res = (runs[0].get("tool") or {}).get("driver"), runs[0].get("results")
+    tool = runs[0].get("tool")
+    drv = tool.get("driver") if isinstance(tool, dict) else None
+    res = runs[0].get("results")
     if not isinstance(drv, dict) or not drv.get("name") or not isinstance(drv.get("rules"), list) or not isinstance(res, list):
         return False, "Invalid SARIF tool.driver or results"
     rids = {r.get("id") for r in drv["rules"] if isinstance(r, dict)}
     for i, r in enumerate(res):
         locs = r.get("locations") if isinstance(r, dict) else None
-        uri = ((locs[0].get("physicalLocation") or {}).get("artifactLocation") or {}).get("uri") if isinstance(locs, list) and locs else None
-        if not isinstance(r, dict) or r.get("ruleId") not in rids or not uri or not r.get("partialFingerprints"):
+        loc0 = locs[0] if isinstance(locs, list) and locs and isinstance(locs[0], dict) else {}
+        phys = loc0.get("physicalLocation") if isinstance(loc0.get("physicalLocation"), dict) else {}
+        art = phys.get("artifactLocation") if isinstance(phys.get("artifactLocation"), dict) else {}
+        if not isinstance(r, dict) or r.get("ruleId") not in rids or not art.get("uri") or not r.get("partialFingerprints"):
             return False, f"Invalid SARIF result[{i}]"
     return True, f"Valid SARIF v2.1.0 ({len(res)} results, {len(drv['rules'])} rules)"
 
