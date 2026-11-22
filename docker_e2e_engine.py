@@ -143,7 +143,16 @@ class DockerE2EOrchestrator:
                     cp_res = subprocess.run([self.container_cli, "cp", f"{spec.container_name}:{in_container_out}", host_dest], capture_output=True, check=False)
                     if cp_res.returncode == 0 and os.path.exists(host_dest):
                         size = os.path.getsize(host_dest)
-                        validations[fmt] = (size > 50, f"Valid ({size} bytes)")
+                        if fmt == "sarif":
+                            try:
+                                from sarif_exporter import validate_sarif_document
+                                with open(host_dest, "r", encoding="utf-8") as sf:
+                                    ok, note = validate_sarif_document(json.load(sf))
+                                validations[fmt] = (ok and size > 50, note)
+                            except Exception as exc:
+                                validations[fmt] = (False, f"Invalid SARIF: {exc}")
+                        else:
+                            validations[fmt] = (size > 50, f"Valid ({size} bytes)")
                         extracted[fmt] = host_dest
                     else:
                         validations[fmt] = (False, "Failed to copy report to host")

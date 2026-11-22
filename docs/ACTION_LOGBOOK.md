@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-127 — feat(sarif): add PSL SARIF v2.1.0 validation to E2E report integrity checkers (Issue `#731`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#731` | **Branch**: `feat/issue-731-sarif-e2e-validation`
+- **Changes**: Added `validate_sarif_document()` in `sarif_exporter.py`, wired `.sarif` validation into `scripts/run_e2e_tests.py` and `docker_e2e_engine.py` (preserving 4-format defaults), added tests in `tests/test_sarif_exporter.py`.
+- **Result**: 333 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-126 — feat(engines): wire --format sarif into Cassandra/RHEL and 18-target matrix (Issue `#729`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#729` | **Branch**: `feat/issue-729-sarif-cassandra-rhel-matrix`
 - **Changes**: Added `sarif` support to Cassandra 4.0/4.1/5.0 and RHEL 8/9/10 (18/18 parity); enforced all-18 SARIF check in `tests/test_target_catalog_and_cli_matrix.py`.
