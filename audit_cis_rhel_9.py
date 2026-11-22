@@ -623,6 +623,9 @@ def export_results(results, overall_score, categories_scores, target_name, filen
             json.dump(data, f, indent=2)
         print(f"📄 JSON Report successfully generated: {filename}")
 
+    elif fmt == "sarif":
+        from sarif_exporter import export_sarif_report
+        export_sarif_report(results, overall_score, categories_scores, target_name, filename, execution_context, t_meta)
     elif fmt == "xml":
         root = ET.Element("testsuite", name=target_name, tests=str(len(flat_results)), failures=str(sum(1 for r in flat_results if r.get("status") in ["FAIL", "Fail"])), timestamp=datetime.now().isoformat())
         for r in flat_results:
@@ -902,7 +905,7 @@ if __name__ == "__main__":
     parser.add_argument("--defaults-file", "--config-file", dest="defaults_file", default=None, help="Path to database option/configuration file (.my.cnf, .pgpass, cqlshrc)")
     parser.add_argument("--auth-db", dest="auth_db", default=None, help="Authentication database (MongoDB)")
     parser.add_argument("--local", action="store_true", help="Force local audit execution mode")
-    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt"], default="html", help="Report output format (html/json/xml/txt)")
+    parser.add_argument("-f", "--format", choices=["html", "json", "xml", "txt", "sarif"], default="html", help="Report output format (html/json/xml/txt/sarif)")
     parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Report language choice (en/fr)")
     parser.add_argument("-o", "--output", dest="output", default=None, help="Custom output report file path")
     args = parser.parse_args()
