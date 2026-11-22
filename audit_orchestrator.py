@@ -220,6 +220,8 @@ class AuditOrchestrator:
         self.sudo = sudo
         self.remediate_dry_run = remediate_dry_run
         self.remediation_format = (remediation_format or "diff").strip().lower()
+        if self.remediate_dry_run and self.remediation_format not in ("diff", "sql", "shell", "ansible", "json"):
+            raise ValueError(f"Unsupported remediation format: {remediation_format}")
         os.makedirs(self.output_dir, exist_ok=True)
 
     @property
@@ -383,8 +385,8 @@ class AuditOrchestrator:
                 from post_execution_publisher import atomic_write_text
                 target_slug = canonical_key.lower().replace("-", "_")
                 mode_suffix = "_ssh" if self.mode == "ssh" or self.remote_host else ""
-                rem_fmt = self.remediation_format if self.remediation_format in rem_gen.SUPPORTED_FORMATS else "diff"
-                rem_ext = rem_gen.FORMAT_EXTENSIONS.get(rem_fmt, rem_fmt)
+                rem_fmt = self.remediation_format
+                rem_ext = rem_gen.FORMAT_EXTENSIONS[rem_fmt]
                 rem_path = os.path.join(self.output_dir, f"rapport_cis_{target_slug}{mode_suffix}_remediation.{rem_ext}")
                 rem_plan = rem_gen.build_remediation_plan(results, target_name=canonical_key, dry_run=True)
                 atomic_write_text(rem_path, rem_gen.render_remediation(rem_plan, fmt=rem_fmt))

@@ -92,6 +92,7 @@ class TestRemediationGenerator(unittest.TestCase):
         import audit_orchestrator as orch
         parsed = orch.build_cli_parser().parse_args(["-t", "mysql80", "--remediate-dry-run", "--remediation-format", "sql"])
         self.assertTrue(parsed.remediate_dry_run and parsed.remediation_format == "sql")
+        self.assertRaises(ValueError, orch.AuditOrchestrator, remediate_dry_run=True, remediation_format="yaml")
         with tempfile.TemporaryDirectory() as td:
             o = orch.AuditOrchestrator(output_dir=td, formats=["json"], remediate_dry_run=True, remediation_format="ansible")
             fake_mod = type("M", (), {"RECOMMENDATIONS_DATA": [], "perform_checks": staticmethod(lambda *a, **k: [{"number": "4.4", "status": "FAIL"}]), "export_results": staticmethod(lambda *a, **k: None)})
