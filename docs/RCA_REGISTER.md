@@ -610,6 +610,10 @@
 - **Priority / Target**: `In Progress` · `remediation_generator.py`, `audit_cis.py`, `audit_orchestrator.py`
 - **Description**: Read-only dry-run diff/SQL/Shell/Ansible/JSON remediation generator covering all 6 target families (`ACT-129`, `ACT-130`, Issues `#735`, `#737`; orchestrator hook next).
 
+### IDEA-012 — Read-Only CLI JSON/SARIF MCP Contract for `api_executor`
+- **Priority / Target**: `Completed ✅` · `docs/MCP_API_EXECUTOR_CONTRACT.md`, `conf/mcp_api_executor_presets.json`, `tests/test_mcp_contract.py`
+- **Description**: Formal `cis.mcp.contract.v1` contract and declarative read-only preset catalog (`cis_list_targets`, `cis_audit_json`, `cis_audit_sarif`, `cis_remediate_dry_run`) with automated CLI flag and 18-target parity validation (`ACT-131`, Issue `#739`).
+
 
 
 
