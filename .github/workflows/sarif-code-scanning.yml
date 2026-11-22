@@ -1,0 +1,40 @@
+name: SARIF Code Scanning
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: sarif-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sarif-validate-and-upload:
+    name: Generate, Validate & Upload SARIF v2.1.0 (Python 3.12)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate and validate deterministic SARIF v2.1.0 report
+        run: |
+          python3 -c "import json, pathlib, sarif_exporter as s; p = s.export_sarif_report({'General': [{'id': '1.1', 'name': 'Baseline SARIF check', 'status': 'PASS', 'type': 'Automated', 'output': 'ok'}]}, 100.0, {}, 'rhel9', filename='reports/ci_baseline.sarif'); ok, msg = s.validate_sarif_document(json.loads(pathlib.Path(p).read_text(encoding='utf-8'))); print(msg); assert ok, msg"
+
+      - name: Upload SARIF report to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/ci_baseline.sarif
+          category: cis-benchmarks-tools

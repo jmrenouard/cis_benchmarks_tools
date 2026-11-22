@@ -148,7 +148,16 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         """Verify release.yml bundles cis_core_engine.py (required by all 18 audit engines) and README_fr.md."""
         release_content = (WORKFLOWS_DIR / "release.yml").read_text(encoding="utf-8")
         self.assertIn("cis_core_engine.py", release_content)
+        self.assertIn("sarif_exporter.py", release_content)
         self.assertIn("README_fr.md", release_content)
+
+    def test_sarif_code_scanning_workflow_configured_correctly(self) -> None:
+        """Verify sarif-code-scanning.yml validates SARIF v2.1.0 and uploads via codeql-action."""
+        sarif_wf = (WORKFLOWS_DIR / "sarif-code-scanning.yml").read_text(encoding="utf-8")
+        self.assertIn("security-events: write", sarif_wf)
+        self.assertIn('python-version: "3.12"', sarif_wf)
+        self.assertIn("github/codeql-action/upload-sarif@v3", sarif_wf)
+        self.assertIn("validate_sarif_document", sarif_wf)
 
     def test_packaging_license_metadata_matches_gplv3(self) -> None:
         """Verify pyproject.toml and Dockerfile declare GPL-3.0-or-later matching root LICENSE (GPLv3)."""
