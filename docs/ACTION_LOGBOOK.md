@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-125 — feat(engines): wire --format sarif into PostgreSQL 16/17/18 and MongoDB 7/8 engines (Issue `#727`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#727` | **Branch**: `feat/issue-727-sarif-pg-mongo-engines`
+- **Changes**: Added `sarif` export and `-f/--format sarif` CLI support to PostgreSQL 16/17/18 and MongoDB 7/8 engines; extended SARIF matrix assertion in `tests/test_target_catalog_and_cli_matrix.py`.
+- **Result**: 332 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-124 — feat(engines): wire --format sarif into MySQL 8.0, 8.4, and 9.7 engines (Issue `#725`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#725` | **Branch**: `feat/issue-725-sarif-mysql-engines`
 - **Changes**: Added `sarif` export and `-f/--format sarif` CLI support to all 5 MySQL engines (`8.0`, Community/Enterprise `8.4`, Community/Enterprise `9.7`); extended SARIF test coverage in `tests/test_audit_cis_cli.py`.
