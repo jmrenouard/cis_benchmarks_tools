@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-128 — ci(sarif): add GitHub Code Scanning SARIF upload workflow and release tarball sync (Issue `#733`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#733` | **Branch**: `ci/issue-733-sarif-code-scanning-workflow`
+- **Changes**: Added `.github/workflows/sarif-code-scanning.yml` (`upload-sarif@v3`, Python 3.12, zero `secrets.*` in `if:`), added `sarif_exporter.py` to `.github/workflows/release.yml`, added workflow governance test in `tests/test_github_actions_workflows.py`.
+- **Result**: 334 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-127 — feat(sarif): add PSL SARIF v2.1.0 validation to E2E report integrity checkers (Issue `#731`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#731` | **Branch**: `feat/issue-731-sarif-e2e-validation`
 - **Changes**: Added `validate_sarif_document()` in `sarif_exporter.py`, wired `.sarif` validation into `scripts/run_e2e_tests.py` and `docker_e2e_engine.py` (preserving 4-format defaults), added tests in `tests/test_sarif_exporter.py`.

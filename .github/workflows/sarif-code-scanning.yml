@@ -31,7 +31,7 @@ jobs:
 
       - name: Generate and validate deterministic SARIF v2.1.0 report
         run: |
-          python3 -c "import json, sarif_exporter as s; p = s.export_sarif_report({'General': [{'id': '1.1', 'name': 'Baseline SARIF check', 'status': 'PASS', 'type': 'Automated', 'output': 'ok'}]}, 100.0, {}, 'rhel9', filename='reports/ci_baseline.sarif'); ok, msg = s.validate_sarif_document(json.load(open(p, encoding='utf-8'))); print(msg); assert ok, msg"
+          python3 -c "import json, pathlib, sarif_exporter as s; p = s.export_sarif_report({'General': [{'id': '1.1', 'name': 'Baseline SARIF check', 'status': 'PASS', 'type': 'Automated', 'output': 'ok'}]}, 100.0, {}, 'rhel9', filename='reports/ci_baseline.sarif'); ok, msg = s.validate_sarif_document(json.loads(pathlib.Path(p).read_text(encoding='utf-8'))); print(msg); assert ok, msg"
 
       - name: Upload SARIF report to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
