@@ -38,6 +38,8 @@ class TestLiveMultiDbE2EVerifier(unittest.TestCase):
             self.assertEqual((res["delta"]["score_before"], res["delta"]["score_after"], res["delta"]["fixed_controls"]), (0.0, 100.0, ["4.4"]))
             st["bad_sarif"] = True
             self.assertRaises(ValueError, v.verify_target, "mariadb1011", "cis-e2e-mariadb", td, None, None, "Sec99", False, {}, fake_run)
+        for f, tok in (("pyproject.toml", '"live_e2e_verifier"'), ("Dockerfile", "live_e2e_verifier.py"), (".github/workflows/release.yml", "live_e2e_verifier.py")):
+            self.assertIn(tok, (ROOT / f).read_text(encoding="utf-8"))
 
 
 @unittest.skipUnless(os.environ.get("CIS_LIVE_DOCKER_E2E") == "1", "Set CIS_LIVE_DOCKER_E2E=1 for live Docker E2E")

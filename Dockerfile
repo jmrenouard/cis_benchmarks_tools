@@ -14,7 +14,7 @@ RUN groupadd -g 10001 cisgroup && \
 WORKDIR /app
 
 COPY --chown=cisuser:cisgroup audit_cis*.py execution_drivers.py audit_diagnostics.py \
-     audit_orchestrator.py cis_core_engine.py sarif_exporter.py remediation_generator.py docker_transport.py in_container_inspector.py \
+     audit_orchestrator.py cis_core_engine.py sarif_exporter.py remediation_generator.py live_e2e_verifier.py docker_transport.py in_container_inspector.py \
      docker_e2e_engine.py temporal_metadata.py post_execution_publisher.py \
      VERSION README.md LICENSE ./
 COPY --chown=cisuser:cisgroup rules/ ./rules/

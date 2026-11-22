@@ -35,7 +35,7 @@ jobs:
           VERSION=$(cat VERSION | tr -d '[:space:]')
           cp audit_cis.py "dist/audit_cis-v${VERSION}.py"
           tar -czf "dist/cis-benchmarks-tools-v${VERSION}.tar.gz" \
-            audit_cis.py audit_cis_*.py cis_core_engine.py sarif_exporter.py remediation_generator.py execution_drivers.py audit_diagnostics.py \
+            audit_cis.py audit_cis_*.py cis_core_engine.py sarif_exporter.py remediation_generator.py live_e2e_verifier.py execution_drivers.py audit_diagnostics.py \
             audit_orchestrator.py docker_transport.py in_container_inspector.py \
             docker_e2e_engine.py temporal_metadata.py post_execution_publisher.py \
             rules/ templates/ README.md README_fr.md LICENSE VERSION
