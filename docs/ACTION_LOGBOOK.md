@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-123 — feat(cli): wire --format sarif into CLI, orchestrator, publisher, and MariaDB engines (Issue `#723`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#723` | **Branch**: `feat/issue-723-sarif-cli-mariadb-mysql`
+- **Changes**: Added `sarif` support to `audit_cis.py`, `audit_orchestrator.py`, `post_execution_publisher.py`, and MariaDB 10.6/10.11 engines (5 MySQL engines split into dedicated follow-up issue to keep PR diff < 15,000 bytes per `AGENTS.md` §1.2); added tests in `tests/test_audit_cis_cli.py`.
+- **Result**: 332 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-122 — feat(sarif): add PSL SARIF v2.1.0 exporter core module and tests (Issue `#721`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#721` | **Branch**: `feat/issue-721-sarif-v210-core-exporter`
 - **Changes**: Added `sarif_exporter.py` (`IDEA-003`), wired `cis_core_engine.py`, updated `pyproject.toml`/`Dockerfile` (`release.yml` awaits `workflow` scope), added `tests/test_sarif_exporter.py`.

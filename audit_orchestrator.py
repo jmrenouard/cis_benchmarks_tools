@@ -520,7 +520,7 @@ def build_cli_parser() -> argparse.ArgumentParser:
     parser.add_argument("-i", "--ssh-key", dest="ssh_key", default=None, help="Path to SSH private key file")
     parser.add_argument("--sudo", action="store_true", help="Execute commands with sudo privileges")
     parser.add_argument("-c", "--docker", dest="docker_container", default=None, help="Target Docker container")
-    parser.add_argument("-f", "--format", dest="formats", default="html,json,xml,txt", help="Report formats")
+    parser.add_argument("-f", "--format", dest="formats", default="html,json,xml,txt", help="Report formats (html,json,xml,txt,sarif)")
     parser.add_argument("-j", "--parallel", type=int, default=1, help="Parallel worker threads")
     parser.add_argument("-o", "--output-dir", dest="output_dir", default="reports", help="Output directory")
     parser.add_argument("-l", "--lang", choices=["en", "fr"], default="en", help="Report language")

@@ -212,6 +212,40 @@ class TestAuditCisCliEngine(unittest.TestCase):
             if os.path.exists(path):
                 os.remove(path)
 
+    def test_sarif_cli_forwarding_orchestrator_publisher_and_mariadb_engines(self):
+        import importlib, json, pathlib, tempfile
+        from unittest.mock import MagicMock, patch
+        import audit_cis
+        from audit_orchestrator import AuditOrchestrator
+        from post_execution_publisher import AuditReportPublisher
+
+        with patch("sys.argv", ["audit_cis.py", "-t", "mariadb106", "-f", "sarif", "-p", "SarifSec1!", "-o", "/tmp/out.sarif"]), \
+             patch("subprocess.run", return_value=MagicMock(returncode=0)) as m_sub:
+            with self.assertRaises(SystemExit) as cm:
+                audit_cis.main()
+            self.assertEqual(cm.exception.code, 0)
+            cmd, env = m_sub.call_args[0][0], m_sub.call_args[1].get("env", {})
+            self.assertIn("--format", cmd)
+            self.assertIn("sarif", cmd)
+            self.assertNotIn("SarifSec1!", cmd)
+            self.assertEqual(env.get("CIS_DB_PASSWORD"), "SarifSec1!")
+
+        sample = {"1. Auth": [{"number": "1.1", "name": "Check", "status": "FAIL", "output": "OFF"}]}
+        with tempfile.TemporaryDirectory() as td:
+            pub = AuditReportPublisher("mariadb_106", output_dir=td, formats=["sarif"])
+            self.assertTrue(pub.resolve_destination("sarif").endswith("rapport_cis_mariadb_106.sarif"))
+            for key, mod_name in (("mariadb106", "audit_cis_mariadb_106"), ("mariadb1011", "audit_cis_mariadb_1011")):
+                mod = importlib.import_module(mod_name)
+                out = os.path.join(td, f"{key}.sarif")
+                mod.export_results(sample, 0.0, {"1. Auth": {"score": 0.0}}, key, out, fmt="sarif")
+                data = json.loads(pathlib.Path(out).read_text(encoding="utf-8"))
+                self.assertEqual((data["version"], len(data["runs"][0]["results"])), ("2.1.0", 1))
+
+            with patch("audit_cis_mariadb_106.run_command", return_value=("1", "", 0)):
+                res = AuditOrchestrator(mode="local", output_dir=td, formats=["sarif"]).execute_single_target("mariadb106")
+                self.assertTrue(res.success and res.generated_reports["sarif"].endswith(".sarif"))
+                self.assertEqual(json.loads(pathlib.Path(res.generated_reports["sarif"]).read_text(encoding="utf-8"))["version"], "2.1.0")
+
 
 if __name__ == "__main__":
     unittest.main()

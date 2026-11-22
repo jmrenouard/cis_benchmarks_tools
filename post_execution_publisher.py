@@ -64,11 +64,12 @@ class AuditReportPublisher:
 
     def resolve_destination(self, fmt: str) -> str:
         """Determines destination file path for a given format."""
-        if self.custom_output and (len(self.formats) == 1 or fmt == self.formats[0]):
+        norm_fmt = (fmt or "html").strip().lower()
+        if self.custom_output and (len(self.formats) == 1 or norm_fmt == self.formats[0].strip().lower()):
             return os.path.abspath(self.custom_output)
 
         slug = self.target_name.lower().replace(" ", "_").replace(".", "")
-        filename = f"rapport_cis_{slug}.{fmt}"
+        filename = f"rapport_cis_{slug}.{norm_fmt}"
         return os.path.join(self.output_dir, filename)
 
     def publish_content(self, fmt: str, content: str) -> str:
