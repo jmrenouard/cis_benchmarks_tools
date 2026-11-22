@@ -543,9 +543,9 @@
 ## 3. Current Approximations & Simplifying Assumptions (`APP`)
 
 ### APP-001 — Simulated Docker Command Execution in Fast Unit Tests
-- **Target Files**: `tests/test_zero_command_errors_and_automation.py` and `tests/test_e2e_docker_audits.py`
-- **Nature & Justification**: Fast `unittest` runs simulate container command responses using deterministic mocks when live database containers are not running, executing 180+ tests in `< 2s` in CI.
-- **Removal Condition**: Run `make test-all` or `python3 scripts/run_e2e_tests.py` on a Docker host for live container audits.
+- **Target Files**: `tests/test_zero_command_errors_and_automation.py`, `tests/test_e2e_docker_audits.py`, `live_e2e_verifier.py`, and `tests/test_live_multi_db_docker_e2e.py`
+- **Nature & Justification**: Fast `unittest` runs simulate container command responses using deterministic mocks when live database containers are not running, keeping CI fast (`< 5s`).
+- **Removal Condition**: Run `CIS_LIVE_DOCKER_E2E=1 python3 -m unittest tests/test_live_multi_db_docker_e2e.py` or `python3 live_e2e_verifier.py --target <target>` against live `jmrenouard/multi-db-docker-env` containers (`ACT-133`, Issue `#743`).
 
 ### APP-002 — Regex Heuristic Matching in `CommandFailureClassifier`
 - **Target File**: `audit_diagnostics.py` (`CommandFailureClassifier.classify`)
