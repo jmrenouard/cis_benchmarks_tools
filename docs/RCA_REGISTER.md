@@ -606,6 +606,10 @@
 - **Priority / Target**: `Completed ✅` · `Dockerfile`, `.dockerignore`, `.github/workflows/docker-publish.yml`, `docs/PUBLISHING.md`
 - **Description**: Zero-dependency container packaging: official multi-platform container (`linux/amd64`, `linux/arm64`) on Docker Hub at `jmrenouard/cis-benchmarks-tools`, non-root execution (`cisuser:cisgroup`), secret fallbacks (`DOCKERHUB_USERNAME || DOCKER_USER_LOGIN`, `DOCKERHUB_TOKEN || DOCKER_USER_PASSWORD` matching `MySQLTuner-perl` & `MicroLLM`), OCI/release-notes labels, and publication on `release: types: [published]` and `workflow_dispatch` (ACT-118, ACT-119, Issues `#708`, `#714`).
 
+### IDEA-011 — PSL Deterministic Dry-Run Remediation Generator (`remediation_generator.py`)
+- **Priority / Target**: `In Progress` · `remediation_generator.py`, `audit_cis.py`, `audit_orchestrator.py`
+- **Description**: Read-only dry-run diff/SQL/Shell/Ansible/JSON remediation generator (`ACT-129`, `#735`: MariaDB/MySQL/PostgreSQL templates and packaging).
+
 
 
 

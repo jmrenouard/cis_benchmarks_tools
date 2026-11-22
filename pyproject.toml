@@ -77,6 +77,7 @@ py-modules = [
     "execution_drivers",
     "cis_core_engine",
     "sarif_exporter",
+    "remediation_generator",
 ]
 
 [tool.setuptools.package-data]
