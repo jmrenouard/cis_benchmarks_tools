@@ -608,7 +608,7 @@
 
 ### IDEA-011 — PSL Deterministic Dry-Run Remediation Generator (`remediation_generator.py`)
 - **Priority / Target**: `In Progress` · `remediation_generator.py`, `audit_cis.py`, `audit_orchestrator.py`
-- **Description**: Read-only dry-run diff/SQL/Shell/Ansible/JSON remediation generator (`ACT-129`, `#735`: MariaDB/MySQL/PostgreSQL templates and packaging).
+- **Description**: Read-only dry-run diff/SQL/Shell/Ansible/JSON remediation generator covering all 6 target families (`ACT-129`, `ACT-130`, Issues `#735`, `#737`; orchestrator hook next).
 
 
 

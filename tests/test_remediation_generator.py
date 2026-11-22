@@ -44,6 +44,36 @@ class TestRemediationGenerator(unittest.TestCase):
         for f, tok in (("pyproject.toml", '"remediation_generator"'), ("Dockerfile", "remediation_generator.py")):
             self.assertIn(tok, (pathlib.Path(ROOT) / f).read_text(encoding="utf-8"))
 
+    def test_mongo_cassandra_rhel_and_audit_cli(self):
+        import audit_cis
+        for tgt, cid, d_tok, s_tok in (
+            ("mongodb7", "2.1", "authorization: enabled", "mongod.conf"),
+            ("mongodb8", "4.3", "requireTLS", "mongod.conf"),
+            ("cassandra40", "2.1", "PasswordAuthenticator", "cassandra.yaml"),
+            ("cassandra50", "2.2", "CassandraAuthorizer", "cassandra.yaml"),
+            ("rhel9", "1.1.1.1", "install cramfs /bin/false", "cramfs.conf"),
+            ("rhel9", "5.2.1", "PermitRootLogin no", "99-cis.conf"),
+            ("rhel10", "5.3.1", "-LEGACY\n+DEFAULT", "update-crypto-policies"),
+        ):
+            plan = rem.build_remediation_plan([{"number": cid, "status": "FAIL"}], tgt)
+            diff_out, sh_out = rem.render_remediation(plan, "diff"), rem.render_remediation(plan, "shell")
+            self.assertIn(d_tok, diff_out)
+            self.assertIn(s_tok, sh_out)
+            self.assertNotIn("crypto-p***", diff_out + sh_out)
+            self.assertIn("check_mode: true", rem.render_remediation(plan, "ansible"))
+        with tempfile.TemporaryDirectory() as td:
+            rep, out = os.path.join(td, "m.json"), os.path.join(td, "fix.diff")
+            pathlib.Path(rep).write_text(json.dumps({"target": "mongodb7", "results": [{"number": "2.1", "status": "FAIL"}]}), encoding="utf-8")
+            with patch.object(sys, "argv", ["audit_cis.py", "--remediate-dry-run", "--from-report", rep, "--remediation-format", "diff", "--remediation-output", out]):
+                with self.assertRaises(SystemExit) as cm:
+                    audit_cis.main()
+            self.assertEqual(cm.exception.code, 0)
+            self.assertIn("authorization: enabled", pathlib.Path(out).read_text(encoding="utf-8"))
+            with patch.object(sys, "argv", ["audit_cis.py", "--remediate-dry-run"]):
+                with self.assertRaises(SystemExit) as cm:
+                    audit_cis.main()
+            self.assertEqual(cm.exception.code, 2)
+
 
 if __name__ == "__main__":
     unittest.main()
