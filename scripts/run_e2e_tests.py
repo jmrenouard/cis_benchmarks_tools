@@ -65,6 +65,14 @@ def analyze_report_integrity(filepath):
             json.loads(content)
         except Exception as e:
             return False, f"Invalid JSON syntax: {e}"
+    elif filepath.endswith(".sarif"):
+        try:
+            from sarif_exporter import validate_sarif_document
+            ok, msg = validate_sarif_document(json.loads(content))
+            if not ok:
+                return False, msg
+        except Exception as e:
+            return False, f"Invalid SARIF syntax: {e}"
     elif filepath.endswith(".xml"):
         try:
             ET.fromstring(content)

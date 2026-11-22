@@ -41,6 +41,40 @@ class TestSarifExporter(unittest.TestCase):
         for f, tok in (("pyproject.toml", '"sarif_exporter"'), ("Dockerfile", "sarif_exporter.py")):
             self.assertIn(tok, (pathlib.Path(ROOT) / f).read_text(encoding="utf-8"))
 
+    def test_sarif_validation_in_e2e_checkers(self):
+        from unittest.mock import MagicMock, patch
+        from docker_e2e_engine import DockerE2EOrchestrator, TargetE2ESpec
+        from scripts.run_e2e_tests import analyze_report_integrity
+
+        self.assertFalse(sarif.validate_sarif_document({})[0])
+        self.assertFalse(sarif.validate_sarif_document({"version": "2.1.0", "runs": []})[0])
+        self.assertFalse(sarif.validate_sarif_document({"version": "2.1.0", "runs": [{"tool": "bad", "results": []}]})[0])
+        self.assertFalse(sarif.validate_sarif_document({"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "t", "rules": [{"id": "R1"}]}}, "results": [{"ruleId": "R1", "locations": [None], "partialFingerprints": {"k": "v"}}]}]})[0])
+        self.assertFalse(sarif.validate_sarif_document({"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "t", "rules": []}}, "results": [{"ruleId": "X"}]}]})[0])
+
+        with tempfile.TemporaryDirectory() as td:
+            good = os.path.join(td, "good.sarif")
+            bad = os.path.join(td, "bad.sarif")
+            sarif.export_sarif_report({"G": [{"id": "1.1", "status": "FAIL", "output": "OFF"}]}, 0.0, {}, "mariadb106", filename=good)
+            pathlib.Path(bad).write_text(json.dumps({"version": "1.0.0", "runs": []}) + " " * 50, encoding="utf-8")
+            self.assertTrue(analyze_report_integrity(good)[0])
+            self.assertFalse(analyze_report_integrity(bad)[0])
+
+            orch = DockerE2EOrchestrator(output_dir=td)
+            self.assertEqual(orch.DEFAULT_FORMATS, ["html", "json", "xml", "txt"])
+            spec = TargetE2ESpec("mariadb106", "d", "img", "c1", "audit_cis_mariadb_106.py", "rapport_cis_mariadb_106")
+            expected_dest = os.path.join(td, "rapport_cis_mariadb_106.sarif")
+
+            def fake_run(cmd, **kw):
+                if len(cmd) >= 2 and cmd[1] == "cp" and cmd[-1] == expected_dest:
+                    pathlib.Path(expected_dest).write_text(pathlib.Path(good).read_text(encoding="utf-8"), encoding="utf-8")
+                return MagicMock(returncode=0, stdout="", stderr="")
+
+            with patch("subprocess.run", side_effect=fake_run):
+                vals, ext = orch.execute_in_container_audit(spec, mode="local", formats=["sarif"])
+                self.assertTrue(vals["sarif"][0], vals["sarif"][1])
+                self.assertEqual(ext["sarif"], expected_dest)
+
 
 if __name__ == "__main__":
     unittest.main()

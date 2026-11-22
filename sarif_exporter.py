@@ -102,6 +102,29 @@ def build_sarif_document(results, overall_score=0.0, categories_scores=None, tar
     return {"$schema": SARIF_SCHEMA_URI, "version": SARIF_VERSION, "runs": [{"tool": {"driver": {"name": TOOL_NAME, "version": _version(tool_version), "informationUri": TOOL_INFO_URI, "rules": rules}}, "invocations": [inv], "results": s_res, "properties": {"target": _clean(target_name), "rule_spec": spec, "overall_score": round(float(overall_score or 0.0), 2), "execution_context": ctx, "counts": cnt, "categories": categories_scores or {}, "temporal_metadata": td}}]}
 
 
+def validate_sarif_document(doc):
+    """Validate structural SARIF v2.1.0 and GitHub Code Scanning invariants."""
+    if not isinstance(doc, dict) or doc.get("version") != SARIF_VERSION:
+        return False, "Invalid SARIF root or version"
+    runs = doc.get("runs")
+    if not isinstance(runs, list) or not runs or not isinstance(runs[0], dict):
+        return False, "Missing SARIF runs[0]"
+    tool = runs[0].get("tool")
+    drv = tool.get("driver") if isinstance(tool, dict) else None
+    res = runs[0].get("results")
+    if not isinstance(drv, dict) or not drv.get("name") or not isinstance(drv.get("rules"), list) or not isinstance(res, list):
+        return False, "Invalid SARIF tool.driver or results"
+    rids = {r.get("id") for r in drv["rules"] if isinstance(r, dict)}
+    for i, r in enumerate(res):
+        locs = r.get("locations") if isinstance(r, dict) else None
+        loc0 = locs[0] if isinstance(locs, list) and locs and isinstance(locs[0], dict) else {}
+        phys = loc0.get("physicalLocation") if isinstance(loc0.get("physicalLocation"), dict) else {}
+        art = phys.get("artifactLocation") if isinstance(phys.get("artifactLocation"), dict) else {}
+        if not isinstance(r, dict) or r.get("ruleId") not in rids or not art.get("uri") or not r.get("partialFingerprints"):
+            return False, f"Invalid SARIF result[{i}]"
+    return True, f"Valid SARIF v2.1.0 ({len(res)} results, {len(drv['rules'])} rules)"
+
+
 def export_sarif_report(results, overall_score, categories_scores, target_name, filename=None, execution_context=None, temporal_metadata=None):
     fn = filename or f"reports/rapport_cis_{resolve_rule_spec(target_name)}.sarif"
     doc = build_sarif_document(results, overall_score, categories_scores, target_name, execution_context, temporal_metadata)

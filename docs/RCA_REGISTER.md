@@ -575,8 +575,8 @@
 - **Description**: Optional legacy audit target based on `CIS_DATA/CIS_APACHE_CASSANDRA_3.11_Benchmark_v1.1.0_ARCHIVE.md`.
 
 ### IDEA-003 — SARIF v2.1.0 Exporter for GitHub Code Scanning (`--format sarif`)
-- **Priority / Target**: `Completed (18/18 Targets) ✅` · `sarif_exporter.py`, `cis_core_engine.py`, `audit_cis.py`, `audit_cis_*.py`
-- **Description**: Native PSL `--format sarif` exporter across all 18 targets (`ACT-122..126`, `#721/#723/#725/#727/#729`; CI workflow & `release.yml` await `workflow` OAuth scope).
+- **Priority / Target**: `Completed (18/18 Targets + E2E Validator) ✅` · `sarif_exporter.py`, `cis_core_engine.py`, `audit_cis.py`, `audit_cis_*.py`
+- **Description**: Native PSL `--format sarif` exporter and validator across all 18 targets (`ACT-122..127`, `#721/#723/#725/#727/#729/#731`; CI upload workflow & `release.yml` await `workflow` OAuth scope).
 
 ### IDEA-004 — PyPI Distribution Pipeline with Trusted Publishing or API Token
 - **Priority / Target**: `Completed ✅` · `pyproject.toml`, `.github/workflows/pypi-publish.yml`, and `release.yml`
