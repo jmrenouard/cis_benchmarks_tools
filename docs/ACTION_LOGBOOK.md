@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-133 — test(e2e): add live multi-db-docker-env before/after remediation verification harness (Issue `#743`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#743` | **Branch**: `test/issue-743-live-multi-db-e2e-verifier`
+- **Changes**: Added PSL module `live_e2e_verifier.py` (`MULTI_DB_PROFILES` aligned with `jmrenouard/multi-db-docker-env`, dual ephemeral-lab guard, `CIS_DB_PASSWORD` env-only isolation, before/after SARIF validation & compliance delta), added `tests/test_live_multi_db_docker_e2e.py`, and updated `APP-001` in `docs/RCA_REGISTER.md`.
+- **Result**: 341 tests passed (`2` skipped, including opt-in `CIS_LIVE_DOCKER_E2E=1`); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-132 — feat(orchestrator): wire dry-run remediation hook and release tarball packaging (Issue `#741`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#741` | **Branch**: `feat/issue-741-orchestrator-remediation-hook`
 - **Changes**: Added `FORMAT_EXTENSIONS` in `remediation_generator.py`, wired `--remediate-dry-run`/`--remediation-format` into `AuditOrchestrator` (`audit_orchestrator.py`), added `remediation_generator.py` to `.github/workflows/release.yml`, extended `tests/test_remediation_generator.py`, and marked `IDEA-011` `Completed ✅`.
