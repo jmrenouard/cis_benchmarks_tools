@@ -12,11 +12,11 @@ def _t(*a):
     return dict(zip(_K, a))
 
 
-def _my(v, old, new, persist=False, rst=False, rsk="low", cli="mysql", cv=None):
+def _my(v, old, new, persist=False, rst=False, rsk="low", cli="mysql", cv=None, vv=None):
     c, val = "/etc/mysql/conf.d/cis-hardening.cnf", (new if cv is None else cv)
     sql = f"SET {'PERSIST' if persist else 'GLOBAL'} {v} = {new};" if cli else ""
     sh = f"grep -q '^{v}' {c} 2>/dev/null || printf '[mysqld]\\n{v} = {val}\\n' >> {c}"
-    return _t("sql_and_config" if sql else "config", rst, rsk, c, f"[mysqld]\n{v} = {old}", f"[mysqld]\n{v} = {val}", sql, sh, f"{cli or 'mysql'} -N -B -e 'SELECT @@{v};'")
+    return _t("sql_and_config" if sql else "config", rst, rsk, c, f"[mysqld]\n{v} = {old}", f"[mysqld]\n{v} = {val}", sql, sh, f"{cli or 'mysql'} -N -B -e 'SELECT @@{vv or v};'")
 
 
 def _pg(p, old, new, rst=False, rsk="low"):
@@ -33,7 +33,7 @@ TEMPLATES = {
     },
     "mysql": {
         "4.4": _my("local_infile", "1", "OFF", True, False, "low", "mysql", "0"),
-        "4.6": _my("symbolic-links", "1", "0", False, True, "low", ""),
+        "4.6": _my("symbolic-links", "1", "0", False, True, "low", "", None, "have_symlink"),
         "6.3": _my("log_error_verbosity", "1", "2", True),
         "8.1": _my("require_secure_transport", "OFF", "ON", True, True, "medium"),
     },
@@ -90,11 +90,11 @@ def render_remediation(plan, fmt="diff"):
     tgt, items = plan.get("target", "CIS Target"), plan.get("items", [])
     hdr = f"{tgt} / {plan.get('family', 'generic')}"
     if f != "ansible":
-        pfx = "--" if f == "sql" else "#"
-        out = [*(["#!/usr/bin/env bash", "set -euo pipefail"] if f == "shell" else []), f"{pfx} DRY-RUN {f.upper()} ({hdr})"]
+        pfx, ol = ("--" if f == "sql" else "#"), lambda s: " ".join(str(s or "").splitlines())
+        out = [*(["#!/usr/bin/env bash", "set -euo pipefail"] if f == "shell" else []), f"{pfx} DRY-RUN {f.upper()} ({ol(hdr)})"]
         for it in items:
-            b, cid, ttl = it.get(f, ""), it["control_id"], it["title"]
-            out.extend([f"{pfx} CIS {cid} - {ttl}", b] if b else [f"{pfx} CIS {cid} [manual_only]: {it.get('manual_guidance', ttl)}"])
+            b, cid, ttl = it.get(f, ""), ol(it["control_id"]), ol(it["title"])
+            out.extend([f"{pfx} CIS {cid} - {ttl}", b] if b else [f"{pfx} CIS {cid} [manual_only]: {ol(it.get('manual_guidance', ttl))}"])
         return "\n".join(out).rstrip("\n") + "\n"
     out = ["---", f"- name: {json.dumps(f'CIS Dry-Run Remediation ({tgt})')}", "  hosts: all", "  become: true", "  tasks:"]
     for it in items:
