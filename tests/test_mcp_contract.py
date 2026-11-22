@@ -2,6 +2,7 @@
 """Contract tests for read-only MCP api_executor presets (100% PSL ONLY)."""
 import json
 import pathlib
+import re
 import subprocess
 import sys
 import unittest
@@ -11,6 +12,7 @@ sys.path.insert(0, str(ROOT))
 
 import audit_cis
 import audit_orchestrator as orch
+import remediation_generator as rem
 
 PRESET_PATH = ROOT / "conf" / "mcp_api_executor_presets.json"
 CONTRACT_DOC = ROOT / "docs" / "MCP_API_EXECUTOR_CONTRACT.md"
@@ -31,9 +33,11 @@ class TestMcpApiExecutorContract(unittest.TestCase):
 
         forbidden = set(self.cfg["forbidden_flags"])
         self.assertTrue({"-p", "--password", "--db-password", "--apply", "--allow-ephemeral-apply", "--force"}.issubset(forbidden))
+        self.assertEqual(set(self.cfg["optional_connection_flags"]) & forbidden, set())
 
         presets = self.cfg["presets"]
         self.assertEqual(set(presets.keys()), {"cis_list_targets", "cis_audit_json", "cis_audit_sarif", "cis_remediate_dry_run"})
+        self.assertEqual(tuple(presets["cis_remediate_dry_run"]["allowed_remediation_formats"]), rem.SUPPORTED_FORMATS)
         for name, spec in presets.items():
             self.assertIs(spec["read_only"], True, f"{name} must be read_only")
             self.assertIs(spec["mutating"], False, f"{name} must not mutate")
@@ -49,7 +53,7 @@ class TestMcpApiExecutorContract(unittest.TestCase):
                 if tok.startswith("-"):
                     flags.add(tok)
         for flag in sorted(flags):
-            self.assertIn(flag, help_txt, f"Preset flag missing from audit_cis.py --help: {flag}")
+            self.assertRegex(help_txt, rf"(?<![\w-]){re.escape(flag)}(?![\w-])", f"Preset flag missing from audit_cis.py --help: {flag}")
         for doc_path in (ROOT / "README.md", ROOT / "README_fr.md"):
             self.assertIn("docs/MCP_API_EXECUTOR_CONTRACT.md", doc_path.read_text(encoding="utf-8"))
 
