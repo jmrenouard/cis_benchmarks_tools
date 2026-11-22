@@ -60,11 +60,12 @@ class TestCanonicalTargetsMatrix(unittest.TestCase):
                 out = os.path.join(tmp_dir, f"{k}.json")
                 mod.export_results(sample, scores[0], scores[1], target_name=k, filename=out, fmt="json")
                 self.assertTrue(os.path.exists(out) and os.path.getsize(out) > 0)
-                if k.startswith(("mariadb", "mysql", "postgresql", "mongodb")):
-                    sout = os.path.join(tmp_dir, f"{k}.sarif")
-                    mod.export_results(sample, scores[0], scores[1], target_name=k, filename=sout, fmt="sarif")
-                    with open(sout, "r", encoding="utf-8") as sf:
-                        self.assertEqual(json.load(sf)["version"], "2.1.0")
+                sout = os.path.join(tmp_dir, f"{k}.sarif")
+                mod.export_results(sample, scores[0], scores[1], target_name=k, filename=sout, fmt="sarif")
+                with open(sout, "r", encoding="utf-8") as sf:
+                    sdoc = json.load(sf)
+                    self.assertEqual((sdoc["version"], len(sdoc["runs"][0]["results"])), ("2.1.0", 3))
+                    self.assertEqual(sdoc["runs"][0]["results"][0]["locations"][0]["physicalLocation"]["artifactLocation"]["uri"], f"rules/{meta['rule_spec']}.json")
 
 
 class TestCliParsingAndForwardingMatrix(unittest.TestCase):

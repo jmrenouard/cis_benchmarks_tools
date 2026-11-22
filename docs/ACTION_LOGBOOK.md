@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-126 — feat(engines): wire --format sarif into Cassandra/RHEL and 18-target matrix (Issue `#729`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#729` | **Branch**: `feat/issue-729-sarif-cassandra-rhel-matrix`
+- **Changes**: Added `sarif` support to Cassandra 4.0/4.1/5.0 and RHEL 8/9/10 (18/18 parity); enforced all-18 SARIF check in `tests/test_target_catalog_and_cli_matrix.py`.
+- **Result**: 332 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-125 — feat(engines): wire --format sarif into PostgreSQL 16/17/18 and MongoDB 7/8 engines (Issue `#727`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#727` | **Branch**: `feat/issue-727-sarif-pg-mongo-engines`
 - **Changes**: Added `sarif` export and `-f/--format sarif` CLI support to PostgreSQL 16/17/18 and MongoDB 7/8 engines; extended SARIF matrix assertion in `tests/test_target_catalog_and_cli_matrix.py`.
