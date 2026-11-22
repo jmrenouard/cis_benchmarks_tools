@@ -5,7 +5,6 @@ from post_execution_publisher import atomic_write_text
 from sarif_exporter import _clean, map_compliance_state, normalize_control_results, resolve_rule_spec
 
 SUPPORTED_FORMATS = ("diff", "sql", "shell", "ansible", "json")
-FORMAT_EXTENSIONS = {"diff": "diff", "sql": "sql", "shell": "sh", "ansible": "yml", "json": "json"}
 _K = ("action_type", "requires_restart", "risk_level", "config_file", "before", "after", "sql", "shell", "verify")
 
 

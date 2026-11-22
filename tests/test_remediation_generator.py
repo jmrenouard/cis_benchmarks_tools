@@ -73,6 +73,20 @@ class TestRemediationGenerator(unittest.TestCase):
                 with self.assertRaises(SystemExit) as cm:
                     audit_cis.main()
             self.assertEqual(cm.exception.code, 2)
+            out2 = os.path.join(td, "m_pipe.sql")
+            def _fake_audit(t, output_file=None, fmt=None, **kw):
+                self.assertEqual((t, fmt), ("mariadb106", "json"))
+                pathlib.Path(output_file).write_text(json.dumps({"target": t, "results": [{"number": "4.4", "status": "FAIL"}]}), encoding="utf-8")
+                return True
+            with patch.object(audit_cis, "run_single_audit", side_effect=_fake_audit), patch.object(sys, "argv", ["audit_cis.py", "--remediate-dry-run", "-t", "mariadb106", "--remediation-format", "sql", "--remediation-output", out2]):
+                with self.assertRaises(SystemExit) as cm:
+                    audit_cis.main()
+            self.assertEqual(cm.exception.code, 0)
+            self.assertIn("SET GLOBAL local_infile = OFF;", pathlib.Path(out2).read_text(encoding="utf-8"))
+            with patch.object(audit_cis, "run_single_audit", return_value=False), patch.object(sys, "argv", ["audit_cis.py", "--remediate-dry-run", "-t", "mariadb106"]):
+                with self.assertRaises(SystemExit) as cm:
+                    audit_cis.main()
+            self.assertEqual(cm.exception.code, 1)
 
 
 if __name__ == "__main__":
