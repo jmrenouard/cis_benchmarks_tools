@@ -607,8 +607,8 @@
 - **Description**: Zero-dependency container packaging: official multi-platform container (`linux/amd64`, `linux/arm64`) on Docker Hub at `jmrenouard/cis-benchmarks-tools`, non-root execution (`cisuser:cisgroup`), secret fallbacks (`DOCKERHUB_USERNAME || DOCKER_USER_LOGIN`, `DOCKERHUB_TOKEN || DOCKER_USER_PASSWORD` matching `MySQLTuner-perl` & `MicroLLM`), OCI/release-notes labels, and publication on `release: types: [published]` and `workflow_dispatch` (ACT-118, ACT-119, Issues `#708`, `#714`).
 
 ### IDEA-011 — PSL Deterministic Dry-Run Remediation Generator (`remediation_generator.py`)
-- **Priority / Target**: `In Progress` · `remediation_generator.py`, `audit_cis.py`, `audit_orchestrator.py`
-- **Description**: Read-only dry-run diff/SQL/Shell/Ansible/JSON remediation generator covering all 6 target families (`ACT-129`, `ACT-130`, Issues `#735`, `#737`; orchestrator hook next).
+- **Priority / Target**: `Completed ✅` · `remediation_generator.py`, `audit_cis.py`, `audit_orchestrator.py`
+- **Description**: Read-only dry-run diff/SQL/Shell/Ansible/JSON remediation generator covering all 6 target families (MariaDB, MySQL, PostgreSQL, MongoDB, Cassandra, RHEL) with unified CLI, orchestrator hook, and release/PyPI/Docker packaging (`ACT-129`, `ACT-130`, `ACT-132`, Issues `#735`, `#737`, `#741`).
 
 ### IDEA-012 — Read-Only CLI JSON/SARIF MCP Contract for `api_executor`
 - **Priority / Target**: `Completed ✅` · `docs/MCP_API_EXECUTOR_CONTRACT.md`, `conf/mcp_api_executor_presets.json`, `tests/test_mcp_contract.py`
