@@ -165,7 +165,7 @@ python3 audit_cis.py --all
 
 ## 📦 Packaging & Release Pipeline
 
-The suite follows PyPA standards (100% PSL runtime) and publishes automatically to **PyPI** (`pypi-publish.yml`) and **Docker Hub** (`jmrenouard/cis-benchmarks-tools` via `docker-publish.yml`) upon release publication or manual `workflow_dispatch` (including `testpypi` support). See the [Publishing Guide](docs/PUBLISHING.md).
+The suite follows PyPA standards (100% PSL runtime) and publishes automatically to **PyPI** (`pypi-publish.yml`) and **Docker Hub** (`jmrenouard/cis-benchmarks-tools` via `docker-publish.yml`) upon release publication or manual `workflow_dispatch` (including `testpypi` support). See the [Publishing Guide](docs/PUBLISHING.md) and the read-only [MCP `api_executor` Contract](docs/MCP_API_EXECUTOR_CONTRACT.md).
 
 ---
 

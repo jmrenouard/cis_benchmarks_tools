@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-131 — docs(mcp): define read-only CLI JSON/SARIF contract and presets for api_executor (Issue `#739`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#739` | **Branch**: `docs/issue-739-mcp-api-executor-contract`
+- **Changes**: Added `docs/MCP_API_EXECUTOR_CONTRACT.md` (`cis.mcp.contract.v1`), declarative preset catalog `conf/mcp_api_executor_presets.json`, programmatic contract test suite `tests/test_mcp_contract.py`, and cross-references in `README.md` and `README_fr.md`.
+- **Result**: 338 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-130 — feat(remediation): add MongoDB, Cassandra, RHEL templates and wire --remediate-dry-run CLI (Issue `#737`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#737` | **Branch**: `feat/issue-737-remediation-templates-cli`
 - **Changes**: Added MongoDB (`2.1`, `4.3`, `5.4`), Cassandra (`2.1`, `2.2`), and RHEL (`1.1.1.1`, `1.3.1.2`, `5.2.1`, `5.2.2`, `5.3.1`) templates in `remediation_generator.py`, fixed unified diff line terminators and static template over-redaction, wired `--remediate-dry-run`/`--remediation-format`/`--remediation-output`/`--from-report` in `audit_cis.py` (PSL AST clean), and extended `tests/test_remediation_generator.py`.

@@ -1,0 +1,58 @@
+{
+  "schema_version": "cis.mcp.contract.v1",
+  "read_only": true,
+  "entrypoint": ["python3", "audit_cis.py"],
+  "console_script": "audit-cis",
+  "exit_codes": {"0": "success", "1": "audit_or_runtime_error", "2": "invalid_cli_arguments"},
+  "compliance_states": ["Pass", "Fail", "Error", "Manual", "Not Applicable"],
+  "credential_boundary": {"password_env_var": "CIS_DB_PASSWORD", "never_pass_in_argv": true, "stdout_sanitized_by": "SecretSanitizer"},
+  "forbidden_flags": ["-p", "--password", "--db-password", "--apply", "--allow-ephemeral-apply", "--force", "--sync-cis", "--all", "--auto-detect"],
+  "allowed_targets": [
+    "mariadb106", "mariadb1011",
+    "mysql80", "mysql-community84", "mysql-enterprise84", "mysql-community97", "mysql-enterprise97",
+    "postgresql16", "postgresql17", "postgresql18",
+    "mongodb7", "mongodb8",
+    "cassandra40", "cassandra41", "cassandra50",
+    "rhel8", "rhel9", "rhel10"
+  ],
+  "optional_connection_flags": ["--docker", "--remote", "--ssh-port", "--ssh-key", "--db-host", "--db-port", "--db-user", "--db-name", "--defaults-file", "--auth-db", "--sudo"],
+  "presets": {
+    "cis_list_targets": {
+      "read_only": true,
+      "mutating": false,
+      "description": "List all 18 canonical CIS/STIG target keys and control counts.",
+      "args": ["--list-targets"],
+      "output_kind": "text_stdout"
+    },
+    "cis_audit_json": {
+      "read_only": true,
+      "mutating": false,
+      "description": "Run a read-only CIS audit for one target and export structured JSON report.",
+      "args": ["--target", "{target}", "--format", "json", "--lang", "{lang}", "--mode", "{mode}", "--output", "{output_path}"],
+      "defaults": {"lang": "en", "mode": "local"},
+      "allowed_modes": ["local", "ssh"],
+      "allowed_langs": ["en", "fr"],
+      "output_kind": "json_file"
+    },
+    "cis_audit_sarif": {
+      "read_only": true,
+      "mutating": false,
+      "description": "Run a read-only CIS audit for one target and export SARIF v2.1.0 JSON.",
+      "args": ["--target", "{target}", "--format", "sarif", "--lang", "{lang}", "--mode", "{mode}", "--output", "{output_path}"],
+      "defaults": {"lang": "en", "mode": "local"},
+      "allowed_modes": ["local", "ssh"],
+      "allowed_langs": ["en", "fr"],
+      "output_kind": "sarif_v210_file"
+    },
+    "cis_remediate_dry_run": {
+      "read_only": true,
+      "mutating": false,
+      "description": "Generate deterministic dry-run remediation preview from a JSON audit report without executing changes.",
+      "args": ["--remediate-dry-run", "--from-report", "{report_path}", "--remediation-format", "{remediation_format}", "--remediation-output", "{output_path}"],
+      "optional_args": ["--target"],
+      "defaults": {"remediation_format": "diff"},
+      "allowed_remediation_formats": ["diff", "sql", "shell", "ansible", "json"],
+      "output_kind": "remediation_file"
+    }
+  }
+}
