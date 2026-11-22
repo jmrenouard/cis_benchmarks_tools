@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-122 — feat(sarif): add PSL SARIF v2.1.0 exporter core module and tests (Issue `#721`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#721` | **Branch**: `feat/issue-721-sarif-v210-core-exporter`
+- **Changes**: Added `sarif_exporter.py` (`IDEA-003`), wired `cis_core_engine.py`, updated `pyproject.toml`/`Dockerfile` (`release.yml` awaits `workflow` scope), added `tests/test_sarif_exporter.py`.
+- **Result**: 331 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-121 — docs: align READMEs and QA specification with Docker Hub, PyPI, and GPLv3 (Issue `#719`)
 - **Date**: `2026-11-12T22:40:00Z` | **Status**: `COMPLETED` | **Issue**: `#719` | **Branch**: `docs/issue-719-align-publishing-docs`
 - **Request**: Align documentation with Docker Hub, PyPI `workflow_dispatch`, GNU GPLv3 license, and current test metrics (`#719`).

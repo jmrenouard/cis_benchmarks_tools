@@ -121,6 +121,9 @@ def export_results(results, overall_score, categories_scores, target_name, filen
     flat = _flatten(results)
     if fmt == "json":
         c = json.dumps({"target": target_name, "overall_score": float(overall_score), "categories": categories_scores, "total_checks": len(flat), "results": results}, indent=2)
+    elif fmt == "sarif":
+        from sarif_exporter import export_sarif_report
+        return export_sarif_report(results, overall_score, categories_scores, target_name, filename=fn, execution_context=kw.get("execution_context"), temporal_metadata=kw.get("temporal_metadata"))
     elif fmt == "xml":
         root = ET.Element("testsuite", name=target_name, tests=str(len(flat)))
         for r in flat:
