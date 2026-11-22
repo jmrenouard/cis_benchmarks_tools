@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Live multi-db-docker-env before/after remediation E2E verifier (100% PSL ONLY)."""
-import argparse, json, os, subprocess, sys, tempfile
+import argparse, json, os, re, subprocess, sys, tempfile
 from post_execution_publisher import atomic_write_text
 from remediation_generator import build_remediation_plan, render_remediation
 from sarif_exporter import map_compliance_state, normalize_control_results, validate_sarif_document
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
+ROOT, _DC = os.path.dirname(os.path.abspath(__file__)), "docker-compose.yml"
 EPHEMERAL_MARKERS = ("-ephemeral", "-lab", "-test")
+_CNAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
 _PK = ("compose", "service", "container", "port", "user")
-_DC = "docker-compose.yml"
 MULTI_DB_PROFILES = {k: dict(zip(_PK, v)) for k, v in (
     ("mariadb106", (_DC, "mariadb106", "mariadb-10.6", 3306, "root")),
     ("mariadb1011", (_DC, "mariadb1011", "mariadb-10.11", 3306, "root")),
@@ -26,8 +26,7 @@ MULTI_DB_PROFILES = {k: dict(zip(_PK, v)) for k, v in (
 
 def build_audit_env(db_password=None):
     env = os.environ.copy()
-    if db_password is not None:
-        env["CIS_DB_PASSWORD"] = str(db_password)
+    if db_password is not None: env["CIS_DB_PASSWORD"] = str(db_password)
     return env
 
 
@@ -42,8 +41,7 @@ def inspect_container_labels(container, runner=subprocess.run):
 
 def is_ephemeral_lab_container(container_name, labels=None):
     lbls = labels if isinstance(labels, dict) else {}
-    if str(lbls.get("cis.ephemeral_lab", "")).strip().lower() == "true":
-        return True
+    if str(lbls.get("cis.ephemeral_lab", "")).strip().lower() == "true": return True
     low = str(container_name or "").strip().lower()
     return low.startswith("cis-e2e-") or any(m in low for m in EPHEMERAL_MARKERS)
 
@@ -63,13 +61,11 @@ def compute_compliance_delta(before_doc, after_doc):
     am, ac = _state_map(after_doc)
     sb = float(before_doc.get("overall_score") or 0.0) if isinstance(before_doc, dict) else 0.0
     sa = float(after_doc.get("overall_score") or 0.0) if isinstance(after_doc, dict) else 0.0
-    return {
-        "score_before": round(sb, 2), "score_after": round(sa, 2), "score_delta": round(sa - sb, 2),
-        "counts_before": bc, "counts_after": ac,
-        "fixed_controls": sorted(k for k, st in bm.items() if st in ("Fail", "Error") and am.get(k) == "Pass"),
-        "regressed_controls": sorted(k for k, st in bm.items() if st == "Pass" and am.get(k) in ("Fail", "Error")),
-        "error_count_before": bc["Error"], "error_count_after": ac["Error"],
-    }
+    return {"score_before": round(sb, 2), "score_after": round(sa, 2), "score_delta": round(sa - sb, 2),
+            "counts_before": bc, "counts_after": ac,
+            "fixed_controls": sorted(k for k, st in bm.items() if st in ("Fail", "Error") and am.get(k) == "Pass"),
+            "regressed_controls": sorted(k for k, st in bm.items() if st == "Pass" and am.get(k) in ("Fail", "Error")),
+            "error_count_before": bc["Error"], "error_count_after": ac["Error"]}
 
 
 def run_audit_pair(target, container, out_dir, prefix="before", db_user=None, db_port=None, db_password=None, runner=subprocess.run):
@@ -84,8 +80,7 @@ def run_audit_pair(target, container, out_dir, prefix="before", db_user=None, db
     with open(paths["json"], encoding="utf-8") as fp: jdoc = json.load(fp)
     with open(paths["sarif"], encoding="utf-8") as fp: sdoc = json.load(fp)
     ok, msg = validate_sarif_document(sdoc)
-    if not ok:
-        raise ValueError(f"Invalid SARIF ({prefix}): {msg}")
+    if not ok: raise ValueError(f"Invalid SARIF ({prefix}): {msg}")
     return jdoc, sdoc, paths["json"], paths["sarif"]
 
 
@@ -93,17 +88,15 @@ def verify_target(target, container=None, out_dir=None, db_user=None, db_port=No
                   allow_ephemeral_apply=False, container_labels=None, runner=subprocess.run):
     prof = MULTI_DB_PROFILES.get(target, {})
     cname = container or prof.get("container")
-    if not cname:
-        raise ValueError(f"Specify --container for target '{target}'.")
+    if not cname or not _CNAME_RE.fullmatch(str(cname)): raise ValueError(f"Invalid container: {cname!r}")
     if allow_ephemeral_apply:
         lbls = container_labels if container_labels is not None else inspect_container_labels(cname, runner)
-        if not is_ephemeral_lab_container(cname, lbls):
-            raise PermissionError(f"Refusing apply on non-ephemeral container '{cname}'.")
+        if not is_ephemeral_lab_container(cname, lbls): raise PermissionError(f"Non-ephemeral container: '{cname}'")
     user, port = (db_user if db_user is not None else prof.get("user")), (db_port if db_port is not None else prof.get("port"))
     work = out_dir or tempfile.mkdtemp(prefix=f"cis_e2e_{target}_")
     os.makedirs(work, exist_ok=True)
     b_json, _, b_jp, b_sp = run_audit_pair(target, cname, work, "before", user, port, db_password, runner)
-    plan = build_remediation_plan(b_json.get("results", b_json), target_name=target, dry_run=True)
+    plan = build_remediation_plan(b_json.get("results", b_json) if isinstance(b_json, dict) else b_json, target_name=target, dry_run=True)
     dp, sp = os.path.join(work, f"remediation_{target}.diff"), os.path.join(work, f"remediation_{target}.sh")
     atomic_write_text(dp, render_remediation(plan, "diff"))
     atomic_write_text(sp, render_remediation(plan, "shell"))
@@ -115,26 +108,20 @@ def verify_target(target, container=None, out_dir=None, db_user=None, db_port=No
                 runner(["docker", "exec", cname, "sh", "-lc", it["shell"]], env=env, check=True)
         applied = True
         a_json, _, a_jp, a_sp = run_audit_pair(target, cname, work, "after", user, port, db_password, runner)
-    summary = {
-        "target": target, "container": cname, "applied": applied, "remediation_items": plan["total_items"],
-        "artifacts": {"before_json": b_jp, "before_sarif": b_sp, "after_json": a_jp, "after_sarif": a_sp, "diff": dp, "shell": sp},
-        "delta": compute_compliance_delta(b_json, a_json),
-    }
+    summary = {"target": target, "container": cname, "applied": applied, "remediation_items": plan["total_items"],
+               "artifacts": dict(zip(("before_json", "before_sarif", "after_json", "after_sarif", "diff", "shell"), (b_jp, b_sp, a_jp, a_sp, dp, sp))),
+               "delta": compute_compliance_delta(b_json, a_json)}
     atomic_write_text(os.path.join(work, f"verification_{target}.json"), json.dumps(summary, indent=2, sort_keys=True) + "\n")
     return summary
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="Live multi-db-docker-env CIS verifier (PSL ONLY)")
-    p.add_argument("-t", "--target", required=True)
-    p.add_argument("-c", "--container")
-    p.add_argument("-o", "--output-dir")
-    p.add_argument("-u", "--db-user")
-    p.add_argument("-P", "--db-port", type=int)
+    p = argparse.ArgumentParser(description="Live multi-db-docker-env CIS verifier")
+    for fl, n, kw in (("-t", "target", {"required": True}), ("-c", "container", {}), ("-o", "output-dir", {}), ("-u", "db-user", {}), ("-P", "db-port", {"type": int})):
+        p.add_argument(fl, f"--{n}", **kw)
     p.add_argument("--allow-ephemeral-apply", action="store_true")
     a = p.parse_args(argv)
-    res = verify_target(a.target, a.container, a.output_dir, a.db_user, a.db_port, os.environ.get("CIS_DB_PASSWORD"), a.allow_ephemeral_apply)
-    sys.stdout.write(json.dumps(res, indent=2, sort_keys=True) + "\n")
+    sys.stdout.write(json.dumps(verify_target(a.target, a.container, a.output_dir, a.db_user, a.db_port, os.environ.get("CIS_DB_PASSWORD"), a.allow_ephemeral_apply), indent=2, sort_keys=True) + "\n")
     return 0
 
 
