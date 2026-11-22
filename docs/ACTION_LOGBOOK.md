@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-129 — feat(remediation): add PSL deterministic dry-run remediation generator (Issue `#735`)
+- **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#735` | **Branch**: `feat/issue-735-dry-run-remediation-generator`
+- **Changes**: Added `remediation_generator.py` (strict `dry_run=True`, deterministic diff/sql/shell/ansible/json outputs, MariaDB/MySQL/PostgreSQL templates, `SecretSanitizer`), registered in `pyproject.toml` and `Dockerfile`, added `tests/test_remediation_generator.py`.
+- **Result**: 335 tests passed (`1` skipped); `pre_commit_checks.py` 8/8 passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-128 — ci(sarif): add GitHub Code Scanning SARIF upload workflow and release tarball sync (Issue `#733`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#733` | **Branch**: `ci/issue-733-sarif-code-scanning-workflow`
 - **Changes**: Added `.github/workflows/sarif-code-scanning.yml` (`upload-sarif@v3`, Python 3.12, zero `secrets.*` in `if:`), added `sarif_exporter.py` to `.github/workflows/release.yml`, added workflow governance test in `tests/test_github_actions_workflows.py`.
