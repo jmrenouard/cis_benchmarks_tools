@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-142 — docs(diataxis): add reference CLI flags, targets matrix, and error codes (Issue `#761`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#761` | **Branch**: `docs/issue-761-diataxis-reference`
+- **Changes**: Added `docs/03-reference/{cli-and-scripts/cli-flags-and-exit-codes.md,configuration/targets-and-transport-matrix.md,troubleshooting-codes/error-and-alert-matrix.md}` and updated `docs/03-reference/index.md` and `docs/index.md`.
+- **Result**: `diataxis_check.py --strict --check-ste` 0 errors/warnings; `mkdocs build --strict` exit 0; `pre_commit_checks.py` 8/8; 341 tests passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-141 — docs(diataxis): add ASD-STE100 how-to guides (Issue `#759`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#759` | **Branch**: `docs/issue-759-diataxis-how-to-guides`
 - **Changes**: Added 4 ASD-STE100 Issue 9 how-to guides under `docs/02-how-to-guides/{deployment,operations,incident-response,security}/` and updated `docs/02-how-to-guides/index.md` and `docs/index.md`.
