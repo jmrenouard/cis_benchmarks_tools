@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-137 — feat(docs): add PSL multi-version MkDocs site builder (Issue `#751`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#751` | **Branch**: `feat/issue-751-build-versioned-docs`
+- **Changes**: Added `scripts/build_versioned_docs.py` (`versions.json`, Apache `.htaccess` HTTPS/302 redirects, zip-slip protection, private-file guard) and registered `build_versioned_docs.py` in `ESSENTIAL_SCRIPTS`.
+- **Result**: `pre_commit_checks.py` 8/8 passed; 341 unit tests passed (`2` skipped); PR diff < 15,000 bytes.
+
+---
+
 ### ACT-136 — feat(docs): add PSL MkDocs Material build hooks (Issue `#747`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#747` | **Branch**: `feat/issue-747-mkdocs-hooks`
 - **Changes**: Added `scripts/mkdocs_hooks.py` (100% PSL import-safe; lazy `mkdocs` import in `on_files`; GitHub alerts, GFM slugify, link rewriting, tag fallbacks, virtual specs/overviews, private file exclusions) and added `mkdocs_hooks.py` to `ESSENTIAL_SCRIPTS` in `tests/test_script_inventory_and_governance.py`.
