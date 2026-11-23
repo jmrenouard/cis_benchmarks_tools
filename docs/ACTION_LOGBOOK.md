@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-144 — test(docs): add 100% PSL Diataxis and ASD-STE100 test suite (Issue `#765`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#765` | **Branch**: `test/issue-765-diataxis-doc-tests`
+- **Changes**: Added `tests/test_diataxis_documentation.py` (100% PSL `unittest.TestCase`, 8 tests covering quadrants, relative links, genre guardrails, cross-linking mesh, ASD-STE100 Issue 9, configs, and LaTeX math syntax).
+- **Result**: `pre_commit_checks.py` 8/8 passed; 349 unit tests passed (`2` skipped); PR diff < 15,000 bytes.
+
+---
+
 ### ACT-143 — docs(diataxis): add explanation architecture, ADRs, and README portal integration (Issue `#763`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#763` | **Branch**: `docs/issue-763-diataxis-explanation`
 - **Changes**: Added `docs/04-explanation/{architecture-overview/four-tier-psl-audit-architecture.md,design-decisions/adr-001-psl-only-and-offline-svg.md,design-decisions/adr-002-diataxis-versioned-mkdocs-publishing.md}`, updated `docs/04-explanation/index.md`, `docs/index.md`, `README.md`, `README_fr.md` (`15` active tools + Docs links), and `pyproject.toml`.
