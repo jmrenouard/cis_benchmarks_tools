@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-147 — ci(docs): add MkDocs CI validation and IONOS SFTP publishing workflows (Issue `#769`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#769` | **Branch**: `ci/issue-769-docs-ci-and-publish`
+- **Changes**: Added `.github/workflows/docs-ci.yml` and `.github/workflows/docs-publish.yml` (40-char SHA-pinned actions, `contents: read`, `unittest`, IONOS SFTP + `.htaccess` + live HTTPS checks) and added `test_docs_ci_and_publish_workflows_configured_correctly` in `tests/test_github_actions_workflows.py`.
+- **Result**: `pre_commit_checks.py` 8/8 passed; 357 unit tests passed (`2` skipped); PR diff < 15,000 bytes.
+
+---
+
 ### ACT-146 — docs(publishing): document MkDocs Material multi-version IONOS publishing (§7, Issue `#770`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#770` | **Branch**: `docs/issue-770-publishing-docs-section7`
 - **Changes**: Added `§7` in `docs/PUBLISHING.md` covering `build_versioned_docs.py`, `mkdocs_hooks.py`, IONOS SFTP workflows, and the 5 required `IONOS_*` GitHub secrets.
