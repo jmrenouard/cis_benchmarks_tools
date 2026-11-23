@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-140 — docs(diataxis): add portal home, quadrant indexes, and tutorials (Issue `#757`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#757` | **Branch**: `docs/issue-757-diataxis-portal-tutorials`
+- **Changes**: Added `docs/index.md`, `docs/01-tutorials/{index.md,01-first-local-and-docker-audit.md,02-sarif-and-dry-run-remediation-lab.md}`, `docs/02-how-to-guides/index.md`, `docs/03-reference/index.md`, and `docs/04-explanation/index.md`.
+- **Result**: `diataxis_check.py` 0 errors/warnings; `mkdocs build --strict` exit 0; `pre_commit_checks.py` 8/8 passed; 341 tests passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-139 — feat(docs): add MkDocs Material config, theme assets, and doc linters (Issue `#755`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#755` | **Branch**: `feat/issue-755-mkdocs-material-config`
 - **Changes**: Added `mkdocs.yml`, `requirements-docs.txt`, `.vale.ini`, `.markdownlint.json`, `.gitignore` rules (`/site_dist/`, `/.worktrees/`), `docs/stylesheets/extra.css`, `docs/javascripts/katex.js`, `docs/assets/logo.svg`, and `docs/assets/header-banner.svg`.
