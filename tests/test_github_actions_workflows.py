@@ -167,6 +167,65 @@ class TestGitHubActionsWorkflows(unittest.TestCase):
         self.assertIn('license = "GPL-3.0-or-later"', pyproject)
         self.assertIn('org.opencontainers.image.licenses="GPL-3.0-or-later"', dockerfile)
 
+    def test_docs_ci_and_publish_workflows_configured_correctly(self) -> None:
+        """Verify docs-ci.yml and docs-publish.yml triggers, 40-char SHA pinning, least-privilege, and IONOS SFTP."""
+        import re
+
+        sha40 = re.compile(r"^[0-9a-fA-F]{40}$")
+        ci_text = (WORKFLOWS_DIR / "docs-ci.yml").read_text(encoding="utf-8")
+        pub_text = (WORKFLOWS_DIR / "docs-publish.yml").read_text(encoding="utf-8")
+
+        for wf_name, content in (("docs-ci.yml", ci_text), ("docs-publish.yml", pub_text)):
+            self.assertIn("contents: read", content, f"{wf_name} must enforce contents: read permissions")
+            self.assertIn("push:", content)
+            self.assertIn("pull_request:", content)
+            self.assertIn("main", content.split("jobs:")[0])
+            self.assertIn("workflow_dispatch:", content)
+            self.assertIn("tests/test_diataxis_documentation.py", content)
+            self.assertIn("tests/test_mkdocs_publishing.py", content)
+
+            uses_refs = re.findall(r"^\s*(?:-\s+)?uses:\s*([^\s#]+)", content, re.MULTILINE)
+            self.assertTrue(uses_refs, f"{wf_name} must declare actions via uses:")
+            for ref in uses_refs:
+                self.assertIn("@", ref, f"{wf_name} unpinned action: {ref}")
+                self.assertRegex(ref.split("@", 1)[1], sha40, f"{wf_name} requires 40-char SHA: {ref}")
+
+            lines = content.splitlines()
+            in_run, run_indent = False, 0
+            for lineno, line in enumerate(lines, 1):
+                stripped = line.lstrip()
+                indent = len(line) - len(stripped)
+                if stripped.startswith("if:"):
+                    self.assertNotIn("secrets.", stripped, f"{wf_name}:{lineno} secrets.* in if:")
+                if in_run:
+                    if stripped and indent <= run_indent:
+                        in_run = False
+                    else:
+                        self.assertNotIn("${{", line, f"{wf_name}:{lineno} ${{ in run:")
+                if re.match(r"^(?:-\s+)?run:\s*(.*)$", stripped):
+                    rest = stripped.split("run:", 1)[1].strip()
+                    if rest.startswith(("|", ">")):
+                        in_run, run_indent = True, indent
+                    else:
+                        self.assertNotIn("${{", rest, f"{wf_name}:{lineno} ${{ in run:")
+
+        self.assertIn("mkdocs build --strict", ci_text)
+        self.assertIn("release:", pub_text.split("jobs:")[0])
+        self.assertIn("types: [published]", pub_text.split("jobs:")[0])
+        self.assertIn("build_versioned_docs.py", pub_text)
+        self.assertIn("include-hidden-files: true", pub_text)
+        self.assertIn("sftp_only: true", pub_text)
+        self.assertIn("local_path: .htaccess", pub_text)
+        self.assertIn("https://cis-benchmarks.lightpath.fr", pub_text)
+        for secret in (
+            "IONOS_FTP_SERVER",
+            "IONOS_FTP_USERNAME",
+            "IONOS_FTP_PASSWORD",
+            "IONOS_FTP_PORT",
+            "IONOS_REMOTE_PATH",
+        ):
+            self.assertIn(f"secrets.{secret}", pub_text, f"Missing IONOS secret {secret} in docs-publish.yml")
+
 
 if __name__ == "__main__":
     unittest.main()
