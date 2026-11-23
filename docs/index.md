@@ -59,6 +59,10 @@ Zero-dependency security compliance audit suite (`PSL ONLY`). Live portal:
     ASD-STE100 Issue 9 operations, triage, and security procedures.
 
     - [How-To Guides Index](02-how-to-guides/index.md)
+    - [Remote SSH & Docker Audits](02-how-to-guides/deployment/run-remote-ssh-and-docker-audits.md)
+    - [SARIF & Dry-Run Remediation CI](02-how-to-guides/operations/integrate-sarif-and-remediation-ci.md)
+    - [Triage Errors & Auth Failures](02-how-to-guides/incident-response/triage-audit-errors-and-auth-failures.md)
+    - [Protect Credentials & MCP Presets](02-how-to-guides/security/protect-credentials-and-run-mcp-presets.md)
     - [Publishing](PUBLISHING.md) · [MCP Contract](MCP_API_EXECUTOR_CONTRACT.md)
 
 -   :material-table-search:{ .lg .middle } **3. Reference (`03-reference/`)**

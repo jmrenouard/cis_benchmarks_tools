@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-141 — docs(diataxis): add ASD-STE100 how-to guides (Issue `#759`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#759` | **Branch**: `docs/issue-759-diataxis-how-to-guides`
+- **Changes**: Added 4 ASD-STE100 Issue 9 how-to guides under `docs/02-how-to-guides/{deployment,operations,incident-response,security}/` and updated `docs/02-how-to-guides/index.md` and `docs/index.md`.
+- **Result**: `diataxis_check.py --strict --check-ste` 0 errors/warnings; `mkdocs build --strict` exit 0; `pre_commit_checks.py` 8/8; 341 tests passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-140 — docs(diataxis): add portal home, quadrant indexes, and tutorials (Issue `#757`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#757` | **Branch**: `docs/issue-757-diataxis-portal-tutorials`
 - **Changes**: Added `docs/index.md`, `docs/01-tutorials/{index.md,01-first-local-and-docker-audit.md,02-sarif-and-dry-run-remediation-lab.md}`, `docs/02-how-to-guides/index.md`, `docs/03-reference/index.md`, and `docs/04-explanation/index.md`.
