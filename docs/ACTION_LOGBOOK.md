@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-146 — docs(publishing): document MkDocs Material multi-version IONOS publishing (§7, Issue `#770`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#770` | **Branch**: `docs/issue-770-publishing-docs-section7`
+- **Changes**: Added `§7` in `docs/PUBLISHING.md` covering `build_versioned_docs.py`, `mkdocs_hooks.py`, IONOS SFTP workflows, and the 5 required `IONOS_*` GitHub secrets.
+- **Result**: `diataxis_check.py --strict --check-ste` 0 errors/warnings; `pre_commit_checks.py` 8/8 passed; 356 unit tests passed (`2` skipped); PR diff < 15,000 bytes.
+
+---
+
 ### ACT-145 — test(docs): add 100% PSL MkDocs publishing and E2E test suite (Issue `#767`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#767` | **Branch**: `test/issue-767-mkdocs-publishing-tests`
 - **Changes**: Added `tests/test_mkdocs_publishing.py` (100% PSL `unittest.TestCase`, 7 tests covering `mkdocs.yml`, `mkdocs_hooks.py`, `build_versioned_docs.py`, and conditional E2E multi-version build).
