@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-143 — docs(diataxis): add explanation architecture, ADRs, and README portal integration (Issue `#763`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#763` | **Branch**: `docs/issue-763-diataxis-explanation`
+- **Changes**: Added `docs/04-explanation/{architecture-overview/four-tier-psl-audit-architecture.md,design-decisions/adr-001-psl-only-and-offline-svg.md,design-decisions/adr-002-diataxis-versioned-mkdocs-publishing.md}`, updated `docs/04-explanation/index.md`, `docs/index.md`, `README.md`, `README_fr.md` (`15` active tools + Docs links), and `pyproject.toml`.
+- **Result**: `diataxis_check.py --strict --check-ste` 0 errors/warnings; E2E multi-version build (`main`+`v2.10.0`+`v2.9.1`+`v2.9.0`) exit 0; `pre_commit_checks.py` 8/8; 341 tests passed; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-142 — docs(diataxis): add reference CLI flags, targets matrix, and error codes (Issue `#761`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#761` | **Branch**: `docs/issue-761-diataxis-reference`
 - **Changes**: Added `docs/03-reference/{cli-and-scripts/cli-flags-and-exit-codes.md,configuration/targets-and-transport-matrix.md,troubleshooting-codes/error-and-alert-matrix.md}` and updated `docs/03-reference/index.md` and `docs/index.md`.

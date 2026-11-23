@@ -8,6 +8,9 @@
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
 [![Release](https://img.shields.io/badge/Release-v2.10.0-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
+[![Docs](https://img.shields.io/badge/Docs-cis--benchmarks.lightpath.fr-0ea5e9?style=flat-square&logo=materialformkdocs)](https://cis-benchmarks.lightpath.fr/)
+
+**Docs**: [Online Portal (`https://cis-benchmarks.lightpath.fr/`)](https://cis-benchmarks.lightpath.fr/) · [Diátaxis Home](docs/index.md) · [Tutorials](docs/01-tutorials/index.md) · [How-To](docs/02-how-to-guides/index.md) · [Reference](docs/03-reference/index.md) · [Explanation](docs/04-explanation/index.md) · [FR](README_fr.md)
 
 ---
 
@@ -159,7 +162,7 @@ python3 audit_cis.py --all
 7. **Offline First (Pure Inline SVG)**:
    - Complete visual reports with native inline SVG donut and category charts without requiring Internet access or external CDNs.
 8. **Script Inventory Governance (`IMP-005`)**:
-   - Strictly maintained 13 active production tools in `scripts/`; all superseded migration and generator scripts archived under `archive/scripts/`.
+   - Strictly maintained 15 active production tools in `scripts/`; all superseded migration and generator scripts archived under `archive/scripts/`.
 
 ---
 
