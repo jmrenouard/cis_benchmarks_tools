@@ -95,4 +95,27 @@ Orchestrated by `.github/workflows/docker-publish.yml`:
 - **OCI Metadata & Release Notes**: Embeds `org.opencontainers.image.*` and `com.cis-benchmarks-tools.release-notes` labels (`major/MySQLTuner-perl` & `jmrenouard/MicroLLM` conventions).
 - **Secrets**: Supports `DOCKERHUB_USERNAME` (fallback: `DOCKER_USER_LOGIN` / `DOCKER_USERNAME`) and `DOCKERHUB_TOKEN` (fallback: `DOCKER_USER_PASSWORD` / `DOCKER_PASSWORD`).
 
+---
+
+## 7. Versioned Diátaxis MkDocs Publishing (IONOS SFTP)
+
+Versioned Diátaxis documentation publishes to [`https://cis-benchmarks.lightpath.fr/`](https://cis-benchmarks.lightpath.fr/)
+via **MkDocs Material** (`mkdocs.yml`, `requirements-docs.txt`).
+
+- **Builder & Hooks**: `scripts/build_versioned_docs.py` builds `/main/` (`/dev/`), release tags (`/latest/`,
+  `v2.9.0`–`v2.10.0`), `versions.json` (`mike`), and `.htaccess` redirects with `assert_no_private_files`;
+  `scripts/mkdocs_hooks.py` mounts virtual root docs and rewrites links.
+- **Local Preview**:
+
+  ```bash
+  pip install -r requirements-docs.txt
+  python scripts/build_versioned_docs.py --output /tmp/cis-site-dist --main-ref WORKTREE
+  ```
+
+- **CI & Deploy Workflows**: `.github/workflows/docs-ci.yml` validates Diátaxis, STE, and `mkdocs build --strict`;
+  `.github/workflows/docs-publish.yml` builds and uploads via SFTP (`sftp_only: true`, explicit `.htaccess` upload)
+  on `main`, published releases, or `workflow_dispatch`.
+- **Required IONOS Secrets**: `IONOS_FTP_SERVER`, `IONOS_FTP_USERNAME`, `IONOS_FTP_PASSWORD`, `IONOS_FTP_PORT` (`22`),
+  and `IONOS_REMOTE_PATH` (`cis-benchmarks.lightpath.fr`).
+
 
