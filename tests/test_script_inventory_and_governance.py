@@ -10,6 +10,7 @@ ESSENTIAL_SCRIPTS = {
     "bundle_audit_cis.py", "pre_commit_checks.py", "pre-commit.sh",
     "download_cis_benchmarks.py", "verify_benchmarks_and_reports.py",
     "clean_ssh_warnings_from_reports.py", "run_e2e_tests.py", "analyze_e2e_reports.py",
+    "mkdocs_hooks.py",
     "start_mariadb.sh", "start_mysql.sh", "start_postgresql.sh",
     "start_mongodb.sh", "start_cassandra.sh"
 }

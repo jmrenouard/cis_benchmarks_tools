@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-136 — feat(docs): add PSL MkDocs Material build hooks (Issue `#747`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#747` | **Branch**: `feat/issue-747-mkdocs-hooks`
+- **Changes**: Added `scripts/mkdocs_hooks.py` (100% PSL import-safe; lazy `mkdocs` import in `on_files`; GitHub alerts, GFM slugify, link rewriting, tag fallbacks, virtual specs/overviews, private file exclusions) and added `mkdocs_hooks.py` to `ESSENTIAL_SCRIPTS` in `tests/test_script_inventory_and_governance.py`.
+- **Result**: `pre_commit_checks.py` 8/8 passed; 341 unit tests passed (`2` skipped); PR diff < 15,000 bytes.
+
+---
+
 ### ACT-135 — fix(docs): repair broken relative links in ACTION_LOGBOOK.md (Issue `#748`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#748` | **Branch**: `fix/issue-748-action-logbook-links`
 - **Changes**: Fixed 3 broken relative links in `docs/ACTION_LOGBOOK.md` (lines 489 `../.agents/AGENTS.md`, 490 `../reports/mariadb_manual_controls_justification.md`, 1199 `../archive/scripts/standardize_generate_html_report.py`) and logged `RCA-041` in `docs/RCA_REGISTER.md`.
