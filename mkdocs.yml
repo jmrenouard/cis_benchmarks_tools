@@ -1,0 +1,155 @@
+site_name: CIS Benchmarks Tools Suite
+site_description: 100% PSL CIS Benchmarks and DISA STIG security audit engine
+site_url: https://cis-benchmarks.lightpath.fr/
+repo_name: jmrenouard/cis_benchmarks_tools
+repo_url: https://github.com/jmrenouard/cis_benchmarks_tools
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2026 Jean-Marie Renouard &middot; LightPath
+
+docs_dir: docs
+exclude_docs: |
+  *.kdbx
+  *.keyx
+  *.pid
+  *.log
+  *.pdf
+  .env
+  .env.*
+  id_rsa*
+
+hooks:
+  - scripts/mkdocs_hooks.py
+
+plugins:
+  - search
+
+theme:
+  name: material
+  language: en
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.tracking
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Light mode
+
+extra:
+  version:
+    provider: mike
+    default: latest
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jmrenouard/cis_benchmarks_tools
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/jmrenouard/cis-benchmarks-tools
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/cis-benchmarks-tools/
+
+extra_css:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/katex.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+nav:
+  - Home: index.md
+  - Tutorials:
+      - 01-tutorials/index.md
+      - 01-tutorials/01-first-local-and-docker-audit.md
+      - 01-tutorials/02-sarif-and-dry-run-remediation-lab.md
+  - How-To Guides:
+      - 02-how-to-guides/index.md
+      - Deployment:
+          - 02-how-to-guides/deployment/run-remote-ssh-and-docker-audits.md
+      - Operations:
+          - 02-how-to-guides/operations/integrate-sarif-and-remediation-ci.md
+      - Incident Response:
+          - 02-how-to-guides/incident-response/triage-audit-errors-and-auth-failures.md
+      - Security:
+          - 02-how-to-guides/security/protect-credentials-and-run-mcp-presets.md
+  - Reference:
+      - 03-reference/index.md
+      - CLI & Scripts:
+          - 03-reference/cli-and-scripts/cli-flags-and-exit-codes.md
+      - Configuration:
+          - 03-reference/configuration/targets-and-transport-matrix.md
+      - Troubleshooting Codes:
+          - 03-reference/troubleshooting-codes/error-and-alert-matrix.md
+      - Specs & Contracts:
+          - MCP_API_EXECUTOR_CONTRACT.md
+          - specs/benchmark-targets.md
+          - specs/execution-contexts.md
+          - specs/reporting-and-metrics.md
+          - specs/testing-and-quality-assurance.md
+  - Explanation:
+      - 04-explanation/index.md
+      - Architecture Overview:
+          - 04-explanation/architecture-overview/four-tier-psl-audit-architecture.md
+      - Design Decisions:
+          - 04-explanation/design-decisions/adr-001-psl-only-and-offline-svg.md
+          - 04-explanation/design-decisions/adr-002-diataxis-versioned-mkdocs-publishing.md
+      - Overviews & Specs:
+          - Overview (EN): overview-en.md
+          - Aperçu (FR): overview-fr.md
+          - specs/architecture.md
+          - specs/project-governance.md
+  - Releases & Governance:
+      - Roadmap: ROADMAP.md
+      - Release Notes v2.10.0: RELEASE_NOTES_v2.10.0.md
+      - Publishing: PUBLISHING.md
+      - Action Logbook: ACTION_LOGBOOK.md
+      - RCA Register: RCA_REGISTER.md

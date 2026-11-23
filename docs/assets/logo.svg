@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none" role="img" aria-label="CIS Benchmarks Tools Logo">
+  <defs>
+    <linearGradient id="g0" x1="4" y1="4" x2="116" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#131822"/><stop offset="100%" stop-color="#070d18"/>
+    </linearGradient>
+    <linearGradient id="g1" x1="36" y1="26" x2="84" y2="94" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fde047"/><stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="112" height="112" rx="26" fill="url(#g0)" stroke="#38bdf8" stroke-opacity=".35" stroke-width="1.5"/>
+  <circle cx="60" cy="60" r="44" stroke="#10b981" stroke-width="3" stroke-dasharray="195 45" stroke-linecap="round"/>
+  <path d="M60 27L83 35V57C83 73 72 85 60 91C48 85 37 73 37 57V35Z" fill="url(#g1)"/>
+  <path d="M60 33L77 39V56C77 69 68 79 60 84C52 79 43 69 43 56V39Z" fill="#0b111c"/>
+  <path d="M51 59L57.5 65.5L70 51" stroke="#34d399" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

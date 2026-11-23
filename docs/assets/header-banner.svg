@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 220" width="1200" height="220" fill="none" role="img" aria-label="CIS Benchmarks Tools Hero Banner">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="220" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#070d18"/><stop offset="55%" stop-color="#0d1829"/><stop offset="100%" stop-color="#071a18"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="180" y1="50" x2="680" y2="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="sh" x1="36" y1="24" x2="78" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fde047"/><stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="1196" height="216" rx="18" fill="url(#bg)" stroke="#38bdf8" stroke-opacity=".3" stroke-width="1.5"/>
+  <g transform="translate(42,26)">
+    <rect width="108" height="108" rx="24" fill="#0d131f" stroke="#38bdf8" stroke-opacity=".35"/>
+    <circle cx="54" cy="54" r="40" stroke="#10b981" stroke-width="3" stroke-dasharray="180 40" stroke-linecap="round"/>
+    <path d="M54 22L75 30V51C75 66 65 77 54 83C43 77 33 66 33 51V30Z" fill="url(#sh)"/>
+    <path d="M54 28L69 34V50C69 62 61 71 54 76C47 71 39 62 39 50V34Z" fill="#09101a"/>
+    <path d="M45 53L51.5 59.5L64 45" stroke="#34d399" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g font-family="system-ui,Segoe UI,sans-serif">
+    <text x="178" y="48" fill="#34d399" font-size="12" font-weight="700" letter-spacing="1">100% PYTHON STDLIB · ZERO PIP DEPS · 18 TARGETS · 887 CONTROLS</text>
+    <text x="178" y="98" fill="#f8fafc" font-size="42" font-weight="800">CIS <tspan fill="url(#ac)">Benchmarks Tools</tspan></text>
+    <text x="178" y="128" fill="#cbd5e1" font-size="14.5">4 Transport Tiers · Env-Only Secret Isolation · 5-State Taxonomy · SARIF &amp; Offline SVG</text>
+    <text x="44" y="182" fill="#7dd3fc" font-size="13.5" font-weight="700">01 Local / SSH / Docker · 02 Env-Only Secrets · 03 5-State Scoring · 04 SVG, SARIF &amp; Dry-Run</text>
+  </g>
+</svg>
