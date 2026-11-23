@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-145 — test(docs): add 100% PSL MkDocs publishing and E2E test suite (Issue `#767`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#767` | **Branch**: `test/issue-767-mkdocs-publishing-tests`
+- **Changes**: Added `tests/test_mkdocs_publishing.py` (100% PSL `unittest.TestCase`, 7 tests covering `mkdocs.yml`, `mkdocs_hooks.py`, `build_versioned_docs.py`, and conditional E2E multi-version build).
+- **Result**: `pre_commit_checks.py` 8/8 passed; 356 unit tests passed (`2` skipped); PR diff < 15,000 bytes.
+
+---
+
 ### ACT-144 — test(docs): add 100% PSL Diataxis and ASD-STE100 test suite (Issue `#765`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#765` | **Branch**: `test/issue-765-diataxis-doc-tests`
 - **Changes**: Added `tests/test_diataxis_documentation.py` (100% PSL `unittest.TestCase`, 8 tests covering quadrants, relative links, genre guardrails, cross-linking mesh, ASD-STE100 Issue 9, configs, and LaTeX math syntax).
