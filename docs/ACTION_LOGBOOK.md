@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-135 — fix(docs): repair broken relative links in ACTION_LOGBOOK.md (Issue `#748`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#748` | **Branch**: `fix/issue-748-action-logbook-links`
+- **Changes**: Fixed 3 broken relative links in `docs/ACTION_LOGBOOK.md` (lines 489 `../.agents/AGENTS.md`, 490 `../reports/mariadb_manual_controls_justification.md`, 1199 `../archive/scripts/standardize_generate_html_report.py`) and logged `RCA-041` in `docs/RCA_REGISTER.md`.
+- **Result**: `pre_commit_checks.py` 8/8 passed; 341 unit tests passed (`2` skipped); 0 broken links in `docs/*.md`; PR diff < 15,000 bytes.
+
+---
+
 ### ACT-134 — chore(packaging): register live_e2e_verifier in PyPI, Docker, and release tarball (Issue `#745`)
 - **Date**: `2026-11-22` | **Status**: `COMPLETED` | **Issue**: `#745` | **Branch**: `chore/issue-745-live-e2e-verifier-packaging`
 - **Changes**: Registered `live_e2e_verifier` in `pyproject.toml`, `Dockerfile`, and `.github/workflows/release.yml` and added packaging assertions in `tests/test_live_multi_db_docker_e2e.py`.
@@ -486,8 +493,8 @@ _None._
 - **Request**: Milestone 2 Iteration 2 (Part 1/4): Correct Phase 30 PR attributions in `ROADMAP.md` (Findings 1–14 across M1–M5, CI matrix, Specifications M1, and Documentation M2), eliminate broken `file:///` URLs in `ROADMAP.md` and `POTENTIAL_ISSUES.md`, and record ACT-083 in `docs/ACTION_LOGBOOK.md`.
 - **Changes**:
   - Corrected Phase 30 PR attributions and ranges in `ROADMAP.md` across Findings 1–14 (PRs #476–#621), CI matrix (#622), Specifications M1 (#623–#626), and Documentation M2 (#628–#634).
-  - Replaced broken `file:///.agents/AGENTS.md` in `ROADMAP.md` with relative link `[.agents/AGENTS.md](.agents/AGENTS.md)`.
-  - Replaced broken `file:///home/jmren/...` in `POTENTIAL_ISSUES.md` with relative link `[mariadb_manual_controls_justification.md](reports/mariadb_manual_controls_justification.md)`.
+  - Replaced broken `file:///.agents/AGENTS.md` in `ROADMAP.md` with relative link `[.agents/AGENTS.md](../.agents/AGENTS.md)`.
+  - Replaced broken `file:///home/jmren/...` in `POTENTIAL_ISSUES.md` with relative link `[mariadb_manual_controls_justification.md](../reports/mariadb_manual_controls_justification.md)`.
   - Updated `docs/ACTION_LOGBOOK.md`.
 - **Result**: `pre_commit_checks.py` 8/8 checks passed, all 295 unit tests passed (100%), PR diff strictly < 15,000 characters.
 
@@ -1196,7 +1203,7 @@ _None._
 - **Status**: `COMPLETED`
 - **Issue / Branch**: Issue `#460` (`fix/issue-460-ci-lint-and-pypi-preflight`)
 - **Request**: Resolve CI failures by fixing Ruff undefined variable lint errors (`F821`), update benchmark inventory scanner to support git-tracked Markdown files when PDFs are gitignored, and implement resilient multi-mode PyPI publishing preflight check.
-- **Changes**: Updated 10 audit engines (`audit_cis_mysql_*.py`, `audit_cis_postgresql_*.py`, `audit_cis_rhel_*.py`), [`scripts/standardize_generate_html_report.py`](../scripts/standardize_generate_html_report.py), [`scripts/verify_benchmarks_and_reports.py`](../scripts/verify_benchmarks_and_reports.py), [`.github/workflows/pypi-publish.yml`](../.github/workflows/pypi-publish.yml), and [`tests/test_github_actions_workflows.py`](../tests/test_github_actions_workflows.py).
+- **Changes**: Updated 10 audit engines (`audit_cis_mysql_*.py`, `audit_cis_postgresql_*.py`, `audit_cis_rhel_*.py`), [`scripts/standardize_generate_html_report.py`](../archive/scripts/standardize_generate_html_report.py), [`scripts/verify_benchmarks_and_reports.py`](../scripts/verify_benchmarks_and_reports.py), [`.github/workflows/pypi-publish.yml`](../.github/workflows/pypi-publish.yml), and [`tests/test_github_actions_workflows.py`](../tests/test_github_actions_workflows.py).
 - **Result**: `ruff check`: 0 errors; `pre_commit_checks.py`: **8 / 8 checks and 199 / 199 tests passed (100%)**; PR diff `< 15,000` chars.
 
 ---
