@@ -4,6 +4,9 @@ Normative specifications for **CIS Benchmarks Tools Suite** `v2.10.0`.
 
 | Document | Scope |
 | :--- | :--- |
+| [CLI Flags & Exit Codes](cli-and-scripts/cli-flags-and-exit-codes.md) | Unified flags, companion entrypoints, env vars, exit codes |
+| [Targets & Transport Matrix](configuration/targets-and-transport-matrix.md) | 18 targets (887 controls), 4 transports, 5 states, scoring math |
+| [Error & Alert Matrix](troubleshooting-codes/error-and-alert-matrix.md) | `CommandFailureClassifier` classes, exit codes, runbook links |
 | [MCP Contract](../MCP_API_EXECUTOR_CONTRACT.md) | Read-only presets, forbidden flags, SARIF schema |
 | [Targets Spec](../../documentation/specifications/benchmark-targets.md) | 18 targets, 887 controls, rule paths |
 | [Transports Spec](../../documentation/specifications/execution-contexts.md) | 4 transports and credential boundaries |

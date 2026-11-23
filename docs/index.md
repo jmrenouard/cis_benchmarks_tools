@@ -72,6 +72,9 @@ Zero-dependency security compliance audit suite (`PSL ONLY`). Live portal:
     CLI flags, 18 targets, 5 states, and failure classifiers.
 
     - [Reference Index](03-reference/index.md)
+    - [CLI Flags & Exit Codes](03-reference/cli-and-scripts/cli-flags-and-exit-codes.md)
+    - [Targets & Transport Matrix](03-reference/configuration/targets-and-transport-matrix.md)
+    - [Error & Alert Matrix](03-reference/troubleshooting-codes/error-and-alert-matrix.md)
     - [Targets Spec](../documentation/specifications/benchmark-targets.md) · [Metrics Spec](../documentation/specifications/reporting-and-metrics.md)
 
 -   :material-lightbulb-outline:{ .lg .middle } **4. Explanation (`04-explanation/`)**
