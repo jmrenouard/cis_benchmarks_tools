@@ -15,6 +15,13 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-138 — docs(governance): update IMP-005 to 15 essential scripts and add APP-005 (Issue `#753`)
+- **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#753` | **Branch**: `docs/issue-753-rca-imp005-app005`
+- **Changes**: Updated `IMP-005` in `docs/RCA_REGISTER.md` from 13 to 15 active essential scripts (`mkdocs_hooks.py`, `build_versioned_docs.py`) and documented `APP-005` historical tag overlay and `.htaccess` version routing.
+- **Result**: `pre_commit_checks.py` 8/8 passed; 341 unit tests passed (`2` skipped); PR diff < 15,000 bytes.
+
+---
+
 ### ACT-137 — feat(docs): add PSL multi-version MkDocs site builder (Issue `#751`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#751` | **Branch**: `feat/issue-751-build-versioned-docs`
 - **Changes**: Added `scripts/build_versioned_docs.py` (`versions.json`, Apache `.htaccess` HTTPS/302 redirects, zip-slip protection, private-file guard) and registered `build_versioned_docs.py` in `ESSENTIAL_SCRIPTS`.
