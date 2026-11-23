@@ -8,6 +8,9 @@
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![PSL Compliance](https://img.shields.io/badge/Dependencies-Zero%20External%20(PSL%20ONLY)-brightgreen.svg)](https://docs.python.org/3/library/)
 [![Release](https://img.shields.io/badge/Release-v2.10.0-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
+[![Docs](https://img.shields.io/badge/Docs-cis--benchmarks.lightpath.fr-0ea5e9?style=flat-square&logo=materialformkdocs)](https://cis-benchmarks.lightpath.fr/)
+
+**Documentation** : [Portail (`https://cis-benchmarks.lightpath.fr/`)](https://cis-benchmarks.lightpath.fr/) · [Accueil Diátaxis](docs/index.md) · [Tutoriels](docs/01-tutorials/index.md) · [Guides](docs/02-how-to-guides/index.md) · [Référence](docs/03-reference/index.md) · [Explications](docs/04-explanation/index.md) · [EN](README.md)
 
 ---
 
@@ -135,7 +138,7 @@ python3 audit_cis.py --all
 5. **Découplage des Règles (`rules/*.json`)** : Contrôles, pré-conditions, regex et remédiations externalisés en fichiers JSON autonomes.
 6. **Préservation de la Télémétrie** : Sorties d'erreur `stderr` conservées sans `2>/dev/null`.
 7. **Indépendance Réseau (Offline First)** : Rapports HTML autonomes avec graphiques SVG natifs (donut et barres) sans CDN ni JavaScript externe.
-8. **Gouvernance de l'Inventaire d'Outils (`IMP-005`)** : Maintien strict de 13 outils actifs dans `scripts/` ; archivage des scripts historiques dans `archive/scripts/`.
+8. **Gouvernance de l'Inventaire d'Outils (`IMP-005`)** : Maintien strict de 15 outils actifs dans `scripts/` ; archivage des scripts historiques dans `archive/scripts/`.
 
 ---
 

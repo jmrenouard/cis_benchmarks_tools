@@ -37,7 +37,7 @@ audit_cis = "audit_cis:main"
 
 [project.urls]
 Homepage = "https://github.com/jmrenouard/cis_benchmarks_tools"
-Documentation = "https://github.com/jmrenouard/cis_benchmarks_tools/blob/main/README.md"
+Documentation = "https://cis-benchmarks.lightpath.fr/"
 Repository = "https://github.com/jmrenouard/cis_benchmarks_tools"
 Issues = "https://github.com/jmrenouard/cis_benchmarks_tools/issues"
 Changelog = "https://github.com/jmrenouard/cis_benchmarks_tools/blob/main/ROADMAP.md"

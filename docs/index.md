@@ -84,6 +84,9 @@ Zero-dependency security compliance audit suite (`PSL ONLY`). Live portal:
     PSL rationale, 4-tier transport model, and ADRs.
 
     - [Explanation Index](04-explanation/index.md)
+    - [Four-Tier PSL Architecture](04-explanation/architecture-overview/four-tier-psl-audit-architecture.md)
+    - [ADR-001: PSL-Only & Offline SVG](04-explanation/design-decisions/adr-001-psl-only-and-offline-svg.md)
+    - [ADR-002: Versioned MkDocs Portal](04-explanation/design-decisions/adr-002-diataxis-versioned-mkdocs-publishing.md)
     - [Architecture Spec](../documentation/specifications/architecture.md) · [Transports Spec](../documentation/specifications/execution-contexts.md)
 
 -   :material-translate:{ .lg .middle } **Overviews & Specs**
