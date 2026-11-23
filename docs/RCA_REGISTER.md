@@ -11,6 +11,17 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-041 — Broken Relative Links in `docs/ACTION_LOGBOOK.md` and Historical Tag Link Resolution (Issue `#748`)
+- **Date / Linked Action**: `2026-11-23` (`ACT-135` / Issue `#748`)
+- **Observed Symptom**: Three Markdown links in `docs/ACTION_LOGBOOK.md` (lines 489, 490, 1199) failed disk resolution (`../` missing for root targets and stale `../scripts/standardize_generate_html_report.py` after `IMP-005`), and historical tags (`v2.9.0`..`v2.10.0`) lacked Diataxis quadrant directories.
+- **Root Cause Analysis (5 Whys)**:
+  1. Log entries copied root-relative paths into `docs/` without adjusting relative depth (`../`), and `IMP-005` moved `standardize_generate_html_report.py` to `archive/scripts/` without rewriting historical links.
+  2. Pre-Diataxis release tags lack `docs/0*-*/` directories when `docs/index.md` is overlaid during multi-version builds.
+- **Applied Change / Fix**: Updated the 3 links in `docs/ACTION_LOGBOOK.md` (`../.agents/AGENTS.md`, `../reports/mariadb_manual_controls_justification.md`, `../archive/scripts/standardize_generate_html_report.py`) ahead of `scripts/mkdocs_hooks.py` (`#747`) historical fallbacks.
+- **Result & Non-Regression Test**: Zero broken relative links in `docs/ACTION_LOGBOOK.md`; `pre_commit_checks.py` and 341 unit tests pass.
+
+---
+
 ### RCA-040 — GitHub Actions `secrets.*` Parse Failure in `pypi-publish.yml`, Missing `cis_core_engine.py` in Release Tarball, and License Drift (Issue `#717`)
 - **Date / Linked Action**: `2026-11-12` (`ACT-120` / Issue `#717`)
 - **Observed Symptom**: `.github/workflows/pypi-publish.yml` failed immediately on every push/PR with `jobs: []` (0 jobs parsed) after PR #715; `v2.10.0` GitHub release tarball omitted `cis_core_engine.py` (breaking standalone execution of all 18 engines); `pyproject.toml`, `Dockerfile`, `README.md`, and `README_fr.md` claimed `MIT` while `LICENSE` is GNU GPLv3.
