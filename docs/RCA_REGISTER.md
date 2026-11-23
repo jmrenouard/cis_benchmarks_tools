@@ -524,13 +524,13 @@
 - **Observed Finding / Debt**: Finding 12 of the Ponytail Audit identified 65 historical one-off migration and hotfix scripts (~289 KB) accumulated in `scripts/`.
 - **Why It Is a Dead-End**:
   1. *CI Lint Bloat*: Compiling 65 dead files during pre-commit checks adds unnecessary overhead.
-  2. *Maintenance Confusion*: Unclear distinction between 13 active production tools and historical artifacts.
+  2. *Maintenance Confusion*: Unclear distinction between 15 active production tools and historical artifacts.
   3. *Bitrot Hazard*: Outdated schemas in one-off scripts risk corrupting current rules if accidentally re-run.
   4. *Diff Limit Hazard*: Pure deletion (`git rm`) produces ~305,000 diff chars; single files like `build_full_roadmap_phases.py` (20,805 bytes) exceed the 15,000-char PR diff limit (`IMP-004`).
 - **Adopted Decision & Archiving Standard**:
   1. **Decommissioning via Archiving**: Relocated all 65 obsolete scripts to `archive/scripts/` via `git mv`, leveraging Git rename detection to keep PR diffs under 15,000 chars.
-  2. **Preservation of 13 Essential Tools**: Whitelisted active tooling in `scripts/`: `bundle_audit_cis.py`, `pre_commit_checks.py`, `pre-commit.sh`, `download_cis_benchmarks.py`, `verify_benchmarks_and_reports.py`, `clean_ssh_warnings_from_reports.py`, `run_e2e_tests.py`, `analyze_e2e_reports.py`, and the 5 container entrypoints `start_*.sh`.
-  3. **Automated Inventory Governance Test**: Enforced in `tests/test_script_inventory_and_governance.py` that only the 13 essential tools exist in `scripts/` and compile cleanly.
+  2. **Preservation of 15 Essential Tools**: Whitelisted active tooling in `scripts/`: `bundle_audit_cis.py`, `pre_commit_checks.py`, `pre-commit.sh`, `download_cis_benchmarks.py`, `verify_benchmarks_and_reports.py`, `clean_ssh_warnings_from_reports.py`, `run_e2e_tests.py`, `analyze_e2e_reports.py`, `mkdocs_hooks.py`, `build_versioned_docs.py`, and the 5 container entrypoints `start_*.sh`.
+  3. **Automated Inventory Governance Test**: Enforced in `tests/test_script_inventory_and_governance.py` that only the 15 essential tools exist in `scripts/` and compile cleanly.
 
 ### IMP-006 — OpenSSH `ControlMaster` Connection Multiplexing for Remote Audits (Finding 14)
 - **Observed Finding / Proposed Optimization**: Finding 14 of the Ponytail Audit highlighted the connection overhead of establishing separate SSH connections for each of the 70+ (or up to 180+) individual CIS control checks per audit target, proposing OpenSSH connection multiplexing (`ControlMaster auto`, `ControlPath /tmp/ssh_mux_%h_%p_%r`, `ControlPersist 10m`) to reuse a single persistent TCP connection.
@@ -572,6 +572,11 @@
 - **Target Files**: All 15 database audit engines (`audit_cis_mariadb_106.py`, `audit_cis_mariadb_1011.py`, `audit_cis_mysql_80.py`, `audit_cis_mysql_community_84.py`, `audit_cis_mysql_community_97.py`, `audit_cis_mysql_enterprise_84.py`, `audit_cis_mysql_enterprise_97.py`, `audit_cis_postgresql_16.py`, `audit_cis_postgresql_17.py`, `audit_cis_postgresql_18.py`, `audit_cis_mongodb_7.py`, `audit_cis_mongodb_8.py`, `audit_cis_cassandra_40.py`, `audit_cis_cassandra_41.py`, `audit_cis_cassandra_50.py`).
 - **Nature & Justification**: All 15 database engines dynamically discover categories from `results` (supporting dict/list, arbitrary order, and filtered subsets) without hardcoded rule dependencies. In M3 Iter2, MariaDB 10.6/10.11 engines were hardened with defensive key access (`check.get()`), non-dict item guards, untyped fallback detection (`check.get("scored") is True` or automated status), and case-insensitive status evaluation.
 - **Removal Condition**: Permanent architectural standard across all audit engines and report exporters.
+
+### APP-005 — Historical Tag Asset Overlay and Apache `.htaccess` Version Routing
+- **Target Files**: `scripts/build_versioned_docs.py` & `scripts/mkdocs_hooks.py`
+- **Nature & Justification**: Pre-Diataxis tags (`v2.9.0`..`v2.10.0`) overlay current `mkdocs.yml`, hooks, CSS/JS, and fallback assets while `QUADRANT_HISTORICAL_FALLBACKS` remaps missing quadrant paths and `.htaccess` serves `versions.json` (`mike` UI) on IONOS Apache.
+- **Removal Condition**: Retire historical tag fallbacks once active release tags include native Diataxis `docs/0*-*/` trees.
 
 ---
 
