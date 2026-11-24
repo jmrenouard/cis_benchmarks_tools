@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-151 — docs(fr): add French Diátaxis portal, quadrant hubs, and FR index hooks (Issue `#779`)
+- **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#779` | **Branch**: `docs/issue-779-fr-diataxis-tutorials-hubs`
+- **Request**: Author `docs/fr/` landing portal, all four French Diátaxis quadrant hubs, `mkdocs_hooks.py` `docs/fr/index.md` path support, and `mkdocs.fr.yml` anchored exclusions.
+- **Changes**: Updated `scripts/mkdocs_hooks.py`, `mkdocs.fr.yml`, `tests/test_mkdocs_publishing.py`, `README_fr.md`, and `tests/test_diataxis_documentation.py`; added `docs/fr/index.md` and the four French quadrant hubs (`01-tutoriels`, `02-guides-pratiques`, `03-reference`, `04-explications`).
+- **Result**: `diataxis_check_fr.py docs/fr --strict --check-stf` `0` errors / `0` warnings; `diataxis_check.py docs --strict --check-ste --lang en` `0` errors; `audit_helpers.py docs` PASS; EN+FR `mkdocs build --strict` exit `0`; Playwright `/` and `/fr/` `0` failures; `pre_commit_checks.py` 8/8 (`358` tests); PR diff `< 15,000` bytes.
+
+---
+
 ### ACT-150 — docs(i18n): add French `mkdocs.fr.yml` and bilingual `<ver>/fr/` versioned builds (Issue `#777`)
 - **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#777` | **Branch**: `docs/issue-777-mkdocs-fr-versioned`
 - **Request**: Create isolated French `mkdocs.fr.yml`, build `<ver>/fr/` alongside `<ver>/` in `scripts/build_versioned_docs.py`, and verify bilingual outputs with tests and Playwright.

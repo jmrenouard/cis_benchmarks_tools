@@ -172,6 +172,19 @@ class TestMkDocsPublishing(unittest.TestCase):
             included_docs=("index.md", "overview-fr.md"), lang="fr")
         self.assertEqual(
             fr_rw, f"[EN]({REPO}/blob/main/README.md) [Idx](index.md) [Pub]({REPO}/blob/main/docs/PUBLISHING.md)")
+        (dd / "fr").mkdir()
+        (dd / "fr/index.md").write_text("# FR\n", encoding="utf-8")
+        (dd / "fr/01-tutoriels").mkdir()
+        (dd / "fr/01-tutoriels/01-demo.md").write_text("# D\n", encoding="utf-8")
+        self.assertEqual(h.rewrite_relative_links(
+            "[T](01-tutoriels/01-demo.md) [O](../../README_fr.md)", "index.md", ref="main", docs_dir=dd,
+            available_root_docs=("overview-fr.md",),
+            included_docs=("index.md", "overview-fr.md", "fr/01-tutoriels/01-demo.md"), lang="fr",
+        ), "[T](fr/01-tutoriels/01-demo.md) [O](overview-fr.md)")
+        self.assertEqual(h.rewrite_relative_links(
+            "[H](../index.md)", "fr/01-tutoriels/01-demo.md", ref="main", docs_dir=dd,
+            included_docs=("index.md", "fr/01-tutoriels/01-demo.md"), lang="fr",
+        ), "[H](../../index.md)")
 
     def test_builder_semver_manifest_htaccess_redirect_zip_and_privacy(self) -> None:
         b = _load("build_versioned_docs", BUILD)
