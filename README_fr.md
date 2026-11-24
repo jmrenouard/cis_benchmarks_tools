@@ -10,7 +10,7 @@
 [![Release](https://img.shields.io/badge/Release-v2.10.0-success.svg)](https://github.com/jmrenouard/cis_benchmarks_tools/releases)
 [![Docs](https://img.shields.io/badge/Docs-cis--benchmarks.lightpath.fr-0ea5e9?style=flat-square&logo=materialformkdocs)](https://cis-benchmarks.lightpath.fr/)
 
-**Documentation** : [Portail (`https://cis-benchmarks.lightpath.fr/`)](https://cis-benchmarks.lightpath.fr/) · [Accueil Diátaxis](docs/index.md) · [Tutoriels](docs/01-tutorials/index.md) · [Guides](docs/02-how-to-guides/index.md) · [Référence](docs/03-reference/index.md) · [Explications](docs/04-explanation/index.md) · [EN](README.md)
+**Documentation** : [Portail FR (`https://cis-benchmarks.lightpath.fr/fr/`)](https://cis-benchmarks.lightpath.fr/fr/) · [Accueil Diátaxis](docs/fr/index.md) · [Tutoriels](docs/fr/01-tutoriels/index.md) · [Guides](docs/fr/02-guides-pratiques/index.md) · [Référence](docs/fr/03-reference/index.md) · [Explications](docs/fr/04-explications/index.md) · [EN](README.md)
 
 ---
 

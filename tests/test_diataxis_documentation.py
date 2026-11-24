@@ -207,9 +207,13 @@ class TestDiataxisDocumentation(unittest.TestCase):
         portal = (DOCS / "index.md").read_text("utf-8")
         self.assertTrue(all(t in portal for t in (
             *[f"{q}/index.md" for q in QUADS], "ACTION_LOGBOOK.md", "RCA_REGISTER.md", PORTAL)))
-        for name in ("README.md", "README_fr.md"):
-            text = (ROOT / name).read_text("utf-8")
-            self.assertTrue("docs/index.md" in text and PORTAL in text and all(f"docs/{q}/index.md" in text for q in QUADS))
+        en_txt = (ROOT / "README.md").read_text("utf-8")
+        en_ok = "docs/index.md" in en_txt and PORTAL in en_txt
+        self.assertTrue(en_ok and all(f"docs/{q}/index.md" in en_txt for q in QUADS))
+        fr_txt = (ROOT / "README_fr.md").read_text("utf-8")
+        fr_quads = ("01-tutoriels", "02-guides-pratiques", "03-reference", "04-explications")
+        self.assertTrue("docs/fr/index.md" in fr_txt and f"{PORTAL}/fr/" in fr_txt
+                        and all(f"docs/fr/{q}/index.md" in fr_txt for q in fr_quads))
 
     def test_ste_structural_checker_catches_violations_and_passes_valid_prose(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

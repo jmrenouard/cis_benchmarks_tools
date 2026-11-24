@@ -21,10 +21,10 @@ exclude_docs: |
   en/
   overview-en.md
   index_en.md
-  01-tutorials/
-  02-how-to-guides/
-  03-reference/
-  04-explanation/
+  /01-tutorials/
+  /02-how-to-guides/
+  /03-reference/
+  /04-explanation/
   ACTION_LOGBOOK.md
   MCP_API_EXECUTOR_CONTRACT.md
   PUBLISHING.md
