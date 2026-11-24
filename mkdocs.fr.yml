@@ -1,0 +1,135 @@
+site_name: CIS Benchmarks Tools Suite
+site_description: Moteur d'audit de sécurité CIS Benchmarks et DISA STIG 100 % Python Standard Library
+site_url: https://cis-benchmarks.lightpath.fr/fr/
+repo_name: jmrenouard/cis_benchmarks_tools
+repo_url: https://github.com/jmrenouard/cis_benchmarks_tools
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2026 Jean-Marie Renouard &middot; LightPath
+
+docs_dir: docs
+exclude_docs: |
+  *.kdbx
+  *.keyx
+  *.pid
+  *.log
+  *.pdf
+  .env
+  .env.*
+  id_rsa*
+  *_en.md
+  *-en.md
+  en/
+  overview-en.md
+  index_en.md
+  01-tutorials/
+  02-how-to-guides/
+  03-reference/
+  04-explanation/
+  ACTION_LOGBOOK.md
+  MCP_API_EXECUTOR_CONTRACT.md
+  PUBLISHING.md
+  RCA_REGISTER.md
+  RELEASE_NOTES_*.md
+  ROADMAP.md
+
+hooks:
+  - scripts/mkdocs_hooks.py
+
+plugins:
+  - search
+
+theme:
+  name: material
+  language: fr
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.tracking
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Mode sombre
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Mode clair
+
+extra:
+  alternate:
+    - name: English
+      link: ../
+      lang: en
+    - name: Français
+      link: ./
+      lang: fr
+extra_css:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/katex.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+nav:
+  - Accueil: index.md
+  - Vue d'ensemble (FR): overview-fr.md
+  - Tutoriels:
+      - fr/01-tutoriels/index.md
+      - Premier audit local et Docker: fr/01-tutoriels/01-premier-audit-local-et-docker.md
+      - Lab SARIF et remédiation dry-run: fr/01-tutoriels/02-lab-sarif-et-remediation.md
+  - Guides pratiques:
+      - fr/02-guides-pratiques/index.md
+      - Audits SSH et Docker distants: fr/02-guides-pratiques/deploiement/executer-audits-ssh-et-docker-distants.md
+      - Intégration SARIF et CI/CD: fr/02-guides-pratiques/exploitation/integrer-sarif-et-remediation-ci.md
+      - Triage des erreurs et authentification: fr/02-guides-pratiques/gestion-incidents/trier-erreurs-audit-et-authentification.md
+      - Protection des identifiants et presets MCP: fr/02-guides-pratiques/securite/proteger-identifiants-et-presets-mcp.md
+  - Référence:
+      - fr/03-reference/index.md
+  - Explications:
+      - fr/04-explications/index.md

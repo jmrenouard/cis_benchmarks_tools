@@ -217,11 +217,38 @@ class TestMkDocsPublishing(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertTrue(all((out / r).is_file() for r in (
             "versions.json", "index.html", ".htaccess", "latest/index.html", "dev/index.html", "main/index.html",
-            "main/stylesheets/extra.css", "main/javascripts/katex.js",
-            "v2.10.0/index.html", "v2.9.1/index.html", "v2.9.0/index.html")))
+            "main/fr/index.html", "main/stylesheets/extra.css", "main/javascripts/katex.js",
+            "main/fr/stylesheets/extra.css", "main/fr/javascripts/katex.js",
+            "v2.10.0/index.html", "v2.9.1/index.html", "v2.9.0/index.html",
+            "v2.10.0/fr/index.html", "v2.9.1/fr/index.html", "v2.9.0/fr/index.html")))
+        for lang, rel in (
+            ("en", "main/index.html"), ("fr", "main/fr/index.html"),
+            ("en", "v2.10.0/index.html"), ("fr", "v2.10.0/fr/index.html"),
+        ):
+            head = (out / rel).read_text("utf-8")[:4000]
+            self.assertIn(f'lang="{lang}"', head)
+            self.assertIn('hreflang="en"', head)
+            self.assertIn('hreflang="fr"', head)
+        for leak in (
+            "main/overview-fr/index.html", "main/fr/overview-en/index.html",
+            "main/fr/01-tutorials/index.html", "main/fr/04-explanation/index.html",
+        ):
+            self.assertFalse((out / leak).exists(), leak)
         man = json.loads((out / "versions.json").read_text("utf-8"))
         self.assertEqual([e["version"] for e in man], ["v2.10.0", "v2.9.1", "v2.9.0", "main"])
         self.assertTrue("latest" in man[0]["aliases"] and "dev" in man[-1]["aliases"])
+
+    def test_mkdocs_fr_yml_isolation_and_config(self) -> None:
+        fr_cfg = (ROOT / "mkdocs.fr.yml").read_text("utf-8")
+        for tok in (
+            "language: fr", "https://cis-benchmarks.lightpath.fr/fr/",
+            "*_en.md", "overview-en.md", "01-tutorials/", "02-how-to-guides/",
+            "03-reference/", "04-explanation/", "ROADMAP.md",
+            "alternate:", "link: ../", "link: ./",
+            "Accueil: index.md", "Tutoriels:", "Guides pratiques:",
+        ):
+            self.assertIn(tok, fr_cfg)
+        self.assertNotIn("01-tutorials/01-", fr_cfg)
 
 
 if __name__ == "__main__":

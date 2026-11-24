@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-150 — docs(i18n): add French `mkdocs.fr.yml` and bilingual `<ver>/fr/` versioned builds (Issue `#777`)
+- **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#777` | **Branch**: `docs/issue-777-mkdocs-fr-versioned`
+- **Request**: Create isolated French `mkdocs.fr.yml`, build `<ver>/fr/` alongside `<ver>/` in `scripts/build_versioned_docs.py`, and verify bilingual outputs with tests and Playwright.
+- **Changes**: Added `mkdocs.fr.yml` (`theme.language: fr`, `exclude_docs` excluding EN quadrants/root docs, `extra.alternate` `../` <-> `./`), updated `scripts/build_versioned_docs.py` (`ALWAYS_OVERLAY_FILES`, `_run_mkdocs_build` dual EN+FR build), extended `tests/test_mkdocs_publishing.py`, and logged `APP-006`.
+- **Result**: `mkdocs build --strict` and `mkdocs build -f mkdocs.fr.yml --strict` PASS; bilingual versioned bundle (`main`, `v2.10.0`, `v2.9.1`, `v2.9.0` EN+FR) verified (`lang="en"`/`lang="fr"`, `0` leakage); Playwright `62` pages / `5` Mermaid diagrams / `0` failures on `/main/` and `/main/fr/`; `pre_commit_checks.py` 8/8 (`358` unit tests OK); PR diff `< 15,000` bytes.
+
+---
+
 ### ACT-149 — docs: isolate English `mkdocs.yml` and add language-aware MkDocs hooks (Issue `#775`)
 - **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#775` | **Branch**: `docs/issue-775-mkdocs-en-hooks`
 - **Request**: Keep `mkdocs.yml` 100% English (`exclude_docs`, `extra.alternate`, remove `overview-fr.md` from nav) and make `scripts/mkdocs_hooks.py` language-aware.
