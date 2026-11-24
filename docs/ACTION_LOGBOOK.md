@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-148 — docs: convert ASCII diagram to Mermaid and fix Tutorial 1 and README drift (Issue `#773`)
+- **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#773` | **Branch**: `docs/issue-773-mermaid-readme-tutorial-fixes`
+- **Request**: Convert `documentation/specifications/architecture.md` ASCII diagram to Mermaid, add tutorial flow diagrams, remove `2>/dev/null` from Tutorial 1, and align MariaDB 10.6 version (`v1.1.0`) in `README.md` and `README_fr.md`.
+- **Changes**: Converted `documentation/specifications/architecture.md` component diagram to column-0 Mermaid, added flowcharts to `docs/01-tutorials/{01,02}*.md`, replaced `2>/dev/null` cleanup in Tutorial 1, aligned `mariadb106` `v1.1.0` in `README.md` / `README_fr.md`, and logged `RCA-042` + `IMP-007`.
+- **Result**: `diataxis_check.py --strict --check-ste --lang en` `0` errors; `ste_check.py --mode procedural` `0` errors; `mmdc` `4/4` OK; `mkdocs build --strict` exit `0`; `pre_commit_checks.py` 8/8 (`357` unit tests OK); PR diff `< 15,000` bytes.
+
+---
+
 ### ACT-147 — ci(docs): add MkDocs CI validation and IONOS SFTP publishing workflows (Issue `#769`)
 - **Date**: `2026-11-23` | **Status**: `COMPLETED` | **Issue**: `#769` | **Branch**: `ci/issue-769-docs-ci-and-publish`
 - **Changes**: Added `.github/workflows/docs-ci.yml` and `.github/workflows/docs-publish.yml` (40-char SHA-pinned actions, `contents: read`, `unittest`, IONOS SFTP + `.htaccess` + live HTTPS checks) and added `test_docs_ci_and_publish_workflows_configured_correctly` in `tests/test_github_actions_workflows.py`.

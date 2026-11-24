@@ -11,6 +11,15 @@
 
 ## 1. Errors & Bugs Encountered (Root Cause Analysis — RCA)
 
+### RCA-042 — Unconverted Architecture ASCII Diagram, Tutorial 1 `2>/dev/null`, and MariaDB 10.6 Version Drift (Issue `#773`)
+- **Date / Linked Action**: `2026-11-24` (`ACT-148` / Issue `#773`)
+- **Observed Symptom**: `documentation/specifications/architecture.md` (published at `specs/architecture.md`) contained a 40-line ASCII diagram, `docs/01-tutorials/01-first-local-and-docker-audit.md` suppressed cleanup errors with `2>/dev/null` (`IMP-003`), and `README.md` / `README_fr.md` listed MariaDB 10.6 as `v1.3.0` instead of `v1.1.0`.
+- **Root Cause Analysis (5 Whys)**: Early spec diagrams and README tables were written manually before Mermaid enforcement (`pymdownx.superfences`) and automated doc verification covered `documentation/specifications/` and tutorials.
+- **Applied Change / Fix**: Replaced the ASCII diagram with a column-0 Mermaid flowchart, added flowcharts to both tutorials, removed `2>/dev/null` from Tutorial 1, and aligned `mariadb106` to `v1.1.0` in both READMEs.
+- **Result & Non-Regression Test**: `mmdc` validates `documentation/specifications/` and `docs/` diagrams cleanly; `pre_commit_checks.py` passes 8/8 (`357` unit tests).
+
+---
+
 ### RCA-041 — Broken Relative Links in `docs/ACTION_LOGBOOK.md` and Historical Tag Link Resolution (Issue `#748`)
 - **Date / Linked Action**: `2026-11-23` (`ACT-135` / Issue `#748`)
 - **Observed Symptom**: Three Markdown links in `docs/ACTION_LOGBOOK.md` (lines 489, 490, 1199) failed disk resolution (`../` missing for root targets and stale `../scripts/standardize_generate_html_report.py` after `IMP-005`), and historical tags (`v2.9.0`..`v2.10.0`) lacked Diataxis quadrant directories.
@@ -548,6 +557,10 @@
      - `StrictHostKeyChecking=no` and `UserKnownHostsFile=/dev/null`: Eliminates host key collision errors across ephemeral containers and avoids polluting `~/.ssh/known_hosts`.
      - `TCPKeepAlive=yes`: Ensures OS-level TCP socket heartbeat.
   3. **Non-Regression Verification**: Assert in `tests/test_execution_drivers.py` that hardened timeout and keepalive flags are systematically constructed in SSH command arguments and that no `ControlMaster` options are present.
+
+### IMP-007 — Modifying `.github/workflows/*.yml` Over HTTPS Without `workflow` OAuth Scope
+- **Why It Is a Dead-End**: GitHub rejects pushes touching `.github/workflows/*.yml` when the HTTPS OAuth token lacks `workflow` scope.
+- **Adopted Decision**: Enforce strict French MkDocs validation, dual `<ver>/` + `<ver>/fr/` site builds, and executable tutorial/how-to checks directly inside `scripts/build_versioned_docs.py` and `tests/` (which `docs-ci.yml`, `docs-publish.yml`, and `unit-tests.yml` already run).
 
 ---
 

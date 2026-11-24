@@ -48,7 +48,7 @@
 
 | Clé Cible | Moteur SGBD | Version / Profil | Benchmark CIS | Contrôles | Script d'Audit | Spécification JSON |
 |---|---|---|---|:---:|---|---|
-| `mariadb106` | MariaDB | 10.6 | v1.3.0 | 74 | [`audit_cis_mariadb_106.py`](audit_cis_mariadb_106.py) | [`rules/mariadb_106.json`](rules/mariadb_106.json) |
+| `mariadb106` | MariaDB | 10.6 | v1.1.0 | 74 | [`audit_cis_mariadb_106.py`](audit_cis_mariadb_106.py) | [`rules/mariadb_106.json`](rules/mariadb_106.json) |
 | `mariadb1011` | MariaDB | 10.11 | v1.0.0 | 75 | [`audit_cis_mariadb_1011.py`](audit_cis_mariadb_1011.py) | [`rules/mariadb_1011.json`](rules/mariadb_1011.json) |
 | `mysql80` | MySQL Enterprise | 8.0 | v1.5.0 | 70 | [`audit_cis_mysql_80.py`](audit_cis_mysql_80.py) | [`rules/mysql_80.json`](rules/mysql_80.json) |
 | `mysql-community84` | MySQL Community | 8.4 LTS | v1.1.0 | 79 | [`audit_cis_mysql_community_84.py`](audit_cis_mysql_community_84.py) | [`rules/mysql_community_84.json`](rules/mysql_community_84.json) |
