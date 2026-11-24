@@ -16,7 +16,7 @@ Ce guide verrouille la transmission des secrets et encadre les presets en lectur
 ```bash
 export CIS_DB_PASSWORD="votre_secret_temporaire"
 chmod 600 ~/.my.cnf
-python3 audit_cis.py -t mysql80 --defaults-file ~/.my.cnf -f json -o reports/mysql80.json
+python3 audit_cis.py -t mariadb106 --defaults-file ~/.my.cnf -f json -o reports/mariadb106.json
 ```
 
 3. Effacez la variable de session juste après la fin de l'audit.
@@ -31,7 +31,7 @@ unset CIS_DB_PASSWORD
 
 ## Vérification
 
-1. Vérifiez l'absence de secret en clair dans `reports/mysql80.json` grâce au filtre `SecretSanitizer`.
+1. Vérifiez l'absence de secret en clair dans `reports/mariadb106.json` grâce au filtre `SecretSanitizer`.
 2. Vérifiez l'état `read_only: true` dans `conf/mcp_api_executor_presets.json`.
 
 ## Retour arrière

@@ -18,12 +18,15 @@ ssh -i ~/.ssh/id_ed25519 -p 22 admin@db-host "docker --version"
 
 2. **ATTENTION :** Limitez les droits SSH du compte de supervision au strict nécessaire. Un compte `root` sans restriction expose le serveur cible aux erreurs de manipulation.
 
-3. Exécutez l'audit CIS MariaDB 10.6 sur le conteneur distant avec SSH.
+3. Exécutez l'audit CIS MariaDB 10.6 sur le conteneur distant avec SSH pour les sorties HTML et JSON.
 
 ```bash
 python3 audit_cis.py -t mariadb106 -m ssh -r admin@db-host \
   --ssh-port 22 -i ~/.ssh/id_ed25519 -c mariadb-prod -l fr \
-  -f html -o reports/mariadb_remote.html -j reports/mariadb_remote.json
+  -f html -o reports/mariadb_remote.html
+python3 audit_cis.py -t mariadb106 -m ssh -r admin@db-host \
+  --ssh-port 22 -i ~/.ssh/id_ed25519 -c mariadb-prod -l fr \
+  -f json -o reports/mariadb_remote.json
 ```
 
 4. Si le moteur exige une élévation locale sur l'hôte distant, ajoutez `--sudo`.

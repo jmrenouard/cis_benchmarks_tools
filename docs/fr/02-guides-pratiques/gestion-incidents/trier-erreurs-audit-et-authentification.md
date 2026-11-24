@@ -9,8 +9,7 @@ Ce guide classe les échecs retournés par `CommandFailureClassifier` pour sépa
 
 ## Procédure
 
-1. Examinez le code de sortie retourné par `audit_cis.py`.
-
+1. Examinez le code de sortie CLI (`0`, `1` ou `2`) et la catégorie `CommandFailureClassifier` des commandes.
 
 2. Si la catégorie est `TIMEOUT` ou `CONNECTION_ERROR`, testez l'accès réseau et le port cible.
 
@@ -18,13 +17,13 @@ Ce guide classe les échecs retournés par `CommandFailureClassifier` pour sépa
 ssh -o ConnectTimeout=5 -p 22 admin@db-host "echo ok"
 ```
 
-3. Si la catégorie est `MISSING_BINARY` (`rc == 127`), installez le client manquant ou vérifiez `$PATH`.
+3. Si la commande interne retourne `rc == 127` (`MISSING_BINARY`), installez le client ou vérifiez `$PATH`.
 
 4. Si la catégorie est `AUTH_FAILURE`, vérifiez la variable `CIS_DB_PASSWORD` et les droits du fichier `.my.cnf` ou `.pgpass`.
 
 5. **ATTENTION :** Corrigez la configuration d'accès avant de redémarrer l'audit sur une base active. Des tentatives répétées déclenchent le verrouillage du compte de service.
 
-6. Si la catégorie est `PERMISSION_DENIED` (`rc == 126`), lancez avec `--sudo` lorsque la politique système l'autorise.
+6. Si la commande interne retourne `rc == 126` (`PERMISSION_DENIED`), lancez avec `--sudo` lorsque la politique système l'autorise.
 
 7. Si la catégorie est `SYNTAX_ERROR`, exécutez `python3 audit_cis.py --help` et corrigez les options CLI.
 
