@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-154 — test(docs): add executable tutorial, how-to, STF100, Mermaid, and i18n checks (Issue `#785`)
+- **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#785` | **Branch**: `test/issue-785-docs-executable-suite`
+- **Request**: Add automated PSL executable documentation checks covering tutorials, How-Tos, ASD-STF100, Mermaid/0 ASCII, EN/FR MkDocs isolation, and fix combined `-o/-j` invocation in FR Tutorial 1.
+- **Changes**: Split `-f html -o` and `-f json -o` in `docs/fr/01-tutoriels/01-premier-audit-local-et-docker.md`; extended `tests/test_diataxis_documentation.py` (`test_french_diataxis_stf100_and_i18n_isolation`, `test_zero_ascii_diagrams_and_valid_mermaid_across_authored_docs`, `test_executable_tutorial_howto_cli_scripts_and_presets`).
+- **Result**: `unittest tests/test_diataxis_documentation.py` PASS; `pre_commit_checks.py` 8/8 (`361` unit tests OK); `diataxis_check_fr.py`, `diataxis_check.py`, `stf_check.py`, `ste_check.py`, `audit_helpers.py`, EN+FR `mkdocs build --strict`, and Playwright `/` + `/fr/` PASS; PR diff `< 15,000` bytes.
+
+---
+
 ### ACT-153 — docs(fr): add four ASD-STF100 French How-To guides (Issue `#783`)
 - **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#783` | **Branch**: `docs/issue-783-fr-stf100-howtos`
 - **Request**: Author all four ASD-STF100 Edition 1 French How-To guides (`deploiement`, `exploitation`, `gestion-incidents`, `securite`) under `docs/fr/02-guides-pratiques/` and verify zero STF/Diátaxis/MkDocs/Playwright issues.
