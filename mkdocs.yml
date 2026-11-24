@@ -16,6 +16,15 @@ exclude_docs: |
   .env
   .env.*
   id_rsa*
+  *_fr.md
+  *-fr.md
+  fr/
+  overview-fr.md
+  01-tutoriels/
+  02-guides-pratiques/
+  03-reference/
+  04-explications/
+  index_fr.md
 
 hooks:
   - scripts/mkdocs_hooks.py
@@ -60,6 +69,13 @@ extra:
   version:
     provider: mike
     default: latest
+  alternate:
+    - name: English
+      link: ./
+      lang: en
+    - name: Français
+      link: ./fr/
+      lang: fr
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/jmrenouard/cis_benchmarks_tools
@@ -144,7 +160,6 @@ nav:
           - 04-explanation/design-decisions/adr-002-diataxis-versioned-mkdocs-publishing.md
       - Overviews & Specs:
           - Overview (EN): overview-en.md
-          - Aperçu (FR): overview-fr.md
           - specs/architecture.md
           - specs/project-governance.md
   - Releases & Governance:
