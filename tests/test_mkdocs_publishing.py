@@ -135,6 +135,9 @@ class TestMkDocsPublishing(unittest.TestCase):
         ), "[T](overview-en.md) [H](overview-en.md)")
         self.assertEqual(h.rewrite_relative_links("[H](02-how-to-guides/index.md)", "index.md", ref="v2.10.0",
                                                   docs_dir=dd), "[H](specs/execution-contexts.md)")
+        self.assertEqual(h.rewrite_relative_links(
+            "[R](03-reference/index.md)", "index.md", ref="v2.10.0", docs_dir=dd,
+            available_root_docs=("overview-en.md", "specs/benchmark-targets.md")), "[R](specs/benchmark-targets.md)")
         nav = [{"Home": "index.md"}, {"HT": ["02-how-to-guides/x.md"]}, {"Exp": [{"EN": "overview-en.md"},
                {"FR": "overview-fr.md"}]}, {"Releases & Governance": [{"R": "RELEASE_NOTES_v9.9.9.md"},
                                                                      {"Log": "ACTION_LOGBOOK.md"}]}]
@@ -151,25 +154,24 @@ class TestMkDocsPublishing(unittest.TestCase):
         for ref, uri, eurl in (("WORKTREE", "edit/main/docs/", f"{REPO}/edit/main/README.md"), ("v2.10.0", "", None)):
             with patch.dict(os.environ, {"CIS_DOCS_REF": ref, "CIS_DOCS_SITE_URL": f"{PORTAL}/main"}):
                 cfg = _Cfg({"docs_dir": str(dd), "site_url": "", "edit_uri": "x", "repo_url": REPO,
-                            "theme": {"language": "fr"},
-                            "extra": {"alternate": [{"lang": "en", "link": "../"}, {"lang": "fr", "link": "./"}]},
                             "mdx_configs": {"toc": {}}, "nav": [{"Home": "index.md"}]})
                 h.on_config(cfg)
                 h.on_page_markdown("# O\n", pg, cfg, None)
-                self.assertEqual((cfg["edit_uri"], cfg["site_url"], pg.edit_url, h._lang(cfg)),
-                                 (uri, f"{PORTAL}/main/", eurl, "fr"))
-                self.assertEqual(cfg["extra"]["alternate"],
-                                 [{"lang": "en", "link": "/main/"}, {"lang": "fr", "link": "/main/fr/"}])
+                self.assertEqual((cfg["edit_uri"], cfg["site_url"], pg.edit_url), (uri, f"{PORTAL}/main/", eurl))
                 self.assertIs(cfg["mdx_configs"]["toc"]["slugify"], h.gfm_slugify)
+        fr_cfg = _Cfg({"docs_dir": str(dd), "site_url": "", "repo_url": REPO, "theme": {"language": "fr"},
+                       "extra": {"alternate": [{"lang": "en", "link": "../"}, {"lang": "fr", "link": "./"}]},
+                       "mdx_configs": {"toc": {}}, "nav": [{"Home": "index.md"}]})
+        with patch.dict(os.environ, {"CIS_DOCS_REF": "main", "CIS_DOCS_SITE_URL": f"{PORTAL}/main/fr"}):
+            h.on_config(fr_cfg)
+        self.assertEqual((h._lang(fr_cfg), fr_cfg["extra"]["alternate"]),
+                         ("fr", [{"lang": "en", "link": "/main/"}, {"lang": "fr", "link": "/main/fr/"}]))
         fr_rw = h.rewrite_relative_links(
-            "[EN](README.md) [Idx](docs/fr/index.md) [Pub](docs/PUBLISHING.md)",
-            "overview-fr.md", ref="main", docs_dir=dd,
-            available_root_docs=("overview-fr.md",), included_docs=("index.md", "overview-fr.md"), lang="fr",
-        )
+            "[EN](README.md) [Idx](docs/fr/index.md) [Pub](docs/PUBLISHING.md)", "overview-fr.md",
+            ref="main", docs_dir=dd, available_root_docs=("overview-fr.md",),
+            included_docs=("index.md", "overview-fr.md"), lang="fr")
         self.assertEqual(
-            fr_rw,
-            f"[EN]({REPO}/blob/main/README.md) [Idx](index.md) [Pub]({REPO}/blob/main/docs/PUBLISHING.md)",
-        )
+            fr_rw, f"[EN]({REPO}/blob/main/README.md) [Idx](index.md) [Pub]({REPO}/blob/main/docs/PUBLISHING.md)")
 
     def test_builder_semver_manifest_htaccess_redirect_zip_and_privacy(self) -> None:
         b = _load("build_versioned_docs", BUILD)

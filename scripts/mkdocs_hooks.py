@@ -27,8 +27,7 @@ _R2V = {s: u for u, (s, _) in VIRTUAL_DOCS.items()}
 QUADRANT_HISTORICAL_FALLBACKS = {
     "01-tutorials": "overview-en.md", "02-how-to-guides": "specs/execution-contexts.md",
     "03-reference": "specs/benchmark-targets.md", "04-explanation": "specs/architecture.md",
-    "fr": "overview-fr.md", "01-tutoriels": "overview-fr.md", "02-guides-pratiques": "overview-fr.md",
-    "03-reference": "overview-fr.md", "04-explications": "overview-fr.md",
+    "fr": "overview-fr.md",
 }
 ALERT_MAP = {"NOTE": "note", "TIP": "tip", "IMPORTANT": "info", "WARNING": "warning", "CAUTION": "danger"}
 _FENCE_RE = re.compile(r"(?ms)^[ \t]*(`{3,}|~{3,})[^\r\n]*\r?\n.*?(?:^[ \t]*\1[ \t]*(?:\r?\n|\Z)|\Z)")
@@ -137,7 +136,7 @@ def rewrite_relative_links(
         if docs:
             top = sub.split("/", 1)[0]
             if top in QUADRANT_HISTORICAL_FALLBACKS and not (docs / top).is_dir():
-                fb = QUADRANT_HISTORICAL_FALLBACKS[top]
+                fb = "overview-fr.md" if lang == "fr" and top == "03-reference" else QUADRANT_HISTORICAL_FALLBACKS[top]
                 ok = (((docs / fb).is_file() and (inc is None or fb in inc)) or fb in rt)
                 return (f"{px}{fb}" if ok else ov_px), False
             if root and not (docs / sub).exists() and (root / sub).exists():  # v2.10.0 root links
@@ -224,7 +223,7 @@ def prune_nav_for_existing_files(nav: list[Any] | None, docs_dir: Path, repo_roo
 
 
 def on_config(config: Any) -> Any:
-    """Apply env `site_url`, `edit_uri`, dynamic `alternate`, GFM slugifier, and pruned nav."""
+    """Apply env `site_url`, `edit_uri`, GFM slugifier, and pruned nav."""
     if url := os.environ.get("CIS_DOCS_SITE_URL", "").strip():
         config.site_url = url.rstrip("/") + "/"
     config.edit_uri = "edit/main/docs/" if _ref() == "main" else ""
@@ -246,7 +245,7 @@ def on_config(config: Any) -> Any:
 
 
 def on_files(files: Files, config: Any) -> Files:
-    """Exclude private files and mount language-scoped virtual docs and index."""
+    """Exclude private files and mount virtual root overviews, roadmap, and specs."""
     from mkdocs.structure.files import File, Files as MkDocsFiles, InclusionLevel
 
     lang, docs = _lang(config), Path(config.docs_dir)
@@ -256,7 +255,7 @@ def on_files(files: Files, config: Any) -> Files:
     for f in list(files):
         if _EXCLUDED_TARGET_RE.search(f.src_uri):
             f.inclusion = InclusionLevel.EXCLUDED
-        elif lang == "fr" and f.src_uri == "index.md" and fr_idx.is_file():
+        elif lang == "fr" and f.src_uri in {"index.md", "fr/index.md"} and fr_idx.is_file():
             continue
         else:
             kept.append(f)
