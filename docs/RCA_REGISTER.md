@@ -591,6 +591,11 @@
 - **Nature & Justification**: Pre-Diataxis tags (`v2.9.0`..`v2.10.0`) overlay current `mkdocs.yml`, hooks, CSS/JS, and fallback assets while `QUADRANT_HISTORICAL_FALLBACKS` remaps missing quadrant paths and `.htaccess` serves `versions.json` (`mike` UI) on IONOS Apache.
 - **Removal Condition**: Retire historical tag fallbacks once active release tags include native Diataxis `docs/0*-*/` trees.
 
+### APP-006 — Dual-Build French Sub-Site (`<ver>/fr/`) Overlay & `README_fr.md` Fallback
+- **Target Files**: `mkdocs.fr.yml`, `scripts/build_versioned_docs.py` & `scripts/mkdocs_hooks.py`
+- **Nature & Justification**: Builds each version into `<ver>/` (EN) and `<ver>/fr/` (FR) using `mkdocs.fr.yml` overlay and falls back to `README_fr.md` as virtual `index.md` on historical tags without `docs/fr/index.md`.
+- **Removal Condition**: Drop `README_fr.md` virtual index fallback once active release tags include native `docs/fr/` Diataxis subtrees.
+
 ---
 
 ## 4. Unimplemented Ideas & Future Roadmap (`IDEA`)

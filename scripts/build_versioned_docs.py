@@ -21,7 +21,8 @@ _PRIVATE_OUTPUT_RE = re.compile(
     r"(?i)(?:(?:^|/)(?:\.env[^/]*|id_rsa[^/]*)$|\.(?:kdbx|keyx|pid)$|(?:^|/)CIS_DATA/.*\.pdf$)"
 )
 ALWAYS_OVERLAY_FILES: tuple[str, ...] = (
-    "mkdocs.yml", "scripts/mkdocs_hooks.py", "docs/stylesheets/extra.css", "docs/javascripts/katex.js"
+    "mkdocs.yml", "mkdocs.fr.yml", "scripts/mkdocs_hooks.py",
+    "docs/stylesheets/extra.css", "docs/javascripts/katex.js",
 )
 FALLBACK_OVERLAY_FILES: tuple[str, ...] = (
     "docs/index.md", "docs/assets/logo.svg", "docs/assets/header-banner.svg"
@@ -150,15 +151,27 @@ def assert_no_private_files(output_dir: Path) -> None:
         raise RuntimeError(f"Privacy violation in built documentation output ({output_dir}): {bad}")
 
 
-def _run_mkdocs_build(project_dir: Path, site_out: Path, git_ref: str, slug: str, base_url: str, strict: bool) -> None:
+def _run_mkdocs_build(
+    project_dir: Path, site_out: Path, git_ref: str, slug: str, base_url: str, strict: bool,
+) -> None:
     env = os.environ.copy()
     env["PYTHONUTF8"] = "1"
     env["CIS_DOCS_REF"] = "main" if git_ref in {"WORKTREE", "origin/main", "main", "HEAD"} else git_ref
-    env["CIS_DOCS_SITE_URL"] = f"{base_url.rstrip('/')}/{slug}/"
+    base_slug = f"{base_url.rstrip('/')}/{slug}"
+    env["CIS_DOCS_SITE_URL"] = f"{base_slug}/"
     cmd = [sys.executable, "-m", "mkdocs", "build", "-f", str(project_dir / "mkdocs.yml"), "-d", str(site_out)]
     if strict:
         cmd.append("--strict")
     subprocess.run(cmd, cwd=str(project_dir), env=env, check=True)  # nosec B603
+    fr_cfg = project_dir / "mkdocs.fr.yml"
+    has_fr = (project_dir / "docs/fr/index.md").is_file() or (project_dir / "README_fr.md").is_file()
+    if fr_cfg.is_file() and has_fr:
+        fr_env = env.copy()
+        fr_env["CIS_DOCS_SITE_URL"] = f"{base_slug}/fr/"
+        fr_cmd = [sys.executable, "-m", "mkdocs", "build", "-f", str(fr_cfg), "-d", str(site_out / "fr")]
+        if strict:
+            fr_cmd.append("--strict")
+        subprocess.run(fr_cmd, cwd=str(project_dir), env=fr_env, check=True)  # nosec B603
 
 
 def build_single_version(
