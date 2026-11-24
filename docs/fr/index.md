@@ -10,3 +10,5 @@ Suite d'audit de sécurité CIS Benchmarks & DISA STIG — **100 % Python Standa
 | **Explications** | Comprendre l'architecture PSL | [Explications](04-explications/index.md) |
 
 - [Vue d'ensemble complète (`README_fr.md`)](../../README_fr.md)
+- [Tutoriel 1 — Premier audit local et Docker](01-tutoriels/01-premier-audit-local-et-docker.md)
+- [Tutoriel 2 — Lab SARIF et remédiation dry-run](01-tutoriels/02-lab-sarif-et-remediation.md)
