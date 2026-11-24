@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-152 — docs(fr): add French Diátaxis tutorials with Mermaid workflows (Issue `#781`)
+- **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#781` | **Branch**: `docs/issue-781-fr-tutorials-mermaid`
+- **Request**: Add French Diátaxis Tutorials 1 & 2 with column-0 Mermaid workflow diagrams and clean up shadowed `fr/index.md` handling in `scripts/mkdocs_hooks.py`.
+- **Changes**: Added `docs/fr/01-tutoriels/{01-premier-audit-local-et-docker,02-lab-sarif-et-remediation}.md`, linked both in `docs/fr/index.md` and `docs/fr/01-tutoriels/index.md`, and removed shadowed `sub == "fr/index.md"` branch in `scripts/mkdocs_hooks.py`.
+- **Result**: `diataxis_check_fr.py docs/fr --strict --check-stf` `0` errors / `0` warnings; `diataxis_check.py docs --strict --check-ste --lang en` `0` errors; `audit_helpers.py docs` PASS (`6/6` `mmdc`, `0` ASCII, `0` `language_mix`); EN+FR `mkdocs build --strict` exit `0`; Playwright `/` and `/fr/` (`0` failures); `pre_commit_checks.py` 8/8 (`358` tests); PR diff `< 15,000` bytes.
+
+---
+
 ### ACT-151 — docs(fr): add French Diátaxis portal, quadrant hubs, and FR index hooks (Issue `#779`)
 - **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#779` | **Branch**: `docs/issue-779-fr-diataxis-tutorials-hubs`
 - **Request**: Author `docs/fr/` landing portal, all four French Diátaxis quadrant hubs, `mkdocs_hooks.py` `docs/fr/index.md` path support, and `mkdocs.fr.yml` anchored exclusions.

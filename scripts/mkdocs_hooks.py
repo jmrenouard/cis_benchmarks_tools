@@ -103,7 +103,8 @@ def rewrite_relative_links(
     docs = Path(docs_dir) if docs_dir else None
     root = docs.parent if docs else None
     fr_home = lang == "fr" and src == "index.md" and docs and (docs / "fr/index.md").is_file()
-    sd = VIRTUAL_DOCS[src][1] if src in VIRTUAL_DOCS else ("docs/fr" if fr_home else posixpath.dirname(f"docs/{src}"))
+    sd = VIRTUAL_DOCS[src][1] if src in VIRTUAL_DOCS else (
+        "docs/fr" if fr_home else posixpath.dirname(f"docs/{src}"))
 
     def _gh(rel, sl, an):
         kind = "tree" if sl or (root and (root / rel).is_dir()) else "blob"
@@ -131,8 +132,6 @@ def rewrite_relative_links(
         if not rel.startswith("docs/"):
             return (repo if rel in (".", "..") or rel.startswith("../") else _gh(rel, sl, an)), False
         sub = rel[5:]
-        if lang == "fr" and sub == "fr/index.md":
-            return _vt("index.md", px, an), False
         if sub in VIRTUAL_DOCS and (not docs or not (docs / sub).is_file()):
             return _vt(sub, px, an), False
         ov_px = _vt("overview-fr.md", px) if lang == "fr" else _vt("overview-en.md", px)

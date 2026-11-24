@@ -2,8 +2,8 @@
 
 Ces parcours pas à pas vous guident dans un environnement isolé pour découvrir les audits CIS Benchmarks sans modifier votre système hôte.
 
-- Exécutez `python3 audit_cis.py --list-targets` puis un audit conteneurisé en laboratoire.
-- Consultez les [Tutoriels EN](../../01-tutorials/index.md) en attendant l'ajout des labs détaillés en français.
+- **[Premier audit local et Docker](01-premier-audit-local-et-docker.md)** — Valider la CLI PSL, exécuter un premier audit Docker MariaDB 10.6 et inspecter les rapports HTML/JSON.
+- **[Lab SARIF et remédiation dry-run](02-lab-sarif-et-remediation.md)** — Générer des exports SARIF v2.1.0 et des plans `--remediate-dry-run` (`diff`, `sql`, `ansible`, `json`).
 
 ---
 
