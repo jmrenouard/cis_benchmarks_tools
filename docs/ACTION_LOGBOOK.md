@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-153 — docs(fr): add four ASD-STF100 French How-To guides (Issue `#783`)
+- **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#783` | **Branch**: `docs/issue-783-fr-stf100-howtos`
+- **Request**: Author all four ASD-STF100 Edition 1 French How-To guides (`deploiement`, `exploitation`, `gestion-incidents`, `securite`) under `docs/fr/02-guides-pratiques/` and verify zero STF/Diátaxis/MkDocs/Playwright issues.
+- **Changes**: Added `docs/fr/02-guides-pratiques/{deploiement/executer-audits-ssh-et-docker-distants,exploitation/integrer-sarif-et-remediation-ci,gestion-incidents/trier-erreurs-audit-et-authentification,securite/proteger-identifiants-et-presets-mcp}.md` and linked all four in `docs/fr/02-guides-pratiques/index.md`.
+- **Result**: `stf_check.py --mode procedural` `0` errors / `0` warnings; `diataxis_check_fr.py docs/fr --strict --check-stf` `0` errors / `0` warnings (`11` files); `audit_helpers.py docs` PASS; EN+FR `mkdocs build --strict` exit `0`; Playwright `/` and `/fr/` `0` failures; `pre_commit_checks.py` 8/8 (`358` tests); PR diff `< 15,000` bytes.
+
+---
+
 ### ACT-152 — docs(fr): add French Diátaxis tutorials with Mermaid workflows (Issue `#781`)
 - **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#781` | **Branch**: `docs/issue-781-fr-tutorials-mermaid`
 - **Request**: Add French Diátaxis Tutorials 1 & 2 with column-0 Mermaid workflow diagrams and clean up shadowed `fr/index.md` handling in `scripts/mkdocs_hooks.py`.
