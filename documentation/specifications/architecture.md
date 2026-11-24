@@ -30,43 +30,13 @@ The codebase operates under a dual-mode pattern:
 
 ## 4. Component Interaction Diagram
 
-```
-+-------------------------------------------------------------------+
-|                        audit_cis.py (Unified CLI)                 |
-+---------------------------------+---------------------------------+
-                                  |
-               +------------------+------------------+
-               |                                     |
-               v                                     v
-+-----------------------------+       +-----------------------------+
-|    audit_orchestrator.py    |       |  18 Standalone Scripts       |
-|    (Multi-target / Pipeline)|       |  (audit_cis_<target>.py)     |
-+--------------+--------------+       +--------------+--------------+
-               |                                     |
-               +------------------+------------------+
-                                  |
-                                  v
-+-------------------------------------------------------------------+
-|                   cis_core_engine.py (Core Engine)                |
-|  - load_recommendations()       - run_command()                   |
-|  - evaluate_condition()         - calculate_scores()              |
-|  - build_inline_svg_*()         - export_results()                |
-+---------------------------------+---------------------------------+
-                                  |
-               +------------------+------------------+
-               |                                     |
-               v                                     v
-+-----------------------------+       +-----------------------------+
-|    execution_drivers.py     |       |    audit_diagnostics.py     |
-|  - LocalExecutor            |       |  - CommandFailureClassifier |
-|  - DockerExecutor           |       |  - FailureCategory          |
-|  - SSHExecutor              |       |  - FailureDiagnostic        |
-|  - RemoteSSHContainerExec   |       +-----------------------------+
-|  - SecretSanitizer          |
-+-----------------------------+
-               |
-               v
-+-------------------------------------------------------------------+
-|       Target Systems: Bare-Metal / Docker / Remote SSH / Hybrid   |
-+-------------------------------------------------------------------+
+```mermaid
+flowchart TD
+    CLI["audit_cis.py (Unified CLI)"] --> ORCH["audit_orchestrator.py (Multi-target Pipeline)"]
+    CLI --> ENG["18 Standalone Scripts (audit_cis_*.py)"]
+    ORCH --> CORE["cis_core_engine.py (Scoring, SVG, Exporters)"]
+    ENG --> CORE
+    CORE --> DRV["execution_drivers.py (Local, Docker, SSH, SecretSanitizer)"]
+    CORE --> DIAG["audit_diagnostics.py (CommandFailureClassifier)"]
+    DRV --> TGT["Target Systems: Bare-Metal / Docker / Remote SSH"]
 ```

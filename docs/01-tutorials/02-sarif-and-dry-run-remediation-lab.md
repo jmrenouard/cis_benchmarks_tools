@@ -5,6 +5,12 @@
 > [!WARNING]
 > **Isolated Lab Only:** Store files under `/tmp/cis-sarif-lab`. `--remediate-dry-run` executes zero live commands.
 
+```mermaid
+flowchart LR
+    J["JSON Audit Report"] --> SAR["sarif_exporter.py -> SARIF v2.1.0"]
+    J --> REM["--remediate-dry-run -> diff / sql / json"]
+```
+
 ## Prerequisites
 
 - Python `3.8+` checkout of `cis_benchmarks_tools`

@@ -5,6 +5,13 @@
 > [!WARNING]
 > **Isolated Lab Only:** Write artifacts under `/tmp/cis-lab` and target disposable containers only.
 
+```mermaid
+flowchart LR
+    T["--list-targets (18 targets)"] --> LOC["--local rhel9 -> JSON"]
+    LOC --> DOC["--docker mariadb106 -> SVG HTML"]
+    DOC --> CLN["docker rm & clean /tmp/cis-lab"]
+```
+
 ## Prerequisites
 
 - Python `3.8+` (`python3 audit_cis.py --version` prints `CIS Benchmarks Suite v2.10.0`)
@@ -38,7 +45,7 @@ python3 -c "assert '<svg' in open('/tmp/cis-lab/m106.html', encoding='utf-8').re
 ## Step 4: Clean Up `/tmp/cis-lab`
 
 ```bash
-docker rm -f cis-lab-mariadb106 2>/dev/null || true
+if docker container inspect cis-lab-mariadb106; then docker rm -f cis-lab-mariadb106; fi
 rm -rf /tmp/cis-lab
 ```
 
