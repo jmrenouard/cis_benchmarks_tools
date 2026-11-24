@@ -24,7 +24,7 @@ python3 audit_cis.py --help
 python3 audit_cis.py --list-targets
 ```
 
-Résultat attendu : `audit_cis.py` affiche les 18 cibles (`mariadb106` à `rhel10`) avec le statut `[READY]` ou similaire sans dépendance externe.
+Résultat attendu : `audit_cis.py` affiche l'en-tête `Supported CIS Audit Targets (18 Benchmarks / 887 Controls)` puis les colonnes `Target Key`, `Name`, `Controls` et `Script File` (`mariadb106` à `rhel10`) sans dépendance externe.
 
 ## Étape 2 — Démarrer un conteneur MariaDB 10.6 éphémère
 

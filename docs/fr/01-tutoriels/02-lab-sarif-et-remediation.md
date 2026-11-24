@@ -52,15 +52,15 @@ python3 audit_cis.py --remediate-dry-run \
 
 Résultat attendu : `plan.diff` contient le plan de modification sans aucune exécution sur une base réelle. Changez `--remediation-format` pour `sql`, `shell`, `ansible` ou `json` selon votre outillage.
 
-## Étape 3 — Valider le format SARIF v2.1.0
+## Étape 3 — Générer et valider le format SARIF v2.1.0
 
-Convertissez et vérifiez le schéma SARIF avec la bibliothèque standard :
+Convertissez le rapport JSON en document SARIF v2.1.0 et vérifiez ses invariants :
 
 ```bash
-python3 -c "import json, sarif_exporter; doc = sarif_exporter.build_sarif_from_audit('mariadb106', [], tool_version='2.10.0'); errs = sarif_exporter.validate_sarif_document(doc); print('SARIF errors:', errs)"
+python3 -c "import json, sarif_exporter; data = json.load(open('/tmp/cis-sarif-fr/sample_report.json', encoding='utf-8')); doc = sarif_exporter.build_sarif_document(data['controls'], target_name=data['target']); ok, msg = sarif_exporter.validate_sarif_document(doc); assert ok, msg; sarif_exporter.export_sarif_report(data['controls'], 0.0, {}, data['target'], '/tmp/cis-sarif-fr/report.sarif'); print(msg)"
 ```
 
-Résultat attendu : `SARIF errors: []`.
+Résultat attendu : `SARIF Report generated: /tmp/cis-sarif-fr/report.sarif` puis `Valid SARIF v2.1.0 (1 results, 1 rules)`.
 
 ## Nettoyage
 
