@@ -60,6 +60,9 @@ class TestMkDocsPublishing(unittest.TestCase):
             "*.kdbx", "*.keyx", "*.pid", ".env",
         )
         self.assertTrue(all(t in mk for t in toks))
+        for tok in ("*_fr.md", "fr/", "overview-fr.md", "alternate:", "lang: fr"):
+            self.assertIn(tok, mk)
+        self.assertNotIn("overview-fr.md", mk.split("\nnav:", 1)[1])
         nav = re.split(r"\n(?=[A-Za-z0-9_]+:)", mk.split("\nnav:", 1)[1], maxsplit=1)[0].splitlines()
         self.assertEqual([m.group(1).strip() for l in nav if (m := re.match(r"^  -\s+['\"]?([^'\":\n]+?)['\"]?:", l))],
                          ["Home", "Tutorials", "How-To Guides", "Reference", "Explanation", "Releases & Governance"])
@@ -132,6 +135,9 @@ class TestMkDocsPublishing(unittest.TestCase):
         ), "[T](overview-en.md) [H](overview-en.md)")
         self.assertEqual(h.rewrite_relative_links("[H](02-how-to-guides/index.md)", "index.md", ref="v2.10.0",
                                                   docs_dir=dd), "[H](specs/execution-contexts.md)")
+        self.assertEqual(h.rewrite_relative_links(
+            "[R](03-reference/index.md)", "index.md", ref="v2.10.0", docs_dir=dd,
+            available_root_docs=("overview-en.md", "specs/benchmark-targets.md")), "[R](specs/benchmark-targets.md)")
         nav = [{"Home": "index.md"}, {"HT": ["02-how-to-guides/x.md"]}, {"Exp": [{"EN": "overview-en.md"},
                {"FR": "overview-fr.md"}]}, {"Releases & Governance": [{"R": "RELEASE_NOTES_v9.9.9.md"},
                                                                      {"Log": "ACTION_LOGBOOK.md"}]}]
@@ -153,6 +159,19 @@ class TestMkDocsPublishing(unittest.TestCase):
                 h.on_page_markdown("# O\n", pg, cfg, None)
                 self.assertEqual((cfg["edit_uri"], cfg["site_url"], pg.edit_url), (uri, f"{PORTAL}/main/", eurl))
                 self.assertIs(cfg["mdx_configs"]["toc"]["slugify"], h.gfm_slugify)
+        fr_cfg = _Cfg({"docs_dir": str(dd), "site_url": "", "repo_url": REPO, "theme": {"language": "fr"},
+                       "extra": {"alternate": [{"lang": "en", "link": "../"}, {"lang": "fr", "link": "./"}]},
+                       "mdx_configs": {"toc": {}}, "nav": [{"Home": "index.md"}]})
+        with patch.dict(os.environ, {"CIS_DOCS_REF": "main", "CIS_DOCS_SITE_URL": f"{PORTAL}/main/fr"}):
+            h.on_config(fr_cfg)
+        self.assertEqual((h._lang(fr_cfg), fr_cfg["extra"]["alternate"]),
+                         ("fr", [{"lang": "en", "link": "/main/"}, {"lang": "fr", "link": "/main/fr/"}]))
+        fr_rw = h.rewrite_relative_links(
+            "[EN](README.md) [Idx](docs/fr/index.md) [Pub](docs/PUBLISHING.md)", "overview-fr.md",
+            ref="main", docs_dir=dd, available_root_docs=("overview-fr.md",),
+            included_docs=("index.md", "overview-fr.md"), lang="fr")
+        self.assertEqual(
+            fr_rw, f"[EN]({REPO}/blob/main/README.md) [Idx](index.md) [Pub]({REPO}/blob/main/docs/PUBLISHING.md)")
 
     def test_builder_semver_manifest_htaccess_redirect_zip_and_privacy(self) -> None:
         b = _load("build_versioned_docs", BUILD)

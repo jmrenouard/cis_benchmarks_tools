@@ -15,6 +15,14 @@ _None._
 
 ## 2. Completed Actions (`COMPLETED`)
 
+### ACT-149 — docs: isolate English `mkdocs.yml` and add language-aware MkDocs hooks (Issue `#775`)
+- **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#775` | **Branch**: `docs/issue-775-mkdocs-en-hooks`
+- **Request**: Keep `mkdocs.yml` 100% English (`exclude_docs`, `extra.alternate`, remove `overview-fr.md` from nav) and make `scripts/mkdocs_hooks.py` language-aware.
+- **Changes**: Updated `mkdocs.yml`, `scripts/mkdocs_hooks.py` (`_lang`, dynamic `alternate`, EN/FR `on_files` & `on_page_markdown` link filtering), and `tests/test_mkdocs_publishing.py`.
+- **Result**: `audit_helpers.py docs` PASS (`language_mix=0`, `4/4` `mmdc`); `mkdocs build --strict` exit `0`; `pre_commit_checks.py` 8/8 (`357` unit tests); PR diff `< 15,000` bytes.
+
+---
+
 ### ACT-148 — docs: convert ASCII diagram to Mermaid and fix Tutorial 1 and README drift (Issue `#773`)
 - **Date**: `2026-11-24` | **Status**: `COMPLETED` | **Issue**: `#773` | **Branch**: `docs/issue-773-mermaid-readme-tutorial-fixes`
 - **Request**: Convert `documentation/specifications/architecture.md` ASCII diagram to Mermaid, add tutorial flow diagrams, remove `2>/dev/null` from Tutorial 1, and align MariaDB 10.6 version (`v1.1.0`) in `README.md` and `README_fr.md`.
