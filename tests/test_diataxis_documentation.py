@@ -5,6 +5,10 @@ from __future__ import annotations
 import configparser
 import json
 import re
+import shlex
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -118,6 +122,56 @@ def _non_idx(quad: str) -> list[Path]:
     return [p for p in sorted((DOCS / quad).rglob("*.md")) if p.name.lower() != "index.md"]
 
 
+_STF_BANNED_RE = re.compile(
+    r"\b(?:devrait|devraient|pourrait|pourraient|serait|seraient|faudrait|éventuellement|"
+    r"potentiellement|susceptible\s+de|il\s+faut|vous\s+devez|il\s+convient\s+de|"
+    r"il\s+est\s+nécessaire\s+de|afin\s+de|à\s+l'aide\s+de|procéder\s+à|via)\b|"
+    r"\b(?:e\.g\.|i\.e\.|etc\.|cf\.)", re.I)
+_BOX_DRAW_RE = re.compile(r"[\u2500-\u257f]")
+_MERMAID_TYPES = (
+    "flowchart", "graph", "sequencediagram", "classdiagram", "statediagram",
+    "erdiagram", "gantt", "pie", "gitgraph", "mindmap", "timeline",
+)
+
+
+def _fenced_blocks(text: str) -> list[tuple[int, int, str, str]]:
+    """Extract (lineno, indent, lang, body) for every fenced code block."""
+    blocks: list[tuple[int, int, str, str]] = []
+    cur: tuple[int, int, str, list[str]] | None = None
+    for idx, line in enumerate(text.splitlines(), 1):
+        m = re.match(r"^( *)```(.*)$", line)
+        if m and cur is None:
+            cur = (idx, len(m.group(1)), m.group(2).strip().lower(), [])
+        elif m and cur is not None and not m.group(2).strip():
+            blocks.append((cur[0], cur[1], cur[2], "\n".join(cur[3])))
+            cur = None
+        elif cur is not None:
+            cur[3].append(line)
+    return blocks
+
+
+def collect_stf_structural_violations(md: Path) -> list[str]:
+    """Validate ASD-STF100 structural rules on French procedural guides."""
+    out: list[str] = []
+    for ln, raw in _non_code(md.read_text("utf-8")):
+        line = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", raw.strip())
+        line = re.sub(r"`[^`]+`", "code", line)
+        if not line or line.startswith(("#", "|", "---")):
+            continue
+        is_note = bool(re.match(r"^(?:\*\*)?NOTE\s*:", line, re.I))
+        body = re.sub(r"^(?:[-*+]|\d+\.)\s+|\*\*(?:ATTENTION|AVERTISSEMENT|NOTE)\s*:\*\*\s*", "", line)
+        for sent in (s.strip() for s in re.split(r"(?<=[.!?])\s+", body) if s.strip()):
+            if ";" in sent:
+                out.append(f"{md.name}:{ln}: semicolon violates ASD-STF100 Rule 8.1")
+            if _STF_BANNED_RE.search(sent):
+                out.append(f"{md.name}:{ln}: disallowed STF modal/phrase in {sent!r}")
+            words = [w for w in re.findall(r"[^\s,;:.!?]+", sent) if w]
+            limit = 25 if is_note else 20
+            if len(words) > limit:
+                out.append(f"{md.name}:{ln}: sentence length {len(words)} > {limit}")
+    return out
+
+
 class TestDiataxisDocumentation(unittest.TestCase):
     """Validate Diataxis structure, links, genre rules, STE compliance, math, and configs."""
 
@@ -227,6 +281,119 @@ class TestDiataxisDocumentation(unittest.TestCase):
             )
             joined = "\n".join(collect_ste_structural_violations(bad))
             self.assertTrue(all(r in joined for r in ("[Rule 3.2]", "[Rule 8.1]", "[Rule 4.2]", "[Rule 3.6]", "[Rule 5.1]")))
+
+    def test_french_diataxis_stf100_and_i18n_isolation(self) -> None:
+        fr_root = DOCS / "fr"
+        fr_quads = ("01-tutoriels", "02-guides-pratiques", "03-reference", "04-explications")
+        self.assertTrue((fr_root / "index.md").is_file())
+        for q in fr_quads:
+            self.assertTrue((fr_root / q / "index.md").is_file(), q)
+        fr_guides = sorted((fr_root / "02-guides-pratiques").rglob("*.md"))
+        self.assertGreaterEqual(len([p for p in fr_guides if p.name != "index.md"]), 4)
+        for md in fr_guides:
+            self.assertEqual(collect_stf_structural_violations(md), [], md.as_posix())
+            if md.name != "index.md":
+                txt = md.read_text("utf-8")
+                self.assertIn("Vérification", txt, md.name)
+                self.assertIn("Retour arrière", txt, md.name)
+                self.assertRegex(txt, r"\*\*(?:ATTENTION|AVERTISSEMENT)\s*:", md.name)
+        fr_tuts = [p for p in (fr_root / "01-tutoriels").glob("*.md") if p.name != "index.md"]
+        self.assertEqual(len(fr_tuts), 2)
+        for tut in fr_tuts:
+            txt = tut.read_text("utf-8")
+            self.assertTrue(all(q in txt for q in ("02-guides-pratiques", "03-reference", "04-explications")))
+        en_cfg = (ROOT / "mkdocs.yml").read_text("utf-8")
+        fr_cfg = (ROOT / "mkdocs.fr.yml").read_text("utf-8")
+        self.assertIn("language: en", en_cfg)
+        self.assertIn("language: fr", fr_cfg)
+        self.assertNotIn("overview-fr.md", en_cfg.split("\nnav:", 1)[1])
+        self.assertNotIn("overview-en.md", fr_cfg.split("\nnav:", 1)[1])
+
+    def test_zero_ascii_diagrams_and_valid_mermaid_across_authored_docs(self) -> None:
+        authored = list(ROOT.glob("*.md")) + list(DOCS.rglob("*.md")) + list((ROOT / "documentation").rglob("*.md"))
+        mermaid_count = 0
+        for md in sorted(authored):
+            txt = md.read_text("utf-8")
+            self.assertIsNone(_BOX_DRAW_RE.search(txt), f"Unicode box-drawing in {md.as_posix()}")
+            for ln, indent, lang, body in _fenced_blocks(txt):
+                if lang == "mermaid":
+                    mermaid_count += 1
+                    self.assertEqual(indent, 0, f"Indented mermaid fence at {md.as_posix()}:{ln}")
+                    self.assertNotIn("<br", body.lower(), f"HTML <br> in mermaid at {md.as_posix()}:{ln}")
+                    first = next((l.strip().lower() for l in body.splitlines() if l.strip()), "")
+                    self.assertTrue(any(first.startswith(k) for k in _MERMAID_TYPES), f"Bad header at {md.name}:{ln}")
+                elif lang in ("", "text", "ascii"):
+                    self.assertNotRegex(body, r"(\+[-=]{2,}\+|-->|<--)", f"ASCII diagram in {md.as_posix()}:{ln}")
+        self.assertGreaterEqual(mermaid_count, 6)
+        for folder in ("01-tutorials", "02-how-to-guides", "fr/01-tutoriels", "fr/02-guides-pratiques"):
+            for md in sorted((DOCS / folder).rglob("*.md")):
+                for ln, _, lang, body in _fenced_blocks(md.read_text("utf-8")):
+                    if lang in ("bash", "sh", "shell"):
+                        self.assertNotIn("2>/dev/null", body, f"{md.as_posix()}:{ln}")
+
+    def test_executable_tutorial_howto_cli_scripts_and_presets(self) -> None:
+        hlp = subprocess.run([sys.executable, str(ROOT / "audit_cis.py"), "--help"], capture_output=True, text=True)
+        self.assertEqual(hlp.returncode, 0, hlp.stderr)
+        lst = subprocess.run([sys.executable, str(ROOT / "audit_cis.py"), "--list-targets"],
+                             capture_output=True, text=True)
+        self.assertEqual(lst.returncode, 0, lst.stderr)
+        self.assertIn("18 Benchmarks / 887 Controls", lst.stdout)
+        presets = json.loads((ROOT / "conf" / "mcp_api_executor_presets.json").read_text("utf-8"))
+        self.assertTrue(presets.get("read_only"))
+        targets = set(presets.get("allowed_targets", []))
+        self.assertEqual(len(targets), 18)
+        for t in targets:
+            self.assertIn(t, lst.stdout)
+        valid_flags = set(re.findall(r"--[a-z][a-z0-9-]+", hlp.stdout))
+        for folder in ("01-tutorials", "02-how-to-guides", "fr/01-tutoriels", "fr/02-guides-pratiques"):
+            for md in sorted((DOCS / folder).rglob("*.md")):
+                for ln, _, lang, body in _fenced_blocks(md.read_text("utf-8")):
+                    if lang not in ("bash", "sh", "shell"):
+                        continue
+                    joined = re.sub(r"\\\s*\n\s*", " ", body)
+                    for cmd_line in joined.splitlines():
+                        if "audit_cis.py" not in cmd_line:
+                            continue
+                        toks = shlex.split(cmd_line.strip())
+                        if "audit_cis.py" not in toks:
+                            continue
+                        self.assertFalse(("-o" in toks or "--output" in toks)
+                                         and ("-j" in toks or "--output-json" in toks),
+                                         f"Combined -o/-j unsupported at {md.name}:{ln}")
+                        for fl in (x for x in toks if x.startswith("--")):
+                            self.assertIn(fl.split("=", 1)[0], valid_flags, f"{md.name}:{ln}")
+                        for i, x in enumerate(toks[:-1]):
+                            if x in ("-t", "--target"):
+                                self.assertIn(toks[i + 1], targets, f"{md.name}:{ln}")
+        with tempfile.TemporaryDirectory() as tmp:
+            rep, out_diff, out_sarif = Path(tmp) / "r.json", Path(tmp) / "p.diff", Path(tmp) / "r.sarif"
+            ctrl = {"id": "4.3", "title": "Disallow local_infile", "status": "FAIL",
+                    "severity": "HIGH", "remediation": "SET GLOBAL local_infile = OFF;"}
+            rep.write_text(json.dumps({"target": "mariadb106", "controls": [ctrl]}), encoding="utf-8")
+            for fmt in ("diff", "sql", "ansible", "json"):
+                r = subprocess.run([
+                    sys.executable, str(ROOT / "audit_cis.py"), "--remediate-dry-run", "--from-report", str(rep),
+                    "--remediation-format", fmt, "--remediation-output", str(out_diff),
+                ], capture_output=True, text=True)
+                self.assertEqual(r.returncode, 0, r.stderr)
+                self.assertTrue(out_diff.read_text("utf-8").strip(), fmt)
+            sys.path.insert(0, str(ROOT))
+            try:
+                import sarif_exporter
+                doc = sarif_exporter.build_sarif_document([ctrl], target_name="mariadb106")
+                ok, msg = sarif_exporter.validate_sarif_document(doc)
+                self.assertTrue(ok, msg)
+                sarif_exporter.export_sarif_report([ctrl], 0.0, {}, "mariadb106", str(out_sarif))
+                self.assertTrue(out_sarif.is_file())
+            finally:
+                sys.path.pop(0)
+        for sh in sorted((ROOT / "scripts").glob("*.sh")):
+            self.assertTrue(sh.read_text("utf-8").startswith("#!/"))
+            if shutil.which("bash"):
+                res = subprocess.run(
+                    ["bash", "-n", f"scripts/{sh.name}"], cwd=str(ROOT), capture_output=True, text=True)
+                if res.returncode != 0 and not any(k in (res.stderr or "") for k in ("WSL", "0x8007")):
+                    self.fail(f"bash -n failed on {sh.name}: {res.stderr}")
 
 
 if __name__ == "__main__":

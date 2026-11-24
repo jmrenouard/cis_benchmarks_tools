@@ -40,12 +40,13 @@ sleep 8
 
 ## Étape 3 — Lancer l'audit Docker en HTML et JSON
 
-Exécutez l'audit CIS MariaDB 10.6 v1.1.0 sur le conteneur cible :
+Exécutez l'audit CIS MariaDB 10.6 v1.1.0 sur le conteneur cible pour les sorties HTML et JSON :
 
 ```bash
 python3 audit_cis.py -t mariadb106 -c cis-tut-mariadb -l fr \
-  -f html -o /tmp/cis-tut-fr/mariadb106.html \
-  -j /tmp/cis-tut-fr/mariadb106.json
+  -f html -o /tmp/cis-tut-fr/mariadb106.html
+python3 audit_cis.py -t mariadb106 -c cis-tut-mariadb -l fr \
+  -f json -o /tmp/cis-tut-fr/mariadb106.json
 ```
 
 Résultat attendu :
