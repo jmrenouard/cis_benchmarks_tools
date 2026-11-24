@@ -60,7 +60,7 @@ class TestMkDocsPublishing(unittest.TestCase):
             "*.kdbx", "*.keyx", "*.pid", ".env",
         )
         self.assertTrue(all(t in mk for t in toks))
-        for tok in ("*_fr.md", "fr/", "overview-fr.md", "01-tutoriels/", "02-guides-pratiques/", "alternate:", "lang: fr"):
+        for tok in ("*_fr.md", "fr/", "overview-fr.md", "alternate:", "lang: fr"):
             self.assertIn(tok, mk)
         self.assertNotIn("overview-fr.md", mk.split("\nnav:", 1)[1])
         nav = re.split(r"\n(?=[A-Za-z0-9_]+:)", mk.split("\nnav:", 1)[1], maxsplit=1)[0].splitlines()
@@ -166,7 +166,10 @@ class TestMkDocsPublishing(unittest.TestCase):
             "overview-fr.md", ref="main", docs_dir=dd,
             available_root_docs=("overview-fr.md",), included_docs=("index.md", "overview-fr.md"), lang="fr",
         )
-        self.assertEqual(fr_rw, f"[EN]({REPO}/blob/main/README.md) [Idx](index.md) [Pub]({REPO}/blob/main/docs/PUBLISHING.md)")
+        self.assertEqual(
+            fr_rw,
+            f"[EN]({REPO}/blob/main/README.md) [Idx](index.md) [Pub]({REPO}/blob/main/docs/PUBLISHING.md)",
+        )
 
     def test_builder_semver_manifest_htaccess_redirect_zip_and_privacy(self) -> None:
         b = _load("build_versioned_docs", BUILD)

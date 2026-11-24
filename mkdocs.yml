@@ -20,10 +20,6 @@ exclude_docs: |
   *-fr.md
   fr/
   overview-fr.md
-  01-tutoriels/
-  02-guides-pratiques/
-  03-reference/
-  04-explications/
   index_fr.md
 
 hooks:
